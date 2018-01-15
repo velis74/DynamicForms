@@ -1,0 +1,10 @@
+*.pyc
+*~
+.idea
+docs/_build
+*.bak
+.#*
+\#*
+*.db
+*.tmp
+*.mo

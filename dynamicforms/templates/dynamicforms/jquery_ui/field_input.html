@@ -1,0 +1,15 @@
+{% extends "dynamicforms/jquery_ui/field_base.html" %}
+{% load dynamicforms %}
+{% block input %}
+  <input id="field.uuid" name="{{ field.name }}" {% if style.input_type != "file" %}class="form-control"{% endif %} type="{{ style.input_type }}" {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %} {% if field.value %}value="{{ field.value }}"{% endif %} {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}>
+
+  <!--suppress JSUnusedLocalSymbols -->
+  <script type="application/javascript">
+    function get_{% field_unique_ident with field %}(formValue) {
+      formValue.{{ field.name }} = $('#{{ field.uuid }}').val();
+    }
+    function set_{% field_unique_ident with field %}(newValue) {
+      $('#{{ field.uuid }}').val(newValue);
+    }
+  </script>
+{% endblock %}
