@@ -3,6 +3,7 @@ from dynamicforms.fields import IntegerField
 from dynamicforms.js.actions import Visible
 from dynamicforms.js.conditions import CFieldValue
 from .models import Validated
+import rest_framework
 
 
 class ValidatedForm(Form):

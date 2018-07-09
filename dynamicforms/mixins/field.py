@@ -9,6 +9,7 @@ from dynamicforms.util import form_value
 class Field(object):
     TEMPLATE = 'field_input.html'
 
+    # noinspection PyUnreachableCode
     if False:
         # provided by implementations, here only for IDE to recognise the member
         name = ''

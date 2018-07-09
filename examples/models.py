@@ -3,7 +3,11 @@ from django.core.validators import RegexValidator, MaxValueValidator, MinValueVa
 
 
 # Create your models here.
+
 class Validated(models.Model):
+    """
+
+    """
     code = models.CharField(max_length=10, validators=[
         RegexValidator(r'\w\w\d+', 'Please enter a string starting with two characters, followed by up to 8 numbers')
     ])
@@ -26,5 +30,5 @@ class Validated(models.Model):
         ('C', 'C'),
         ('D', 'D'),
     ), validators=[
-        RegexValidator(r'[ABC]*', 'Only options A-C may be chosen')
+        RegexValidator(r'^[ABC]*$', 'Only options A-C may be chosen', 'regex')
     ])

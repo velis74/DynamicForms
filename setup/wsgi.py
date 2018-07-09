@@ -1,5 +1,5 @@
 """
-WSGI config for dynamic_forms project.
+WSGI config for dynamic forms project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dynamic_forms.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "setup.settings")
 
 application = get_wsgi_application()
