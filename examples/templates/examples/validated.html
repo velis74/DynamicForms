@@ -1,6 +1,13 @@
-<h3>First record from the table</h3>
-<p>
-{{ validated_rec }}
-</p>
-<h3>Table with validated fields</h3>
-{{ validated_tbl }}
+{% load rest_framework %}
+
+<html><body>
+
+<h1>Validated form</h1>
+
+<form action="{% url 'validated-detail' pk=data.pk %}" method="POST">
+    {% csrf_token %}
+    {% render_form serializer %}
+    <input type="submit" value="Save">
+</form>
+
+</body></html>
