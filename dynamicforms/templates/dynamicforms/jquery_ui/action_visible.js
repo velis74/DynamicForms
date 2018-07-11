@@ -1,1 +1,0 @@
-$("#{{ field.uuid }}").toggle({{ condition }}());

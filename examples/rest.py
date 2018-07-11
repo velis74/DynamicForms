@@ -1,18 +1,8 @@
-from rest_framework import routers, serializers, viewsets
-from rest_framework.renderers import TemplateHTMLRenderer, HTMLFormRenderer
-from rest_framework.utils.serializer_helpers import ReturnList
+from rest_framework import routers, serializers
 
+from dynamicforms.renderers import TemplateHTMLRenderer
+from dynamicforms.viewsets import ModelViewSet
 from .models import Validated
-
-
-class MyTemplateHTMLRenderer(TemplateHTMLRenderer):
-
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        if isinstance(data, ReturnList):
-            data = dict(data=data,
-                        serializer=data.serializer.child
-                        if isinstance(data.serializer, serializers.ListSerializer) else data.serializer)
-        return super().render(data, accepted_media_type, renderer_context)
 
 
 class ValidatedSerializer(serializers.ModelSerializer):
@@ -23,16 +13,14 @@ class ValidatedSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
-class ValidatedViewSet(viewsets.ModelViewSet):
-    renderer_classes = [MyTemplateHTMLRenderer]
+class ValidatedViewSet(ModelViewSet):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'examples/validated.html'
+    list_template_name = 'examples/validated_list.html'
+    template_context = dict(crud_form=True)
 
     queryset = Validated.objects.all()
     serializer_class = ValidatedSerializer
-
-    def get_template_names(self):
-        if self.action == 'list':
-            return ['examples/validated_list.html']
-        return ['examples/validated.html']
 
 
 router = routers.DefaultRouter()
