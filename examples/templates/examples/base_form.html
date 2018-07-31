@@ -6,7 +6,7 @@
 <form action="{% url 'validated-list' %}" method="POST">
 {% endif %}
     {% csrf_token %}
-    {% render_form serializer template_pack='rest_framework/horizontal' %}
+    {% render_form serializer template_pack='rest_framework/vertical' %}
     <div class="form-group">&nbsp;
       <input type="submit" value="Save" class="btn btn-primary float-right">
     </div>

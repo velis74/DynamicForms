@@ -10,6 +10,14 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         if isinstance(data, (ReturnList, ReturnDict)):
             ser = data.serializer
             data = dict(data=data, serializer=ser.child if isinstance(ser, ListSerializer) else ser)
+
+            if getattr(ser, '_errors', {}):
+                # unmark exception from response because this was a validation error
+                # This will allow TemplateHTMLRenderer to still render the template as if it was without problems
+                # If this is not done, the only result user will see will be a 404 error without any details
+                response = renderer_context['response']
+                response.exception = False
+
         return super().render(data, accepted_media_type, renderer_context)
 
     def get_template_context(self, data, renderer_context):
