@@ -1,13 +1,13 @@
 from rest_framework.serializers import ListSerializer
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.utils.serializer_helpers import ReturnList
+from rest_framework.utils.serializer_helpers import ReturnList, ReturnDict
 
 
 # noinspection PyRedeclaration
 class TemplateHTMLRenderer(TemplateHTMLRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        if isinstance(data, ReturnList):
+        if isinstance(data, (ReturnList, ReturnDict)):
             ser = data.serializer
             data = dict(data=data, serializer=ser.child if isinstance(ser, ListSerializer) else ser)
         return super().render(data, accepted_media_type, renderer_context)

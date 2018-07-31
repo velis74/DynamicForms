@@ -1,5 +1,5 @@
 from rest_framework import routers, serializers
-
+from rest_framework.renderers import JSONRenderer
 from dynamicforms.renderers import TemplateHTMLRenderer
 from dynamicforms.viewsets import ModelViewSet
 from .models import Validated
@@ -14,7 +14,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
 
 class ValidatedViewSet(ModelViewSet):
-    renderer_classes = [TemplateHTMLRenderer]
+    renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
     template_name = 'examples/validated.html'
     list_template_name = 'examples/validated_list.html'
     template_context = dict(crud_form=True)

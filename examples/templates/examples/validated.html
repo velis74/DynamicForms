@@ -1,13 +1,29 @@
+{% extends 'examples/base.html' %}
 {% load rest_framework %}
+{% block title %}
+  {% if data.pk %}
+    Edit validated object
+  {% else %}
+    New validated object
+  {% endif %}
+{% endblock %}
+{% block body %}
+<div class="card" style="display: inline-block; margin: 1em">
+  <div class="card-header">Validated</div>
+  <div class="card-body">
 
-<html><body>
-
-<h1>Validated form</h1>
-
+{% if data.pk %}
 <form action="{% url 'validated-detail' pk=data.pk %}" method="POST">
+{% else %}
+<form action="{% url 'validated-list' %}" method="POST">
+{% endif %}
     {% csrf_token %}
     {% render_form serializer %}
-    <input type="submit" value="Save">
+    <div class="form-group">&nbsp;
+      <input type="submit" value="Save" class="btn btn-primary float-right">
+    </div>
 </form>
 
-</body></html>
+  </div>
+</div>
+{% endblock %}
