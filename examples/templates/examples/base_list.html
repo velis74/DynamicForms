@@ -1,0 +1,26 @@
+{% load rest_framework %}
+<table class="table table-striped">
+  <thead>
+    <tr>{% for column in serializer.fields %}<th>{{ column|capfirst }}</th>{% endfor %}<th></th></tr>
+  </thead>
+  <tbody>
+    {% for row in data %}
+      <tr>
+        {% for key, value in row|items %}
+          {% if key in columns %}
+            <td {{ value|add_nested_class }} >
+              {{ value|format_value }}
+            </td>
+          {% endif %}
+        {% endfor %}
+        <td>
+          <a href="{{ row.url }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+      <td colspan="{{ serializer.fields | length }}" style="text-align: center">No data</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

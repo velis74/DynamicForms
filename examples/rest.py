@@ -14,7 +14,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
 
 class ValidatedViewSet(ModelViewSet):
-    renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
+    renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
     template_name = 'examples/validated.html'
     list_template_name = 'examples/validated_list.html'
     template_context = dict(crud_form=True)
