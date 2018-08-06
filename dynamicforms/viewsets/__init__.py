@@ -31,3 +31,9 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
         if hasattr(self, 'list_template_name'):
             res.template_name = self.list_template_name
         return res
+
+    def initialize_request(self, request, *args, **kwargs):
+        if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
+            # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
+            request.method = request.POST.get('data-dynamicforms-method')
+        return super().initialize_request(request, *args, **kwargs)

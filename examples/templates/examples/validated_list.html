@@ -6,7 +6,7 @@ Validated
 {% block body %}
 <div class="card" style="display: inline-block; margin: 1em">
   <div class="card-header">
-    <form action="{% url 'validated-detail' pk='new' %}" method="GET">
+    <form action="{% url 'validated-detail' pk='new' format='html' %}" method="GET">
       Validated
       {% if crud_form %}
       <button type="submit" class="btn btn-info btn-sm float-right">+ Add</button>
