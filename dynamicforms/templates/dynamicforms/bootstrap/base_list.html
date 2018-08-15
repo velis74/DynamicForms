@@ -1,4 +1,4 @@
-{% load rest_framework %}
+{% load dynamicforms %}
 <table class="table table-striped">
   <thead>
     <tr>{% for column in serializer.fields %}<th>{{ column|capfirst }}</th>{% endfor %}<th></th></tr>

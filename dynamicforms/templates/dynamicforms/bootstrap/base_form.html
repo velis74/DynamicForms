@@ -1,4 +1,4 @@
-{% load rest_framework %}
+{% load dynamicforms %}
 
 {% if data.id %}
 <form action="{% url 'validated-detail' pk=data.id format='html' %}" method="POST">

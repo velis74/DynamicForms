@@ -1,5 +1,6 @@
-from rest_framework import routers, serializers
+from rest_framework import routers, serializers as ser
 from dynamicforms.viewsets import ModelViewSet
+from dynamicforms import serializers
 from .models import Validated
 
 
@@ -12,7 +13,6 @@ from .models import Validated
 # TODO:   pagination lahko narediš na dva načina:
 # TODO:     1. lahko imaš nek element pod tabelo in ko ta element pade v view, poskušaš naložit dodatne recorde
 # TODO:     2. lahko pa enemu od recordov proti koncu tabele obesiš to funkcionalnost in bo začel nalagat, ko ON pride v view. tako imaš možnost, da bi bili novi podatki naloženi še preden jih user dejansko potrebuje
-# TODO: base_form.html za edit record kliče POST in posledično se doda nov record in ne popravi obstoječi. Dodat hidden field?
 
 
 class ValidatedSerializer(serializers.ModelSerializer):

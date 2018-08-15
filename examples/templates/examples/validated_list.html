@@ -1,5 +1,5 @@
-{% extends 'examples/base.html' %}
-{% load rest_framework %}
+{% extends 'dynamicforms/bootstrap/base.html' %}
+{% load dynamicforms %}
 {% block title %}
 Validated
 {% endblock %}
@@ -14,7 +14,7 @@ Validated
     </form>
   </div>
   <div class="card-body">
-    {% include 'examples/base_list.html' with serializer=serializer data=data %}
+    {% include 'dynamicforms/bootstrap/base_list.html' with serializer=serializer data=data %}
   </div>
 </div>
 {% endblock %}

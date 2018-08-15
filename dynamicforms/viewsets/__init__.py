@@ -4,9 +4,12 @@ from django.http import Http404
 
 
 class NewMixin(object):
+    """
+    Provides support for retrieving default values for a new record
+    """
 
     def new_object(self: viewsets.ModelViewSet):
-        self.get_queryset().model()
+        return self.get_queryset().model()
 
     # noinspection PyUnresolvedReferences
     def retrieve(self: viewsets.ModelViewSet, request, *args, **kwargs):
