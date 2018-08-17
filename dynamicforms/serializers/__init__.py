@@ -1,9 +1,12 @@
+import uuid as uuid_module
+
 from rest_framework import serializers
 from django.db import models
 from ..fields import *
+from ..fields.mixins import UUIDMixIn
 
 
-class ModelSerializer(serializers.ModelSerializer):
+class ModelSerializer(UUIDMixIn, serializers.ModelSerializer):
     serializer_field_mapping = {
         models.AutoField: IntegerField,
         models.BigIntegerField: IntegerField,
@@ -32,3 +35,9 @@ class ModelSerializer(serializers.ModelSerializer):
     }
     if models.DurationField is not None:
         serializer_field_mapping[models.DurationField] = DurationField
+
+    @property
+    def has_non_field_errors(self):
+        if hasattr(self, '_errors'):
+            return 'non_field_errors' in self.errors
+        return False

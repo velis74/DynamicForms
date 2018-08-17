@@ -16,7 +16,7 @@ TEMPLATE_VARIANT = Struct(getattr(s, MODULE_PREFIX + 'TEMPLATE_VARIANT', dict(BO
 
 # This is a calculated constant specifying the HTML header includes providing js and css for desired Bootstrap version
 BSVER_INCLUDES = TEMPLATE + ('base_includes_%s.html' % TEMPLATE_VARIANT.BOOTSTRAP_VERSION)
-
+BSVER_FIELD_TEMPLATE = TEMPLATE + ('field/base_field_%s.html' % TEMPLATE_VARIANT.BOOTSTRAP_VERSION)
 
 # these entire settings will be passed to context of each form render
 CONTEXT_VARS = {k: v for k, v in globals().items() if k == k.upper()}

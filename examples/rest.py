@@ -1,4 +1,5 @@
-from rest_framework import routers, serializers as ser
+from rest_framework import routers
+from rest_framework.exceptions import ValidationError
 from dynamicforms.viewsets import ModelViewSet
 from dynamicforms import serializers
 from .models import Validated
@@ -17,6 +18,14 @@ from .models import Validated
 
 class ValidatedSerializer(serializers.ModelSerializer):
     # id = serializers.IntegerField(required=False)  # so that it shows at all
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        if attrs['amount'] != 5:
+            if attrs['code'] != '123':
+                raise ValidationError({'amount': 'amount can only be different than 5 if code is "123"'})
+        # dodaj še enega brez veznega za celo formo, samo tolk, da se bo videlo, da se zriše zgoraj
+        return attrs
 
     class Meta:
         model = Validated

@@ -1,6 +1,7 @@
+import six
 from .. import settings
 from django.template import loader
-from rest_framework.serializers import ListSerializer
+from rest_framework.serializers import ListSerializer, HiddenField
 from rest_framework.renderers import TemplateHTMLRenderer, HTMLFormRenderer
 from rest_framework.utils.serializer_helpers import ReturnList, ReturnDict
 
@@ -35,6 +36,36 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
 # noinspection PyRedeclaration
 class HTMLFormRenderer(HTMLFormRenderer):
 
+    def render_field(self, field, parent_style):
+        if isinstance(field._field, HiddenField):
+            return ''
+
+        style = dict(self.default_style[field])
+        style.update(field.style)
+        if 'template_pack' not in style:
+            style['template_pack'] = parent_style.get('template_pack', self.template_pack)
+        style['renderer'] = self
+
+        # Get a clone of the field with text-only value representation.
+        field = field.as_form_field()
+
+        if style.get('input_type') == 'datetime-local' and isinstance(field.value, six.text_type):
+            field.value = field.value.rstrip('Z')
+
+        if 'template' in style:
+            template_name = style['template']
+        else:
+            template_name = style['template_pack'].strip('/') + '/' + style['base_template']
+
+        template = loader.get_template(template_name)
+        context = {
+            'field': field,
+            'style': style,
+            'DF': settings.CONTEXT_VARS,
+        }
+        return template.render(context)
+
+    # Jure: had to copy this one over to support custom template as parameter + DF context variable
     def render(self, data, accepted_media_type=None, renderer_context=None):
         """
         Render serializer data and return an HTML form, as a string.
@@ -54,6 +85,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         template = loader.get_template(template_name)
         context = {
             'form': form,
-            'style': style
+            'style': style,
+            'DF': settings.CONTEXT_VARS,
         }
         return template.render(context)

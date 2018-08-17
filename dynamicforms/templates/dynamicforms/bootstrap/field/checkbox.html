@@ -1,0 +1,18 @@
+{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% block container_class %}form-check{% endblock %}
+{% block field_input_label %}
+  <input id="{{ field.uuid }}"
+         class="form-check-input"
+         type="checkbox"
+         name="{{ field.name }}"
+         value="true"
+         {% if field.value %}checked{% endif %}
+  />
+  {% if field.label %}
+    <label id="label-{{ field.uuid }}"
+           for="{{ field.name }}"
+           class="form-check-label {% if style.hide_label %}sr-only{% endif %}">
+      {{ field.label }}
+    </label>
+  {% endif %}
+{% endblock %}

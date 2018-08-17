@@ -1,0 +1,13 @@
+{% load dynamicforms %}
+
+{% if form.has_non_field_errors %}
+  {% for error in form.errors.non_field_errors %}
+  <div class="text-danger">{{ error }}</div>
+  {% endfor %}
+{% endif %}
+
+{% for field in form %}
+  {% if not field.read_only %}
+    {% render_field field style=style %}
+  {% endif %}
+{% endfor %}
