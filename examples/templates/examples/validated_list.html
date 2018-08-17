@@ -4,17 +4,24 @@
 Validated
 {% endblock %}
 {% block body %}
-<div class="card" style="display: inline-block; margin: 1em">
-  <div class="card-header">
+  {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
+    {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
+  {% else %}
+    {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
+  {% endif %}
+  {% set_var template_list=DF.TEMPLATE|add:'base_list.html' %}
+
+<div class="{{ card_class }}" style="display: inline-block; margin: 1em">
+  <div class="{{ card_header }}">
     <form action="{% url 'validated-detail' pk='new' format='html' %}" method="GET">
       Validated
       {% if crud_form %}
-      <button type="submit" class="btn btn-info btn-sm float-right">+ Add</button>
+      <button type="submit" class="btn btn-info btn-sm float-right pull-right">+ Add</button>
       {% endif %}
     </form>
   </div>
-  <div class="card-body">
-    {% include 'dynamicforms/bootstrap/base_list.html' with serializer=serializer data=data %}
+  <div class="{{ card_body }}">
+    {% include template_list with serializer=serializer data=data %}
   </div>
 </div>
 {% endblock %}

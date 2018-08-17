@@ -48,3 +48,16 @@ def render_form(serializer, template_pack=None, form_template=None):
 def render_field(field, style):
     renderer = style.get('renderer', HTMLFormRenderer())
     return renderer.render_field(field, style)
+
+
+@register.simple_tag(takes_context=True)
+def set_var(context, **kwds):
+    """
+    Sets the given variables to provided values. Kind of like the 'with' block, only it isn't a block tag
+    :param context: template context (automatically provided by django)
+    :param kwds: named parameters with their respective values
+    :return: this tag doesn't render
+    """
+    for k, v in kwds.items():
+        context[k] = v
+    return ''
