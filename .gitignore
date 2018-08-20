@@ -8,3 +8,5 @@ docs/_build
 *.db
 *.tmp
 *.mo
+rest_framework
+db.sqlite3

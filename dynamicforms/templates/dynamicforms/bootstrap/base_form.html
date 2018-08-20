@@ -1,11 +1,17 @@
 {% load dynamicforms %}
 
+<form id="{{ serializer.uuid }}"
+      class="dynamicforms-form"
+      {% if data.id %}
+      action="{% url 'validated-detail' pk=data.id format='html' %}"
+      {% else %}
+      action="{% url 'validated-list' format='html' %}"
+      {% endif %}
+      method="POST">
+
 {% if data.id %}
-<form id="{{ serializer.uuid }}" action="{% url 'validated-detail' pk=data.id format='html' %}" method="POST">
   <!-- This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH -->
   <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
-{% else %}
-<form id="{{ serializer.uuid }}" action="{% url 'validated-list' format='html' %}" method="POST">
 {% endif %}
     {% csrf_token %}
     {% set_var template_pack=DF.TEMPLATE|add:'field' %}
