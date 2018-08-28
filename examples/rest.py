@@ -5,11 +5,10 @@ from dynamicforms import serializers
 from .models import Validated
 
 
-# TODO: templates/examples/base* je treba prenest v dynamicforms/templates
+# TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
 # TODO: Vnos recordov narediti preko dialoga
 # TODO:   zadeva mora biti nastavljiva: tako kot sedaj ali pa dialog
 # TODO:   oziroma: programer sam se odloči točno kaj se zgodi, ko se klikne "add" ali "edit" - tudi nekaj povsem tretjega...
-# TODO: AJAX za vnos recordov?
 # TODO: paginate list template (ne zriši vseh 1500 recordov takoj, ampak jih dinamično loadaj, ko user poscrolla dovolj daleč dol
 # TODO:   pagination lahko narediš na dva načina:
 # TODO:     1. lahko imaš nek element pod tabelo in ko ta element pade v view, poskušaš naložit dodatne recorde
@@ -17,6 +16,12 @@ from .models import Validated
 
 
 class ValidatedSerializer(serializers.ModelSerializer):
+
+    form_titles = {
+        'table': 'Validated list',
+        'new': 'New validated object',
+        'edit': 'Editing validated object',
+    }
     # id = serializers.IntegerField(required=False)  # so that it shows at all
 
     def validate(self, attrs):

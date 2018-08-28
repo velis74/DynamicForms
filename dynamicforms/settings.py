@@ -8,15 +8,26 @@ MODULE_PREFIX = 'DYNAMICFORMS_'
 # e.g. 'bootstrap', 'jQuery UI', etc.
 TEMPLATE = getattr(s, MODULE_PREFIX + 'TEMPLATE', 'dynamicforms/bootstrap/')
 
-# TEMPLATE_VARIANT offers a chance to do some things in the template pack differently. It can be used for anything from
+# TEMPLATE_OPTIONS offers a chance to do some things in the template pack differently. It can be used for anything from
 # choosing version of the underlying framework (bootstrap 3 vs 4) or rendering various subsections differently
 # (e.g. horizontally aligned form labels vs vertically aligned ones)
-TEMPLATE_VARIANT = Struct(getattr(s, MODULE_PREFIX + 'TEMPLATE_VARIANT', dict(BOOTSTRAP_VERSION='v4')))
+bootstrap_options = dict(
+    # Supported Bootstrap versions are v3 and v4
+    BOOTSTRAP_VERSION='v4',
+
+    # if True, base_list template will render the HTML such that it will display dialog
+    #   Make sure you {% include DF.MODAL_DIALOG %} somewhere top-level in your html body
+    # if False, the record will be displayed in a new page
+    EDIT_IN_DIALOG=True,
+)
+TEMPLATE_OPTIONS = Struct(getattr(s, MODULE_PREFIX + 'TEMPLATE_OPTIONS', bootstrap_options))
 
 
-# This is a calculated constant specifying the HTML header includes providing js and css for desired Bootstrap version
-BSVER_INCLUDES = TEMPLATE + ('base_includes_%s.html' % TEMPLATE_VARIANT.BOOTSTRAP_VERSION)
-BSVER_FIELD_TEMPLATE = TEMPLATE + ('field/base_field_%s.html' % TEMPLATE_VARIANT.BOOTSTRAP_VERSION)
+# These are calculated constants specifying the HTML header includes providing js and css for desired Bootstrap version
+MODAL_DIALOG = 'modal_dialog'
+BSVER_INCLUDES = TEMPLATE + ('base_includes_%s.html' % TEMPLATE_OPTIONS.BOOTSTRAP_VERSION)
+BSVER_FIELD_TEMPLATE = TEMPLATE + ('field/base_field_%s.html' % TEMPLATE_OPTIONS.BOOTSTRAP_VERSION)
+BSVER_MODAL = TEMPLATE + MODAL_DIALOG + ('_%s.html' % TEMPLATE_OPTIONS.BOOTSTRAP_VERSION)
 
 # these entire settings will be passed to context of each form render
 CONTEXT_VARS = {k: v for k, v in globals().items() if k == k.upper()}

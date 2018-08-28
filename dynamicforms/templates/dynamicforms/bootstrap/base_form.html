@@ -1,22 +1,28 @@
 {% load dynamicforms %}
 
+{% set_var_conditional action_postfix='?df_dialog=true' condition=df_dialog else_value='' %}
+
 <form id="{{ serializer.uuid }}"
       class="dynamicforms-form"
       {% if data.id %}
-      action="{% url 'validated-detail' pk=data.id format='html' %}"
+      action="{% url 'validated-detail' pk=data.id format='html' %}{{ action_postfix }}"
       {% else %}
-      action="{% url 'validated-list' format='html' %}"
+      action="{% url 'validated-list' format='html' %}{{ action_postfix }}"
       {% endif %}
       method="POST">
 
 {% if data.id %}
-  <!-- This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH -->
+  {% comment %}
+  This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
+  {% endcomment %}
   <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
 {% endif %}
     {% csrf_token %}
     {% set_var template_pack=DF.TEMPLATE|add:'field' %}
     {% render_form serializer template_pack=template_pack %}
+    {% if not df_dialog %}
     <div class="form-group">&nbsp;
       <input type="submit" value="Save" class="btn btn-primary float-right">
     </div>
+    {% endif %}
 </form>

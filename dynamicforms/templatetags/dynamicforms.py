@@ -1,6 +1,13 @@
+import json as jsonlib
+
 from django import template
-from ..renderers import HTMLFormRenderer
+from django.utils.safestring import mark_safe
+
 from rest_framework.templatetags import rest_framework as drftt
+from rest_framework.utils.encoders import JSONEncoder
+from ..renderers import HTMLFormRenderer
+from ..struct import Struct
+
 
 register = template.Library()
 
@@ -61,3 +68,30 @@ def set_var(context, **kwds):
     for k, v in kwds.items():
         context[k] = v
     return ''
+
+
+@register.simple_tag(takes_context=True)
+def set_var_conditional(context, condition=None, else_value=None, **kwds):
+    """
+    Sets the given variables to provided values. Kind of like the 'with' block, only it isn't a block tag
+    :param context: template context (automatically provided by django)
+    :param kwds: named parameters with their respective values
+    :param condition: a value which specifies the original assignment if truthy or else_value if falsy
+    :param else_value: value to be assigned to the variable(s) when condition is falsy
+    :return: this tag doesn't render
+    """
+    for k, v in kwds.items():
+        context[k] = v if condition else else_value
+    return ''
+
+
+@register.filter
+def json(value):
+
+    class Encoder(JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, Struct):
+                return obj.__to_dict__()
+            return super().default(obj)
+
+    return mark_safe(jsonlib.dumps(value, cls=Encoder))

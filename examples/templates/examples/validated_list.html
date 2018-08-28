@@ -1,7 +1,6 @@
-{% extends 'dynamicforms/bootstrap/base.html' %}
-{% load dynamicforms %}
+{% extends 'dynamicforms/bootstrap/base.html' %}{% load dynamicforms %}
 {% block title %}
-Validated
+  {{ serializer.form_titles.table }}
 {% endblock %}
 {% block body %}
   {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
@@ -11,17 +10,18 @@ Validated
   {% endif %}
   {% set_var template_list=DF.TEMPLATE|add:'base_list.html' %}
 
-<div class="{{ card_class }}" style="display: inline-block; margin: 1em">
-  <div class="{{ card_header }}">
-    <form action="{% url 'validated-detail' pk='new' format='html' %}" method="GET">
-      Validated
+  <div class="{{ card_class }}" style="display: inline-block; margin: 1em">
+    <div class="{{ card_header }}">
+      {{ serializer.form_titles.table }}
       {% if crud_form %}
-      <button type="submit" class="btn btn-info btn-sm float-right pull-right">+ Add</button>
+        <button class="btn btn-info btn-sm float-right pull-right"
+                onclick="dynamicforms.newRow('{% url 'validated-detail' pk='new' format='html' %}')">
+          + Add
+        </button>
       {% endif %}
-    </form>
+    </div>
+    <div class="{{ card_body }}">
+      {% include template_list with serializer=serializer data=data %}
+    </div>
   </div>
-  <div class="{{ card_body }}">
-    {% include template_list with serializer=serializer data=data %}
-  </div>
-</div>
 {% endblock %}

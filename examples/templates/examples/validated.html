@@ -2,9 +2,9 @@
 {% load dynamicforms %}
 {% block title %}
   {% if data.id %}
-    Edit validated object
+    {% set_var title=serializer.form_titles.edit %}
   {% else %}
-    New validated object
+    {% set_var title=serializer.form_titles.new %}
   {% endif %}
 {% endblock %}
 {% block body %}
@@ -13,12 +13,18 @@
   {% else %}
     {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
   {% endif %}
-  {% set_var template_list=DF.TEMPLATE|add:'base_form.html' %}
+  {% set_var template_form=DF.TEMPLATE|add:'base_form.html' %}
+
+  {% if data.id %}
+    {% set_var title=serializer.form_titles.edit %}
+  {% else %}
+    {% set_var title=serializer.form_titles.new %}
+  {% endif %}
 
 <div class="{{ card_class }}" style="display: inline-block; margin: 1em">
-  <div class="{{ card_header }}">Validated</div>
+  <div class="{{ card_header }}">{{ title }}</div>
   <div class="{{ card_body }}">
-    {% include template_list with serializer=serializer data=data %}
+    {% include template_form with serializer=serializer data=data %}
   </div>
 </div>
 {% endblock %}

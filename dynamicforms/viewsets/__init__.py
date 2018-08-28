@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.http import Http404
+from ..renderers import TemplateHTMLRenderer
+from ..settings import BSVER_MODAL
 
 
 class NewMixin(object):
@@ -36,7 +38,21 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
         return res
 
     def initialize_request(self, request, *args, **kwargs):
+        # Caution: just to be sure for any future debugging: the request parameter to this function is a WSGIRequest
+        #  while the return Request is actually DRF Request
+        #  As a consequence, form values don't get parsed until you actually call super().initialize_request
+        #  There's no "request.data", etc. Just saying. So you don't debug for two hours next time. By "you" I mean me
+
+        # noinspection PyAttributeOutsideInit
+        self.render_to_dialog = request.META.get('X-DF-DIALOG', request.GET.get('df_dialog', False))
+
         if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
             request.method = request.POST.get('data-dynamicforms-method')
         return super().initialize_request(request, *args, **kwargs)
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        res = super().finalize_response(request, response, *args, **kwargs)
+        if self.render_to_dialog and isinstance(res.accepted_renderer, TemplateHTMLRenderer):
+            res.template_name = BSVER_MODAL
+        return res

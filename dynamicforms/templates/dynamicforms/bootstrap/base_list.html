@@ -1,27 +1,34 @@
 {% load dynamicforms %}
-<table class="table table-striped">
+<table id="{{ serializer.guid }}-list" class="table table-striped">
   <thead>
-    <tr>{% for column in serializer.fields %}<th>{{ column|capfirst }}</th>{% endfor %}<th></th></tr>
+  <tr>{% for column in serializer.fields %}
+    <th>{{ column|capfirst }}</th>{% endfor %}
+    <th></th>
+  </tr>
   </thead>
   <tbody>
-    {% for row in data %}
-      <tr onclick="window.location = '{% url 'validated-detail' pk=row.id format='html' %}'">
-        {% for key, value in row|items %}
-          {% if key in serializer.fields %}
-            <td {{ value|add_nested_class }}>
-              {{ value|format_value }}
-            </td>
-          {% endif %}
-        {% endfor %}
-        <td>
-          <!-- control column -->
-          <!--a href="{{ row.url }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a-->
-        </td>
-      </tr>
-    {% empty %}
-      <tr>
+  {% for row in data %}
+    <tr {% if crud_form %}
+      onclick="dynamicforms.editRow('{% url 'validated-detail' pk=row.id format='html' %}')"
+      style="cursor: pointer"
+    {% endif %}
+    >
+      {% for key, value in row|items %}
+        {% if key in serializer.fields %}
+          <td {{ value|add_nested_class }}>
+            {{ value|format_value }}
+          </td>
+        {% endif %}
+      {% endfor %}
+      <td>
+        <!-- control column -->
+        <!--a href="{{ row.url }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a-->
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
       <td colspan="{{ serializer.fields|length }}" style="text-align: center">No data</td>
-      </tr>
-    {% endfor %}
+    </tr>
+  {% endfor %}
   </tbody>
 </table>

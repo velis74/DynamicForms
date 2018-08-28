@@ -11,13 +11,13 @@
   {% block field_input %}{% endblock %}
   {% endblock %}
 
-  <div id="errors-{{ field.uuid }}">
+  {% comment %}<div id="errors-{{ field.uuid }}">{% endcomment %}
   {% if field.errors %}
     {% for error in field.errors %}
       <span class="invalid-feedback">{{ error }}</span>
     {% endfor %}
   {% endif %}
-  </div>
+  {% comment %}</div>{% endcomment %}
 
   {% if field.help_text %}
     <span id="help-{{ field.uuid }}" class="form-text text-muted">{{ field.help_text|safe }}</span>

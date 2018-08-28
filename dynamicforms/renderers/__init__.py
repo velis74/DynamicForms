@@ -28,6 +28,7 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         view = renderer_context['view']
         if hasattr(view, 'template_context'):
             res.update(view.template_context)
+        res['df_dialog'] = getattr(view, 'render_to_dialog', False)
 
         res['DF'] = settings.CONTEXT_VARS
         return res
@@ -80,8 +81,14 @@ class HTMLFormRenderer(HTMLFormRenderer):
 
         template_pack = style['template_pack'].strip('/')
 
-        # take a specific form template (if specified) or get it from template pack
-        template_name = renderer_context.get('form_template', template_pack + '/' + self.base_template)
+        # getting the template to use
+        template_name = next((x for x in (  # Get the first specified template name as encountered
+            renderer_context.get('form_template', None),  # template name from tag parameter
+            getattr(self, 'form_template', None),  # if ViewSet set the form_template member of this renderer
+            getattr(form, 'form_template', None),  # if Serializer has form_template member set
+            template_pack + '/' + self.base_template  # take default template from pack
+        ) if x))
+
         template = loader.get_template(template_name)
         context = {
             'form': form,
