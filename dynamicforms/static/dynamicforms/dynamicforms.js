@@ -135,6 +135,7 @@ dynamicforms = {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         // also for any authorization errors, CSRF, etc, it will again fail
+        // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         dynamicforms.replaceDialog($dlg, $(xhr.responseText));
       });
   },
