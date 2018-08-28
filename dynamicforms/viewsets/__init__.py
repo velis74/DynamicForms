@@ -11,6 +11,12 @@ class NewMixin(object):
     """
 
     def new_object(self: viewsets.ModelViewSet):
+        # TODO: Tukaj moraš paziti, da je objekt pravilno postavljen glede na pravila
+        # Primer: če se plačnik nastavi iz pilota in tukaj prednapolniš pilota, potem poskrbi, da boš prednapolnil
+        # tudi plačnika.
+        #
+        # Kako pa to lahko naredimo?
+        # Predlog: retrieve, ko pokliče to funkcijo, naj tudi izvede "onchange" event za vsako polje in tako to napolni
         return self.get_queryset().model()
 
     # noinspection PyUnresolvedReferences

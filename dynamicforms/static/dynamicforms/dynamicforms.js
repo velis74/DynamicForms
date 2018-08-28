@@ -130,7 +130,10 @@ dynamicforms = {
              dataType: 'html',
              headers:  {'X-DF-DIALOG': 'true'}
            })
-      .done(function () { dynamicforms.closeDialog($dlg); })
+      .done(function () {
+        // TODO: refresh list of items. Dialogjust closes, but whatever we changed doesn't get updated in the list
+        dynamicforms.closeDialog($dlg);
+      })
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail

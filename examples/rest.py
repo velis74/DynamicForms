@@ -7,7 +7,6 @@ from .models import Validated
 
 # TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
 # TODO: Vnos recordov narediti preko dialoga
-# TODO:   zadeva mora biti nastavljiva: tako kot sedaj ali pa dialog
 # TODO:   oziroma: programer sam se odloči točno kaj se zgodi, ko se klikne "add" ali "edit" - tudi nekaj povsem tretjega...
 # TODO: paginate list template (ne zriši vseh 1500 recordov takoj, ampak jih dinamično loadaj, ko user poscrolla dovolj daleč dol
 # TODO:   pagination lahko narediš na dva načina:
@@ -29,7 +28,12 @@ class ValidatedSerializer(serializers.ModelSerializer):
         if attrs['amount'] != 5:
             if attrs['code'] != '123':
                 raise ValidationError({'amount': 'amount can only be different than 5 if code is "123"'})
-        # dodaj še enega brez veznega za celo formo, samo tolk, da se bo videlo, da se zriše zgoraj
+
+        # TODO: tegale spodaj naredi, da bo odletel samo ob določenem brez veznem (ampak common-case) pogoju
+        # noinspection PyUnreachableCode
+        if False:
+            raise ValidationError('I\'m just messing with you, you will NEVER get this form validated')
+
         return attrs
 
     class Meta:
@@ -49,3 +53,4 @@ class ValidatedViewSet(ModelViewSet):
 
 router = routers.DefaultRouter()
 router.register(r'rest/validated', ValidatedViewSet, base_name='validated')
+# router.register(r'rest/hidden-fields', HiddenFieldsViewSet, base_name='hidden_fields')
