@@ -1,5 +1,5 @@
 {% load dynamicforms %}
-<table id="{{ serializer.guid }}-list" class="table table-striped">
+<table id="list-{{ serializer.uuid }}" class="table table-striped">
   <thead>
   <tr>{% for column in serializer.fields %}
     <th>{{ column|capfirst }}</th>{% endfor %}
