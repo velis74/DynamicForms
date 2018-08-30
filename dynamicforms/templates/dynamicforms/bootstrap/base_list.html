@@ -9,7 +9,7 @@
   <tbody>
   {% for row in data %}
     <tr {% if crud_form %}
-      onclick="dynamicforms.editRow('{% url 'validated-detail' pk=row.id format='html' %}')"
+      onclick="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk=row.id format='html' %}')"
       style="cursor: pointer"
     {% endif %}
     >

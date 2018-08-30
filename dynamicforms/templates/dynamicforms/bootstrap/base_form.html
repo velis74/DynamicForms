@@ -2,12 +2,13 @@
 
 {% set_var_conditional action_postfix='?df_dialog=true' condition=df_dialog else_value='' %}
 
+<p>{{ url_reverse }}</p>
 <form id="{{ serializer.uuid }}"
       class="dynamicforms-form"
       {% if data.id %}
-      action="{% url 'validated-detail' pk=data.id format='html' %}{{ action_postfix }}"
+      action="{% url url_reverse|add:'-detail' pk=data.id format='html' %}{{ action_postfix }}"
       {% else %}
-      action="{% url 'validated-list' format='html' %}{{ action_postfix }}"
+      action="{% url url_reverse|add:'-list' format='html' %}{{ action_postfix }}"
       {% endif %}
       method="POST">
 
