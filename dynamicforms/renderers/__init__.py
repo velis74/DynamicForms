@@ -45,6 +45,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         style.update(field.style)
         if 'template_pack' not in style:
             style['template_pack'] = parent_style.get('template_pack', self.template_pack)
+        style['serializer'] = parent_style.get('serializer', None)
         style['renderer'] = self
 
         # Get a clone of the field with text-only value representation.

@@ -94,7 +94,33 @@ $.fn.deserializeForm = function (data, fieldNamePrefix, handlers) {
   });
 };
 
+/**
+ * Two level dictionary
+ */
+function TLD() {
+  this.storage = {};
+};
+
+TLD.prototype = {
+  get: function get(key1, key2) {
+    if (this.storage[key1] == undefined)
+      return undefined;
+    return this.storage[key1][key2];
+  },
+
+  set: function set(key1, key2, value) {
+    if (this.storage[key1] == undefined)
+      this.storage[key1] = {};
+    this.storage[key1][key2] = value;
+  },
+
+  del: function del(key) {
+    delete this.storage[key];
+  }
+};
+
 dynamicforms = {
+  // DF is an object containing all dynamicforms settings as specified by defaults and in settings.py
   DF: {
     // This is only necessary so that IDE doesn't complain about members not found when you use any of the settings
     // in code
@@ -110,16 +136,28 @@ dynamicforms = {
     "BSVER_MODAL":          "dynamicforms/bootstrap/modal_dialog_v4.html"
   },
 
+  /**
+   * Presents the error in data exchange with the server in a user understandable way
+   * @param xhr
+   * @param status
+   * @param error
+   */
   showAjaxError: function showAjaxError(xhr, status, error) {
     //TODO: make proper error display message. You will probably also need some text about what you were trying to do
     console.log(xhr, status, error);
   },
 
+  /**
+   * Handles what happens when user says "Save data". Basically serialization, send to server, response to returned
+   * status and values
+   * @param $dlg: current dialog which will be updated with call results or closed on successful data store
+   * @param $form: the edited form containing the data
+   */
   submitForm: function submitForm($dlg, $form) {
     // TODO: this will not be required once all the fields have their onChange events in place
-    $.extend(dynamicforms, $form.serializeForm(undefined, undefined, true));
+    dynamicforms.serializeForm($form, 'final');
 
-    var data = dynamicforms[$form.attr('id')];
+    var data = dynamicforms.getSerializedForm($form, 'final');
 
     var method = data['data-dynamicforms-method'] || 'POST';
 
@@ -143,6 +181,10 @@ dynamicforms = {
       });
   },
 
+  /**
+   * Shows a dialog, attaches appropriate event handlers to buttons and gets initial data values
+   * @param $dlg
+   */
   showDialog: function showDialog($dlg) {
     //TODO: adjust hashURL
     $(document.body).append($dlg);
@@ -151,12 +193,11 @@ dynamicforms = {
       // dialog removes itself from DOM hierarchy
       $dlg.remove();
 
-      // And from cache of current form values
-      delete dynamicforms[$form.attr('id')];
+      dynamicforms.removeFormDeclarations($form);
     });
 
     // Let's get initial field values from the form
-    $.extend(dynamicforms, $form.serializeForm(undefined, undefined, true));
+    dynamicforms.serializeForm($form, 'final');
 
     var saveId = '#save-' + $form.attr('id');
     $(saveId).on('click', function () { dynamicforms.submitForm($dlg, $form); });
@@ -164,17 +205,30 @@ dynamicforms = {
     $dlg.modal();
   },
 
+  /**
+   * Replaces the current dialog with a new one. Different than close + open in animation
+   * TODO: change animation
+   * @param $dlg: dialog to close
+   * @param $newDlg: newdialog to show
+   */
   replaceDialog: function replaceDialog($dlg, $newDlg) {
-    //TODO: change animation
     dynamicforms.closeDialog($dlg);
     dynamicforms.showDialog($newDlg);
   },
 
+  /**
+   * Closes the current dialog
+   * TODO: adjust hashURL
+   * @param $dlg: dialog to close
+   */
   closeDialog: function closeDialog($dlg) {
-    //TODO: adjust hashURL
     $dlg.modal('hide');
   },
 
+  /**
+   * Handles what should happen when user clicks to edit a record
+   * @param recordURL: url to call to get data / html for the record / dialog
+   */
   editRow: function editRow(recordURL) {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_dialog=true';
@@ -189,9 +243,156 @@ dynamicforms = {
       window.location = recordURL;
   },
 
+  /**
+   * Handles what should happen when user clicks "Add new" button
+   * Right now newRow doesn't do anything distinct, so let's just call editRow
+   *
+   * @param recordURL: url to call to get data / html for the record / dialog
+   * @returns {*|void}
+   */
   newRow: function newRow(recordURL) {
-    // Right now newRow doesn't do anything distinct, so let's just call editRow
     return dynamicforms.editRow(recordURL);
+  },
+
+  /**************************************************************
+   * Form current values support functions
+   **************************************************************/
+
+  form_helpers: new TLD(),
+
+  _checkFinalParam: function _checkFinalParam(final) {
+    if (final != 'final' && final != 'non-final') {
+      console.trace();
+      throw "Final is not in the allowed values! '" + final + "'";
+    }
+  },
+
+  serializeForm: function serializeForm($form, final) {
+    dynamicforms._checkFinalParam(final);
+    $.each($form.serializeForm(undefined, undefined, true), function (key, value) {
+      dynamicforms.form_helpers.set(key, final, value);
+    });
+  },
+
+  clearSerializedForm: function clearSerializedForm($form, final) {
+    dynamicforms._checkFinalParam(final);
+    dynamicforms.form_helpers.del($form.attr('id'), final);
+  },
+
+  getSerializedForm: function getSerializedForm($form, final) {
+    dynamicforms._checkFinalParam(final);
+    return dynamicforms.form_helpers.get($form.attr('id'), final);
+  },
+
+  removeFormDeclarations: function removeFormDeclarations($form) {
+    dynamicforms.form_helpers.del($form.attr('id'));
+  },
+  /**************************************************************
+   * Actions support functions
+   **************************************************************/
+
+  // A helper obj containing all getters, setters, previous onchanging values, etc.
+  field_helpers:          new TLD(),
+
+  /**
+   * fieldChange function is called whenever field's value changes. Some fields support even "changing" events where
+   * this function will be called for every change in the field's contents (e.g. typing a new letter into input).
+   * This function will then propagate the event to all actions letting them know of the change
+   * Note that "onchanging" has a separate "previous value" tracking. "onchanged" will report value before any editing
+   * no matter how many times "onchanging" has been processed
+   *
+   * TODO does getValue require a "default" parameter? In what situations would the default value be returned?
+   * TODO what does getValue return for inputs that are currently hidden or suppressed? Proposal: nothing, but we must always use PATCH, not PUT?
+   * //$inputs.on('change keyup paste', function () { self.selectMenuShow(false, $(this)); });  //navaden input onchanging
+   * //$inputs.on('focusout', function () { self.selectMenuShow(true, $(this)); });  // navaden input onchanged
+   *
+   * @param fieldID: id of the field
+   * @param final: 'final' when this is "onchanged" and 'non-final' when this is "onchanging"
+   */
+  fieldChange: function fieldChange(fieldID, final) {
+    dynamicforms._checkFinalParam(final);
+
+    var field       = dynamicforms.field_helpers[fieldID],
+        $field      = $('#' + fieldID),
+        newValue    = field.getValue($field),
+        oldValue,
+        $form       = dynamicforms.field_helpers.get(fieldID, '$form'),
+        newFormData,
+        oldFormData = {};
+
+    if (final) {
+      newFormData = dynamicforms.getSerializedForm($form, final);
+      dynamicforms.clearSerializedForm($form, 'non-final')
+    } else {
+      newFormData = dynamicforms.getSerializedForm($form, final);
+      if (formData == undefined)
+        newFormData = dynamicforms.getSerializedForm($form, 'final');
+    }
+
+    $.extend(true, oldFormData, newFormData);
+    oldValue                         = newFormData[$field.attr('name')];
+    newFormData[$field.attr('name')] = newValue;
+
+    if (oldValue != newValue) {
+      console.log('Field ' + $field.attr('name') + 'value has changed. Triggering actions');
+      var actions = dynamicforms.form_helpers.get($form.attr('id'), 'actions');
+      if (actions)
+        $.each(actions, function (idx, action) {
+          // TODO med izvajanjem actionov je verjetno bolje, če se onchange ne procesira
+          // TODO na koncu funkcije je treba serializirat formo, da vidimo, če so se še katera polja spremenila
+          // če so se --> onchange? verjetno ja, ker je od novih vrednosti morda odvisna kakšna vidnost ali pa še kakšen
+          // dodaten onchange
+          action(newFormData, oldFormData, [fieldID]);
+        });
+    }
+  },
+
+  /**
+   * Registers the function which will get current field's value. See "standard" fieldGetValue below
+   * @param formID: id of form object
+   * @param fieldID: id of the field
+   * @param func: function to be called for getting current field value
+   */
+  registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
+    dynamicforms.field_helpers.set(fieldID, 'getValue', func);
+    dynamicforms.field_helpers.set(fieldID, '$form', $(formID));
+
+    var form_fields      = dynamicforms.form_helpers.get(formID, 'fields') || {};
+    form_fields[fieldID] = 1;
+    dynamicforms.form_helpers.set(formID, 'fields', form_fields);
+  },
+
+  /**
+   * Registers the function which will set current field's value. See "standard" fieldSetValue below
+   * @param formID: id of form object
+   * @param fieldID: id of the field
+   * @param func: function to be called for setting current field value
+   */
+  registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
+    dynamicforms.field_helpers.set(fieldID, 'setValue', func);
+    dynamicforms.field_helpers.set(fieldID, '$form', $(formID));
+
+    var form_fields      = dynamicforms.form_helpers.get(formID, 'fields') || {};
+    form_fields[fieldID] = 1;
+    dynamicforms.form_helpers.set(formID, 'fields', form_fields);
+  },
+
+  /**
+   * "Standard" function for getting an input's current value. Any special cases will be handled in custom functions
+   * @param $field: jQuery selector of the field
+   * @returns field value
+   */
+  fieldGetValue: function fieldGetValue($field) {
+    return $field.val();
+  },
+
+  /**
+   * "Standard" function for setting an input's. Any special cases will be handled in custom functions
+   * @param $field: jQuery selector of the field
+   * @param value: new value to set
+   */
+  fieldSetValue: function fieldSetValue($field, value) {
+    $field.val(value);
   }
 };
 

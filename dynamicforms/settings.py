@@ -20,8 +20,10 @@ bootstrap_options = dict(
     # if False, the record will be displayed in a new page
     EDIT_IN_DIALOG=True,
 )
-TEMPLATE_OPTIONS = Struct(getattr(s, MODULE_PREFIX + 'TEMPLATE_OPTIONS', bootstrap_options))
 
+TEMPLATE_OPTIONS = bootstrap_options
+TEMPLATE_OPTIONS.update(getattr(s, MODULE_PREFIX + 'TEMPLATE_OPTIONS', {}))
+TEMPLATE_OPTIONS = Struct(TEMPLATE_OPTIONS)
 
 # These are calculated constants specifying the HTML header includes providing js and css for desired Bootstrap version
 MODAL_DIALOG = 'modal_dialog'

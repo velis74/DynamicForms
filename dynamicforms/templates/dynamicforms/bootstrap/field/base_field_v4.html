@@ -23,3 +23,8 @@
     <span id="help-{{ field.uuid }}" class="form-text text-muted">{{ field.help_text|safe }}</span>
   {% endif %}
 </div>
+<script type="application/javascript">
+  {% block field_onchange %}$('#{{ field.uuid }}').on('change', function() { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });{% endblock %}
+  {% block field_get %}dynamicforms.registerFieldGetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldGetValue); {% endblock %}
+  {% block field_set %}dynamicforms.registerFieldSetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldSetValue); {% endblock %}
+</script>
