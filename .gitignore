@@ -1,7 +1,6 @@
 *.pyc
 *~
 .idea
-docs/_build
 *.bak
 .#*
 \#*
@@ -10,4 +9,4 @@ docs/_build
 *.mo
 rest_framework
 db.sqlite3
-/doc/_*/
+/doc/_build/
