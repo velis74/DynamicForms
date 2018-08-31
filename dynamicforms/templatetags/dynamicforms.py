@@ -46,6 +46,7 @@ def render_form(serializer, template_pack=None, form_template=None):
     style = {'template_pack': template_pack} if template_pack else {}
     if form_template:
         style['form_template'] = form_template
+    style['serializer'] = serializer
 
     renderer = HTMLFormRenderer()
     return renderer.render(serializer.data, None, {'style': style})

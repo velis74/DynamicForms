@@ -35,6 +35,11 @@ class ModelSerializer(UUIDMixIn, serializers.ModelSerializer):
     }
     if models.DurationField is not None:
         serializer_field_mapping[models.DurationField] = DurationField
+    # TODO: Je treba v fielde spravit tudi vse fielde iz rest_framework/relations.py
+    # serializer_related_field = PrimaryKeyRelatedField
+    # serializer_related_to_field = SlugRelatedField
+    # serializer_url_field = HyperlinkedIdentityField
+    serializer_choice_field = ChoiceField
 
     @property
     def has_non_field_errors(self):
