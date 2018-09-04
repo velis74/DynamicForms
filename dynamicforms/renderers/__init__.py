@@ -8,6 +8,16 @@ from rest_framework.utils.serializer_helpers import ReturnList, ReturnDict
 
 # noinspection PyRedeclaration
 class TemplateHTMLRenderer(TemplateHTMLRenderer):
+    """
+    Renderers serializer data into an HTML form.
+
+    If the serializer was instantiated without an object then this will
+    return an HTML form not bound to any object,
+    otherwise it will return an HTML form with the appropriate initial data
+    populated from the object.
+
+    Note that rendering of field and form errors is not currently supported.
+    """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         if isinstance(data, (ReturnList, ReturnDict)):
@@ -36,6 +46,22 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
 
 # noinspection PyRedeclaration
 class HTMLFormRenderer(HTMLFormRenderer):
+    """
+    An HTML renderer for use with templates.
+
+    The data supplied to the Response object should be a dictionary that will
+    be used as context for the template.
+
+    The template name is determined by (in order of preference):
+
+    1. An explicit `.template_name` attribute set on the response.
+    2. An explicit `.template_name` attribute set on this class.
+    3. The return result of calling `view.get_template_names()`.
+
+    For example:
+        data = {'users': User.objects.all()}
+        return Response(data, template_name='users.html')
+    """
 
     def render_field(self, field, parent_style):
         if isinstance(field._field, HiddenField):

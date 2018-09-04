@@ -7,10 +7,17 @@ from ..settings import BSVER_MODAL
 
 class NewMixin(object):
     """
-    Provides support for retrieving default values for a new record
+    Provides support for retrieving default values for a new record.
+
+    Caution: Do not use directly. This is only a mixin and is used in final ViewSet derivatives.
     """
 
     def new_object(self: viewsets.ModelViewSet):
+        """
+        Returns a new model instance. If you need it pre-populated with default values, this is the method to override.
+
+        :return: model instance
+        """
         # TODO: Tukaj moraš paziti, da je objekt pravilno postavljen glede na pravila
         # Primer: če se plačnik nastavi iz pilota in tukaj prednapolniš pilota, potem poskrbi, da boš prednapolnil
         # tudi plačnika.
@@ -35,12 +42,38 @@ class NewMixin(object):
 
 
 class ModelViewSet(NewMixin, viewsets.ModelViewSet):
+    """
+    In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
+
+    * Separate templates for rendering list or single record
+    * You can request a "new" record and even have it pre-populated with values
+    * To render viewset as API or JSON use the same method as in DRF: To render it in HTML just add ".html" to the URL.
+    * Standard DRF router URL patterns apply:
+
+       * To render a new record use pk=new.
+       * To render an existing record (for editing) use pk={record_id}.
+    """
+
+    template_context = {
+        'crud_form': True,
+    }
+    """
+    template_context provides configuration to renderers & templates
+    
+    :py:data: crud_form: True | False 
+       
+       Template pack will render data editing controls when this setting is True
+    """
+
+    # TODO move templates to Serializer so that you can render it in django templates too
+    template_name = None  #: template filename for single record view (html renderer)
+    template_name_list = None  #: template filename for listing multiple records (html renderer)
 
     def list(self, request, *args, **kwargs):
         res = super().list(request, *args, **kwargs)
         # this relies on TemplateHTMLRenderer.get_template_names which first checks for template declared in Response
-        if hasattr(self, 'list_template_name'):
-            res.template_name = self.list_template_name
+        if getattr(self, 'template_name_list', None):
+            res.template_name = self.template_name_list
         return res
 
     def initialize_request(self, request, *args, **kwargs):

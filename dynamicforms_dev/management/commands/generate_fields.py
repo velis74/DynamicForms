@@ -8,7 +8,7 @@ from rest_framework import fields
 
 
 class Command(BaseCommand):
-    help = 'Export translation files into Excel file'
+    help = 'Generate Field classes from DRF with applied DynamicForms mixins'
 
     # def add_arguments(self, parser):
     #     parser.add_argument('-dest', dest='file', type=str, default='strings.xlsx', action='store',
