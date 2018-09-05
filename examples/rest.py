@@ -1,7 +1,8 @@
 from rest_framework import routers
 from rest_framework.exceptions import ValidationError
-from dynamicforms.viewsets import ModelViewSet
+
 from dynamicforms import serializers
+from dynamicforms.viewsets import ModelViewSet
 from .models import Validated
 
 
@@ -9,24 +10,23 @@ from .models import Validated
 
 
 class ValidatedSerializer(serializers.ModelSerializer):
-
     form_titles = {
         'table': 'Validated list',
         'new': 'New validated object',
         'edit': 'Editing validated object',
     }
+
     # id = serializers.IntegerField(required=False)  # so that it shows at all
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+
         if attrs['amount'] != 5:
             if attrs['code'] != '123':
                 raise ValidationError({'amount': 'amount can only be different than 5 if code is "123"'})
 
-        # TODO: tegale spodaj naredi, da bo odletel samo ob določenem brez veznem (ampak common-case) pogoju
-        # noinspection PyUnreachableCode
-        if False:
-            raise ValidationError('I\'m just messing with you, you will NEVER get this form validated')
+        if attrs['enabled'] is True and attrs['item_type'] == 3:
+            raise ValidationError('When enabled you can only choose from first three item types')
 
         return attrs
 
