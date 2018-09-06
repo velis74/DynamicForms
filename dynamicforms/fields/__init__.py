@@ -1,5 +1,5 @@
 from uuid import UUID
-from .mixins import UUIDMixIn
+from .mixins import UUIDMixIn, ActionMixin
 from rest_framework import fields
 from rest_framework.fields import (
     BooleanField, NullBooleanField, CharField, EmailField, RegexField, SlugField, URLField, UUIDField,
@@ -10,7 +10,7 @@ from rest_framework.fields import (
 
 
 # noinspection PyRedeclaration
-class BooleanField(UUIDMixIn, BooleanField):
+class BooleanField(UUIDMixIn, ActionMixin, BooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -21,7 +21,7 @@ class BooleanField(UUIDMixIn, BooleanField):
 
 
 # noinspection PyRedeclaration
-class NullBooleanField(UUIDMixIn, NullBooleanField):
+class NullBooleanField(UUIDMixIn, ActionMixin, NullBooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -32,7 +32,7 @@ class NullBooleanField(UUIDMixIn, NullBooleanField):
 
 
 # noinspection PyRedeclaration
-class CharField(UUIDMixIn, CharField):
+class CharField(UUIDMixIn, ActionMixin, CharField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -43,7 +43,7 @@ class CharField(UUIDMixIn, CharField):
 
 
 # noinspection PyRedeclaration
-class EmailField(UUIDMixIn, EmailField):
+class EmailField(UUIDMixIn, ActionMixin, EmailField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -54,7 +54,7 @@ class EmailField(UUIDMixIn, EmailField):
 
 
 # noinspection PyRedeclaration
-class RegexField(UUIDMixIn, RegexField):
+class RegexField(UUIDMixIn, ActionMixin, RegexField):
 
     def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -65,7 +65,7 @@ class RegexField(UUIDMixIn, RegexField):
 
 
 # noinspection PyRedeclaration
-class SlugField(UUIDMixIn, SlugField):
+class SlugField(UUIDMixIn, ActionMixin, SlugField):
 
     def __init__(self, allow_unicode=False, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -76,7 +76,7 @@ class SlugField(UUIDMixIn, SlugField):
 
 
 # noinspection PyRedeclaration
-class URLField(UUIDMixIn, URLField):
+class URLField(UUIDMixIn, ActionMixin, URLField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -87,7 +87,7 @@ class URLField(UUIDMixIn, URLField):
 
 
 # noinspection PyRedeclaration
-class UUIDField(UUIDMixIn, UUIDField):
+class UUIDField(UUIDMixIn, ActionMixin, UUIDField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -98,7 +98,7 @@ class UUIDField(UUIDMixIn, UUIDField):
 
 
 # noinspection PyRedeclaration
-class IPAddressField(UUIDMixIn, IPAddressField):
+class IPAddressField(UUIDMixIn, ActionMixin, IPAddressField):
 
     def __init__(self, protocol='both', read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -109,7 +109,7 @@ class IPAddressField(UUIDMixIn, IPAddressField):
 
 
 # noinspection PyRedeclaration
-class IntegerField(UUIDMixIn, IntegerField):
+class IntegerField(UUIDMixIn, ActionMixin, IntegerField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -120,7 +120,7 @@ class IntegerField(UUIDMixIn, IntegerField):
 
 
 # noinspection PyRedeclaration
-class FloatField(UUIDMixIn, FloatField):
+class FloatField(UUIDMixIn, ActionMixin, FloatField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -131,7 +131,7 @@ class FloatField(UUIDMixIn, FloatField):
 
 
 # noinspection PyRedeclaration
-class DecimalField(UUIDMixIn, DecimalField):
+class DecimalField(UUIDMixIn, ActionMixin, DecimalField):
 
     def __init__(self, max_digits, decimal_places, coerce_to_string=None, max_value=None, min_value=None,
                  localize=False, rounding=None, read_only=False, write_only=False, required=None, default=fields.empty,
@@ -143,7 +143,7 @@ class DecimalField(UUIDMixIn, DecimalField):
 
 
 # noinspection PyRedeclaration,PyShadowingBuiltins
-class DateTimeField(UUIDMixIn, DateTimeField):
+class DateTimeField(UUIDMixIn, ActionMixin, DateTimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, default_timezone=None, read_only=False,
                  write_only=False, required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -155,7 +155,7 @@ class DateTimeField(UUIDMixIn, DateTimeField):
 
 
 # noinspection PyRedeclaration,PyShadowingBuiltins
-class DateField(UUIDMixIn, DateField):
+class DateField(UUIDMixIn, ActionMixin, DateField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -166,7 +166,7 @@ class DateField(UUIDMixIn, DateField):
 
 
 # noinspection PyRedeclaration,PyShadowingBuiltins
-class TimeField(UUIDMixIn, TimeField):
+class TimeField(UUIDMixIn, ActionMixin, TimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -177,7 +177,7 @@ class TimeField(UUIDMixIn, TimeField):
 
 
 # noinspection PyRedeclaration
-class DurationField(UUIDMixIn, DurationField):
+class DurationField(UUIDMixIn, ActionMixin, DurationField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -188,7 +188,7 @@ class DurationField(UUIDMixIn, DurationField):
 
 
 # noinspection PyRedeclaration
-class ChoiceField(UUIDMixIn, ChoiceField):
+class ChoiceField(UUIDMixIn, ActionMixin, ChoiceField):
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -199,7 +199,7 @@ class ChoiceField(UUIDMixIn, ChoiceField):
 
 
 # noinspection PyRedeclaration
-class MultipleChoiceField(UUIDMixIn, MultipleChoiceField):
+class MultipleChoiceField(UUIDMixIn, ActionMixin, MultipleChoiceField):
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -210,7 +210,7 @@ class MultipleChoiceField(UUIDMixIn, MultipleChoiceField):
 
 
 # noinspection PyRedeclaration
-class FilePathField(UUIDMixIn, FilePathField):
+class FilePathField(UUIDMixIn, ActionMixin, FilePathField):
 
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -222,7 +222,7 @@ class FilePathField(UUIDMixIn, FilePathField):
 
 
 # noinspection PyRedeclaration
-class FileField(UUIDMixIn, FileField):
+class FileField(UUIDMixIn, ActionMixin, FileField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -233,7 +233,7 @@ class FileField(UUIDMixIn, FileField):
 
 
 # noinspection PyRedeclaration
-class ImageField(UUIDMixIn, ImageField):
+class ImageField(UUIDMixIn, ActionMixin, ImageField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -244,7 +244,7 @@ class ImageField(UUIDMixIn, ImageField):
 
 
 # noinspection PyRedeclaration
-class ListField(UUIDMixIn, ListField):
+class ListField(UUIDMixIn, ActionMixin, ListField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -255,7 +255,7 @@ class ListField(UUIDMixIn, ListField):
 
 
 # noinspection PyRedeclaration
-class DictField(UUIDMixIn, DictField):
+class DictField(UUIDMixIn, ActionMixin, DictField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -266,7 +266,7 @@ class DictField(UUIDMixIn, DictField):
 
 
 # noinspection PyRedeclaration
-class HStoreField(UUIDMixIn, HStoreField):
+class HStoreField(UUIDMixIn, ActionMixin, HStoreField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -277,7 +277,7 @@ class HStoreField(UUIDMixIn, HStoreField):
 
 
 # noinspection PyRedeclaration
-class JSONField(UUIDMixIn, JSONField):
+class JSONField(UUIDMixIn, ActionMixin, JSONField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -288,7 +288,7 @@ class JSONField(UUIDMixIn, JSONField):
 
 
 # noinspection PyRedeclaration,PyAbstractClass
-class ReadOnlyField(UUIDMixIn, ReadOnlyField):
+class ReadOnlyField(UUIDMixIn, ActionMixin, ReadOnlyField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -299,7 +299,7 @@ class ReadOnlyField(UUIDMixIn, ReadOnlyField):
 
 
 # noinspection PyRedeclaration,PyAbstractClass
-class HiddenField(UUIDMixIn, HiddenField):
+class HiddenField(UUIDMixIn, ActionMixin, HiddenField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -310,7 +310,7 @@ class HiddenField(UUIDMixIn, HiddenField):
 
 
 # noinspection PyRedeclaration,PyAbstractClass
-class SerializerMethodField(UUIDMixIn, SerializerMethodField):
+class SerializerMethodField(UUIDMixIn, ActionMixin, SerializerMethodField):
 
     def __init__(self, method_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -321,7 +321,7 @@ class SerializerMethodField(UUIDMixIn, SerializerMethodField):
 
 
 # noinspection PyRedeclaration
-class ModelField(UUIDMixIn, ModelField):
+class ModelField(UUIDMixIn, ActionMixin, ModelField):
 
     def __init__(self, model_field, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,

@@ -7,6 +7,8 @@ from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 from ..renderers import HTMLFormRenderer
 from ..struct import Struct
+from ..fields.mixins import ActionMixin, Action
+from ..serializers import ModelSerializer
 
 
 register = template.Library()
@@ -82,7 +84,10 @@ def render_form(serializer, template_pack=None, form_template=None):
 @register.simple_tag
 def render_field(field, style):
     """
-    Renders separate field. Style is a dict, that contains template_pack or form_tempate and rendered. It is defined when rendering form, so it is best to use that one. To do that dynamicforms should be loaded first. See example below.
+    Renders separate field. Style is a dict, that contains template_pack or form_template and rendered. It is defined
+    when rendering form, so it is best to use that one. To do that dynamicforms should be loaded first.
+
+    See example below.
 
     .. code-block:: django
 

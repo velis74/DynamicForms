@@ -6,7 +6,7 @@ from ..fields import *
 from ..fields.mixins import UUIDMixIn
 
 
-class ModelSerializer(UUIDMixIn, serializers.ModelSerializer):
+class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     """
     DynamicForms' ModelSerializer overrides the following behaviour over DRF's implementation:
 
