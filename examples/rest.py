@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from dynamicforms import serializers
 from dynamicforms.viewsets import ModelViewSet
 from .models import Validated
+from dynamicforms.mixins import Action
 
 
 # TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
@@ -17,6 +18,12 @@ class ValidatedSerializer(serializers.ModelSerializer):
     }
 
     # id = serializers.IntegerField(required=False)  # so that it shows at all
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['code'].actions = [
+            Action(['code'], 'function(newRec, oldRec) { console.log([oldRec, newRec]); }')
+        ]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)

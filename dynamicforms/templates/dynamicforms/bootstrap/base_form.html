@@ -27,3 +27,14 @@
     </div>
     {% endif %}
 </form>
+<script type="application/javascript">
+  {% comment %}TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.{% endcomment %}
+  {% block field_actions %}
+    {% for action in serializer.action_register_js %}
+  var action_func{{ action.action_id }} = {{ action.action_js }};
+      {% for field_uuid in action.tracked_fields %}
+  dynamicforms.registerFieldAction('{{ serializer.uuid }}', '{{ field_uuid }}', action_func{{ action.action_id }});
+      {% endfor %}
+    {% endfor %}
+  {% endblock %}
+</script>
