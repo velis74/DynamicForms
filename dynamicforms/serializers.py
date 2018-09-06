@@ -1,9 +1,8 @@
-import uuid as uuid_module
+from django.db import models
 
 from rest_framework import serializers
-from django.db import models
-from ..fields import *
-from ..fields.mixins import UUIDMixIn
+from .fields import *
+from .mixins import UUIDMixIn
 
 
 class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):

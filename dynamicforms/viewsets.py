@@ -1,8 +1,9 @@
+from django.http import Http404
+
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.http import Http404
-from ..renderers import TemplateHTMLRenderer
-from ..settings import BSVER_MODAL
+from .renderers import TemplateHTMLRenderer
+from .settings import BSVER_MODAL
 
 
 class NewMixin(object):

@@ -15,7 +15,7 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.fields.mixins import UUIDMixIn
+        from dynamicforms.mixins import UUIDMixIn
 
         with open(os.path.abspath(os.path.join('dynamicforms/fields', '__init__.py')), 'w') as output:
 

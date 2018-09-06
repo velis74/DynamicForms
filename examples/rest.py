@@ -1,11 +1,9 @@
-import uuid as uuid_module
-
 from rest_framework import routers
 from rest_framework.exceptions import ValidationError
 from dynamicforms.viewsets import ModelViewSet
 from dynamicforms import serializers
 from .models import Validated
-from dynamicforms.fields.mixins import Action
+from dynamicforms.mixins import Action
 
 
 # TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)

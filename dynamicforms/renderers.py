@@ -1,9 +1,10 @@
 import six
-from .. import settings
 from django.template import loader
-from rest_framework.serializers import ListSerializer, HiddenField
-from rest_framework.renderers import TemplateHTMLRenderer, HTMLFormRenderer
-from rest_framework.utils.serializer_helpers import ReturnList, ReturnDict
+
+from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
+from rest_framework.serializers import HiddenField, ListSerializer
+from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
+from . import settings
 
 
 # noinspection PyRedeclaration

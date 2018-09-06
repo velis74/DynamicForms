@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 # noinspection PyUnreachableCode
 if False:
-    from ..serializers import ModelSerializer
+    from dynamicforms.serializers import ModelSerializer
 
 
 class UUIDMixIn(object):

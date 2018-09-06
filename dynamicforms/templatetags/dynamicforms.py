@@ -7,9 +7,6 @@ from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 from ..renderers import HTMLFormRenderer
 from ..struct import Struct
-from ..fields.mixins import ActionMixin, Action
-from ..serializers import ModelSerializer
-
 
 register = template.Library()
 
