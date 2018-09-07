@@ -381,7 +381,7 @@ dynamicforms = {
           // TODO na koncu funkcije je treba serializirat formo, da vidimo, če so se še katera polja spremenila
           // če so se --> onchange? verjetno ja, ker je od novih vrednosti morda odvisna kakšna vidnost ali pa še kakšen
           // dodaten onchange
-          action(newFormData, oldFormData, [fieldID]);
+          action($form.attr('id'), newFormData, oldFormData, [fieldID]);
         });
     }
   },
@@ -407,15 +407,7 @@ dynamicforms = {
   registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
     var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.getValue = func;
-
-    // Warning: same code in registerFieldSetter
-    if (field.$field == undefined) {
-      field.$field = $('#' + fieldID);
-      field.$form  = $('#' + formID);
-      field.name   = field.$field.attr('name');
-    }
-    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    form_fields[fieldID] = 1;
+    dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
 
   /**
@@ -427,33 +419,70 @@ dynamicforms = {
   registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
     var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.setValue = func;
+    dynamicforms.updateFieldHelpers(formID, fieldID, field);
+  },
 
-    // Warning: same code in registerFieldGetter
+  /**
+   * Sets some standard field helper values so that they don't have to be re-calculated every time
+   * @param formID: id of form object
+   * @param fieldID: id of the field
+   * @param field: field data to be populated
+   */
+  updateFieldHelpers: function updateFieldHelpers(formID, fieldID, field) {
     if (field.$field == undefined) {
       field.$field = $('#' + fieldID);
       field.$form  = $('#' + formID);
       field.name   = field.$field.attr('name');
     }
     var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    form_fields[fieldID] = 1;
+    form_fields[fieldID] = field;
+  },
+
+  /**
+   * Finds field in form by its name and returns its ID. This function is a helper for actions where field UUIDs
+   * are not known in advance. Its result is passed to functions such as fieldSetValue.
+   *
+   * @param formID: id of form object
+   * @param fieldName: name of field
+   * @return: field control ID
+   */
+  getFieldByName: function getFieldByName(formID, fieldName) {
+    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
+    var fld = undefined;
+    $.each(form_fields, function(id, field) {
+      if (field.name == fieldName)
+        fld = id;
+    });
+    return fld;
   },
 
   /**
    * "Standard" function for getting an input's current value. Any special cases will be handled in custom functions
-   * @param $field: jQuery selector of the field
+   *
+   * @param field: id or jQuery object of the field
    * @returns field value
    */
-  fieldGetValue: function fieldGetValue($field) {
+  fieldGetValue: function fieldGetValue(field) {
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     return $field.val();
   },
 
   /**
    * "Standard" function for setting an input's. Any special cases will be handled in custom functions
-   * @param $field: jQuery selector of the field
+   *
+   * @param field: id or jQuery object of the field
    * @param value: new value to set
    */
-  fieldSetValue: function fieldSetValue($field, value) {
+  fieldSetValue: function fieldSetValue(field, value) {
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     $field.val(value);
+  },
+
+  fieldSetVisible: function fieldSetVisible(field, visible) {
+    //TODO: tukaj je treba še preverit nadrejeni container, če je vse v njem skrito. Če je, je treba skrit tudi njega
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var fieldID = $field.attr('id');
+    $field.parents('#container-' + fieldID).toggle(visible);
   }
 };
 

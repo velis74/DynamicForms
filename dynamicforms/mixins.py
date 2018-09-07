@@ -65,7 +65,7 @@ class ActionMixin(object):
         :return: List[{'tracked_fields': List[str], 'action_function': str}]
         """
         if isinstance(self, Serializer) and not hasattr(self, '_actions'):
-            setattr(self, '_actions', [])
+            setattr(self, '_actions', self.actions or [])
 
             # remove actions from Field, move them to Serializer
             for field in self.fields.values():

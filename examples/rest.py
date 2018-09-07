@@ -1,10 +1,11 @@
-from rest_framework import routers
-from rest_framework.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from dynamicforms import serializers
-from dynamicforms.viewsets import ModelViewSet
-from .models import Validated
 from dynamicforms.mixins import Action
+from dynamicforms.viewsets import ModelViewSet
+from rest_framework import routers
+from rest_framework.exceptions import ValidationError
+from .models import Validated
 
 
 # TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
@@ -21,13 +22,16 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['code'].actions = [
-            Action(['code'], """
-            function(newRec, oldRec, changedFields) { 
-              console.log([oldRec, newRec, changedFields]);
-              //$field = dynamicforms.getField(formID, 
-              //dynamicforms.fieldSetValue($field, 6); 
-            }""")
+        self.actions = [
+            Action(['code'], mark_safe("""
+            function(formID, newRec, oldRec, changedFields) { 
+              var amountID = dynamicforms.getFieldByName(formID, 'amount');
+              console.log([oldRec, newRec, changedFields, amountID]);
+              dynamicforms.fieldSetValue(amountID, 6); 
+              
+              var flagsID = dynamicforms.getFieldByName(formID, 'item_flags');
+              dynamicforms.fieldSetVisible(flagsID, undefined); 
+            }"""))
         ]
 
     def validate(self, attrs):
