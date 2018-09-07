@@ -5,6 +5,7 @@ Like much of django-based libraries, DynamicForms is also configured from
 `settings.py <https://docs.djangoproject.com/en/dev/ref/settings/>`_.
 
 
+.. _Activate_DynamicForms_in_DRF:
 Activate DynamicForms in DRF
 ----------------------------
 

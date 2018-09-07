@@ -65,6 +65,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
     """
 
     def render_field(self, field, parent_style):
+        # noinspection PyProtectedMember
         if isinstance(field._field, HiddenField):
             return ''
 

@@ -105,17 +105,34 @@ TLD.prototype = {
   get: function get(key1, key2) {
     if (this.storage[key1] == undefined)
       return undefined;
+    if (key2 == undefined)
+      return this.storage[key1];
     return this.storage[key1][key2];
   },
 
   set: function set(key1, key2, value) {
     if (this.storage[key1] == undefined)
       this.storage[key1] = {};
-    this.storage[key1][key2] = value;
+    if (key2 == undefined)
+      this.storage[key1] = value;
+    else
+      this.storage[key1][key2] = value;
   },
 
-  del: function del(key) {
-    delete this.storage[key];
+  del: function del(key1, key2) {
+    if (key2)
+      delete this.storage[key1][key2];
+    else
+      delete this.storage[key1];
+  },
+
+  getOrCreate: function getOrCreate(key1, key2, defVal) {
+    var res = this.get(key1, key2);
+    if (res == undefined) {
+      res = defVal;
+      this.set(key1, key2, res);
+    }
+    return res;
   }
 };
 
@@ -285,7 +302,11 @@ dynamicforms = {
   },
 
   removeFormDeclarations: function removeFormDeclarations($form) {
-    dynamicforms.form_helpers.del($form.attr('id'));
+    var formID = $form.attr('id');
+    $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
+           function(fieldID) { dynamicforms.field_helpers.del(fieldID); }
+           );
+    dynamicforms.form_helpers.del(formID);
   },
   /**************************************************************
    * Actions support functions
@@ -312,30 +333,31 @@ dynamicforms = {
   fieldChange: function fieldChange(fieldID, final) {
     dynamicforms._checkFinalParam(final);
 
-    var field       = dynamicforms.field_helpers[fieldID],
-        $field      = $('#' + fieldID),
+    var field       = dynamicforms.field_helpers.get(fieldID),
+        $field      = field.$field,
+        $form       = field.$form,
         newValue    = field.getValue($field),
         oldValue,
-        $form       = dynamicforms.field_helpers.get(fieldID, '$form'),
         newFormData,
         oldFormData = {};
 
     if (final) {
       newFormData = dynamicforms.getSerializedForm($form, final);
-      dynamicforms.clearSerializedForm($form, 'non-final')
+      dynamicforms.clearSerializedForm($form, 'non-final');
     } else {
       newFormData = dynamicforms.getSerializedForm($form, final);
-      if (formData == undefined)
+      if (newFormData == undefined)
         newFormData = dynamicforms.getSerializedForm($form, 'final');
     }
 
     $.extend(true, oldFormData, newFormData);
-    oldValue                         = newFormData[$field.attr('name')];
-    newFormData[$field.attr('name')] = newValue;
+    var field_name          = $field.attr('name')
+    oldValue                = newFormData[field_name];
+    newFormData[field_name] = newValue;
 
     if (oldValue != newValue) {
-      console.log('Field ' + $field.attr('name') + 'value has changed. Triggering actions');
-      var actions = dynamicforms.form_helpers.get($form.attr('id'), 'actions');
+      console.log('Field "' + field_name + '" value has changed. Triggering actions');
+      var actions = dynamicforms.form_helpers.get($form.attr('id'), 'actions_' + fieldID);
       if (actions)
         $.each(actions, function (idx, action) {
           // TODO med izvajanjem actionov je verjetno bolje, če se onchange ne procesira
@@ -348,18 +370,35 @@ dynamicforms = {
   },
 
   /**
+   * Registers an onchange event with action to execute when given field's value changes
+   * @param formID: id of form object
+   * @param fieldID: id of the field
+   * @param func: function to be called for getting current field value
+   */
+  registerFieldAction: function registerFieldAction(formID, fieldID, func) {
+    var fieldActions = dynamicforms.form_helpers.get(formID, 'actions_' + fieldID) || [];
+    fieldActions.push(func);
+    dynamicforms.form_helpers.set(formID, 'actions_' + fieldID, fieldActions);
+  },
+
+  /**
    * Registers the function which will get current field's value. See "standard" fieldGetValue below
    * @param formID: id of form object
    * @param fieldID: id of the field
    * @param func: function to be called for getting current field value
    */
   registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
-    dynamicforms.field_helpers.set(fieldID, 'getValue', func);
-    dynamicforms.field_helpers.set(fieldID, '$form', $(formID));
+    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    field.getValue = func;
 
-    var form_fields      = dynamicforms.form_helpers.get(formID, 'fields') || {};
+    // Warning: same code in registerFieldSetter
+    if (field.$field == undefined) {
+      field.$field = $('#' + fieldID);
+      field.$form  = $('#' + formID);
+      field.name   = field.$field.attr('name');
+    }
+    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
     form_fields[fieldID] = 1;
-    dynamicforms.form_helpers.set(formID, 'fields', form_fields);
   },
 
   /**
@@ -369,12 +408,17 @@ dynamicforms = {
    * @param func: function to be called for setting current field value
    */
   registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
-    dynamicforms.field_helpers.set(fieldID, 'setValue', func);
-    dynamicforms.field_helpers.set(fieldID, '$form', $(formID));
+    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    field.setValue = func;
 
-    var form_fields      = dynamicforms.form_helpers.get(formID, 'fields') || {};
+    // Warning: same code in registerFieldGetter
+    if (field.$field == undefined) {
+      field.$field = $('#' + fieldID);
+      field.$form  = $('#' + formID);
+      field.name   = field.$field.attr('name');
+    }
+    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
     form_fields[fieldID] = 1;
-    dynamicforms.form_helpers.set(formID, 'fields', form_fields);
   },
 
   /**

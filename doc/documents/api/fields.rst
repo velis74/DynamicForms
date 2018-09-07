@@ -23,5 +23,5 @@ Class reference
 Field mixins
 ------------
 
-.. automodule:: dynamicforms.fields.mixins
+.. automodule:: dynamicforms.mixins
    :members:

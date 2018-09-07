@@ -22,7 +22,12 @@ class ValidatedSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['code'].actions = [
-            Action(['code'], 'function(newRec, oldRec) { console.log([oldRec, newRec]); }')
+            Action(['code'], """
+            function(newRec, oldRec, changedFields) { 
+              console.log([oldRec, newRec, changedFields]);
+              //$field = dynamicforms.getField(formID, 
+              //dynamicforms.fieldSetValue($field, 6); 
+            }""")
         ]
 
     def validate(self, attrs):

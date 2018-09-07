@@ -1,11 +1,6 @@
 from typing import List
 import uuid as uuid_module
 from rest_framework.serializers import Serializer
-from django.utils.safestring import mark_safe
-
-# noinspection PyUnreachableCode
-if False:
-    from dynamicforms.serializers import ModelSerializer
 
 
 class UUIDMixIn(object):
@@ -32,9 +27,6 @@ class Action(object):
         self.action_js = action_js
         assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         assert self.action_js, 'When declaring action, it must declare action JavaScript to execute'
-
-    def to_json(self, serializer: 'ModelSerializer'):
-        return dict(tracked_fields=self.tracked_fields, action_function=mark_safe(self.action_js))
 
     @property
     def action_id(self):
