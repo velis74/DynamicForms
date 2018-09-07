@@ -14,10 +14,7 @@
     <div class="{{ card_header }}">
       {{ serializer.form_titles.table }}
       {% if crud_form %}
-        <button class="btn btn-info btn-sm float-right pull-right"
-                onclick="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}')">
-          + Add
-        </button>
+        {% render_table_commands serializer 'header' %}
       {% endif %}
     </div>
     <div class="{{ card_body }}">

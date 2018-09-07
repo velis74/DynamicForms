@@ -1,6 +1,8 @@
 from django.db import models
 
 from rest_framework import serializers
+
+from dynamicforms.action import ActionControls
 from .fields import *
 from .mixins import UUIDMixIn
 
@@ -63,6 +65,7 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     # serializer_related_to_field = SlugRelatedField
     # serializer_url_field = HyperlinkedIdentityField
     serializer_choice_field = ChoiceField
+    controls = ActionControls(add_default_crud=True)
 
     @property
     def has_non_field_errors(self):

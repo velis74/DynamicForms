@@ -117,6 +117,20 @@ def render_field_to_table(serializer, field_name, value):
     return serializer.fields[field_name].render_to_table(value)
 
 
+@register.simple_tag
+def table_columns_count(serializer):
+    """
+    Returns number of columns including control columns
+
+    :param serializer: Serializer
+    :return: Number of all columns
+    """
+    actions = serializer.controls.actions
+
+    return len(serializer.fields) + 1 if any(action.position == "rowend" for action in actions) else 0 + 1 if any(
+        action.position == "rowstart" for action in actions) else 0
+
+
 @register.simple_tag(takes_context=True)
 def render_table_commands(context, serializer, position, field_name=None, table_header=None):
     """

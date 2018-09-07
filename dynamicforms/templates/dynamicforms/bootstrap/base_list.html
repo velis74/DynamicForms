@@ -2,6 +2,7 @@
 <table id="list-{{ serializer.uuid }}" class="table table-striped">
   <thead>
   <tr>
+    {% table_columns_count serializer as columns_count %}
     {% render_table_commands serializer "rowstart" table_header='Control start' %}
     {% for column in serializer.fields %}
       <th>{{ column|capfirst }}</th>{% endfor %}
@@ -10,9 +11,10 @@
   </thead>
   <tbody>
   {% for row in data %}
-    <tr {% if crud_form %} data-id="{{ row.id }}"
+    <tr data-id="{{ row.id }}"
+        {% if crud_form %}
                            style="cursor: pointer"
-    {% endif %}
+        {% endif %}
     >
       {% render_table_commands serializer "rowstart" %}
       {% for key, value in row|items %}
@@ -25,14 +27,10 @@
         {% endif %}
       {% endfor %}
       {% render_table_commands serializer "rowend" %}
-      <td>
-        <!-- control column -->
-        <!--a href="{{ row.url }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a-->
-      </td>
     </tr>
   {% empty %}
     <tr>
-      <td colspan="{{ serializer.fields|length }}" style="text-align: center">No data</td>
+      <td colspan="{{ columns_count }}" style="text-align: center">No data</td>
     </tr>
   {% endfor %}
   </tbody>
