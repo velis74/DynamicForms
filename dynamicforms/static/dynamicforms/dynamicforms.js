@@ -261,6 +261,23 @@ dynamicforms = {
   },
 
   /**
+   * Handles what should happen when user clicks to delete a record
+   * @param recordURL: url to call to get data / html for the record / dialog
+   */
+  deleteRow: function deleteRow(recordURL) {
+    //TODO: Ask user for confirmation
+    $.ajax({
+             url:    recordURL,
+             method: 'DELETE'
+           })
+      .done(function (dialogHTML) {
+        console.log('Record successfully deleted.');
+        //  TODO: make a proper notification
+      })
+      .fail(function (xhr, status, error) { dynamicforms.showAjaxError(xhr, status, error); });
+  },
+
+  /**
    * Handles what should happen when user clicks "Add new" button
    * Right now newRow doesn't do anything distinct, so let's just call editRow
    *

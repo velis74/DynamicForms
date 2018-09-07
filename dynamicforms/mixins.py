@@ -1,6 +1,8 @@
-from typing import List
 import uuid as uuid_module
+from typing import List
+
 from rest_framework.serializers import Serializer
+from rest_framework.templatetags import rest_framework as drftt
 
 
 class UUIDMixIn(object):
@@ -15,7 +17,7 @@ class UUIDMixIn(object):
     for id.
     """
 
-    def __init__(self, *args, uuid: uuid_module.UUID=None, **kwargs):
+    def __init__(self, *args, uuid: uuid_module.UUID = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.uuid = uuid or uuid_module.uuid1()
 
@@ -50,7 +52,8 @@ class ActionMixin(object):
     """
     Used in fields allowing declaration of actions that happen when field values change
     """
-    def __init__(self, *args, actions: List['Action']=None, **kwargs):
+
+    def __init__(self, *args, actions: List['Action'] = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.actions = actions or []
 
@@ -74,3 +77,18 @@ class ActionMixin(object):
                 action.tracked_fields = [_resolve_reference(self, ref) for ref in action.tracked_fields]
 
         return self._actions
+
+
+class RenderToTableMixin(object):
+    """
+    Used for rendering individual field to table view
+    """
+
+    def render_to_table(self, value):
+        """
+        Renders field value for table view
+
+        :param value: field value
+        :return: rendered value for table view
+        """
+        return drftt.format_value(value)

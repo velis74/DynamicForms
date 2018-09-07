@@ -2,9 +2,9 @@ import json as jsonlib
 
 from django import template
 from django.utils.safestring import mark_safe
-
 from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
+
 from ..renderers import HTMLFormRenderer
 from ..struct import Struct
 
@@ -47,6 +47,7 @@ def as_string(value):
 def as_list_of_strings(value):
     # TODO: tegale je treba skenslat, ko bo narejena naloga #62 in #63
     return drftt.as_list_of_strings(value)
+
 
 # // just copy tags
 
@@ -101,6 +102,76 @@ def render_field(field, style):
     """
     renderer = style.get('renderer', HTMLFormRenderer())
     return renderer.render_field(field, style)
+
+
+@register.simple_tag
+def render_field_to_table(serializer, field_name, value):
+    """
+    Renders separate field to table view.
+
+    :param serializer: Serializer
+    :param field_name: Field name
+    :param value: Field value
+    :return: rendered field for table view
+    """
+    return serializer.fields[field_name].render_to_table(value)
+
+
+@register.simple_tag(takes_context=True)
+def render_table_commands(context, serializer, position, field_name=None, table_header=None):
+    """
+    Renders commands that are defined in serializers controls attribute.
+
+    :param context: Context
+    :param serializer: Serializer
+    :param position: Position of command (See action.py->Action for more details)
+    :param field_name: If position is left or right to the field, then this parameter must contain field name
+    :param table_header: Name of table header for column, fo commands. Only for row start and row end position.
+    :return: rendered command buttons. If table_header parameter is given and commands for position are defined, returns only rendered table header
+    """
+    ret = rowclick = rowrclick = ''
+    stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
+
+    for action in serializer.controls.actions:
+        if action.position != position and not \
+                (position == 'onrowclick' and action.position in ('rowclick', 'rowrightclick')):
+            continue
+
+        if position == 'onrowclick':
+            if action.position == 'rowclick':
+                rowclick = action.action
+            elif action.position == 'rowrightclick':
+                rowrclick = action.action
+        else:
+            if field_name is None or (action.field_name == field_name):
+                ret += '<button class="btn btn-info" onClick="{stop_propagation} {action}">{label}</button>'. \
+                    format(stop_propagation=stop_propagation, action=action.action, label=action.label)
+
+    if ret != '':
+        if 'rowclick' not in position:
+            ret = '<div class="dynamicforms-actioncontrol float-{direction} pull-{direction}">{ret}</div>'.format(
+                ret=ret, direction='left' if position == 'fieldleft' else 'right'
+            )
+
+        if position in ('rowstart', 'rowend'):
+            if table_header:
+                ret = '<th>%s</th>' % table_header
+            else:
+                ret = '<td>%s</td>' % ret
+
+    if position == 'onrowclick':
+        if rowclick != '':
+            ret += "$('#list-{uuid}').find('tbody').find('tr').click(" \
+                   "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
+                format(stop_propagation=stop_propagation, action=rowclick, uuid=serializer.uuid)
+        if rowrclick != '':
+            ret += "$('#list-{uuid}').find('tbody').find('tr').contextmenu(" \
+                   "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
+                format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
+        if ret != '':
+            ret = '<script type="application/javascript">%s</script>' % ret
+
+    return mark_safe(context.template.engine.from_string(ret).render(context))
 
 
 @register.simple_tag(takes_context=True)

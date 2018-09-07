@@ -1,25 +1,30 @@
 {% load dynamicforms %}
 <table id="list-{{ serializer.uuid }}" class="table table-striped">
   <thead>
-  <tr>{% for column in serializer.fields %}
-    <th>{{ column|capfirst }}</th>{% endfor %}
-    <th></th>
+  <tr>
+    {% render_table_commands serializer "rowstart" table_header='Control start' %}
+    {% for column in serializer.fields %}
+      <th>{{ column|capfirst }}</th>{% endfor %}
+    {% render_table_commands serializer "rowend" table_header='Control end' %}
   </tr>
   </thead>
   <tbody>
   {% for row in data %}
-    <tr {% if crud_form %}
-      onclick="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk=row.id format='html' %}')"
-      style="cursor: pointer"
+    <tr {% if crud_form %} data-id="{{ row.id }}"
+                           style="cursor: pointer"
     {% endif %}
     >
+      {% render_table_commands serializer "rowstart" %}
       {% for key, value in row|items %}
         {% if key in serializer.fields %}
-          <td {{ value|add_nested_class }}>
-            {{ value|format_value }}
+          <td {{ value|add_nested_class }} data-name="{{ key }}">
+            {% render_table_commands serializer "fieldleft" key %}
+            {% render_field_to_table serializer key value %}
+            {% render_table_commands serializer "fieldright" key %}
           </td>
         {% endif %}
       {% endfor %}
+      {% render_table_commands serializer "rowend" %}
       <td>
         <!-- control column -->
         <!--a href="{{ row.url }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a-->
@@ -32,3 +37,5 @@
   {% endfor %}
   </tbody>
 </table>
+{% render_table_commands serializer "onrowclick" %}
+{#TODO: Unit test: preveri, če se on click in on right click primerno nastavita, kadar se vrstice v tabeli dinamično nalagajo#}
