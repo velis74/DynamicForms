@@ -22,17 +22,17 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.actions = [
-            Action(['code'], mark_safe("""
-            function(formID, newRec, oldRec, changedFields) { 
-              var amountID = dynamicforms.getFieldByName(formID, 'amount');
-              console.log([oldRec, newRec, changedFields, amountID]);
-              dynamicforms.fieldSetValue(amountID, 6); 
-              
-              var flagsID = dynamicforms.getFieldByName(formID, 'item_flags');
-              dynamicforms.fieldSetVisible(flagsID, undefined); 
-            }"""))
-        ]
+        # self.actions = [
+        #     Action(['code'], mark_safe("""
+        #     function(formID, newRec, oldRec, changedFields) {
+        #       var amountID = dynamicforms.getFieldByName(formID, 'amount');
+        #       console.log([oldRec, newRec, changedFields, amountID]);
+        #       dynamicforms.fieldSetValue(amountID, 6);
+        #
+        #       var flagsID = dynamicforms.getFieldByName(formID, 'item_flags');
+        #       dynamicforms.fieldSetVisible(flagsID, undefined);
+        #     }"""))
+        # ]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)

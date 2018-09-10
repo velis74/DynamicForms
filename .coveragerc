@@ -1,0 +1,6 @@
+[run]
+omit =
+    doc/*
+    tests/*
+    setup/wsgi.py
+    rest_framework/*

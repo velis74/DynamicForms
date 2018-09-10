@@ -16,13 +16,14 @@ class Struct(object):
             return Struct(value) if isinstance(value, dict) else value
 
     def clone(self, **kwds):
-        return Struct(self.__dict__, **kwds)
+        return Struct(self.__to_dict__(), **kwds)
 
     def __repr__(self):
         return "Struct: " + repr(self.__dict__)
 
     def __to_dict__(self):
-        res = self.__dict__
+        res = {}
+        res.update(self.__dict__)
         for k in res.keys():
             if isinstance(res[k], Struct):
                 res[k] = res[k].__to_dict__()
