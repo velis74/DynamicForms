@@ -1,6 +1,13 @@
 [run]
+plugins =
+    django_coverage_plugin
+
 omit =
     doc/*
     tests/*
     setup/wsgi.py
     rest_framework/*
+
+[report]
+show_missing = true
+precision = 2
