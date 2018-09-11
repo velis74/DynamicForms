@@ -2,6 +2,9 @@
 plugins =
     django_coverage_plugin
 
+include =
+    dynamicforms/*
+
 omit =
     doc/*
     tests/*
