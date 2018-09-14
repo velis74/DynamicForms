@@ -2,12 +2,12 @@
 
 {% if form.has_non_field_errors %}
   {% for error in form.errors.non_field_errors %}
-  <div class="text-danger">{{ error }}</div>
+    <div class="text-danger">{{ error }}</div>
   {% endfor %}
 {% endif %}
 
-{% for field in form %}
-  {% if not field.read_only %}
+{% block form_inner %}
+  {% for field in form %}
     {% render_field field style=style %}
-  {% endif %}
-{% endfor %}
+  {% endfor %}
+{% endblock %}

@@ -3,10 +3,11 @@
   <thead>
   <tr>
     {% table_columns_count serializer as columns_count %}
-    {% render_table_commands serializer "rowstart" table_header='Control start' %}
+  {# TODO: Remove "Actions" strings #}
+    {% render_table_commands serializer "rowstart" table_header='Actions' %}
     {% for column in serializer.fields %}
       <th>{{ column|capfirst }}</th>{% endfor %}
-    {% render_table_commands serializer "rowend" table_header='Control end' %}
+    {% render_table_commands serializer "rowend" table_header='Actions' %}
   </tr>
   </thead>
   <tbody>

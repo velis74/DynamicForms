@@ -70,7 +70,7 @@ class ActionMixin(object):
             # remove actions from Field, move them to Serializer
             for field in self.fields.values():
                 # field: ActionMixin
-                self._actions.extend(field.actions)
+                self._actions.extend(getattr(field, 'actions', []))
 
             # Change all {field name}, Field to UUID references
             for action in self._actions:

@@ -48,7 +48,7 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
         value = this.value;
       storeValue(name, value);
     });
-    res_d[item.id] = o;
+    res_d[item.attributes['id'].value] = o;
     return o;
   });
   if (returnDict === true) return res_d;

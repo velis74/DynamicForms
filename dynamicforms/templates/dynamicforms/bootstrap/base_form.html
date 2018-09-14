@@ -2,7 +2,6 @@
 
 {% set_var_conditional action_postfix='?df_dialog=true' condition=df_dialog else_value='' %}
 
-<p>{{ url_reverse }}</p>
 <form id="{{ serializer.uuid }}"
       class="dynamicforms-form"
       {% if data.id %}
