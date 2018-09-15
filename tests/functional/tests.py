@@ -151,11 +151,15 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 elif label.text == "Item flags":  # ta mora biti select2...
                     #     TODO: naredi preverjanja, ko bo implementiran select2
                     pass
+                elif field.get_attribute("name") in ('id',):
+                    # Hidden fields
+                    pass
                 else:
                     field_count -= 1
                     check = label.text == "Code"
-                    self.assertTrue(False, f"Wrong field container - label: '{label.text}' {check}")
-        self.assertEqual(field_count, 5)
+                    fname = field.get_attribute("name")
+                    self.assertTrue(False, f"Wrong field container - label: '{label.text}' {check} {fname}")
+        self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model

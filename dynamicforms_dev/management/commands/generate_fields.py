@@ -5,6 +5,7 @@ import uuid
 
 from django.core.management.base import BaseCommand
 from rest_framework import fields
+from rest_framework import relations
 
 
 class Command(BaseCommand):
@@ -17,7 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from dynamicforms.mixins import UUIDMixIn
 
-        with open(os.path.abspath(os.path.join('dynamicforms/fields', '__init__.py')), 'w') as output:
+        with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
 
             field_list = []
             for obj in fields.__dict__.values():
@@ -25,13 +26,30 @@ class Command(BaseCommand):
                         issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
-            print('from uuid import UUID', file=output)
-            print('from .mixins import UUIDMixIn', file=output)
+            for obj in relations.__dict__.values():
+                if obj != relations.RelatedField and inspect.isclass(obj) and \
+                        issubclass(obj, relations.RelatedField) and obj.__name__.endswith('Field'):
+                    field_list.append(obj)
+
+            print('from uuid import UUID\n', file=output)
             print('from rest_framework import fields', file=output)
+
             print('from rest_framework.fields import (', file=output)
-            field_names = textwrap.wrap(', '.join((f.__name__ for f in field_list)), width=110)
+            field_names = textwrap.wrap(', '.join((f.__name__ for f in field_list
+                                                   if inspect.getmodule(f).__name__ == 'rest_framework.fields')),
+                                        width=110)
             print(textwrap.indent('\n'.join(field_names), '    '), file=output)
             print(')', file=output)
+
+            print('from rest_framework.relations import (', file=output)
+
+            field_names = textwrap.wrap(', '.join((f.__name__ for f in field_list
+                                                   if inspect.getmodule(f).__name__ == 'rest_framework.relations')),
+                                        width=110)
+            print(textwrap.indent('\n'.join(field_names), '    '), file=output)
+            print(')', file=output)
+
+            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -112,7 +130,7 @@ class Command(BaseCommand):
                 print(textwrap.dedent(f"""
                 
                     # noinspection PyRedeclaration{additional_inspects}
-                    class {field_class}(UUIDMixIn, {field_class}):
+                    class {field_class}(UUIDMixIn, ActionMixin, RenderToTableMixin, {field_class}):
                     
                         def __init__({field_params}):
                             kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}

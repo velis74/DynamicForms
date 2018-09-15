@@ -7,12 +7,6 @@ from .fields import *
 from .mixins import UUIDMixIn
 
 
-class PrimaryKeyRelatedField(RenderToTableMixin, serializers.PrimaryKeyRelatedField):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-
 class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     """
     DynamicForms' ModelSerializer overrides the following behaviour over DRF's implementation:
@@ -66,10 +60,10 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     }
     if models.DurationField is not None:
         serializer_field_mapping[models.DurationField] = DurationField
-    # TODO: Je treba v fielde spravit tudi vse fielde iz rest_framework/relations.py
+
     serializer_related_field = PrimaryKeyRelatedField
-    # serializer_related_to_field = SlugRelatedField
-    # serializer_url_field = HyperlinkedIdentityField
+    serializer_related_to_field = SlugRelatedField
+    serializer_url_field = HyperlinkedIdentityField
     serializer_choice_field = ChoiceField
     controls = ActionControls(add_default_crud=True)
 
