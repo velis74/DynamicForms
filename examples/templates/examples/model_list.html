@@ -1,4 +1,4 @@
-{% extends 'dynamicforms/bootstrap/base.html' %}{% load dynamicforms %}
+{% extends 'examples/base.html' %}{% load dynamicforms %}
 {% block title %}
   {{ serializer.form_titles.table }}
 {% endblock %}
@@ -13,9 +13,7 @@
   <div class="{{ card_class }}" style="display: inline-block; margin: 1em">
     <div class="{{ card_header }}">
       {{ serializer.form_titles.table }}
-      {% if crud_form %}
-        {% render_table_commands serializer 'header' %}
-      {% endif %}
+      {% render_table_commands serializer 'header' %}
     </div>
     <div class="{{ card_body }}">
       {% include template_list with serializer=serializer data=data %}

@@ -186,7 +186,7 @@ dynamicforms = {
              headers:  {'X-DF-DIALOG': 'true'}
            })
       .done(function () {
-        // TODO: refresh list of items. Dialogjust closes, but whatever we changed doesn't get updated in the list
+        // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
       })
       .fail(function (xhr, status, error) {
@@ -353,29 +353,31 @@ dynamicforms = {
     var field       = dynamicforms.field_helpers.get(fieldID),
         $field      = field.$field,
         $form       = field.$form,
+        formId      = $form.attr('id'),
         newValue    = field.getValue($field),
         oldValue,
         newFormData,
         oldFormData = {};
 
-    if (final) {
-      newFormData = dynamicforms.getSerializedForm($form, final);
+    // Get current form values object
+    newFormData = dynamicforms.getSerializedForm($form, final);
+    if (final == 'final')
       dynamicforms.clearSerializedForm($form, 'non-final');
-    } else {
-      newFormData = dynamicforms.getSerializedForm($form, final);
-      if (newFormData == undefined)
+    else if (newFormData == undefined)
         newFormData = dynamicforms.getSerializedForm($form, 'final');
-    }
 
+    // Copy the current form values to "old" object and adjust the current values with the change
     $.extend(true, oldFormData, newFormData);
-    var field_name          = $field.attr('name')
+    var field_name          = $field.attr('name');
     oldValue                = newFormData[field_name];
     newFormData[field_name] = newValue;
 
+    // Process the change if there was any
     if (oldValue != newValue) {
       console.log('Field "' + field_name + '" value has changed. Triggering actions');
-      var actions = dynamicforms.form_helpers.get($form.attr('id'), 'actions_' + fieldID);
-      if (actions)
+      var actions = dynamicforms.form_helpers.get(formId, 'actions_' + fieldID);
+      if (actions) {
+        var fieldVisibility = dynamicforms.getVisibleFields(formId);
         $.each(actions, function (idx, action) {
           // TODO med izvajanjem actionov je verjetno bolje, če se onchange ne procesira
           // TODO na koncu funkcije je treba serializirat formo, da vidimo, če so se še katera polja spremenila
@@ -383,6 +385,10 @@ dynamicforms = {
           // dodaten onchange
           action($form.attr('id'), newFormData, oldFormData, [fieldID]);
         });
+        // Copy newFormData to oldFormmData and Get new field values
+        // Get new field visibility
+        // go through all fields and run their actions if either their value or their visibility is changed
+      }
     }
   },
 
@@ -434,26 +440,21 @@ dynamicforms = {
       field.$form  = $('#' + formID);
       field.name   = field.$field.attr('name');
     }
-    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    form_fields[fieldID] = field;
+    var form_fields       = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
+    form_fields[fieldID]  = field;
+    var field_ids         = dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
+    field_ids[field.name] = fieldID;
   },
 
   /**
-   * Finds field in form by its name and returns its ID. This function is a helper for actions where field UUIDs
+   * Gets an object which maps field names to their IDs. This function is a helper for actions where field UUIDs
    * are not known in advance. Its result is passed to functions such as fieldSetValue.
    *
    * @param formID: id of form object
-   * @param fieldName: name of field
-   * @return: field control ID
+   * @return: object where obj.field_name == field control ID
    */
-  getFieldByName: function getFieldByName(formID, fieldName) {
-    var form_fields      = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    var fld = undefined;
-    $.each(form_fields, function(id, field) {
-      if (field.name == fieldName)
-        fld = id;
-    });
-    return fld;
+  getFieldIDs: function getFieldIDs(formID) {
+    return dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
   },
 
   /**
@@ -468,7 +469,7 @@ dynamicforms = {
   },
 
   /**
-   * "Standard" function for setting an input's. Any special cases will be handled in custom functions
+   * "Standard" function for setting an input's value. Any special cases will be handled in custom functions
    *
    * @param field: id or jQuery object of the field
    * @param value: new value to set
@@ -478,11 +479,30 @@ dynamicforms = {
     $field.val(value);
   },
 
+  /**
+   * "Standard" function for setting an input's visibility. Any special cases will be handled in custom functions
+   *
+   * @param field: id or jQuery object of the field
+   * @param visible: boolean specifying whether field should be visible
+   */
   fieldSetVisible: function fieldSetVisible(field, visible) {
     //TODO: tukaj je treba še preverit nadrejeni container, če je vse v njem skrito. Če je, je treba skrit tudi njega
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     $field.parents('#container-' + fieldID).toggle(visible);
+  },
+
+  /**
+   * "Standard" function for checking whether an input's is visible. Any special cases will be handled in custom
+   * functions
+   *
+   * @param field: id or jQuery object of the field
+   * @return: boolean true for visible, false for hidden
+   */
+  fieldIsVisible: function fieldIsVisible(field) {
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var fieldID = $field.attr('id');
+    return $field.parents('#container-' + fieldID).is(":visible");
   }
 };
 

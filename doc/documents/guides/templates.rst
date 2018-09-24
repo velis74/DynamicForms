@@ -26,11 +26,11 @@ Head tag includes base_includes.html (for bootstrap we have base_includes_v3.htm
 all the libraries that are needed for dynamic forms to work are included.
 
 Base_list.html can be used for rendering Viewset in list mode. It shows all records with values or »No data« label if
-there is no data. When user clicks on record (only if crud_form context variable is set), this record is shown in form
-(modal dialog or separate page) and can be edited there.
+there is no data. When user clicks on record (only if default CRUD functionlity is enabled), this record is shown in
+form (modal dialog or separate page) and can be edited there.
 
-Base_form.html can be used for rendering ViewSet in form mode. It shows one record, and if crud is enabled
-(template_context = dict(crud_form=True) in Viewset) it can also be edited.
+Base_form.html can be used for rendering ViewSet in form mode. It shows one record, and if crud is enabled in Viewset,
+it can also be edited.
 
 Form can be shown as modal dialog. For that template which is defined in settings.pyBSVER_MODAL is used. When using
 bootstrap v4 default template is modal_dialog_v4.html.

@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include DF.BSVER_INCLUDES %}
+    <title>{% block title %}{% endblock %}</title>
+    <script src="{% static 'examples/examples.js' %}"></script>
+    {% block head_extra %}{% endblock %}
+    <style>
+        /* action controls */
+        .dynamicforms-actioncontrol {
+            padding: 0 .25rem;
+        }
+
+        .dynamicforms-actioncontrol .btn {
+            margin-top: -.25rem;
+            margin-right: .5rem;
+            padding: .15rem .3rem;
+            font-size: .675rem;
+            line-height: 1.1;
+            border-radius: .13rem;
+        }
+
+        /* side navigation bar */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 4.5em;
+        }
+
+        .sidenav a {
+            padding: .5rem;
+            text-decoration: none;
+            font-size: 2rem;
+            white-space: nowrap;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #sidenav-overlay {
+            z-index: 1;
+            background: black;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 1rem;
+            margin-top: 3.5rem;
+        }
+
+        #hamburger {
+            font-size: 200%;
+            cursor: pointer;
+        }
+
+        #titlebar {
+            position: absolute;
+            z-index: 3;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: darkslategrey;
+            height: 3.5em;
+            padding-left: 1em;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div id="titlebar">
+    <div id="hamburger" onclick="togglemenu()">
+        &#9776; <span id="page-title"></span>
+    </div>
+</div>
+<div id="side-nav" class="sidenav">
+    <a href="{% url 'validated-list' format='html' %}">Validated</a>
+    <a href="{% url 'hidden-fields-list' format='html' %}">Hidden fields</a>
+</div>
+<div id="sidenav-overlay" onclick="togglemenu()"></div>
+<div id="main">
+    {% block body %}{% endblock %}
+</div>
+<script type="application/javascript">
+    $('#page-title').html($('title').text());
+
+    function togglemenu() {
+        var $side_nav = $('#side-nav');
+        var $overlay = $('#sidenav-overlay');
+
+        if ($side_nav.width() == 0) {
+            $side_nav.width('15em');
+            $overlay.show().animate({opacity: .33}, 500);
+        }
+        else {
+            $side_nav.width(0);
+            $overlay.animate({opacity: .0}, 500, null, function () {
+                $overlay.hide();
+            });
+        }
+    }
+</script>
+</body>
+</html>

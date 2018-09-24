@@ -5,7 +5,7 @@ from dynamicforms.mixins import Action
 from dynamicforms.viewsets import ModelViewSet
 from rest_framework import routers
 from rest_framework.exceptions import ValidationError
-from .models import Validated
+from .models import Validated, HiddenFields
 
 
 # TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
@@ -19,20 +19,6 @@ class ValidatedSerializer(serializers.ModelSerializer):
     }
 
     # id = serializers.IntegerField(required=False)  # so that it shows at all
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # self.actions = [
-        #     Action(['code'], mark_safe("""
-        #     function(formID, newRec, oldRec, changedFields) {
-        #       var amountID = dynamicforms.getFieldByName(formID, 'amount');
-        #       console.log([oldRec, newRec, changedFields, amountID]);
-        #       dynamicforms.fieldSetValue(amountID, 6);
-        #
-        #       var flagsID = dynamicforms.getFieldByName(formID, 'item_flags');
-        #       dynamicforms.fieldSetVisible(flagsID, undefined);
-        #     }"""))
-        # ]
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -53,14 +39,42 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
 class ValidatedViewSet(ModelViewSet):
     # renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
-    template_name = 'examples/validated.html'
-    template_name_list = 'examples/validated_list.html'
-    template_context = dict(crud_form=True, url_reverse='validated')
+    template_name = 'examples/model_single.html'
+    template_name_list = 'examples/model_list.html'
+    template_context = dict(url_reverse='validated')
 
     queryset = Validated.objects.all()
     serializer_class = ValidatedSerializer
 
 
+class HiddenFieldsSerializer(serializers.ModelSerializer):
+    form_titles = {
+        'table': 'Hidden fields list',
+        'new': 'New hidden fields object',
+        'edit': 'Editing hidden fields object',
+    }
+
+    # TODO: skrij samo unit, potem pa pošlji onchanged njemu in naj on skrije še ostala polja
+    # TODO: ko pa unit spet pokažeš, spet pošlješ zadevo njemu in on bo pogledal, katero od polj mora pokazati
+    actions = [
+        Action(['note'], mark_safe('examples.action_hiddenfields_note')),
+        Action(['unit'], mark_safe('examples.action_hiddenfields_unit')),
+    ]
+
+    class Meta:
+        model = HiddenFields
+        exclude = ()
+
+
+class HiddenFieldsViewSet(ModelViewSet):
+    template_name = 'examples/model_single.html'
+    template_name_list = 'examples/model_list.html'
+    template_context = dict(url_reverse='hidden-fields')
+
+    queryset = HiddenFields.objects.all()
+    serializer_class = HiddenFieldsSerializer
+
+
 router = routers.DefaultRouter()
-router.register(r'rest/validated', ValidatedViewSet, base_name='validated')
-# router.register(r'rest/hidden-fields', HiddenFieldsViewSet, base_name='hidden_fields')
+router.register(r'validated', ValidatedViewSet, base_name='validated')
+router.register(r'hidden-fields', HiddenFieldsViewSet, base_name='hidden-fields')

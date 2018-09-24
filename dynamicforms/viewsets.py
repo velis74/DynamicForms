@@ -55,15 +55,9 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
        * To render an existing record (for editing) use pk={record_id}.
     """
 
-    template_context = {
-        'crud_form': True,
-    }
+    template_context = { }
     """
     template_context provides configuration to renderers & templates
-    
-    :py:data: crud_form: True | False 
-       
-       Template pack will render data editing controls when this setting is True
     """
 
     # TODO move templates to Serializer so that you can render it in django templates too

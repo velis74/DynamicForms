@@ -96,7 +96,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         return cells
 
     def test_validated_list(self):
-        self.browser.get(self.live_server_url + '/rest/validated.html')
+        self.browser.get(self.live_server_url + '/validated.html')
         # Grem na validated html in preverim, če ima + Add button
 
         header = self.browser.find_element_by_class_name("card-header")
@@ -112,7 +112,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Spodaj je test, če je modalen dialog... lahko bi se naredil še test, če se urejanje pokaže na novi strani#
         # ---------------------------------------------------------------------------------------------------------#
 
-        # Potem preko add buttona dodam en zapis in grem nazaj na validated.html in preverim, če je zapis dodan
+        # Potem preko add buttona dodam en zapis in grem nazaj na model_single.html in preverim, če je zapis dodan
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
@@ -198,7 +198,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertTrue(len(cells) == 7)
 
-        # Potem kliknem na zapis in ga uredim. Grem nazaj na validated.html in preverim, če je zapis urejen
+        # Potem kliknem na zapis in ga uredim. Grem nazaj na model_single.html in preverim, če je zapis urejen
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
         dialog.find_element_by_name("enabled").click()

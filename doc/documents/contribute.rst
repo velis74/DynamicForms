@@ -92,3 +92,5 @@ These variables will be set in a :py:class:`dynamicforms.viewsets.ModelViewSet` 
 .. py:data:: crud_form: True | False
 
    If set, template pack is expected to render HTML that will allow user to edit the presented data.
+
+.. todo:: The above is left just to keep an example. Currently there is nothing in the code that would be used

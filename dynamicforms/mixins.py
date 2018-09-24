@@ -22,19 +22,6 @@ class UUIDMixIn(object):
         self.uuid = uuid or uuid_module.uuid1()
 
 
-class Action(object):
-
-    def __init__(self, tracked_fields: List[str], action_js: str):
-        self.tracked_fields = tracked_fields
-        self.action_js = action_js
-        assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
-        assert self.action_js, 'When declaring action, it must declare action JavaScript to execute'
-
-    @property
-    def action_id(self):
-        return id(self)
-
-
 def _resolve_reference(serializer: Serializer, ref):
     if isinstance(ref, uuid_module.UUID):
         return ref
@@ -48,6 +35,22 @@ def _resolve_reference(serializer: Serializer, ref):
     raise Exception('Unknown reference type for Action tracked field (%r)' % ref)
 
 
+class Action(object):
+
+    def __init__(self, tracked_fields: List[str], action_js: str):
+        self.tracked_fields = tracked_fields
+        self.action_js = action_js
+        assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
+        assert self.action_js, 'When declaring action, it must declare action JavaScript to execute'
+
+    @property
+    def action_id(self):
+        return id(self)
+
+    def copy_and_resolve_reference(self, serializer: Serializer):
+        return Action([_resolve_reference(serializer, f) for f in self.tracked_fields], self.action_js)
+
+
 class ActionMixin(object):
     """
     Used in fields allowing declaration of actions that happen when field values change
@@ -55,7 +58,8 @@ class ActionMixin(object):
 
     def __init__(self, *args, actions: List['Action'] = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.actions = actions or []
+        if not getattr(self, 'actions', None):
+            self.actions = actions or []
 
     @property
     def action_register_js(self):
@@ -65,12 +69,12 @@ class ActionMixin(object):
         :return: List[{'tracked_fields': List[str], 'action_function': str}]
         """
         if isinstance(self, Serializer) and not hasattr(self, '_actions'):
-            setattr(self, '_actions', self.actions or [])
+            setattr(self, '_actions', [a.copy_and_resolve_reference(self) for a in (self.actions or [])])
 
             # remove actions from Field, move them to Serializer
             for field in self.fields.values():
                 # field: ActionMixin
-                self._actions.extend(getattr(field, 'actions', []))
+                self._actions.extend([a.copy_and_resolve_reference(self) for a in getattr(field, 'actions', [])])
 
             # Change all {field name}, Field to UUID references
             for action in self._actions:

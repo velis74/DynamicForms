@@ -13,9 +13,9 @@
   <tbody>
   {% for row in data %}
     <tr data-id="{{ row.id }}"
-        {% if crud_form %}
+        {% comment %}TODO: tole moramo prestaviti v javascript, ki nastavi vse TRje
                            style="cursor: pointer"
-        {% endif %}
+        {% endcomment %}
     >
       {% render_table_commands serializer "rowstart" %}
       {% for key, value in row|items %}

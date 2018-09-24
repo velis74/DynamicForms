@@ -6,7 +6,7 @@ from examples.models import Validated
 
 
 class ValidatedPageTest(TestCase):
-    base_url = '/rest/validated/{}{}'
+    base_url = '/validated/{}{}'
 
     def test_get_return(self):
         validate_ = Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
@@ -29,7 +29,7 @@ class ValidatedPageTest(TestCase):
 
     def testPOSTing_a_new_record(self):
         response = self.client.post(
-            '/rest/validated.html?df_dialog=true',
+            '/validated.html?df_dialog=true',
             # self.base_url.format("new", "/"),
             {'code': "123", 'enabled': True, 'amount': 7, 'item_type': 2, 'item_flags': 'A'})
         self.assertEqual(response.status_code, 201)
