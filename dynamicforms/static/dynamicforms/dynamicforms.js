@@ -11,7 +11,7 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
   handlers   = handlers == undefined ? {} : handlers;
   returnDict = returnDict == undefined ? false : returnDict;
 
-  var res_d = {}
+  var res_d = {};
   var res   = $.map(this, function (item) {
     var o          = {},
         $form      = $(item),
@@ -99,7 +99,7 @@ $.fn.deserializeForm = function (data, fieldNamePrefix, handlers) {
  */
 function TLD() {
   this.storage = {};
-};
+}
 
 TLD.prototype = {
   get: function get(key1, key2) {
@@ -133,7 +133,7 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  }
+  },
 };
 
 dynamicforms = {
@@ -145,12 +145,12 @@ dynamicforms = {
     "TEMPLATE":             "dynamicforms/bootstrap/",
     "TEMPLATE_OPTIONS":     {
       "BOOTSTRAP_VERSION": "v4",
-      "EDIT_IN_DIALOG":    true
+      "EDIT_IN_DIALOG":    true,
     },
     "MODAL_DIALOG":         "modal_dialog",
     "BSVER_INCLUDES":       "dynamicforms/bootstrap/base_includes_v4.html",
     "BSVER_FIELD_TEMPLATE": "dynamicforms/bootstrap/field/base_field_v4.html",
-    "BSVER_MODAL":          "dynamicforms/bootstrap/modal_dialog_v4.html"
+    "BSVER_MODAL":          "dynamicforms/bootstrap/modal_dialog_v4.html",
   },
 
   /**
@@ -179,12 +179,12 @@ dynamicforms = {
     var method = data['data-dynamicforms-method'] || 'POST';
 
     $.ajax({
-             type:     method,
-             url:      $form.attr("action"),
-             data:     data,
-             dataType: 'html',
-             headers:  {'X-DF-DIALOG': 'true'}
-           })
+      type:     method,
+      url:      $form.attr("action"),
+      data:     data,
+      dataType: 'html',
+      headers:  {'X-DF-DIALOG': 'true'},
+    })
       .done(function () {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
@@ -250,9 +250,9 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_dialog=true';
       $.ajax({
-               url:     recordURL,
-               headers: {'X-DF-DIALOG': 'true'}
-             })
+        url:     recordURL,
+        headers: {'X-DF-DIALOG': 'true'},
+      })
         .done(function (dialogHTML) { dynamicforms.showDialog($(dialogHTML)); })
         .fail(function (xhr, status, error) { dynamicforms.showAjaxError(xhr, status, error); });
     }
@@ -267,9 +267,9 @@ dynamicforms = {
   deleteRow: function deleteRow(recordURL) {
     //TODO: Ask user for confirmation
     $.ajax({
-             url:    recordURL,
-             method: 'DELETE'
-           })
+      url:    recordURL,
+      method: 'DELETE',
+    })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -318,11 +318,20 @@ dynamicforms = {
     return dynamicforms.form_helpers.get($form.attr('id'), final);
   },
 
+  getSerializedFormFinal: function getSerializedFormFinal($form, final) {
+    var newFormData = dynamicforms.getSerializedForm($form, final);
+    if (final == 'final')
+      dynamicforms.clearSerializedForm($form, 'non-final');
+    else if (newFormData == undefined)
+      newFormData = dynamicforms.getSerializedForm($form, 'final');
+    return newFormData;
+  },
+
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-           function(fieldID) { dynamicforms.field_helpers.del(fieldID); }
-           );
+      function (fieldID) { dynamicforms.field_helpers.del(fieldID); }
+    );
     dynamicforms.form_helpers.del(formID);
   },
   /**************************************************************
@@ -356,15 +365,8 @@ dynamicforms = {
         formId      = $form.attr('id'),
         newValue    = field.getValue($field),
         oldValue,
-        newFormData,
+        newFormData = dynamicforms.getSerializedFormFinal($form, final),
         oldFormData = {};
-
-    // Get current form values object
-    newFormData = dynamicforms.getSerializedForm($form, final);
-    if (final == 'final')
-      dynamicforms.clearSerializedForm($form, 'non-final');
-    else if (newFormData == undefined)
-        newFormData = dynamicforms.getSerializedForm($form, 'final');
 
     // Copy the current form values to "old" object and adjust the current values with the change
     $.extend(true, oldFormData, newFormData);
@@ -411,7 +413,7 @@ dynamicforms = {
    * @param func: function to be called for getting current field value
    */
   registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
-    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.getValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -423,7 +425,7 @@ dynamicforms = {
    * @param func: function to be called for setting current field value
    */
   registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
-    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.setValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -487,7 +489,7 @@ dynamicforms = {
    */
   fieldSetVisible: function fieldSetVisible(field, visible) {
     //TODO: tukaj je treba še preverit nadrejeni container, če je vse v njem skrito. Če je, je treba skrit tudi njega
-    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     $field.parents('#container-' + fieldID).toggle(visible);
   },
@@ -500,10 +502,10 @@ dynamicforms = {
    * @return: boolean true for visible, false for hidden
    */
   fieldIsVisible: function fieldIsVisible(field) {
-    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     return $field.parents('#container-' + fieldID).is(":visible");
-  }
+  },
 };
 
 $(document).ready(function () {

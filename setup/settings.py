@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'dynamicforms',
     'dynamicforms_dev',
-    'examples'
+    'examples',
 ]
 
 MIDDLEWARE = [
@@ -128,4 +128,3 @@ REST_FRAMEWORK = {
         'dynamicforms.renderers.TemplateHTMLRenderer',
     )
 }
-

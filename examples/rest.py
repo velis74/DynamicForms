@@ -57,8 +57,8 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     # TODO: skrij samo unit, potem pa pošlji onchanged njemu in naj on skrije še ostala polja
     # TODO: ko pa unit spet pokažeš, spet pošlješ zadevo njemu in on bo pogledal, katero od polj mora pokazati
     actions = [
-        Action(['note'], mark_safe('examples.action_hiddenfields_note')),
-        Action(['unit'], mark_safe('examples.action_hiddenfields_unit')),
+        Action(['note'], 'examples.action_hiddenfields_note'),
+        Action(['unit'], 'examples.action_hiddenfields_unit'),
     ]
 
     class Meta:
