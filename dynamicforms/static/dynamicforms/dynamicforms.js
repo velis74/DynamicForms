@@ -8,13 +8,13 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
    * @return: JS object with form data
    */
   fieldNamePrefix = fieldNamePrefix == undefined ? '' : fieldNamePrefix;
-  handlers = handlers == undefined ? {} : handlers;
+  handlers   = handlers == undefined ? {} : handlers;
   returnDict = returnDict == undefined ? false : returnDict;
 
   var res_d = {};
-  var res = $.map(this, function (item) {
-    var o = {},
-        $form = $(item),
+  var res   = $.map(this, function (item) {
+    var o          = {},
+        $form      = $(item),
         storeValue = function (name, value) {
           var handler = handlers[name.substring(fieldNamePrefix.length)] || {};
 
@@ -29,10 +29,10 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
           } else
             o[name] = value;
         },
-        disabled = $(this).find(':input:disabled').removeAttr('disabled');
+        disabled   = $(this).find(':input:disabled').removeAttr('disabled');
 
     $.each($form.serializeArray(), function () {
-      var name = this.name.replace(fieldNamePrefix, ''),
+      var name  = this.name.replace(fieldNamePrefix, ''),
           value = this.value;
       storeValue(name, value);
     });
@@ -42,7 +42,7 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
       if (name in o) delete o[name];
     });
     $form.find('input:checkbox').each(function () {
-      var name = this.name.replace(fieldNamePrefix, ''),
+      var name  = this.name.replace(fieldNamePrefix, ''),
           value = $(this).is(':checked'); // ? this.value || true : false;
       if (value && 'value' in this.attributes)
         value = this.value;
@@ -57,7 +57,7 @@ $.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
 
 $.fn.deserializeForm = function (data, fieldNamePrefix, handlers) {
   fieldNamePrefix = fieldNamePrefix == undefined ? '' : fieldNamePrefix;
-  handlers = handlers == undefined ? {} : handlers;
+  handlers        = handlers == undefined ? {} : handlers;
 
   var setValue = function ($inp, value) {
     if ($inp.length > 0) {
@@ -97,8 +97,7 @@ $.fn.deserializeForm = function (data, fieldNamePrefix, handlers) {
 /**
  * Two level dictionary
  */
-function TLD()
-{
+function TLD() {
   this.storage = {};
 }
 
@@ -142,16 +141,16 @@ dynamicforms = {
   DF: {
     // This is only necessary so that IDE doesn't complain about members not found when you use any of the settings
     // in code
-    "MODULE_PREFIX": "DYNAMICFORMS_",
-    "TEMPLATE": "dynamicforms/bootstrap/",
-    "TEMPLATE_OPTIONS": {
+    "MODULE_PREFIX":        "DYNAMICFORMS_",
+    "TEMPLATE":             "dynamicforms/bootstrap/",
+    "TEMPLATE_OPTIONS":     {
       "BOOTSTRAP_VERSION": "v4",
-      "EDIT_IN_DIALOG": true,
+      "EDIT_IN_DIALOG":    true,
     },
-    "MODAL_DIALOG": "modal_dialog",
-    "BSVER_INCLUDES": "dynamicforms/bootstrap/base_includes_v4.html",
+    "MODAL_DIALOG":         "modal_dialog",
+    "BSVER_INCLUDES":       "dynamicforms/bootstrap/base_includes_v4.html",
     "BSVER_FIELD_TEMPLATE": "dynamicforms/bootstrap/field/base_field_v4.html",
-    "BSVER_MODAL": "dynamicforms/bootstrap/modal_dialog_v4.html",
+    "BSVER_MODAL":          "dynamicforms/bootstrap/modal_dialog_v4.html",
   },
 
   /**
@@ -180,23 +179,23 @@ dynamicforms = {
     var method = data['data-dynamicforms-method'] || 'POST';
 
     $.ajax({
-      type: method,
-      url: $form.attr("action"),
-      data: data,
+      type:     method,
+      url:      $form.attr("action"),
+      data:     data,
       dataType: 'html',
-      headers: {'X-DF-DIALOG': 'true'},
+      headers:  {'X-DF-DIALOG': 'true'},
     })
-        .done(function () {
-          // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
-          dynamicforms.closeDialog($dlg);
-        })
-        .fail(function (xhr, status, error) {
-          // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
-          // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
-          // also for any authorization errors, CSRF, etc, it will again fail
-          // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
-          dynamicforms.replaceDialog($dlg, $(xhr.responseText));
-        });
+      .done(function () {
+        // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
+        dynamicforms.closeDialog($dlg);
+      })
+      .fail(function (xhr, status, error) {
+        // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
+        // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
+        // also for any authorization errors, CSRF, etc, it will again fail
+        // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
+        dynamicforms.replaceDialog($dlg, $(xhr.responseText));
+      });
   },
 
   /**
@@ -253,15 +252,15 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_dialog=true';
       $.ajax({
-        url: recordURL,
+        url:     recordURL,
         headers: {'X-DF-DIALOG': 'true'},
       })
-          .done(function (dialogHTML) {
-            dynamicforms.showDialog($(dialogHTML));
-          })
-          .fail(function (xhr, status, error) {
-            dynamicforms.showAjaxError(xhr, status, error);
-          });
+        .done(function (dialogHTML) {
+          dynamicforms.showDialog($(dialogHTML));
+        })
+        .fail(function (xhr, status, error) {
+          dynamicforms.showAjaxError(xhr, status, error);
+        });
     }
     else
       window.location = recordURL;
@@ -274,16 +273,16 @@ dynamicforms = {
   deleteRow: function deleteRow(recordURL) {
     //TODO: Ask user for confirmation
     $.ajax({
-      url: recordURL,
+      url:    recordURL,
       method: 'DELETE',
     })
-        .done(function (dialogHTML) {
-          console.log('Record successfully deleted.');
-          //  TODO: make a proper notification
-        })
-        .fail(function (xhr, status, error) {
-          dynamicforms.showAjaxError(xhr, status, error);
-        });
+      .done(function (dialogHTML) {
+        console.log('Record successfully deleted.');
+        //  TODO: make a proper notification
+      })
+      .fail(function (xhr, status, error) {
+        dynamicforms.showAjaxError(xhr, status, error);
+      });
   },
 
   /**
@@ -339,9 +338,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-        function (fieldID) {
-          dynamicforms.field_helpers.del(fieldID);
-        }
+      function (fieldID) {
+        dynamicforms.field_helpers.del(fieldID);
+      }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -350,7 +349,7 @@ dynamicforms = {
    **************************************************************/
 
   // A helper obj containing all getters, setters, previous onchanging values, etc.
-  field_helpers: new TLD(),
+  field_helpers:          new TLD(),
 
   /**
    * fieldChange function is called whenever field's value changes. Some fields support even "changing" events where
@@ -370,23 +369,23 @@ dynamicforms = {
   fieldChange: function fieldChange(fieldID, final) {
     dynamicforms._checkFinalParam(final);
 
-    var field = dynamicforms.field_helpers.get(fieldID),
-        $field = field.$field,
-        $form = field.$form,
-        newValue = field.getValue($field),
+    var field       = dynamicforms.field_helpers.get(fieldID),
+        $field      = field.$field,
+        $form       = field.$form,
+        newValue    = field.getValue($field),
         oldValue,
         newFormData = dynamicforms.getSerializedFormFinal($form, final),
         oldFormData = {};
 
     // Copy the current form values to "old" object and adjust the current values with the change
     $.extend(true, oldFormData, newFormData);
-    var field_name = $field.attr('name');
-    oldValue = newFormData[field_name];
+    var field_name          = $field.attr('name');
+    oldValue                = newFormData[field_name];
     newFormData[field_name] = newValue;
 
     // Process the change if there was any
     if (oldValue != newValue)
-      dynamicforms.processChangedFields([fieldID], oldFormData, newFormData);
+      dynamicforms.processChangedFields(final, [fieldID], oldFormData, newFormData);
   },
 
   /**
@@ -402,19 +401,19 @@ dynamicforms = {
 
     //Apply field actions
     $.each(fields, function (idx, fieldID) {
-      var field = dynamicforms.field_helpers.get(fieldID),
-          $field = field.$field,
+      var field      = dynamicforms.field_helpers.get(fieldID),
+          $field     = field.$field,
           field_name = $field.attr('name'),
-          $form = field.$form,
-          formID = $form.attr('id');
+          $form      = field.$form,
+          formID     = $form.attr('id');
 
       if (changedHelper.get(formID, 'visibility') == undefined) {
         // Remember current field visibility
-        changedHelper.set(formID, 'visibility', dynamicforms.getVisibleFields(formId));
+        changedHelper.set(formID, 'visibility', dynamicforms.getVisibleFields(formID));
         changedHelper.set(formID, 'old', newFormData);
       }
-      console.log('Field "' + field_name + '" value has changed. Triggering actions');
-      var actions = dynamicforms.form_helpers.get(formId, 'actions_' + fieldID);
+      // console.log('Field "' + field_name + '" value has changed. Triggering actions');
+      var actions = dynamicforms.form_helpers.get(formID, 'actions_' + fieldID);
       if (actions) {
         $.each(actions, function (idx, action) {
           // TODO med izvajanjem actionov je verjetno bolje, če se onchange ne procesira
@@ -423,16 +422,27 @@ dynamicforms = {
       }
     });
 
-    $.each(changedHelper.storage, function(formID, ignored) {
-      var $form = $('#' + formID),
-      // Get new field values & visibility
-          newFormData = dynamicforms.getSerializedFormFinal($form, final),
-          newVisibility = dynamicforms.getVisibleFields(formId);
+    $.each(changedHelper.storage, function (formID, ignored) {
+      var $form         = $('#' + formID),
+          // Get new field values & visibility
+          oldFormData   = changedHelper.get(formID, 'old'),
+          newFormData   = dynamicforms.getSerializedFormFinal($form, final),
+          oldVisibility = changedHelper.get(formID, 'visibility'),
+          newVisibility = dynamicforms.getVisibleFields(formID),
+          changedFields = [];
 
       // get diff for visibility & union it with diff for field values
+      $.each(dynamicforms.form_helpers.get(formID, 'fields'), function (fieldID, field) {
+        if (
+          ($.inArray(fieldID, oldVisibility) != -1) != ($.inArray(fieldID, newVisibility) != -1) ||
+          (newFormData[field.name] != oldFormData[field.name])
+        ) {
+          changedFields.push(fieldID);
+        }
+      });
 
       // go through all fields and run their actions if either their value or their visibility is changed
-
+      processChangedFields(final, changedFields, oldFormData, newFormData);
     });
   },
 
@@ -455,7 +465,7 @@ dynamicforms = {
    * @param func: function to be called for getting current field value
    */
   registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
-    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.getValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -467,7 +477,7 @@ dynamicforms = {
    * @param func: function to be called for setting current field value
    */
   registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
-    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.setValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -481,12 +491,12 @@ dynamicforms = {
   updateFieldHelpers: function updateFieldHelpers(formID, fieldID, field) {
     if (field.$field == undefined) {
       field.$field = $('#' + fieldID);
-      field.$form = $('#' + formID);
-      field.name = field.$field.attr('name');
+      field.$form  = $('#' + formID);
+      field.name   = field.$field.attr('name');
     }
-    var form_fields = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    form_fields[fieldID] = field;
-    var field_ids = dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
+    var form_fields       = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
+    form_fields[fieldID]  = field;
+    var field_ids         = dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
     field_ids[field.name] = fieldID;
   },
 
@@ -531,7 +541,7 @@ dynamicforms = {
    */
   fieldSetVisible: function fieldSetVisible(field, visible) {
     //TODO: tukaj je treba še preverit nadrejeni container, če je vse v njem skrito. Če je, je treba skrit tudi njega
-    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     $field.parents('#container-' + fieldID).toggle(visible);
   },
@@ -544,10 +554,19 @@ dynamicforms = {
    * @return: boolean true for visible, false for hidden
    */
   fieldIsVisible: function fieldIsVisible(field) {
-    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     return $field.parents('#container-' + fieldID).is(":visible");
   },
+
+  getVisibleFields: function getVisibleFields(formID) {
+    var res = [];
+    $.each(dynamicforms.form_helpers.get(formID, 'fields'), function (fieldID, field) {
+      if (dynamicforms.fieldIsVisible(field.$field))
+        res.push(fieldID);
+    });
+    return res;
+  }
 };
 
 $(document).ready(function () {
