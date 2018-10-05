@@ -43,8 +43,11 @@ class HiddenFields(models.Model):
         ('pcs', 'Pieces'),
         ('wt', 'Weight'),
         ('cst', 'Custom'),
-    ))
-    int_fld = models.IntegerField(verbose_name='Quantity')
-    qty_fld = models.FloatField(verbose_name='Weight', help_text='Fell free to use a decimal point / comma')
-    cst_fld = models.CharField(max_length=80, verbose_name='Comment', help_text='Enter additional info here')
-    additional_text = models.CharField(max_length=80, help_text='Now that you have shown me, please enter something')
+    ), null=True, blank=True)
+    int_fld = models.IntegerField(verbose_name='Quantity', null=True, blank=True)
+    qty_fld = models.FloatField(verbose_name='Weight', null=True, blank=True,
+                                help_text='Fell free to use a decimal point / comma')
+    cst_fld = models.CharField(max_length=80, verbose_name='Comment', null=True, blank=True,
+                               help_text='Enter additional info here')
+    additional_text = models.CharField(max_length=80, null=True, blank=True,
+                                       help_text='Now that you have shown me, please enter something')
