@@ -175,15 +175,20 @@ dynamicforms = {
     dynamicforms.serializeForm($form, 'final');
 
     var data = dynamicforms.getSerializedForm($form, 'final');
-
     var method = data['data-dynamicforms-method'] || 'POST';
+    var headers = {'X-DF-DIALOG': 'true'};
+
+    if ('csrfmiddlewaretoken' in data) {
+      headers['X-CSRFToken'] = data.csrfmiddlewaretoken;
+      delete data.csrfmiddlewaretoken;
+    }
 
     $.ajax({
       type:     method,
       url:      $form.attr("action"),
       data:     data,
       dataType: 'html',
-      headers:  {'X-DF-DIALOG': 'true'},
+      headers:  headers,
     })
       .done(function () {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
