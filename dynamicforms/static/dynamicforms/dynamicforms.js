@@ -174,8 +174,8 @@ dynamicforms = {
     // TODO: this will not be required once all the fields have their onChange events in place
     dynamicforms.serializeForm($form, 'final');
 
-    var data = dynamicforms.getSerializedForm($form, 'final');
-    var method = data['data-dynamicforms-method'] || 'POST';
+    var data    = dynamicforms.getSerializedForm($form, 'final');
+    var method  = data['data-dynamicforms-method'] || 'POST';
     var headers = {'X-DF-DIALOG': 'true'};
 
     if ('csrfmiddlewaretoken' in data) {
@@ -184,12 +184,12 @@ dynamicforms = {
     }
 
     $.ajax({
-      type:     method,
-      url:      $form.attr("action"),
-      data:     data,
-      dataType: 'html',
-      headers:  headers,
-    })
+             type:     method,
+             url:      $form.attr("action"),
+             data:     data,
+             dataType: 'html',
+             headers:  headers,
+           })
       .done(function () {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
@@ -257,9 +257,9 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_dialog=true';
       $.ajax({
-        url:     recordURL,
-        headers: {'X-DF-DIALOG': 'true'},
-      })
+               url:     recordURL,
+               headers: {'X-DF-DIALOG': 'true'},
+             })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML));
         })
@@ -278,9 +278,9 @@ dynamicforms = {
   deleteRow: function deleteRow(recordURL) {
     //TODO: Ask user for confirmation
     $.ajax({
-      url:    recordURL,
-      method: 'DELETE',
-    })
+             url:    recordURL,
+             method: 'DELETE',
+           })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -304,6 +304,8 @@ dynamicforms = {
   /**************************************************************
    * Form current values support functions
    **************************************************************/
+
+  df_tbl_pagination: new TLD(),
 
   form_helpers: new TLD(),
 
@@ -343,9 +345,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-      function (fieldID) {
-        dynamicforms.field_helpers.del(fieldID);
-      }
+           function (fieldID) {
+             dynamicforms.field_helpers.del(fieldID);
+           }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -571,7 +573,76 @@ dynamicforms = {
         res.push(fieldID);
     });
     return res;
-  }
+  },
+
+  paginator_init_table: function paginator_init(serializer_uuid, link_next, link_prev) {
+    if (link_next != "") {
+      dynamicforms.df_tbl_pagination.set(serializer_uuid, 'link_next', link_next);
+      var table_rows = $("#list-" + serializer_uuid).find("tbody:first").find("tr");
+      dynamicforms.df_tbl_pagination.set(serializer_uuid, 'trigger_element', table_rows[0]);
+    }
+  },
+
+  paginator_check_get_next_page: function check_get_next_page(serializer_uuid) {
+    var trigger_element = dynamicforms.df_tbl_pagination.get(serializer_uuid, 'trigger_element');
+
+    if (trigger_element != null) {
+      var rect = trigger_element.getBoundingClientRect();
+
+      if (rect.top <= (window.innerHeight || document.documentElement.clientHeight))
+        dynamicforms.paginator_get_next_page(serializer_uuid);
+
+      //TODO: Preveri zgornji in spodnji način v večih scrollih naenkrat
+      //   var top_of_element    = trigger_element.offset().top;
+      //   var bottom_of_element = top_of_element + trigger_element.outerHeight();
+      //   var top_of_screen     = $(window).scrollTop();
+      //   var bottom_of_screen  = top_of_screen + window.innerHeight;
+      //
+      //   if (bottom_of_screen > top_of_element) {
+      //     dynamicforms.paginator_get_next_page(serializer_uuid);
+      //   }
+    }
+  },
+
+  paginator_get_next_page: function next_page(serializer_uuid) {
+    var tbl_pagination = dynamicforms.df_tbl_pagination.get(serializer_uuid, undefined);
+    var link_next      = tbl_pagination.link_next;
+    if (link_next != null && link_next != tbl_pagination.last_link_next) {
+      tbl_pagination.last_link_next = link_next;
+      $("#loading-" + serializer_uuid).show();
+      $.ajax({
+               type:    'GET',
+               headers: {"X-CSRFToken": csrf_token},
+               url:     link_next,
+             }).done(function (data) {
+        var table                = $("#list-" + serializer_uuid).find("tbody:first");
+        data                     = $(data).filter("tr");
+        tbl_pagination.link_next = data[0].getAttribute('data-next');
+        // remove elements, that are already shown - in case of new data insertion and order different than id.
+        for (var i = data.length - 1; i >= 0; i--) {
+          var data_id = data[i].getAttribute('data-id');
+          if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
+            data.splice(i, 1);
+        }
+        //TODO: Če pride NoData pomeni, da sem prišel do konca... ali sploh še probavam z nabiranjem podatkov?
+        $("#loading-" + serializer_uuid).hide();
+        if (data.length > 0) {
+          table.append(data);
+          tbl_pagination.trigger_element = data[0];
+        }
+        dynamicforms.paginator_check_get_next_page(serializer_uuid);
+      }).fail(function (xhr, status, error) {
+        $("#loading-" + serializer_uuid).hide();
+        console.log('Pagination failed.', xhr, status, error);
+        //  TODO: kaj če server vrne napako. Ali potem sploh še probava s paginacijo? (Naloga #100)
+      });
+    }
+  },
+
+  paginator_check_get_next_page_all: function paginator_check_get_next_page_all() {
+    for (var serializer_uuid in dynamicforms.df_tbl_pagination.storage)
+      dynamicforms.paginator_check_get_next_page(serializer_uuid);
+  },
 };
 
 $(document).ready(function () {
@@ -579,4 +650,6 @@ $(document).ready(function () {
   // TODO: Is this jQuery-specific? Will vue.js page also contain some kind of initializer or will everything just work?
   // TODO: also might be prudent to just move this to base_form.html. we already process dialogs separately...
   $.extend(dynamicforms, $('.dynamicforms-form').serializeForm(undefined, undefined, true));
+  window.setInterval(dynamicforms.paginator_check_get_next_page_all, 100);
 })
+

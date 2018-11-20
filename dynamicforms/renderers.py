@@ -21,9 +21,18 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
     """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        link_next = link_prev = ''
+
+        if isinstance(data, dict) and 'next' in data and 'results' in data and \
+                isinstance(data['results'], (ReturnList, ReturnDict)):
+            # This is in case of Pagination
+            link_next = data.get('next', '')
+            link_prev = data.get('previous', '')
+            data = data['results']
         if isinstance(data, (ReturnList, ReturnDict)):
             ser = data.serializer
-            data = dict(data=data, serializer=ser.child if isinstance(ser, ListSerializer) else ser)
+            data = dict(data=data, serializer=ser.child if isinstance(ser, ListSerializer) else ser,
+                        link_next=link_next, link_prev=link_prev)
 
             if getattr(ser, '_errors', {}):
                 # unmark exception from response because this was a validation error

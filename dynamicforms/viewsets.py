@@ -55,7 +55,7 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
        * To render an existing record (for editing) use pk={record_id}.
     """
 
-    template_context = { }
+    template_context = {}
     """
     template_context provides configuration to renderers & templates
     """
@@ -67,8 +67,14 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         res = super().list(request, *args, **kwargs)
         # this relies on TemplateHTMLRenderer.get_template_names which first checks for template declared in Response
-        if getattr(self, 'template_name_list', None):
-            res.template_name = self.template_name_list
+        # TODO: to bo hendlal že list template, ko bo narejena naloga za prerazporeditev template-ov na Ser, View, Rendr
+        #   takrat boš samo nastavil neko spremenljivko v ViewSet in jo potem dodal v context
+        if request.query_params.get('cursor', '') != '':
+            if getattr(self, 'template_name_table_body', None):
+                res.template_name = self.template_name_table_body
+        else:
+            if getattr(self, 'template_name_list', None):
+                res.template_name = self.template_name_list
         return res
 
     def initialize_request(self, request, *args, **kwargs):

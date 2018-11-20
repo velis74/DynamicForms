@@ -11,6 +11,12 @@ from ..struct import Struct
 register = template.Library()
 
 
+@register.filter(name='dict_item')
+def dict_item(d, k):
+    """Returns the given key from a dictionary."""
+    return d[k]
+
+
 # just copy the template tags that are the same as we're not redeclaring them
 # note that simply copying the filters didn't work: django kept complaining about parameters. So now it's verbatim copy
 @register.filter
@@ -127,8 +133,9 @@ def table_columns_count(serializer):
     """
     actions = serializer.controls.actions
 
-    return len(serializer.fields) + 1 if any(action.position == "rowend" for action in actions) else 0 + 1 if any(
-        action.position == "rowstart" for action in actions) else 0
+    return len([f for f in serializer.fields.values() if f.visible_in_table]) \
+        + (1 if any(action.position == "rowend" for action in actions) else 0) \
+        + (1 if any(action.position == "rowstart" for action in actions) else 0)
 
 
 @register.simple_tag(takes_context=True)
@@ -158,8 +165,9 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                 rowrclick = action.action
         else:
             if field_name is None or (action.field_name == field_name):
-                ret += '<button class="btn btn-info" onClick="{stop_propagation} {action}">{label}</button>'. \
-                    format(stop_propagation=stop_propagation, action=action.action, label=action.label)
+                ret += '<button class="btn btn-info" onClick="{stop_propagation} {action}">' \
+                       '<img src="{icon}"/>{label}</button>'. \
+                    format(stop_propagation=stop_propagation, action=action.action, label=action.label, icon=action.icon)
 
     if ret != '':
         if 'rowclick' not in position:

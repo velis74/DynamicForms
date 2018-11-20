@@ -87,6 +87,9 @@ class RenderToTableMixin(object):
     """
     Used for rendering individual field to table view
     """
+    def __init__(self, *args, visible_in_table: bool=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.visible_in_table = visible_in_table
 
     def render_to_table(self, value):
         """
