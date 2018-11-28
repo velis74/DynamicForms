@@ -29,7 +29,7 @@ class ValidatedPageTest(TestCase):
 
     def testPOSTing_a_new_record(self):
         response = self.client.post(
-            '/validated.html?df_dialog=true',
+            '/validated.html?df_render_type=dialog',
             # self.base_url.format("new", "/"),
             {'code': "123", 'enabled': True, 'amount': 7, 'item_type': 2, 'item_flags': 'A'})
         self.assertEqual(response.status_code, 201)
@@ -41,7 +41,7 @@ class ValidatedPageTest(TestCase):
         our_record = Validated.objects.create(code="12345", enabled=True, amount=5, item_type=1, item_flags='B')
 
         response = self.client.put(
-            self.base_url.format(our_record.id, ".html?df_dialog=true"),
+            self.base_url.format(our_record.id, '.html?df_render_type=dialog'),
             '{"code": "12345", "enabled": false, "amount": 5, "item_type": 1, "item_flags": "B"}',
             content_type='application/json')
         self.assertEqual(response.status_code, 200)

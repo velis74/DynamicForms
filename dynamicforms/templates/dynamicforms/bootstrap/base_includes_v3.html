@@ -8,4 +8,5 @@
 <script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
 <script type="application/javascript">
   dynamicforms.DF = {{ DF|json }}
+  dynamicforms.csrf_token = '{{ csrf_token }}';
 </script>

@@ -2,6 +2,9 @@ from django.http import Http404
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.serializers import ListSerializer
+from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
+from dynamicforms.settings import TEMPLATE
 from .renderers import TemplateHTMLRenderer
 from .settings import BSVER_MODAL
 
@@ -57,34 +60,24 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
 
     template_context = {}
     """
-    template_context provides configuration to renderers & templates
+    template_context provides configuration to templates being rendered
     """
 
-    # TODO move templates to Serializer so that you can render it in django templates too
-    template_name = None  #: template filename for single record view (html renderer)
-    template_name_list = None  #: template filename for listing multiple records (html renderer)
+    template_name = TEMPLATE + 'base_list.html'  #: template filename for listing multiple records (html renderer)
 
-    def list(self, request, *args, **kwargs):
-        res = super().list(request, *args, **kwargs)
-        # this relies on TemplateHTMLRenderer.get_template_names which first checks for template declared in Response
-        # TODO: to bo hendlal že list template, ko bo narejena naloga za prerazporeditev template-ov na Ser, View, Rendr
-        #   takrat boš samo nastavil neko spremenljivko v ViewSet in jo potem dodal v context
-        if request.query_params.get('cursor', '') != '':
-            if getattr(self, 'template_name_table_body', None):
-                res.template_name = self.template_name_table_body
-        else:
-            if getattr(self, 'template_name_list', None):
-                res.template_name = self.template_name_list
-        return res
-
+    # noinspection PyAttributeOutsideInit
     def initialize_request(self, request, *args, **kwargs):
         # Caution: just to be sure for any future debugging: the request parameter to this function is a WSGIRequest
         #  while the return Request is actually DRF Request
         #  As a consequence, form values don't get parsed until you actually call super().initialize_request
         #  There's no "request.data", etc. Just saying. So you don't debug for two hours next time. By "you" I mean me
 
-        # noinspection PyAttributeOutsideInit
-        self.render_to_dialog = request.META.get('X-DF-DIALOG', request.GET.get('df_dialog', False))
+        # Force render using a given render path (full page, table, table rows, form, dialog with form)
+        self.render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
+
+        # This is an additional table records load
+        # TODO: change this to X-DF-RENDER-TYPE
+        self.render_rows_only = hasattr(request, 'query_params') and request.query_params.get('cursor', '') != ''
 
         if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
@@ -93,6 +86,47 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
 
     def finalize_response(self, request, response, *args, **kwargs):
         res = super().finalize_response(request, response, *args, **kwargs)
-        if self.render_to_dialog and isinstance(res.accepted_renderer, TemplateHTMLRenderer):
-            res.template_name = BSVER_MODAL
+
+        if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
+            if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
+                    isinstance(res.data['results'], (ReturnList, ReturnDict)):
+                serializer = res.data['results'].serializer
+            else:
+                serializer = res.data.serializer
+
+            if isinstance(serializer, ListSerializer):
+                serializer.child.render_type = self.render_type
+            else:
+                serializer.render_type = self.render_type
+
+            if self.render_type in ('table', 'table rows'):
+                serializer.data_template = self.template_name
+            elif self.render_type == 'dialog':
+                serializer.data_template = BSVER_MODAL
+                res.template_name = BSVER_MODAL
+            elif self.render_type == 'form':
+                serializer.data_template = res.data.serializer.template_name
+            elif self.render_rows_only:
+                serializer.data_template = self.template_name
+                res.template_name = self.template_name
+                serializer.render_rows_only = self.render_rows_only
+            else:
+                if isinstance(serializer, ListSerializer):
+                    serializer.child.render_type = 'table'
+                    serializer.child.data_template = self.template_name
+                else:
+                    serializer.render_type = 'form'
+                    serializer.data_template = serializer.template_name
+
         return res
+
+    @staticmethod
+    def generate_paged_loader(page_size: int = 30):
+        from rest_framework.pagination import CursorPagination
+        ps = page_size
+
+        class MyCursorPagination(CursorPagination):
+            ordering = 'id'
+            page_size = ps
+
+        return MyCursorPagination

@@ -1,4 +1,5 @@
 {% load dynamicforms %}
+{% if serializer.render_type != 'table rows' %}
 <table id="list-{{ serializer.uuid }}" class="table table-striped">
   <thead>
   <tr>
@@ -12,8 +13,10 @@
   </tr>
   </thead>
   <tbody>
+{% endif %}
     {% set_var template_table_body=DF.TEMPLATE|add:'base_table_body.html' %}
     {% include template_table_body %}
+{% if serializer.render_type != 'table rows' %}
   </tbody>
   <tfoot>
     <tr id="loading-{{ serializer.uuid }}" style="display: none">
@@ -26,3 +29,4 @@
 <script type="application/javascript">
   dynamicforms.paginator_init_table("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
 </script>
+{% endif %}

@@ -43,13 +43,17 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
 
         return super().render(data, accepted_media_type, renderer_context)
 
+    def get_template_names(self, response, view):
+        if view.render_type == 'page' and settings.PAGE_TEMPLATE:
+            return [settings.PAGE_TEMPLATE]
+        return super().get_template_names(response, view)
+
     def get_template_context(self, data, renderer_context):
         res = super().get_template_context(data, renderer_context)
         view = renderer_context['view']
         if hasattr(view, 'template_context'):
             res.update(view.template_context)
-        res['df_dialog'] = getattr(view, 'render_to_dialog', False)
-
+        res['df_render_type'] = view.render_type  # This one should not fail because it's set in initialize_request
         res['DF'] = settings.CONTEXT_VARS
         return res
 

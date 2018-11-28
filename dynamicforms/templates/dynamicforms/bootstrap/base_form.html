@@ -1,33 +1,29 @@
 {% load dynamicforms %}
 
-{% set_var_conditional action_postfix='?df_dialog=true' condition=df_dialog else_value='' %}
+{% set_var_conditional action_postfix='?df_render_type=dialog' condition_var=df_render_type compare='dialog' else_value='' %}
+{% if data.id %}
+{% url url_reverse|add:'-detail' pk=data.id format='html' as form_action %}
+{% else %}
+{% url url_reverse|add:'-list' format='html' as form_action %}
+{% endif %}
 
-<form id="{{ serializer.uuid }}"
-      class="dynamicforms-form"
-      {% if data.id %}
-      action="{% url url_reverse|add:'-detail' pk=data.id format='html' %}{{ action_postfix }}"
-      {% else %}
-      action="{% url url_reverse|add:'-list' format='html' %}{{ action_postfix }}"
-      {% endif %}
-      method="POST">
+<form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
 
 {% if data.id %}
-  {% comment %}
-  This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
-  {% endcomment %}
+  {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
   <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
 {% endif %}
     {% csrf_token %}
     {% set_var template_pack=DF.TEMPLATE|add:'field' %}
     {% render_form serializer template_pack=template_pack %}
-    {% if not df_dialog %}
+    {% if df_render_type != 'dialog' %}
     <div class="form-group">&nbsp;
       <input type="submit" value="Save" class="btn btn-primary float-right">
     </div>
     {% endif %}
 </form>
 <script type="application/javascript">
-  {% comment %}TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.{% endcomment %}
+  {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}
   {% block field_actions %}
     {% for action in serializer.action_register_js %}
   var action_func{{ action.action_id }} = {{ action.action_js }};

@@ -51,3 +51,10 @@ class HiddenFields(models.Model):
                                help_text='Enter additional info here')
     additional_text = models.CharField(max_length=80, null=True, blank=True,
                                        help_text='Now that you have shown me, please enter something')
+
+
+class PageLoad(models.Model):
+    """
+    Shows how DynamicForms handles dynamic loading of many records in ViewSet result
+    """
+    description = models.CharField(max_length=20, help_text='Item description')

@@ -3,6 +3,7 @@ from django.db import models
 from rest_framework import serializers
 
 from dynamicforms.action import ActionControls
+from dynamicforms.settings import TEMPLATE
 from .fields import *
 from .mixins import UUIDMixIn, ActionMixin
 
@@ -66,7 +67,13 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     serializer_url_field = HyperlinkedIdentityField
     serializer_choice_field = ChoiceField
 
+    template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
+    form_titles = {
+        'table': '',
+        'new': '',
+        'edit': '',
+    }
 
     @property
     def has_non_field_errors(self):
@@ -79,3 +86,16 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
         if hasattr(self, '_errors'):
             return 'non_field_errors' in self.errors
         return False
+
+    @property
+    def page_title(self):
+        """
+        Returns page title from form_titles based on the rendered data
+        :return string: page title
+        """
+        if self.render_type == 'table':
+            return self.form_titles.get('table', '')
+        elif self.data.get('id', None):
+            return self.form_titles.get('edit', '')
+        else:
+            return self.form_titles.get('new', '')

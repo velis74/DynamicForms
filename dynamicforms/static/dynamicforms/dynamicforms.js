@@ -176,7 +176,7 @@ dynamicforms = {
 
     var data    = dynamicforms.getSerializedForm($form, 'final');
     var method  = data['data-dynamicforms-method'] || 'POST';
-    var headers = {'X-DF-DIALOG': 'true'};
+    var headers = {'X-DF-RENDER-TYPE': 'dialog'};
 
     if ('csrfmiddlewaretoken' in data) {
       headers['X-CSRFToken'] = data.csrfmiddlewaretoken;
@@ -255,10 +255,10 @@ dynamicforms = {
    */
   editRow: function editRow(recordURL) {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
-      recordURL += '?df_dialog=true';
+      recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
                url:     recordURL,
-               headers: {'X-DF-DIALOG': 'true'},
+               headers: {'X-DF-RENDER-TYPE': 'dialog'},
              })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML));
@@ -612,7 +612,7 @@ dynamicforms = {
       $("#loading-" + serializer_uuid).show();
       $.ajax({
                type:    'GET',
-               headers: {"X-CSRFToken": csrf_token},
+               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
                url:     link_next,
              }).done(function (data) {
         var table                = $("#list-" + serializer_uuid).find("tbody:first");

@@ -197,6 +197,12 @@ def render_table_commands(context, serializer, position, field_name=None, table_
 
 
 @register.simple_tag(takes_context=True)
+def get_data_template(context):
+    serializer = context['serializer']
+    return serializer.data_template
+
+
+@register.simple_tag(takes_context=True)
 def set_var(context, **kwds):
     """
     Sets the given variables to provided values. Kind of like the 'with' block, only it isn't a block tag
@@ -211,16 +217,20 @@ def set_var(context, **kwds):
 
 
 @register.simple_tag(takes_context=True)
-def set_var_conditional(context, condition=None, else_value=None, **kwds):
+def set_var_conditional(context, condition=None, condition_var=None, compare=None, else_value=None, **kwds):
     """
     Sets the given variables to provided values. Kind of like the 'with' block, only it isn't a block tag
 
     :param context: template context (automatically provided by django)
     :param kwds: named parameters with their respective values
-    :param condition: a value which specifies the original assignment if truthy or else_value if falsy
+    :param condition_var: pair with compare to obtain True or False whether to use original assignment or else_value
+    :param compare: pair with condition_var to obtain True or False whether to use original assignment or else_value
+    :param condition: alternative to condition_var & compare: original assignment if truthy or else_value if falsy
     :param else_value: value to be assigned to the variable(s) when condition is falsy
     :return: this tag doesn't render
     """
+    if condition_var is not None:
+        condition = condition_var == compare
     for k, v in kwds.items():
         context[k] = v if condition else else_value
     return ''
