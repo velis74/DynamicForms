@@ -1,8 +1,10 @@
 What is DynamicForms?
 =====================
 
-DynamicForms is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form fields, auto-filled default values
-and similar candy with little to zero effort.
+DynamicForms is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
+fields, auto-filled default values, dynamic record loading and similar candy with little effort. To put it differently:
+once defined, a particular ViewSet / Serializer can be rendered in any way required to allow you to perform viewing and
+authoring operations on the data in question.
 
 It is based on `django-rest-framework <http://www.django-rest-framework.org/>`_
 
@@ -14,6 +16,8 @@ Why DynamicForms
 
    * Support for fetching “new” records, both in JSON or in HTML
    * Render to HTML, dialog html or from your own template
+   * Render form (embedded or dialog) or table, depending on situation
+   * Easily add actions and place the buttons to execute them anywhere you like
 
 * Clear separation of list & dialog templates
 * Dynamic loading of additional records for table views

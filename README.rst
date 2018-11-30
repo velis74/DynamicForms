@@ -1,0 +1,131 @@
+.. intro.rst
+
+What is DynamicForms?
+=====================
+
+DynamicForms is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
+fields, auto-filled default values, dynamic record loading and similar candy with little effort. To put it differently:
+once defined, a particular ViewSet / Serializer can be rendered in any way required to allow you to perform viewing and
+authoring operations on the data in question.
+
+It is based on `django-rest-framework <http://www.django-rest-framework.org/>`_
+
+Why DynamicForms
+----------------
+
+* Turn your rest-framework ViewSets into HTML forms
+* Powerful HTML based CRUD
+
+   * Support for fetching “new” records, both in JSON or in HTML
+   * Render to HTML, dialog html or from your own template
+   * Render form (embedded or dialog) or table, depending on situation
+   * Easily add actions and place the buttons to execute them anywhere you like
+
+* Clear separation of list & dialog templates
+* Dynamic loading of additional records for table views
+* Action items, declared globally, placed where you need them
+* Custom templates whenever & wherever you want them
+* Render to full html or work with dialogs within same page or both at the same time
+* Each form and field have a unique HTML id for easy finding & manipulation
+* Bootstrap 3 & 4 templates, jQuery UI coming soon, easy to make your own or enhance existing
+* Support for form validation, will show errors even if they are not tied to a field
+* Convenient JS functions for easier action scripting
+
+.. guides/quick_start.rst
+
+Quick start guide
+=================
+
+.. code-block:: bash
+
+   pip install dynamicforms
+
+Then you need to Activate DynamicForms in DRF.
+
+Also make sure you specify a proper base page template DYNAMICFORMS_PAGE_TEMPLATE - see below for an
+example).
+
+DynamicForms has been designed to cause minimal disruption to your existing code patterns.
+
+So instead of DRF ModelViewSet just use DynamicForms ModelViewSet, instead of ModelSerializer - DynamicForms
+ModelSerializer.
+
+Currently only the dynamicforms.viewsets.ModelViewSet is supported for ViewSets. We have others planned,
+but not implemented yet.
+
+.. code-block:: python
+   :caption: examples/rest/page_load.py
+   :name: examples/rest/page_load.py
+
+   from dynamicforms import serializers, viewsets
+   from ..models import PageLoad
+
+
+   class PageLoadSerializer(serializers.ModelSerializer):
+       form_titles = {
+           'table': 'Dynamic page loader list',
+           'new': 'New object',
+           'edit': 'Editing object',
+       }
+
+       class Meta:
+           model = PageLoad
+           exclude = ()
+
+
+   class PageLoadViewSet(viewsets.ModelViewSet):
+       template_context = dict(url_reverse='page-load')
+       pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
+
+       queryset = PageLoad.objects.all()
+       serializer_class = PageLoadSerializer
+
+
+.. code-block:: python
+   :caption: examples/models.py  (excerpt)
+   :name: examples/models.py
+
+   from django.db import models
+
+   class PageLoad(models.Model):
+       """
+       Shows how DynamicForms handles dynamic loading of many records in ViewSet result
+       """
+       description = models.CharField(max_length=20, help_text='Item description')
+
+
+Following is an example page template to render straight router URLs. The emphasized lines show the lines that obtain
+and render the actual data, be it table or form. See DYNAMICFORMS_PAGE_TEMPLATE.
+
+.. code-block:: django
+   :caption: examples/templates/examples/page.html
+   :name: examples/templates/examples/page.html
+   :emphasize-lines: 12, 17, 20
+
+   {% extends 'examples/base.html' %}
+   {% load dynamicforms %}
+   {% block title %}
+     {{ serializer.page_title }}
+   {% endblock %}
+   {% block body %}
+     {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
+       {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
+     {% else %}
+       {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
+     {% endif %}
+     {% get_data_template as data_template %}
+
+   <div class="{{ card_class }}" style="display: inline-block; margin: 1em">
+     <div class="{{ card_header }}">
+       {{ serializer.page_title }}
+       {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+     </div>
+     <div class="{{ card_body }}">
+       {% include data_template with serializer=serializer data=data %}
+     </div>
+   </div>
+   {% endblock %}
+
+
+Done. Point your DRF router to the ViewSet you just created and your browser to its URL - make sure you add ".html" to
+the URL to specify the renderer. If you forget that, you will get DRF's API renderer.
