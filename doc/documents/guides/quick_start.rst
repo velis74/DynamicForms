@@ -1,45 +1,96 @@
 Quick start guide
 =================
 
-.. code-block:: python
+.. code-block:: bash
 
    pip install dynamicforms
 
-First, you need to :ref:`Activate DynamicForms in DRF <Activate_DynamicForms_in_DRF>`.
+Then you need to :ref:`Activate DynamicForms in DRF <Activate_DynamicForms_in_DRF>`.
+
+Also make sure you specify a proper base page template (:py:data:`DYNAMICFORMS_PAGE_TEMPLATE` - see below for an
+example).
 
 DynamicForms has been designed to cause minimal disruption to your existing code patterns.
 
-So instead of DRF ModelViewSet just use DynamicForms ModelViewSet.
+So instead of DRF ModelViewSet just use DynamicForms ModelViewSet, instead of ModelSerializer - DynamicForms
+ModelSerializer.
 
-.. todo:: Provide a code example showing how a simple Serializer / ViewSet configuration might look like.
-
-
-Requirements for running tests
-------------------------------
+Currently only the :py:class:`~dynamicforms.viewsets.ModelViewSet` is supported for ViewSets. We have others planned,
+but not implemented yet.
 
 .. code-block:: python
+   :caption: examples/rest/page_load.py
+   :name: examples/rest/page_load.py
 
-   pip install selenium
+   from dynamicforms import serializers, viewsets
+   from ..models import PageLoad
 
-Gecko driver
-************
 
-Geckodriver is needed for the functional tests. It is available from https://github.com/mozilla/geckodriver/releases.
-You need to download and extract it and put it somewhere on your system path.
+   class PageLoadSerializer(serializers.ModelSerializer):
+       form_titles = {
+           'table': 'Dynamic page loader list',
+           'new': 'New object',
+           'edit': 'Editing object',
+       }
 
-For macOS or Linux, one convenient place to put it is ~/.local/bin
+       class Meta:
+           model = PageLoad
+           exclude = ()
 
-For Windows, put it in your Python Scripts folder
 
-To test that you’ve got this working, open up a Bash console and you should be able to run:
+   class PageLoadViewSet(viewsets.ModelViewSet):
+       template_context = dict(url_reverse='page-load')
+       pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
 
-.. code-block:: bash
+       queryset = PageLoad.objects.all()
+       serializer_class = PageLoadSerializer
 
-   geckodriver --version
-   geckodriver 0.17.0
 
-The source code of this program is available at https://github.com/mozilla/geckodriver.
+.. code-block:: python
+   :caption: examples/models.py  (excerpt)
+   :name: examples/models.py
 
-This program is subject to the terms of the Mozilla Public License 2.0.
+   from django.db import models
 
-You can obtain a copy of the license at https://mozilla.org/MPL/2.0/.
+   class PageLoad(models.Model):
+       """
+       Shows how DynamicForms handles dynamic loading of many records in ViewSet result
+       """
+       description = models.CharField(max_length=20, help_text='Item description')
+
+
+Following is an example page template to render straight router URLs. The emphasized lines show the lines that obtain
+and render the actual data, be it table or form. See :py:data:`DYNAMICFORMS_PAGE_TEMPLATE`.
+
+.. code-block:: django
+   :caption: examples/templates/examples/page.html
+   :name: examples/templates/examples/page.html
+   :emphasize-lines: 12, 17, 20
+
+   {% extends 'examples/base.html' %}
+   {% load dynamicforms %}
+   {% block title %}
+     {{ serializer.page_title }}
+   {% endblock %}
+   {% block body %}
+     {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
+       {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
+     {% else %}
+       {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
+     {% endif %}
+     {% get_data_template as data_template %}
+
+   <div class="{{ card_class }}" style="display: inline-block; margin: 1em">
+     <div class="{{ card_header }}">
+       {{ serializer.page_title }}
+       {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+     </div>
+     <div class="{{ card_body }}">
+       {% include data_template with serializer=serializer data=data %}
+     </div>
+   </div>
+   {% endblock %}
+
+
+Done. Point your DRF router to the ViewSet you just created and your browser to its URL - make sure you add ".html" to
+the URL to specify the renderer. If you forget that, you will get DRF's API renderer.

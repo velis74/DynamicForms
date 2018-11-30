@@ -18,12 +18,11 @@ def dict_item(d, k):
 
 
 # just copy the template tags that are the same as we're not redeclaring them
+# TODO: the following DRF filters pending removal?
 # note that simply copying the filters didn't work: django kept complaining about parameters. So now it's verbatim copy
 @register.filter
 def items(value):
     """
-    TODO: za skenslat?
-
     Simple filter to return the items of the dict. Useful when the dict may
     have a key 'items' which is resolved first in Django template dot-notation
     lookup. See DRF issue #4931
@@ -39,19 +38,19 @@ def add_nested_class(value):
 
 @register.filter
 def format_value(value):
-    # TODO: tegale je treba skenslat, ko bo narejena naloga #62 in #63
+    # TODO: this one pending removal on tasks #62 in #63 completion
     return drftt.format_value(value)
 
 
 @register.filter
 def as_string(value):
-    # TODO: tegale je treba skenslat, ko bo narejena naloga #62 in #63
+    # TODO: this one pending removal on tasks #62 in #63 completion
     return drftt.as_string(value)
 
 
 @register.filter
 def as_list_of_strings(value):
-    # TODO: tegale je treba skenslat, ko bo narejena naloga #62 in #63
+    # TODO: this one pending removal on tasks #62 in #63 completion
     return drftt.as_list_of_strings(value)
 
 
@@ -198,6 +197,12 @@ def render_table_commands(context, serializer, position, field_name=None, table_
 
 @register.simple_tag(takes_context=True)
 def get_data_template(context):
+    """
+    Returns template that should be used for rendering current serializer data
+
+    :param context: template context (automatically provided by django)
+    :return: template file name
+    """
     serializer = context['serializer']
     return serializer.data_template
 

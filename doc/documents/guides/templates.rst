@@ -5,14 +5,12 @@ Design
 ------
 
 Templates are organised in template packs for different UI libraries. DynamicForms provides template packs for
-bootstrap v3 / v4 and for jQuery.
+bootstrap v3 / v4 with jQuery UI templates pending.
 
 .. code-block:: python
    :name: settings.py
 
    DYNAMICFORMS_TEMPLATE = 'dynamicforms/bootstrap'
-   # or
-   DYNAMICFORMS_TEMPLATE = 'dynamicforms/jquery'
 
 
 Main template is base.html. HTML and its head tag are defined here. There are three blocks, that can be used in deriving
@@ -32,7 +30,7 @@ form (modal dialog or separate page) and can be edited there.
 Base_form.html can be used for rendering ViewSet in form mode. It shows one record, and if crud is enabled in Viewset,
 it can also be edited.
 
-Form can be shown as modal dialog. For that template which is defined in settings.pyBSVER_MODAL is used. When using
+Form can be shown as modal dialog. For that template which is defined in settings.py - BSVER_MODAL is used. When using
 bootstrap v4 default template is modal_dialog_v4.html.
 
 Template for dialog should have first div with »dynamicforms-dialog« class. JS searches for that to see if the response
@@ -42,4 +40,3 @@ For showing fields base template the one that is defined in settings.pyBSVER_
 template is field/base_field_v4.html. That template makes sure that the label, input, errors and help text is correctly
 shown. This template is extracted by templates that are used for rendering individual field types (e.g.: checkbox.html,
 input.html, radio.html, etc.)
-

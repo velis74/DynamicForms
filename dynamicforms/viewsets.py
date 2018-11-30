@@ -22,12 +22,13 @@ class NewMixin(object):
 
         :return: model instance
         """
-        # TODO: Tukaj moraš paziti, da je objekt pravilno postavljen glede na pravila
-        # Primer: če se plačnik nastavi iz pilota in tukaj prednapolniš pilota, potem poskrbi, da boš prednapolnil
-        # tudi plačnika.
-        #
-        # Kako pa to lahko naredimo?
-        # Predlog: retrieve, ko pokliče to funkcijo, naj tudi izvede "onchange" event za vsako polje in tako to napolni
+        # TODO: This function must return an object that has its field values correctly / realistically filled out
+        # Example: if a certain field's value hides (sets another field to None), then that second field can't be
+        # set to 42, can it?
+        # can we run some kind of validation to enforce this?
+        # Not that easy: the returned record may not validate for its (correctly) empty fields
+        # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
+        # If we do not, subsequent validation may fail because a hidden field has a value
         return self.get_queryset().model()
 
     # noinspection PyUnresolvedReferences
@@ -75,10 +76,6 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
         # Force render using a given render path (full page, table, table rows, form, dialog with form)
         self.render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
 
-        # This is an additional table records load
-        # TODO: change this to X-DF-RENDER-TYPE
-        self.render_rows_only = hasattr(request, 'query_params') and request.query_params.get('cursor', '') != ''
-
         if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
             request.method = request.POST.get('data-dynamicforms-method')
@@ -106,10 +103,6 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
                 res.template_name = BSVER_MODAL
             elif self.render_type == 'form':
                 serializer.data_template = res.data.serializer.template_name
-            elif self.render_rows_only:
-                serializer.data_template = self.template_name
-                res.template_name = self.template_name
-                serializer.render_rows_only = self.render_rows_only
             else:
                 if isinstance(serializer, ListSerializer):
                     serializer.child.render_type = 'table'
@@ -122,6 +115,13 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
 
     @staticmethod
     def generate_paged_loader(page_size: int = 30):
+        """
+        Generates a Pagination class that will handle dynamic data loading for ViewSets with a lot of data.
+        Use by declaring `pagination_class = ModelViewSet.generate_paged_loader()` in class variables
+
+        :param page_size: how many records should be fetched at a time
+        :return: a Pagination class
+        """
         from rest_framework.pagination import CursorPagination
         ps = page_size
 

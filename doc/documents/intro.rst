@@ -15,7 +15,9 @@ Why DynamicForms
    * Support for fetching “new” records, both in JSON or in HTML
    * Render to HTML, dialog html or from your own template
 
-* Easy separation of list & dialog templates
+* Clear separation of list & dialog templates
+* Dynamic loading of additional records for table views
+* Action items, declared globally, placed where you need them
 * Custom templates whenever & wherever you want them
 * Render to full html or work with dialogs within same page or both at the same time
 * Each form and field have a unique HTML id for easy finding & manipulation

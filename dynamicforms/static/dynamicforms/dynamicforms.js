@@ -423,7 +423,7 @@ dynamicforms = {
       var actions = dynamicforms.form_helpers.get(formID, 'actions_' + fieldID);
       if (actions) {
         $.each(actions, function (idx, action) {
-          // TODO med izvajanjem actionov je verjetno bolje, če se onchange ne procesira
+          // TODO while running actions, it's probably better not to process onchange
           action($form.attr('id'), newFormData, oldFormData, [fieldID]);
         });
       }
@@ -547,7 +547,7 @@ dynamicforms = {
    * @param visible: boolean specifying whether field should be visible
    */
   fieldSetVisible: function fieldSetVisible(field, visible) {
-    //TODO: tukaj je treba še preverit nadrejeni container, če je vse v njem skrito. Če je, je treba skrit tudi njega
+    //TODO: we need to check parent container if everything inside it is hidden. If there is, the parent container needs to hide too
     var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     $field.parents('#container-' + fieldID).toggle(visible);
@@ -592,7 +592,9 @@ dynamicforms = {
       if (rect.top <= (window.innerHeight || document.documentElement.clientHeight))
         dynamicforms.paginator_get_next_page(serializer_uuid);
 
-      //TODO: Preveri zgornji in spodnji način v večih scrollih naenkrat
+      //TODO: Check both methods of determining whether control item is showing (unit tests for one and the other?)
+      // problem with unit tests is that automated ones only run in Firefox
+
       //   var top_of_element    = trigger_element.offset().top;
       //   var bottom_of_element = top_of_element + trigger_element.outerHeight();
       //   var top_of_screen     = $(window).scrollTop();
@@ -624,7 +626,8 @@ dynamicforms = {
           if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
             data.splice(i, 1);
         }
-        //TODO: Če pride NoData pomeni, da sem prišel do konca... ali sploh še probavam z nabiranjem podatkov?
+        //TODO: If NoData comes back - i reached the end of dataset... doI even attempt further reading?
+        //  for log-type datasets where new data is frequently inserted, it might be useful.
         $("#loading-" + serializer_uuid).hide();
         if (data.length > 0) {
           table.append(data);
@@ -634,7 +637,7 @@ dynamicforms = {
       }).fail(function (xhr, status, error) {
         $("#loading-" + serializer_uuid).hide();
         console.log('Pagination failed.', xhr, status, error);
-        //  TODO: kaj če server vrne napako. Ali potem sploh še probava s paginacijo? (Naloga #100)
+        // TODO: what if the server returns an error? Do we continue with pagination? (Task #100)
       });
     }
   },

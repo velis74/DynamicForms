@@ -149,7 +149,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     self.assertTrue(field.tag_name == "select")
                     select.select_by_index(3)
                 elif label.text == "Item flags":  # ta mora biti select2...
-                    #     TODO: naredi preverjanja, ko bo implementiran select2
+                    # TODO: complete this test when we have select2 implemented
                     pass
                 elif field.get_attribute("name") in ('id',):
                     # Hidden fields

@@ -6,6 +6,7 @@ Like much of django-based libraries, DynamicForms is also configured from
 
 
 .. _Activate_DynamicForms_in_DRF:
+
 Activate DynamicForms in DRF
 ----------------------------
 
@@ -32,6 +33,13 @@ List of settings
 .. py:data:: DYNAMICFORMS_TEMPLATE
 
    Specifies the template pack that dynamicforms will use for rendering HTML forms, e.g. 'bootstrap', 'jQuery UI', etc.
+
+.. py:data:: DYNAMICFORMS_PAGE_TEMPLATE
+
+   Specifies the main page template to be used for plain rendering when you navigate to a ViewSet router URL.
+
+   Defaults to DYNAMICFORMS_TEMPLATE + 'page.html' (but currently, there's nothing there - see dynamicforms examples
+   on how to specify base page template)
 
 .. py:data:: DYNAMICFORMS_TEMPLATE_OPTIONS
 

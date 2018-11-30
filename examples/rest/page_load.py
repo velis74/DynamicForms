@@ -1,9 +1,5 @@
-from dynamicforms import serializers
-from dynamicforms.viewsets import ModelViewSet
+from dynamicforms import serializers, viewsets
 from ..models import PageLoad
-
-
-# TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
 
 
 class PageLoadSerializer(serializers.ModelSerializer):
@@ -18,10 +14,9 @@ class PageLoadSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
-class PageLoadViewSet(ModelViewSet):
-    template_name = 'dynamicforms/bootstrap/base_list.html'
+class PageLoadViewSet(viewsets.ModelViewSet):
     template_context = dict(url_reverse='page-load')
-    pagination_class = ModelViewSet.generate_paged_loader(30)
+    pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
 
     queryset = PageLoad.objects.all()
     serializer_class = PageLoadSerializer

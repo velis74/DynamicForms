@@ -25,7 +25,7 @@
   </tfoot>
 </table>
 {% render_table_commands serializer "onrowclick" %}
-{#TODO: Unit test: preveri, če se on click in on right click primerno nastavita, kadar se vrstice v tabeli dinamično nalagajo#}
+{#TODO: Unit test: check if on_click & on_right_click declare properly, when table rows dynamically load#}
 <script type="application/javascript">
   dynamicforms.paginator_init_table("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
 </script>

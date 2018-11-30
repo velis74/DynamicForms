@@ -3,13 +3,13 @@ from .struct import Struct
 
 MODULE_PREFIX = 'DYNAMICFORMS_'
 
-# PAGE_TEMPLATE specifies the basepage template to be used for TemplateHTMLRenderer
-PAGE_TEMPLATE = getattr(s, MODULE_PREFIX + 'PAGE_TEMPLATE', 'dynamicforms/bootstrap/page.html')
-
-
 # TEMPLATE specifies the template pack that dynamicforms will use for rendering HTML forms,
 # e.g. 'bootstrap', 'jQuery UI', etc.
 TEMPLATE = getattr(s, MODULE_PREFIX + 'TEMPLATE', 'dynamicforms/bootstrap/')
+
+# PAGE_TEMPLATE specifies the basepage template to be used for TemplateHTMLRenderer
+PAGE_TEMPLATE = getattr(s, MODULE_PREFIX + 'PAGE_TEMPLATE', TEMPLATE + 'page.html')
+
 
 # TEMPLATE_OPTIONS offers a chance to do some things in the template pack differently. It can be used for anything from
 # choosing version of the underlying framework (bootstrap 3 vs 4) or rendering various subsections differently

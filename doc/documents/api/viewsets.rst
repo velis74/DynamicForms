@@ -15,7 +15,7 @@ Class reference
 ---------------
 
 .. autoclass:: dynamicforms.viewsets.ModelViewSet
-   :members:
+   :members: generate_paged_loader
    :exclude-members: initialize_request, finalize_response
 
    .. automethod:: new_object

@@ -4,9 +4,6 @@ from rest_framework.exceptions import ValidationError
 from ..models import Validated
 
 
-# TODO: templates/examples/validated* je treba prenest v dynamicforms/templates (standardni templati morajo bit pokrit)
-
-
 class ValidatedSerializer(serializers.ModelSerializer):
     form_titles = {
         'table': 'Validated list',
@@ -32,7 +29,6 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
 
 class ValidatedViewSet(ModelViewSet):
-    template_name = 'dynamicforms/bootstrap/base_list.html'
     template_context = dict(url_reverse='validated')
 
     queryset = Validated.objects.all()

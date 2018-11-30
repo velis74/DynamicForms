@@ -11,8 +11,6 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         'edit': 'Editing hidden fields object',
     }
 
-    # TODO: skrij samo unit, potem pa pošlji onchanged njemu in naj on skrije še ostala polja
-    # TODO: ko pa unit spet pokažeš, spet pošlješ zadevo njemu in on bo pogledal, katero od polj mora pokazati
     actions = [
         Action(['note'], 'examples.action_hiddenfields_note'),
         Action(['unit'], 'examples.action_hiddenfields_unit'),

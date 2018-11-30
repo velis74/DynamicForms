@@ -1,11 +1,7 @@
 {% load dynamicforms %}
 
   {% for row in data %}
-    <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}" data-previous="{{ link_prev }}" {% endif %}
-        {% comment %}TODO: tole moramo prestaviti v javascript, ki nastavi vse TRje
-                           style="cursor: pointer"
-        {% endcomment %}
-    >
+    <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}" data-previous="{{ link_prev }}" {% endif %}>
       {% render_table_commands serializer "rowstart" %}
       {% for key, value in row|items %}
         {% set_var column=serializer.fields|dict_item:key %}
