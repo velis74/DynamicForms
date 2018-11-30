@@ -53,9 +53,9 @@ ModelSerializer.
 Currently only the dynamicforms.viewsets.ModelViewSet is supported for ViewSets. We have others planned,
 but not implemented yet.
 
+examples/rest/page_load.py
+
 .. code-block:: python
-   :caption: examples/rest/page_load.py
-   :name: examples/rest/page_load.py
 
    from dynamicforms import serializers, viewsets
    from ..models import PageLoad
@@ -81,9 +81,9 @@ but not implemented yet.
        serializer_class = PageLoadSerializer
 
 
+examples/models.py  (excerpt)
+
 .. code-block:: python
-   :caption: examples/models.py  (excerpt)
-   :name: examples/models.py
 
    from django.db import models
 
@@ -94,13 +94,10 @@ but not implemented yet.
        description = models.CharField(max_length=20, help_text='Item description')
 
 
-Following is an example page template to render straight router URLs. The emphasized lines show the lines that obtain
+Following is an example page template to render straight router URLs. Lines 12, 17 & 20 show the lines that obtain
 and render the actual data, be it table or form. See DYNAMICFORMS_PAGE_TEMPLATE.
 
 .. code-block:: django
-   :caption: examples/templates/examples/page.html
-   :name: examples/templates/examples/page.html
-   :emphasize-lines: 12, 17, 20
 
    {% extends 'examples/base.html' %}
    {% load dynamicforms %}
