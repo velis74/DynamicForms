@@ -7,7 +7,7 @@ with open('requirements.txt', 'r') as fh:
 
 setuptools.setup(
     name="DynamicForms",
-    version="0.1.1",
+    version="0.1.2",
     author="Jure Erznožnik",
     author_email="jure@velis.si",
     description="DynamicForms is a django library that gives you the power of dynamically-shown form fields, "
