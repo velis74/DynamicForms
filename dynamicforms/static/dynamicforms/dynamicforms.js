@@ -280,6 +280,7 @@ dynamicforms = {
     $.ajax({
              url:    recordURL,
              method: 'DELETE',
+             headers: {'X-CSRFToken': dynamicforms.csrf_token },
            })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');

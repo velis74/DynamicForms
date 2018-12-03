@@ -13,11 +13,11 @@ class ValidatedFormTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         staging_server = os.environ.get('STAGING_SERVER')
-        print(self.live_server_url)
+        # print(self.live_server_url)
         if staging_server:
-            print('\n\nSTAGING SERVER\n\n')
+            # print('\n\nSTAGING SERVER\n\n')
             self.live_server_url = 'http://' + staging_server
-        print(self.live_server_url)
+        # print(self.live_server_url)
 
     def tearDown(self):
         self.browser.refresh()
@@ -97,26 +97,26 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
     def test_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
-        # Grem na validated html in preverim, če ima + Add button
+        # Go to validated html and check if there's a "+ Add" button
 
         header = self.browser.find_element_by_class_name("card-header")
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
 
-        # Preverim, če ima no data polje
+        # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertTrue(len(rows) == 1)
         self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
-        # Spodaj je test, če je modalen dialog... lahko bi se naredil še test, če se urejanje pokaže na novi strani#
+        # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        # Potem preko add buttona dodam en zapis in grem nazaj na model_single.html in preverim, če je zapis dodan
+        # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        # preverim, če so v dialogu prikazana vsa polja... in če nobeden ni preveč
+        # check if all fields are in the dialog and no excessive fields too
         field_count = 0
         self.assertTrue(self.check_error_text(dialog) is None)
 
@@ -148,7 +148,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     self.assertTrue(field.get_attribute("name") == "item_type")
                     self.assertTrue(field.tag_name == "select")
                     select.select_by_index(3)
-                elif label.text == "Item flags":  # ta mora biti select2...
+                elif label.text == "Item flags":  # this one should be a select2...
                     # TODO: complete this test when we have select2 implemented
                     pass
                 elif field.get_attribute("name") in ('id',):
@@ -192,13 +192,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
-        # check if record have saved
+        # check if record was stored
         rows = self.get_table_body()
         self.assertTrue(len(rows) == 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertTrue(len(cells) == 7)
 
-        # Potem kliknem na zapis in ga uredim. Grem nazaj na model_single.html in preverim, če je zapis urejen
+        # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
         dialog.find_element_by_name("enabled").click()
@@ -211,7 +211,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.assertTrue(len(rows) == 1)
         cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
 
-        # Grem šeenkrat na urejanje in ga prekinem
+        # Once more to editing and cancel it
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
         Select(dialog.find_element_by_name("item_type")).select_by_index(1)
@@ -222,3 +222,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertTrue(len(rows) == 1)
         self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
+
+        # we delete the row we created
+        del_btn = rows[0].find_elements_by_tag_name('td')[6].find_element_by_class_name('btn')
+        del_btn.click()
+
+        # TODO: remove following line when task for auto refresh is done.
+        self.browser.refresh()
+        rows = self.get_table_body()
+        self.assertTrue(len(rows) == 1)
+        self.assertTrue(rows[0].find_element_by_tag_name('td').text == 'No data')
