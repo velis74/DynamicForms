@@ -1,0 +1,5 @@
+include README.rst
+include LICENSE.rst
+recursive-include dynamicforms *
+global-exclude __pycache__
+global-exclude *.py[co]

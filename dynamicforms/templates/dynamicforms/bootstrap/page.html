@@ -1,0 +1,23 @@
+{% extends 'dynamicforms/bootstrap/base.html' %}
+{% load dynamicforms %}
+{% block title %}
+  {{ serializer.page_title }}
+{% endblock %}
+{% block body %}
+  {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
+    {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
+  {% else %}
+    {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
+  {% endif %}
+  {% get_data_template as data_template %}
+
+<div class="{{ card_class }}" style="display: inline-block; margin: 1em">
+  <div class="{{ card_header }}">
+    {{ serializer.page_title }}
+    {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+  </div>
+  <div class="{{ card_body }}">
+    {% include data_template with serializer=serializer data=data %}
+  </div>
+</div>
+{% endblock %}
