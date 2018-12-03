@@ -182,11 +182,11 @@ def render_table_commands(context, serializer, position, field_name=None, table_
 
     if position == 'onrowclick':
         if rowclick != '':
-            ret += "$('#list-{uuid}').find('tbody').find('tr').click(" \
+            ret += "$('#list-{uuid}').find('tbody').click(" \
                    "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
                 format(stop_propagation=stop_propagation, action=rowclick, uuid=serializer.uuid)
         if rowrclick != '':
-            ret += "$('#list-{uuid}').find('tbody').find('tr').contextmenu(" \
+            ret += "$('#list-{uuid}').find('tbody').contextmenu(" \
                    "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
                 format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
         if ret != '':

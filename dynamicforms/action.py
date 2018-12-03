@@ -49,7 +49,7 @@ class ActionControls(object):
             self.actions.append(
                 Action(label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
                        action="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.currentTarget).attr('data-id')));"))
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')));"))
             self.actions.append(
                 Action(label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
                        action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}');"))
