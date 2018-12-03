@@ -32,23 +32,7 @@ class Command(BaseCommand):
                     field_list.append(obj)
 
             print('from uuid import UUID\n', file=output)
-            print('from rest_framework import fields', file=output)
-
-            print('from rest_framework.fields import (', file=output)
-            field_names = textwrap.wrap(', '.join((f.__name__ for f in field_list
-                                                   if inspect.getmodule(f).__name__ == 'rest_framework.fields')),
-                                        width=110)
-            print(textwrap.indent('\n'.join(field_names), '    '), file=output)
-            print(')', file=output)
-
-            print('from rest_framework.relations import (', file=output)
-
-            field_names = textwrap.wrap(', '.join((f.__name__ for f in field_list
-                                                   if inspect.getmodule(f).__name__ == 'rest_framework.relations')),
-                                        width=110)
-            print(textwrap.indent('\n'.join(field_names), '    '), file=output)
-            print(')', file=output)
-
+            print('from rest_framework import fields, relations', file=output)
             print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn', file=output)
 
             for field in field_list:
@@ -126,11 +110,12 @@ class Command(BaseCommand):
                     additional_inspects += ',PyAbstractClass'
                 if 'format' in field_params_names:
                     additional_inspects += ',PyShadowingBuiltins'
+                field_module = 'fields.' if field_class in fields.__dict__ else 'relations.'
 
                 print(textwrap.dedent(f"""
                 
                     # noinspection PyRedeclaration{additional_inspects}
-                    class {field_class}(UUIDMixIn, ActionMixin, RenderToTableMixin, {field_class}):
+                    class {field_class}(UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):
                     
                         def __init__({field_params}):
                             kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}
@@ -138,5 +123,5 @@ class Command(BaseCommand):
                             super().__init__(**kwargs)"""
                                       ), file=output)
 
-        print('fields/__init__.py successfully generated')
+        print('fields.py successfully generated')
         # options['file']
