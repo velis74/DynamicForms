@@ -1,5 +1,6 @@
 {% load dynamicforms %}
 {% if serializer.render_type != 'table rows' %}
+{% block tablestart-includes %}{% endblock %}
 <table id="list-{{ serializer.uuid }}" class="table table-striped">
   <thead>
   <tr>
@@ -24,9 +25,11 @@
     </tr>
   </tfoot>
 </table>
+{% block tableend-includes %}{% endblock %}
 {% render_table_commands serializer "onrowclick" %}
 {#TODO: Unit test: check if on_click & on_right_click declare properly, when table rows dynamically load#}
 <script type="application/javascript">
   dynamicforms.paginator_init_table("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
+  {% block scriptend-includes %}{% endblock %}
 </script>
 {% endif %}
