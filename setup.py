@@ -22,6 +22,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     classifiers=[
+        "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
