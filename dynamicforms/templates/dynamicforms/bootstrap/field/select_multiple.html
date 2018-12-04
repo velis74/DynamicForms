@@ -2,7 +2,7 @@
 {% load i18n dynamicforms %}
 {% trans "No items to select." as no_items %}
 {% block field_input %}
-<select multiple {{ field.choices|yesno:",disabled" }} id="field.uuid" class="form-control" name="{{ field.name }}">
+<select multiple {{ field.choices|yesno:",disabled" }} id="field.uuid" class="form-control {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}select2-field{% endif %}" name="{{ field.name }}">
   {% for select in field.iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">
@@ -15,4 +15,20 @@
     <option>{{ no_items }}</option>
   {% endfor %}
 </select>
+
+{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+  <script type="text/javascript">
+    var BSVER = "bootstrap4";
+    // Check bootstrap version to set select2 theme
+    if (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') {
+      BSVER = "bootstrap";
+    }
+    $(".select2-field").select2({
+      // Attaches select2 to dialog and enables input field 
+      dropdownParent: $('[id*="dialog-"]'),
+      theme: BSVER
+    });
+  </script>
+{% endif %}
+
 {% endblock %}

@@ -140,6 +140,9 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     self.initial_check(field, "", "amount", "number")
                     field.send_keys("3")
                 elif label.text == "Item type":
+                    # tests stop here when using select2
+                    # TODO: select2 menus don't work in firefox-driver
+                    # https://github.com/SeleniumHQ/selenium/issues/5558
                     select = Select(field)
                     selected_options = select.all_selected_options
                     self.assertTrue(len(selected_options) == 1)
