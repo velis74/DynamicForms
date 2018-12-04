@@ -10,11 +10,11 @@ setuptools.setup(
     version="0.1.3",
     author="Jure Erznožnik",
     author_email="jure@velis.si",
-    description="DynamicForms is a django library that gives you the power of dynamically-shown form fields, "
-                "auto-filled default values, dynamic record loading and similar candy with little effort. To put it "
-                "differently: once defined, a particular ViewSet / Serializer can be rendered in multiple ways "
-                "allowing you to perform viewing and authoring operations on the data in question. It is based on "
-                "django-rest-framework",
+    description="DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds "
+                "some candy of its own: It is a django library that gives you the power of dynamically-shown form "
+                "fields, auto-filled default values, dynamic record loading and similar candy with little effort. "
+                "To put it differently: once defined, a particular ViewSet / Serializer can be rendered in multiple "
+                "ways allowing you to perform viewing and authoring operations on the data in question.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/velis74/DynamicForms",
