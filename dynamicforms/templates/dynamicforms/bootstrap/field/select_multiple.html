@@ -18,13 +18,10 @@
 
 {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
   <script type="text/javascript">
-    var BSVER = "bootstrap4";
     // Check bootstrap version to set select2 theme
-    if (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') {
-      BSVER = "bootstrap";
-    }
+    var BSVER = (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') ? "bootstrap" : "bootstrap4";
     $(".select2-field").select2({
-      // Attaches select2 to dialog and enables input field 
+      // Attaches select2 to dialog and enables input field
       dropdownParent: $('[id*="dialog-"]'),
       theme: BSVER
     });
