@@ -1,99 +1,3 @@
-$.fn.serializeForm = function (fieldNamePrefix, handlers, returnDict) {
-  /**
-   * serializes the given form into a JS object. Tries to keep all input fields, including unselected checkboxes
-   * and disabled fields
-   * @param fieldNamePrefix: fields in the form have a prefix in their name we don't want in the object
-   * @param handlers: dict of transformation functions in the form field_name: function to transform the value
-   * @param returnDict: true if you want the function to return a dictionary of form.id: serialized form
-   * @return: JS object with form data
-   */
-  fieldNamePrefix = fieldNamePrefix == undefined ? '' : fieldNamePrefix;
-  handlers   = handlers == undefined ? {} : handlers;
-  returnDict = returnDict == undefined ? false : returnDict;
-
-  var res_d = {};
-  var res   = $.map(this, function (item) {
-    var o          = {},
-        $form      = $(item),
-        storeValue = function (name, value) {
-          var handler = handlers[name.substring(fieldNamePrefix.length)] || {};
-
-          if (handler.value != undefined)
-            value = handler.value(name, value);
-          value = value == undefined ? '' : value;
-
-          if (o[name] !== undefined) {
-            if (!o[name].push)
-              o[name] = [o[name]];
-            o[name].push(value);
-          } else
-            o[name] = value;
-        },
-        disabled   = $(this).find(':input:disabled').removeAttr('disabled');
-
-    $.each($form.serializeArray(), function () {
-      var name  = this.name.replace(fieldNamePrefix, ''),
-          value = this.value;
-      storeValue(name, value);
-    });
-    disabled.attr('disabled', true);
-    $form.find('input:checkbox').each(function () {
-      var name = this.name.replace(fieldNamePrefix, '');
-      if (name in o) delete o[name];
-    });
-    $form.find('input:checkbox').each(function () {
-      var name  = this.name.replace(fieldNamePrefix, ''),
-          value = $(this).is(':checked'); // ? this.value || true : false;
-      if (value && 'value' in this.attributes)
-        value = this.value;
-      storeValue(name, value);
-    });
-    res_d[item.attributes['id'].value] = o;
-    return o;
-  });
-  if (returnDict === true) return res_d;
-  return res.length == 1 ? res[0] : res;
-};
-
-$.fn.deserializeForm = function (data, fieldNamePrefix, handlers) {
-  fieldNamePrefix = fieldNamePrefix == undefined ? '' : fieldNamePrefix;
-  handlers        = handlers == undefined ? {} : handlers;
-
-  var setValue = function ($inp, value) {
-    if ($inp.length > 0) {
-      var handler = handlers[$inp[0].name.substring(fieldNamePrefix.length)] || {};
-      if (handler.value != undefined)
-        value = handler.value($inp, value);
-
-      if ($inp.is(":checkbox"))
-        $inp.prop("checked", value);
-      else
-        $inp.val(value);
-
-      if ($inp.is(':ui-selectmenu')) {
-        // noinspection JSUnresolvedFunction
-        $inp.selectmenu("refresh");
-        // noinspection JSUnresolvedFunction
-        if ($inp.selectmenu("option", "change") != undefined)
-        // noinspection JSUnresolvedFunction
-          $inp.selectmenu("option", "change")();
-      }
-      if ($inp.data("select2") != undefined)
-        $inp.trigger("change");
-
-      if (handler.copy != undefined)
-        setValue(handler.copy, value);
-    }
-  };
-
-  this.each(function () {
-    var $form = $(this);
-    $.each(data, function (key, value) {
-      setValue($form.find("[name='%s']".replace(/%s/, fieldNamePrefix + key)), value);
-    });
-  });
-};
-
 /**
  * Two level dictionary
  */
@@ -171,25 +75,19 @@ dynamicforms = {
    * @param $form: the edited form containing the data
    */
   submitForm: function submitForm($dlg, $form) {
-    // TODO: this will not be required once all the fields have their onChange events in place
-    dynamicforms.serializeForm($form, 'final');
-
     var data    = dynamicforms.getSerializedForm($form, 'final');
     var method  = data['data-dynamicforms-method'] || 'POST';
     var headers = {'X-DF-RENDER-TYPE': 'dialog'};
 
-    if ('csrfmiddlewaretoken' in data) {
-      headers['X-CSRFToken'] = data.csrfmiddlewaretoken;
-      delete data.csrfmiddlewaretoken;
-    }
+    headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     $.ajax({
-             type:     method,
-             url:      $form.attr("action"),
-             data:     data,
-             dataType: 'html',
-             headers:  headers,
-           })
+      type:     method,
+      url:      $form.attr("action"),
+      data:     data,
+      dataType: 'html',
+      headers:  headers,
+    })
       .done(function () {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
@@ -257,17 +155,16 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
-               url:     recordURL,
-               headers: {'X-DF-RENDER-TYPE': 'dialog'},
-             })
+        url:     recordURL,
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+      })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML));
         })
         .fail(function (xhr, status, error) {
           dynamicforms.showAjaxError(xhr, status, error);
         });
-    }
-    else
+    } else
       window.location = recordURL;
   },
 
@@ -278,10 +175,10 @@ dynamicforms = {
   deleteRow: function deleteRow(recordURL) {
     //TODO: Ask user for confirmation
     $.ajax({
-             url:    recordURL,
-             method: 'DELETE',
-             headers: {'X-CSRFToken': dynamicforms.csrf_token },
-           })
+      url:     recordURL,
+      method:  'DELETE',
+      headers: {'X-CSRFToken': dynamicforms.csrf_token},
+    })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -319,9 +216,14 @@ dynamicforms = {
 
   serializeForm: function serializeForm($form, final) {
     dynamicforms._checkFinalParam(final);
-    $.each($form.serializeForm(undefined, undefined, true), function (key, value) {
-      dynamicforms.form_helpers.set(key, final, value);
+    var formID    = $form.attr('id');
+    var form_data = dynamicforms.form_helpers.getOrCreate(formID, final, {});
+    $.each(dynamicforms.form_helpers.get(formID, 'fields'), function (fieldID, field) {
+      form_data[field.name] = field.getValue(field.$field);
     });
+    var fld = $form.find('input[name="data-dynamicforms-method"]');
+    if (fld.length == 1)
+      form_data['data-dynamicforms-method'] = fld.val();
   },
 
   clearSerializedForm: function clearSerializedForm($form, final) {
@@ -346,9 +248,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-           function (fieldID) {
-             dynamicforms.field_helpers.del(fieldID);
-           }
+      function (fieldID) {
+        dynamicforms.field_helpers.del(fieldID);
+      }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -614,10 +516,10 @@ dynamicforms = {
       tbl_pagination.last_link_next = link_next;
       $("#loading-" + serializer_uuid).show();
       $.ajax({
-               type:    'GET',
-               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next,
-             }).done(function (data) {
+        type:    'GET',
+        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+        url:     link_next,
+      }).done(function (data) {
         var table                = $("#list-" + serializer_uuid).find("tbody:first");
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
@@ -653,7 +555,10 @@ $(document).ready(function () {
   // Let's get initial field values from the forms that are on-page already
   // TODO: Is this jQuery-specific? Will vue.js page also contain some kind of initializer or will everything just work?
   // TODO: also might be prudent to just move this to base_form.html. we already process dialogs separately...
-  $.extend(dynamicforms, $('.dynamicforms-form').serializeForm(undefined, undefined, true));
+  $('.dynamicforms-form').each(function (idx, form) {
+    dynamicforms.serializeForm($(form), 'final');
+  });
+
   window.setInterval(dynamicforms.paginator_check_get_next_page_all, 100);
 })
 
