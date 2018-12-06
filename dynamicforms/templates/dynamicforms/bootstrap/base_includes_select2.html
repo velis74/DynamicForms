@@ -1,0 +1,8 @@
+{% load static %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" rel="stylesheet">
+{% if DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v4' %}
+  <link href="{% static 'select2/css/select2-bootstrap4.min.css' %}" rel="stylesheet">
+{% else %}
+  <link href="{% static 'select2/css/select2-bootstrap3.min.css' %}" rel="stylesheet">
+{% endif %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>

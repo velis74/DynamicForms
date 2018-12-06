@@ -3,7 +3,8 @@ import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, ElementNotInteractableException, NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
 MAX_WAIT = 10
@@ -95,6 +96,22 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 self.assertTrue(cells[i], cell_values[i])
         return cells
 
+    def select_option_for_select2(self, driver, id, text=None):
+        element = driver.find_element_by_xpath(f"//*[@id='{id}']/following-sibling::*[1]")
+        element.click()
+
+        if text:
+            element = driver.find_element_by_xpath("//input[@type='search']")
+            element.send_keys(text)
+
+        try:
+            element.send_keys(Keys.ENTER)
+        except ElementNotInteractableException as e:
+            actions = ActionChains(driver)
+            a = actions.move_to_element_with_offset(element, 50, 30)
+            a.send_keys(Keys.ENTER)
+            a.perform()
+
     def test_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
@@ -140,17 +157,55 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     self.initial_check(field, "", "amount", "number")
                     field.send_keys("3")
                 elif label.text == "Item type":
-                    select = Select(field)
-                    selected_options = select.all_selected_options
-                    self.assertTrue(len(selected_options) == 1)
-                    self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                    self.assertTrue(selected_options[0].text == "Choice 1")
-                    self.assertTrue(field.get_attribute("name") == "item_type")
-                    self.assertTrue(field.tag_name == "select")
-                    select.select_by_index(3)
-                elif label.text == "Item flags":  # this one should be a select2...
-                    # TODO: complete this test when we have select2 implemented
-                    pass
+                    # Check if item_type field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        initial_choice = container.find_element_by_class_name("select2-selection__rendered")
+                        self.assertTrue(initial_choice.text == "Choice 1")
+
+                        select2_options = select2.find_elements_by_tag_name("option")
+                        self.assertTrue(len(select2_options) == 4)
+                        self.assertTrue(select2.get_attribute("name") == "item_type")
+                        self.assertTrue(select2.tag_name == "select")
+                        self.select_option_for_select2(container, field_id, text="Choice 4")
+                    else:
+                        select = Select(field)
+                        selected_options = select.all_selected_options
+                        self.assertTrue(len(selected_options) == 1)
+                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
+                        self.assertTrue(selected_options[0].text == "Choice 1")
+                        self.assertTrue(field.get_attribute("name") == "item_type")
+                        self.assertTrue(field.tag_name == "select")
+                        select.select_by_index(3)
+                elif label.text == "Item flags":
+                    # Check if item_flags field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        empty_choice = container.find_element_by_class_name("select2-selection__rendered")
+                        self.assertTrue(empty_choice.text == "--------")
+
+                        select2_options = select2.find_elements_by_tag_name("option")
+                        self.assertTrue(len(select2_options) == 5)
+                        self.assertTrue(select2.get_attribute("name") == "item_flags")
+                        self.assertTrue(select2.tag_name == "select")
+                        self.select_option_for_select2(container, field_id, text="C")
+                    else:
+                        select = Select(field)
+                        selected_options = select.all_selected_options
+                        self.assertTrue(len(selected_options) == 1)
+                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
+                        self.assertTrue(selected_options[0].text == "--------")
+                        self.assertTrue(field.get_attribute("name") == "item_flags")
+                        self.assertTrue(field.tag_name == "select")
+                        select.select_by_index(3)
                 elif field.get_attribute("name") in ('id',):
                     # Hidden fields
                     pass
@@ -186,7 +241,20 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # There should be a general/form error because of validator set in serializer
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
         self.assertTrue(self.check_error_text(dialog) == "When enabled you can only choose from first three item types")
-        Select(dialog.find_element_by_name("item_type")).select_by_index(2)
+
+        # Check if item_type field is select2 element
+        form = dialog.find_element_by_id(modal_serializer_id)
+        try:
+            select2_elements = form.find_elements_by_class_name("select2-field")
+        except NoSuchElementException:
+            select2_elements = None
+
+        if select2_elements:
+            select2_element_id = select2_elements[0].get_attribute("id")
+            self.select_option_for_select2(select2_elements[0], select2_element_id, text="Choice 3")
+        else:
+            Select(dialog.find_element_by_name("item_type")).select_by_index(2)
+
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -214,7 +282,20 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Once more to editing and cancel it
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
-        Select(dialog.find_element_by_name("item_type")).select_by_index(1)
+
+        # Check if item_type field is select2 element
+        form = dialog.find_element_by_id(modal_serializer_id)
+        try:
+            select2_elements = form.find_elements_by_class_name("select2-field")
+        except NoSuchElementException:
+            select2_elements = None
+
+        if select2_elements:
+            select2_element_id = select2_elements[1].get_attribute("id")
+            self.select_option_for_select2(select2_elements[1], select2_element_id, text="Choice 3")
+        else:
+            Select(dialog.find_element_by_name("item_type")).select_by_index(2)
+
         dialog.find_element_by_css_selector("[data-dismiss=modal]").click()
 
         # TODO: remove following line when task for auto refresh is done.

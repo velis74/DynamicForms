@@ -10,3 +10,6 @@
   dynamicforms.DF = {{ DF|json }}
   dynamicforms.csrf_token = '{{ csrf_token }}';
 </script>
+{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+  {% include DF.SELECT2 %}
+{% endif %}
