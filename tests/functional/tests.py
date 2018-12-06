@@ -77,7 +77,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         return error_text
 
     def get_table_body(self):
-        body = self.browser.find_element_by_class_name("card-body")
+
+        try:
+            body = self.browser.find_element_by_class_name("card-body")
+        except NoSuchElementException:
+            # Bootstrap 3
+            body = self.browser.find_element_by_class_name("panel-body")
+
         table = body.find_element_by_tag_name("table")
 
         tbody = table.find_element_by_tag_name("tbody")
@@ -116,7 +122,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
 
-        header = self.browser.find_element_by_class_name("card-header")
+        try:
+            header = self.browser.find_element_by_class_name("card-header")
+        except NoSuchElementException:
+            # Bootstrap v3
+            header = self.browser.find_element_by_class_name("panel-heading")
+
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
 
@@ -219,7 +230,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         # There should be an error because of validator set in Model
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+
         errors = dialog.find_elements_by_class_name("invalid-feedback")
+        # Bootstrap v3
+        if not errors:
+            errors = dialog.find_elements_by_class_name("help-block")
+
         self.assertTrue(len(errors) == 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == "Ensure this value is greater than or equal to 5.")
         field = errors[0].parent.find_element_by_name("amount")
@@ -230,7 +246,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # There should be a field error because of validator set in serializer
 
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+
         errors = dialog.find_elements_by_class_name("invalid-feedback")
+        # Bootstrap v3
+        if not errors:
+            errors = dialog.find_elements_by_class_name("help-block")
+
         self.assertTrue(len(errors) == 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == 'amount can only be different than 5 if code is "123"')
         field = errors[0].parent.find_element_by_name("code")

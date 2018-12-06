@@ -4,8 +4,8 @@
   {{ serializer.page_title }}
 {% endblock %}
 {% block body %}
-  {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
-    {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
+  {% if DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3' %}
+    {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel-body' %}
   {% else %}
     {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
   {% endif %}

@@ -1,0 +1,26 @@
+{% load dynamicforms %}
+
+{% if data.id %}
+  {% set_var title=serializer.form_titles.edit %}
+{% else %}
+  {% set_var title=serializer.form_titles.new %}
+{% endif %}
+
+<div class="modal fade dynamicforms-dialog" id="dialog-{{ serializer.uuid }}" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLongTitle">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+        {% set_var template_list=DF.TEMPLATE|add:'base_form.html' %}
+        {% include template_list with serializer=serializer data=data %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save-{{ serializer.uuid }}">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
