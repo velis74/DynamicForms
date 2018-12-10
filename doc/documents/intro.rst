@@ -22,6 +22,7 @@ Why DynamicForms
 
 * Clear separation of list & dialog templates
 * Dynamic loading of additional records for table views
+* Easy implementation of simple filtering
 * Action items, declared globally, placed where you need them
 * Custom templates whenever & wherever you want them
 * Render to full html or work with dialogs within same page or both at the same time

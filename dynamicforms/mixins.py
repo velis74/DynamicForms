@@ -91,11 +91,16 @@ class RenderToTableMixin(object):
         super().__init__(*args, **kwargs)
         self.visible_in_table = visible_in_table
 
-    def render_to_table(self, value):
+    def render_to_table(self, value, row_data):
         """
         Renders field value for table view
 
         :param value: field value
+        :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
+        choices = getattr(self, 'choices', {})
+        if value in choices:
+            # choice field: let's render display names, not values
+            return drftt.format_value(choices[value])
         return drftt.format_value(value)

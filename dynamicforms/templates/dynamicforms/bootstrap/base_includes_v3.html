@@ -11,6 +11,37 @@
   dynamicforms.DF = {{ DF|json }}
   dynamicforms.csrf_token = '{{ csrf_token }}';
 </script>
+
 {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
   {% include DF.SELECT2 %}
 {% endif %}
+
+<style>
+  .dynamicforms-actioncontrol {
+    padding: 0 .25rem;
+  }
+
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     1rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  .75rem;
+    height: .75rem;
+  }
+
+  .dynamicforms-filterrow label span[id*="help-"] {
+    display: none !important;
+  }
+
+  .dynamicforms-filterrow div {
+    margin: 0;
+  }
+
+</style>

@@ -75,6 +75,9 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
         'edit': '',
     }
 
+    show_filter = False  # When true, filter row is shown for list view
+    serializer_type = None  # Current types: None, 'filter'
+
     @property
     def has_non_field_errors(self):
         """
@@ -99,3 +102,19 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
             return self.form_titles.get('edit', '')
         else:
             return self.form_titles.get('new', '')
+
+    # noinspection PyProtectedMember
+    @property
+    def filter_data(self):
+        """
+        Returns serializer for filter row in table
+        :return:  Serializer
+        """
+        if not getattr(type(self), '_filter_data', None):
+            _filter_data = type(self)(instance=type(self).Meta.model())
+            _filter_data.serializer_type = 'filter'
+            for name, field in _filter_data.fields.fields.items():
+                if isinstance(field, ChoiceField):
+                    field.allow_blank = True
+            type(self)._filter_data = _filter_data
+        return type(self)._filter_data

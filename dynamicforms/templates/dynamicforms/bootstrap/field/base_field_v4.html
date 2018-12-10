@@ -1,5 +1,5 @@
 <div id="container-{{ field.uuid }}"
-     class="{% block container_class %}form-group{% endblock %} {% if field.errors %}has-error{% endif %} {% if field.read_only or style.display == 'none' %}d-none{% endif %}">
+     class="{% block container_class %}form-group{% endblock %} {% if field.errors %}has-error{% endif %} {% if field.read_only and style.serializer.serializer_type != 'filter' or style.display == 'none' %}d-none{% endif %}">
   {% block field_input_label %}
     {% if field.label %}
       <label id="label-{{ field.uuid }}" for="{{ field.name }}" {% if style.hide_label %}class="sr-only"{% endif %}>

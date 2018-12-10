@@ -1,9 +1,14 @@
-from django.http import Http404
+from datetime import datetime
 
-from rest_framework import viewsets
+import pytz
+from django.conf import settings
+from django.db import models
+from django.http import Http404
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
+
 from dynamicforms.settings import TEMPLATE
 from .renderers import TemplateHTMLRenderer
 from .settings import BSVER_MODAL
@@ -84,7 +89,8 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
     def finalize_response(self, request, response, *args, **kwargs):
         res = super().finalize_response(request, response, *args, **kwargs)
 
-        if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
+        if isinstance(res.accepted_renderer, TemplateHTMLRenderer) and \
+                (status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST):
             if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
                     isinstance(res.data['results'], (ReturnList, ReturnDict)):
                 serializer = res.data['results'].serializer
@@ -112,6 +118,68 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
                     serializer.data_template = serializer.template_name
 
         return res
+
+    def get_queryset(self):
+        """
+        Returns records from queryset with filters applied
+
+        :return: filtered records
+        """
+        queryset = super().get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        return queryset.all()
+
+    def filter_queryset(self, queryset):
+        """
+        Applies filters for all fields
+
+        :param queryset: Queryset
+        :return: queryset with filters applied
+        """
+        res = queryset
+        for fld, val in self.request.query_params.items():
+            res = self.filter_queryset_field(res, fld, val)
+        return res
+
+    # noinspection PyMethodMayBeStatic
+    def filter_queryset_field(self, queryset, field, value):
+        """
+        Applies filter to individual field
+
+        :param queryset: Queryset
+        :param field: Field name
+        :param value: Field value
+        :return: queryset with applied filter for the field
+        """
+        if value is None or value == '':
+            return queryset
+
+        model_meta = queryset.model._meta
+
+        if field not in (fld.name for fld in model_meta.get_fields()):
+            return queryset
+
+        if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
+            return queryset.filter(**{field + '__icontains': value})
+        if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
+            date_time = None
+            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S', settings.DATE_FORMAT, '%Y-%m-%d']:
+                try:
+                    date_time = datetime.strptime(value, date_time_fmt)
+                    break
+                except:
+                    pass
+            if date_time is None:
+                return queryset
+            date_time.replace(tzinfo=pytz.utc)
+            if date_time.hour == 0 and date_time.minute == 0 and date_time.second == 0:
+                return queryset.filter(**{field + '__contains': date_time.date()})
+            return queryset.filter(**{field + '__contains': date_time})
+        else:
+            if isinstance(model_meta.get_field(field), models.BooleanField):
+                value = (value == 'true')
+            return queryset.filter(**{field: value})
 
     @staticmethod
     def generate_paged_loader(page_size: int = 30):

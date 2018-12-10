@@ -20,7 +20,7 @@
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
     var BSVER = (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') ? "bootstrap" : "bootstrap4";
-    $(".select2-field").select2({
+    $("#{{ field.uuid }}").select2({
       // Attaches select2 to dialog and enables input field
       dropdownParent: $('[id*="dialog-"]'),
       theme: BSVER

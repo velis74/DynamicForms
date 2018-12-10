@@ -24,6 +24,7 @@ Why DynamicForms
 
 * Clear separation of list & dialog templates
 * Dynamic loading of additional records for table views
+* Easy implementation of simple filtering
 * Action items, declared globally, placed where you need them
 * Custom templates whenever & wherever you want them
 * Render to full html or work with dialogs within same page or both at the same time
@@ -93,6 +94,41 @@ examples/models.py  (excerpt)
        Shows how DynamicForms handles dynamic loading of many records in ViewSet result
        """
        description = models.CharField(max_length=20, help_text='Item description')
+
+
+If you want filter in list view just set serializers property show_filter value to True. Filter will be applied if user
+press enter in filter field. If you want to have filter button in list header, call ActionControls with
+add_default_filter = True.
+
+examples/rest/filter.py
+
+.. code-block:: python
+   from dynamicforms import serializers, viewsets
+   from dynamicforms.action import ActionControls
+   from ..models import Filter
+
+
+   class FilterSerializer(serializers.ModelSerializer):
+       form_titles = {
+           'table': 'Dynamic filter list',
+           'new': 'New object',
+           'edit': 'Editing object',
+       }
+       controls = ActionControls(add_default_crud=True, add_default_filter=True)
+       show_filter = True
+
+       class Meta:
+           model = Filter
+           exclude = ()
+
+
+   class FilterViewSet(viewsets.ModelViewSet):
+       template_context = dict(url_reverse='filter')
+       pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
+
+       queryset = Filter.objects.all()
+       serializer_class = FilterSerializer
+
 
 
 Following is an example page template to render straight router URLs. Lines 12, 17 & 20 show the lines that obtain

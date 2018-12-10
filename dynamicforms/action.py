@@ -37,12 +37,16 @@ class ActionControls(object):
     Used fo defining controls on table view.
     Default controls are add record button on table header, edit record on row click and delete record button on right
     side of row.
+    If add_default_filter == True, than filter button is shown in table header
     """
 
-    def __init__(self, actions: Iterable[Action] = None, add_default_crud: bool = False):
+    def __init__(self, actions: Iterable[Action] = None, add_default_crud: bool = False,
+                 add_default_filter: bool = False):
         self.actions = [] if actions is None else actions
-        if add_default_crud:
+        if isinstance(self.actions, tuple):
             self.actions = list(self.actions)
+
+        if add_default_crud:
             self.actions.append(
                 Action(label=_('+ Add'), title=_('Add new record'), icon='', position='header',
                        action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}');"))
@@ -53,3 +57,6 @@ class ActionControls(object):
             self.actions.append(
                 Action(label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
                        action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}');"))
+        if add_default_filter:
+            self.actions.append(Action(label=_('Filter'), title=_('Filter'), icon='', position='header',
+                                       action="dynamicforms.defaultFilter(event);"))

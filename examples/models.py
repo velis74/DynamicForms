@@ -1,5 +1,5 @@
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
@@ -58,3 +58,18 @@ class PageLoad(models.Model):
     Shows how DynamicForms handles dynamic loading of many records in ViewSet result
     """
     description = models.CharField(max_length=20, help_text='Item description')
+
+
+class Filter(models.Model):
+    """
+    Shows how DynamicForms handles filers
+    """
+    char_field = models.CharField(max_length=20, help_text='Char field', verbose_name='Char field')
+    datetime_field = models.DateTimeField(help_text='Datetime field', verbose_name='Datetime field')
+    int_field = models.IntegerField(help_text='Integer field', verbose_name='Integer field')
+    int_choice_field = models.IntegerField(choices=(
+        (0, 'Choice 1'),
+        (1, 'Choice 2'),
+        (2, 'Choice 3'),
+        (3, 'Choice 4'),), help_text='Integer field with choices', verbose_name='Integer field with choices')
+    bool_field = models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')

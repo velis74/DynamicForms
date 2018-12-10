@@ -82,12 +82,12 @@ dynamicforms = {
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     $.ajax({
-      type:     method,
-      url:      $form.attr("action"),
-      data:     data,
-      dataType: 'html',
-      headers:  headers,
-    })
+             type:     method,
+             url:      $form.attr("action"),
+             data:     data,
+             dataType: 'html',
+             headers:  headers,
+           })
       .done(function () {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
@@ -155,9 +155,9 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
-        url:     recordURL,
-        headers: {'X-DF-RENDER-TYPE': 'dialog'},
-      })
+               url:     recordURL,
+               headers: {'X-DF-RENDER-TYPE': 'dialog'},
+             })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML));
         })
@@ -175,10 +175,10 @@ dynamicforms = {
   deleteRow: function deleteRow(recordURL) {
     //TODO: Ask user for confirmation
     $.ajax({
-      url:     recordURL,
-      method:  'DELETE',
-      headers: {'X-CSRFToken': dynamicforms.csrf_token},
-    })
+             url:     recordURL,
+             method:  'DELETE',
+             headers: {'X-CSRFToken': dynamicforms.csrf_token},
+           })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -248,9 +248,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-      function (fieldID) {
-        dynamicforms.field_helpers.del(fieldID);
-      }
+           function (fieldID) {
+             dynamicforms.field_helpers.del(fieldID);
+           }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -478,22 +478,37 @@ dynamicforms = {
     return res;
   },
 
-  paginator_init_table: function paginator_init(serializer_uuid, link_next, link_prev) {
+  /**
+   * Pagination init for table.
+   * Remembers url for loading next page and sets trigger element for start of loading next page
+   * When trigger element is visible on screen loading starts
+   *
+   * @param formID: id of table object
+   * @param link_next: url with cursor definition for loading next page
+   * @param link_prev: url with cursor definition for loading previous page
+   */
+  paginatorInitTable: function paginatorInitTable(formID, link_next, link_prev) {
     if (link_next != "") {
-      dynamicforms.df_tbl_pagination.set(serializer_uuid, 'link_next', link_next);
-      var table_rows = $("#list-" + serializer_uuid).find("tbody:first").find("tr");
-      dynamicforms.df_tbl_pagination.set(serializer_uuid, 'trigger_element', table_rows[0]);
+      dynamicforms.df_tbl_pagination.set(formID, 'link_next', link_next);
+      var table_rows = $("#list-" + formID).find("tbody:first").find("tr");
+      dynamicforms.df_tbl_pagination.set(formID, 'trigger_element', table_rows[0]);
     }
   },
 
-  paginator_check_get_next_page: function check_get_next_page(serializer_uuid) {
-    var trigger_element = dynamicforms.df_tbl_pagination.get(serializer_uuid, 'trigger_element');
+  /**
+   * Checks if loading of next page should start
+   * If trigger element is visible on screen
+   *
+   * @param formID: id of table object
+   */
+  paginatorCheckGetNextPage: function paginatorCheckGetNextPage(formID) {
+    var trigger_element = dynamicforms.df_tbl_pagination.get(formID, 'trigger_element');
 
     if (trigger_element != null) {
       var rect = trigger_element.getBoundingClientRect();
 
       if (rect.top <= (window.innerHeight || document.documentElement.clientHeight))
-        dynamicforms.paginator_get_next_page(serializer_uuid);
+        dynamicforms.paginatorGetNextPage(formID, '');
 
       //TODO: Check both methods of determining whether control item is showing (unit tests for one and the other?)
       // problem with unit tests is that automated ones only run in Firefox
@@ -504,51 +519,134 @@ dynamicforms = {
       //   var bottom_of_screen  = top_of_screen + window.innerHeight;
       //
       //   if (bottom_of_screen > top_of_element) {
-      //     dynamicforms.paginator_get_next_page(serializer_uuid);
+      //     dynamicforms.paginatorGetNextPage(formID);
       //   }
     }
   },
 
-  paginator_get_next_page: function next_page(serializer_uuid) {
-    var tbl_pagination = dynamicforms.df_tbl_pagination.get(serializer_uuid, undefined);
-    var link_next      = tbl_pagination.link_next;
-    if (link_next != null && link_next != tbl_pagination.last_link_next) {
+  /**
+   * Calls server to get next page. When filter is given all current records will be deleted and only new ones will be
+   * shown
+   *
+   * @param formID: id of table object
+   * @param filter: filter params
+   */
+  paginatorGetNextPage: function paginatorGetNextPage(formID, filter) {
+    var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
+    var link_next      = '';
+    if (filter.length) {
+      link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
+      if (filter != 'nofilter')
+        link_next += '?' + filter;
+    }
+    else
+      link_next = tbl_pagination.link_next;
+
+    if (link_next != null && link_next != "None" && (link_next != tbl_pagination.last_link_next || filter.length)) {
       tbl_pagination.last_link_next = link_next;
-      $("#loading-" + serializer_uuid).show();
+
+      var table = $("#list-" + formID).find("tbody:first");
+      if (filter.length) {
+        dynamicforms.df_tbl_pagination.set(formID, 'trigger_element', null);
+        table.find('tr').remove();
+      }
+      $("#loading-" + formID).show();
+      //TODO: Remember sequence number... if data that comes back has other than last sequence number than just ignore it #114
       $.ajax({
-        type:    'GET',
-        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-        url:     link_next,
-      }).done(function (data) {
-        var table                = $("#list-" + serializer_uuid).find("tbody:first");
+               type:    'GET',
+               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+               url:     link_next,
+             }).done(function (data) {
+
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
-        // remove elements, that are already shown - in case of new data insertion and order different than id.
-        for (var i = data.length - 1; i >= 0; i--) {
-          var data_id = data[i].getAttribute('data-id');
-          if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
-            data.splice(i, 1);
+
+        if (data[0].getAttribute("data-title") != "NoData") {
+          // remove elements, that are already shown - in case of new data insertion and order different than id.
+          for (var i = data.length - 1; i >= 0; i--) {
+            var data_id = data[i].getAttribute('data-id');
+            if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
+              data.splice(i, 1);
+          }
         }
-        //TODO: If NoData comes back - i reached the end of dataset... doI even attempt further reading?
+        else if (table.find("tr").length > 0)
+          data = [];
+
+        //TODO: If NoData comes back - I reached the end of dataset... do I even attempt further reading?
         //  for log-type datasets where new data is frequently inserted, it might be useful.
-        $("#loading-" + serializer_uuid).hide();
+        $("#loading-" + formID).hide();
         if (data.length > 0) {
           table.append(data);
           tbl_pagination.trigger_element = data[0];
         }
-        dynamicforms.paginator_check_get_next_page(serializer_uuid);
+        dynamicforms.paginatorCheckGetNextPage(formID);
       }).fail(function (xhr, status, error) {
-        $("#loading-" + serializer_uuid).hide();
+        $("#loading-" + formID).hide();
         console.log('Pagination failed.', xhr, status, error);
         // TODO: what if the server returns an error? Do we continue with pagination? (Task #100)
       });
     }
   },
 
-  paginator_check_get_next_page_all: function paginator_check_get_next_page_all() {
-    for (var serializer_uuid in dynamicforms.df_tbl_pagination.storage)
-      dynamicforms.paginator_check_get_next_page(serializer_uuid);
+  /**
+   * Goes through all tables that uses pagination and calls paginatorCheckGetNextPage function for them
+   */
+  paginatorCheckGetNextPageAll: function paginatorCheckGetNextPageAll() {
+    for (var formID in dynamicforms.df_tbl_pagination.storage)
+      dynamicforms.paginatorCheckGetNextPage(formID);
   },
+
+  /**
+   * Registers filtering data on enter press in filter fields
+   *
+   * @param formID: id of table object
+   * @param reverseRowURL: url for getting filtered data
+   */
+  registerFilterRowKeypress: function registerFilterRowKeypress(formID, reverseRowURL) {
+    dynamicforms.form_helpers.set(formID, 'reverseRowURL', reverseRowURL);
+    $($("#list-" + formID).find("tr.dynamicforms-filterrow")[0]).keypress(function (e) {
+      if (e.which == 13) {
+        dynamicforms.filterData(formID);
+      }
+    })
+  },
+
+  /**
+   * Prepares filter string and calls server to get filtered data
+   *
+   * @param formID: id of table object
+   */
+  filterData: function filterData(formID) {
+    var filter = {};
+    $("#list-" + formID).find(".dynamicforms-filterrow th").each(function (index) {
+
+      var element = $(this).find("[name='" + $(this).attr("data-name") + "']");
+
+      if (element.attr('type') == 'checkbox') {
+        if (element.is(':checked'))
+          filter[element.attr("name")] = true;
+        else if (!element.is('[readonly]'))
+          filter[element.attr("name")] = false;
+      }
+      else if (element.val() != null && element.val().length)
+        filter[element.attr("name")] = element.val();
+    });
+    filter = jQuery.param(filter);
+    if (!filter.length)
+      filter = 'nofilter';
+    dynamicforms.paginatorGetNextPage(formID, filter);
+  },
+
+  /**
+   * "Standard" function which is called after filter button in header is clicked.
+   * It finds id of table object and calls filterData function with it.
+   *
+   * @param event: OnClick event from which we get id of table object
+   */
+  defaultFilter: function defaultFilter(event) {
+    var formId = $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
+    dynamicforms.filterData(formId);
+  }
 };
 
 $(document).ready(function () {
@@ -558,7 +656,6 @@ $(document).ready(function () {
   $('.dynamicforms-form').each(function (idx, form) {
     dynamicforms.serializeForm($(form), 'final');
   });
-
-  window.setInterval(dynamicforms.paginator_check_get_next_page_all, 100);
+  window.setInterval(dynamicforms.paginatorCheckGetNextPageAll, 100);
 })
 

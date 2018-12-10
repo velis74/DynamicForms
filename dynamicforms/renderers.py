@@ -117,15 +117,14 @@ class HTMLFormRenderer(HTMLFormRenderer):
         form = data.serializer
 
         style = renderer_context.get('style', {})
-        if 'template_pack' not in style:
-            style['template_pack'] = self.template_pack
+        style['template_pack'] = settings.TEMPLATE + 'field'
         style['renderer'] = self
 
         template_pack = style['template_pack'].strip('/')
 
         # getting the template to use
         template_name = next((x for x in (  # Get the first specified template name as encountered
-            renderer_context.get('form_template', None),  # template name from tag parameter
+            style.get('form_template', None),  # template name from tag parameter
             getattr(self, 'form_template', None),  # if ViewSet set the form_template member of this renderer
             getattr(form, 'form_template', None),  # if Serializer has form_template member set
             template_pack + '/' + self.base_template  # take default template from pack

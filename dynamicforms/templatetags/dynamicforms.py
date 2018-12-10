@@ -58,7 +58,7 @@ def as_list_of_strings(value):
 
 
 @register.simple_tag
-def render_form(serializer, template_pack=None, form_template=None):
+def render_form(serializer, form_template=None):
     """
     Renders form from serializer. If form_template is given, then renderer will use that one, otherwise it will use what
     is defined in self.base_template (e.g.: »form.html«) from template_pack (e.g.: »dynamicforms/bootstrap/field/«)
@@ -68,14 +68,11 @@ def render_form(serializer, template_pack=None, form_template=None):
        {% set_var template_pack=DF.TEMPLATE|add:'field' %}
        {% render_form serializer template_pack=template_pack %}
 
-    TODO: template_pack should be deprecated? We now have a master template pack which takes care of everything
-
     :param serializer: Serializer object
-    :param template_pack: template pack specified as directory where to find field & form templates
     :param form_template: form template file name to use. overrides all other template name declarations
     :return: rendered template
     """
-    style = {'template_pack': template_pack} if template_pack else {}
+    style = {}
     if form_template:
         style['form_template'] = form_template
     style['serializer'] = serializer
@@ -110,16 +107,17 @@ def render_field(field, style):
 
 
 @register.simple_tag
-def render_field_to_table(serializer, field_name, value):
+def render_field_to_table(serializer, field_name, value, row_data):
     """
     Renders separate field to table view.
 
     :param serializer: Serializer
     :param field_name: Field name
     :param value: Field value
+    :param row_data: data for entire row
     :return: rendered field for table view
     """
-    return serializer.fields[field_name].render_to_table(value)
+    return serializer.fields[field_name].render_to_table(value, row_data)
 
 
 @register.simple_tag
@@ -132,9 +130,9 @@ def table_columns_count(serializer):
     """
     actions = serializer.controls.actions
 
-    return len([f for f in serializer.fields.values() if f.visible_in_table]) \
-        + (1 if any(action.position == "rowend" for action in actions) else 0) \
-        + (1 if any(action.position == "rowstart" for action in actions) else 0)
+    return (len([f for f in serializer.fields.values() if f.visible_in_table])
+            + (1 if any(action.position == "rowend" for action in actions) else 0)
+            + (1 if any(action.position == "rowstart" for action in actions) else 0))
 
 
 @register.simple_tag(takes_context=True)
@@ -147,7 +145,8 @@ def render_table_commands(context, serializer, position, field_name=None, table_
     :param position: Position of command (See action.py->Action for more details)
     :param field_name: If position is left or right to the field, then this parameter must contain field name
     :param table_header: Name of table header for column, fo commands. Only for row start and row end position.
-    :return: rendered command buttons. If table_header parameter is given and commands for position are defined, returns only rendered table header
+    :return: rendered command buttons. If table_header parameter is given and commands for position are defined,
+        returns only rendered table header
     """
     ret = rowclick = rowrclick = ''
     stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
@@ -165,8 +164,9 @@ def render_table_commands(context, serializer, position, field_name=None, table_
         else:
             if field_name is None or (action.field_name == field_name):
                 ret += '<button class="btn btn-info" onClick="{stop_propagation} {action}">' \
-                       '<img src="{icon}"/>{label}</button>'. \
-                    format(stop_propagation=stop_propagation, action=action.action, label=action.label, icon=action.icon)
+                       '{icon_def}{label}</button>'. \
+                    format(stop_propagation=stop_propagation, action=action.action, label=action.label,
+                           icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
 
     if ret != '':
         if 'rowclick' not in position:

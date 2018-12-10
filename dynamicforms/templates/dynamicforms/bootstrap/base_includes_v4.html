@@ -1,12 +1,46 @@
 {% load static dynamicforms %}
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl" crossorigin="anonymous"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+        integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl"
+        crossorigin="anonymous"></script>
 <script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
 <script type="application/javascript">
   dynamicforms.DF = {{ DF|json }}
-  dynamicforms.csrf_token = '{{ csrf_token }}';
+    dynamicforms.csrf_token = '{{ csrf_token }}';
 </script>
+
 {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
   {% include DF.SELECT2 %}
 {% endif %}
+
+<style>
+  .dynamicforms-actioncontrol {
+    padding: 0 .25rem;
+  }
+
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     .675rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  .75rem;
+    height: .75rem;
+  }
+
+  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
+    display: none !important;
+  }
+
+  .dynamicforms-filterrow div {
+    margin: 0;
+  }
+
+</style>
