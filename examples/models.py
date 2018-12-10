@@ -1,8 +1,8 @@
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from datetime import timedelta
 from django.db import models
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
-
-# Create your models here.
 
 class Validated(models.Model):
     """
@@ -73,3 +73,60 @@ class Filter(models.Model):
         (2, 'Choice 3'),
         (3, 'Choice 4'),), help_text='Integer field with choices', verbose_name='Integer field with choices')
     bool_field = models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')
+
+
+class BasicFields(models.Model):
+    """
+    Shows basic available fields in DynamicForms
+    """
+    boolean_field = models.BooleanField(null=True)
+    nullboolean_field = models.NullBooleanField(null=True)
+    char_field = models.CharField(null=True, max_length=32)
+    email_field = models.EmailField(null=True)
+    slug_field = models.SlugField(null=True)
+    url_field = models.URLField(null=True)
+    uuid_field = models.UUIDField(null=True)
+    ipaddress_field = models.GenericIPAddressField(null=True)
+    integer_field = models.IntegerField(null=True)
+    float_field = models.IntegerField(null=True)
+    decimal_field = models.DecimalField(null=True, max_digits=5, decimal_places=2)
+    datetime_field = models.DateTimeField(null=True)
+    date_field = models.DateField(null=True)
+    time_field = models.TimeField(null=True)
+    duration_field = models.DurationField(null=True)
+
+
+class AdvancedFields(models.Model):
+    """
+    Shows advanced available fields in DynamicForms
+    """
+    regex_field = models.CharField(max_length=256)
+    choice_field = models.CharField(null=True, max_length=8)
+    multiplechoice_field = models.CharField(null=True, max_length=8)
+    filepath_field = models.FilePathField(null=True)
+    file_field = models.FileField(upload_to='examples/', null=True, blank=True)
+    image_field = models.ImageField(upload_to='examples/', null=True, blank=True)
+
+    # Model attribute for ReadOnlyField
+    hidden_field = models.DateTimeField(default=timezone.now)
+
+    @property
+    def readonly_field(self):
+        return self.hidden_field > timezone.now() - timedelta(days=1)
+
+    """ListField and DictField not supported in HTML forms in DRF"""
+    # list_field = models.?
+    # dict_field = models.?
+
+    """JSONField available only for PostgreSQL"""
+    # json_field = models.JSONField()
+
+    # serializer_method_field = models.?
+    # model_field = models.?
+
+    """Serializer relations"""
+    # string_related_field = models.?
+    # primary_key_related_field = models.?
+    # hyperlinked_related_field = models.?
+    # hyperlinked_identity_field = models.?
+    # slug_related_field = models.?

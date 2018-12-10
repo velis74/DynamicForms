@@ -17,11 +17,24 @@ class BooleanField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.BooleanFie
 
 
 # noinspection PyRedeclaration
+"""
 class NullBooleanField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.NullBooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, uuid: UUID=None, **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        super().__init__(**kwargs)
+"""
+
+# Without allow_null=False kwarg, which throws error
+# noinspection PyRedeclaration
+class NullBooleanField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.NullBooleanField):
+
+    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
+                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
+                 uuid: UUID=None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -286,7 +299,7 @@ class ReadOnlyField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.ReadOnlyF
 # noinspection PyRedeclaration,PyAbstractClass
 class HiddenField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.HiddenField):
 
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
+    def __init__(self, visible_in_table=False, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, uuid: UUID=None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
