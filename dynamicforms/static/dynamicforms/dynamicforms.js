@@ -507,7 +507,7 @@ dynamicforms = {
     if (trigger_element != null) {
       var rect = trigger_element.getBoundingClientRect();
 
-      if (rect.top <= (window.innerHeight || document.documentElement.clientHeight))
+      if (rect.height != 0 && rect.width != 0 && rect.top <= (window.innerHeight || document.documentElement.clientHeight))
         dynamicforms.paginatorGetNextPage(formID, '');
 
       //TODO: Check both methods of determining whether control item is showing (unit tests for one and the other?)
