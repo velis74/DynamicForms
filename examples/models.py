@@ -96,6 +96,16 @@ class BasicFields(models.Model):
     duration_field = models.DurationField(null=True)
 
 
+class Relation(models.Model):
+    """
+    Model related to AdvancedFields model
+    """
+    name = models.CharField(max_length=16)
+
+    def __str__(self):
+        return self.name
+
+
 class AdvancedFields(models.Model):
     """
     Shows advanced available fields in DynamicForms
@@ -124,9 +134,31 @@ class AdvancedFields(models.Model):
     # serializer_method_field = models.?
     # model_field = models.?
 
-    """Serializer relations"""
-    # string_related_field = models.?
-    # primary_key_related_field = models.?
-    # hyperlinked_related_field = models.?
-    # hyperlinked_identity_field = models.?
-    # slug_related_field = models.?
+    # Relations
+    # string_related_field, which is always read_only is defined only in serializer
+    # and primary_key_related_field is defined as its source
+    primary_key_related_field = models.OneToOneField(
+        Relation,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='primary'
+    )
+    slug_related_field = models.ForeignKey(
+        Relation,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='slug'
+    )
+    hyperlinked_related_field = models.ManyToManyField(
+        Relation,
+        related_name='hyper_related'
+    )
+    hyperlinked_identity_field = models.ForeignKey(
+        Relation,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='hyper_identity'
+    )
+
+    def __str__(self):
+        return f'Advanced field {self.id}'

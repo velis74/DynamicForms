@@ -1,4 +1,3 @@
-from django.utils import timezone
 from dynamicforms import serializers
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields

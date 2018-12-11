@@ -1,7 +1,7 @@
 from django.utils import timezone
 from dynamicforms import serializers
 from dynamicforms.viewsets import ModelViewSet
-from ..models import AdvancedFields
+from ..models import AdvancedFields, Relation
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
@@ -49,7 +49,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     # dynamicforms.js: contentType='multipart/form-data' in submitForm()
     # see how data is processed in ajax-form.js in DRF in case contentType='multipart/form-data' is used
 
-
     """ListField and DictField not supported in HTML forms in DRF"""
     # list_field = serializers.ListField()
     # dict_field = serializers.DictField()
@@ -68,20 +67,25 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     ModelField
     A generic field that can be tied to any arbitrary model field.
     The ModelField class delegates the task of serialization/deserialization to its associated model field.
-    This field can be used to create serializer fields for custom model fields, without having to create a new custom serializer field.
+    This field can be used to create serializer fields for custom model fields, without having to create a new custom
+    serializer field.
     """
     # model_field = serializers.ModelField()
 
-    """Serializer relations"""
-    # string_related_field = serializers.StringRelatedField()
-    # primary_key_related_field = serializers.PrimaryKeyRelatedField()
-    # hyperlinked_related_field= serializers.HyperlinkedRelatedField()
-    # hyperlinked_identity_field= serializers.HyperlinkedIdentityField()
-    # slug_related_field= serializers.SlugRelatedField()
+    # Relations
+    string_related_field = serializers.StringRelatedField(source='primary_key_related_field')
+    primary_key_related_field = serializers.PrimaryKeyRelatedField(queryset=Relation.objects.all())
+    slug_related_field = serializers.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+    # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
+    # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
     class Meta:
         model = AdvancedFields
-        exclude = ('multiplechoice_field', 'file_field', 'image_field')
+        exclude = ('multiplechoice_field', 'file_field', 'image_field', 'hyperlinked_related_field',
+                   'hyperlinked_identity_field')
+
+    def create(self, validated_data):
+            return AdvancedFields.objects.create(**validated_data)
 
 
 class AdvancedFieldsViewset(ModelViewSet):
