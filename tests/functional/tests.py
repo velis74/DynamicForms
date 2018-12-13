@@ -708,10 +708,61 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                         self.assertTrue(field.tag_name == "select")
                         select.select_by_index(3)
                 # Hidden field is not shown in dialog
+                elif label.text == "Primary key related field":
+                    # Check if primary_key_related_field field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        initial_choice = container.find_element_by_class_name("select2-selection__rendered")
+                        self.assertTrue(initial_choice.text == "Relation object 1")
+
+                        select2_options = select2.find_elements_by_tag_name("option")
+                        self.assertTrue(len(select2_options) == 10)
+                        self.assertTrue(select2.get_attribute("name") == "primary_key_related_field")
+                        self.assertTrue(select2.tag_name == "select")
+                        self.select_option_for_select2(container, field_id, text="Relation object 7")
+                    else:
+                        select = Select(field)
+                        selected_options = select.all_selected_options
+                        self.assertTrue(len(selected_options) == 1)
+                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
+                        self.assertTrue(selected_options[0].text == "Relation object 1")
+                        self.assertTrue(field.get_attribute("name") == "primary_key_related_field")
+                        self.assertTrue(field.tag_name == "select")
+                        select.select_by_index(6)
+                elif label.text == "Slug related field":
+                    # Check if slug_related_field field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        initial_choice = container.find_element_by_class_name("select2-selection__rendered")
+                        self.assertTrue(initial_choice.text == "Relation object 1")
+
+                        select2_options = select2.find_elements_by_tag_name("option")
+                        self.assertTrue(len(select2_options) == 10)
+                        self.assertTrue(select2.get_attribute("name") == "slug_related_field")
+                        self.assertTrue(select2.tag_name == "select")
+                        self.select_option_for_select2(container, field_id, text="Relation object 5")
+                    else:
+                        select = Select(field)
+                        selected_options = select.all_selected_options
+                        self.assertTrue(len(selected_options) == 1)
+                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
+                        self.assertTrue(selected_options[0].text == "Relation object 1")
+                        self.assertTrue(field.get_attribute("name") == "slug_related_field")
+                        self.assertTrue(field.tag_name == "select")
+                        select.select_by_index(4)
+                # StringRelatedField is read only with primary_key_related_field as source and is not shown in dialog
                 else:
                     field_count -= 1
 
-        self.assertEqual(field_count, 3)
+        self.assertEqual(field_count, 5)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -720,13 +771,18 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertTrue(len(rows) == 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 6)
+        self.assertTrue(len(cells) == 9)
+
+        # Check for relations
+        self.assertTrue(cells[5].text == "Relation object 7")
+        self.assertTrue(cells[6].text == "Relation object 7")
+        self.assertTrue(cells[7].text == "Relation object 5")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
-        # Change choice and filepath fields
+        # Change choice fields
         form = dialog.find_element_by_id(modal_serializer_id)
         try:
             select2_elements = form.find_elements_by_class_name("select2-field")
@@ -734,29 +790,31 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
             select2_elements = None
 
         if select2_elements:
-            select2_element_id = select2_elements[0].get_attribute("id")
-            self.select_option_for_select2(select2_elements[0], select2_element_id, text="Choice 4")
-            self.select_option_for_select2(select2_elements[1], select2_element_id, text="test.py")
+            self.select_option_for_select2(
+                select2_elements[0], select2_elements[0].get_attribute("id"), text="Choice 2"
+            )
+            self.select_option_for_select2(
+                select2_elements[3], select2_elements[3].get_attribute("id"), text="Relation object 9"
+            )
         else:
-            Select(dialog.find_element_by_name("choice_field")).select_by_index(3)
-            Select(dialog.find_element_by_name("filepath_field")).select_by_index(2)
+            Select(dialog.find_element_by_name("choice_field")).select_by_index(1)
+            Select(dialog.find_element_by_name("primary_key_related_field")).select_by_index(8)
 
         # Submit
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-
-        # Check for changed values
-        self.browser.refresh()
-        rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
-        self.check_row(rows[0], 6, ["1", "abcdef", "0", "true", "test.py", None])
 
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
         self.assertTrue(len(rows) == 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 6)
+        self.assertTrue(len(cells) == 9)
+
+        # Check for changed values
+        self.assertTrue(cells[2].text == "Choice 2")
+        self.assertTrue(cells[5].text == "Relation object 9")
+        self.assertTrue(cells[6].text == "Relation object 9")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
