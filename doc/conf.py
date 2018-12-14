@@ -31,9 +31,9 @@ copyright = '2018, Velis Ltd'
 author = 'Velis Ltd'
 
 # The short X.Y version
-version = '0.1'
+version = '0.2'
 # The full version, including alpha/beta/rc tags
-release = '0.1 dev'
+release = '0.2 dev'
 
 # -- General configuration ---------------------------------------------------
 
