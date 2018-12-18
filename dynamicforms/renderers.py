@@ -52,7 +52,10 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         res = super().get_template_context(data, renderer_context)
         view = renderer_context['view']
         if hasattr(view, 'template_context'):
-            res.update(view.template_context)
+            if callable(view.template_context):
+                res.update(view.template_context())
+            else:
+                res.update(view.template_context)
         res['df_render_type'] = view.render_type  # This one should not fail because it's set in initialize_request
         res['DF'] = settings.CONTEXT_VARS
         return res

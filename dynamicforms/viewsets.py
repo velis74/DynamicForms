@@ -62,11 +62,28 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
 
        * To render a new record use pk=new.
        * To render an existing record (for editing) use pk={record_id}.
+
     """
 
     template_context = {}
     """
     template_context provides configuration to templates being rendered
+
+    Note that when adding data from database, it is advised to make this definition a callable so that it is evaluated
+    on each render of the ViewSet: that way you can ensure data is always loaded fresh from database.
+
+    e.g.
+
+    .. code-block:: python
+
+       template_context = lambda self: dict(items=MyModel.objects.all())
+       
+    or
+    
+    .. code-block:: python
+    
+       def template_context(self):
+           return dict(items=MyModel.objects.all())
     """
 
     template_name = TEMPLATE + 'base_list.html'  #: template filename for listing multiple records (html renderer)
