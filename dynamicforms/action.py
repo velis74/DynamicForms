@@ -56,7 +56,8 @@ class ActionControls(object):
                               " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')));"))
             self.actions.append(
                 Action(label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
-                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}');"))
+                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', " +
+                       "deleteThisRow={{row.id}});"))
         if add_default_filter:
             self.actions.append(Action(label=_('Filter'), title=_('Filter'), icon='', position='header',
                                        action="dynamicforms.defaultFilter(event);"))
