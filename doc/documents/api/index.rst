@@ -6,6 +6,7 @@ DynamicForms API reference
 
    action_controls
    context_processors
+   dialogs
    fields
    renderers
    serializers
