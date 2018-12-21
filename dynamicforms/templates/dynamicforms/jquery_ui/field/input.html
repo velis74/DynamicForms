@@ -1,0 +1,10 @@
+{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% block field_input %}
+  <input id="{{ field.uuid }}"
+         name="{{ field.name }}"
+         class="{% if style.input_type != "file" %}text ui-widget-content ui-corner-all{% else %} form-control-file{% endif %}{% if field.errors %} ui-state-error{% endif %}"
+         type="{{ style.input_type }}"
+         {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
+         {% if field.value is not None %}value="{{ field.value }}"{% endif %}
+         {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}/>
+{% endblock %}

@@ -80,8 +80,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -124,8 +128,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
@@ -228,12 +236,20 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        try:
+            # jQueryUI
+            body = self.browser.find_element_by_class_name("ui-accordion-content")
+            dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        except NoSuchElementException:
+            dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
 
         self.assertTrue(len(errors) == 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == "Ensure this value is greater than or equal to 5.")
@@ -243,13 +259,20 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be a field error because of validator set in serializer
-
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        try:
+            # jQueryUI
+            body = self.browser.find_element_by_class_name("ui-accordion-content")
+            dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        except NoSuchElementException:
+            dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
 
         self.assertTrue(len(errors) == 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == 'amount can only be different than 5 if code is "123"')
@@ -382,8 +405,12 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -402,8 +429,12 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
@@ -550,6 +581,8 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
+                print("Old: " + f"dialog-{old_id}")
+                print("New: " + element_id)
                 if old_id:
                     self.assertFalse(element_id == f"dialog-{old_id}")
                 self.assertTrue(element_id.startswith("dialog-"))
@@ -574,8 +607,12 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -618,8 +655,12 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")

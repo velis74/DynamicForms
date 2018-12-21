@@ -1,0 +1,35 @@
+{% load dynamicforms %}
+
+{% set_var_conditional action_postfix='?df_render_type=dialog' condition_var=df_render_type compare='dialog' else_value='' %}
+{% if data.id %}
+  {% url url_reverse|add:'-detail' pk=data.id format='html' as form_action %}
+{% else %}
+  {% url url_reverse|add:'-list' format='html' as form_action %}
+{% endif %}
+
+<form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
+  <fieldset>
+    {% if data.id %}
+      {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
+      <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
+    {% endif %}
+
+    {% csrf_token %}
+    {% render_form serializer %}
+
+    {% if df_render_type != 'dialog' %}
+      <input type="submit" value="Save" class="ui-button ui-corner-all ui-widget">
+    {% endif %}
+  </fieldset>
+</form>
+<script type="application/javascript">
+  {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}
+  {% block field_actions %}
+    {% for action in serializer.action_register_js %}
+  var action_func{{ action.action_id }} = {{ action.action_js }};
+      {% for field_uuid in action.tracked_fields %}
+  dynamicforms.registerFieldAction('{{ serializer.uuid }}', '{{ field_uuid }}', action_func{{ action.action_id }});
+      {% endfor %}
+    {% endfor %}
+  {% endblock %}
+</script>

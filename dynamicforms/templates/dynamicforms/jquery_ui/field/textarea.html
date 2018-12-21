@@ -1,0 +1,10 @@
+{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% block field_input %}
+  <textarea id="{{ field.uuid }}"
+            name="{{ field.name }}"
+            class="ui-widget ui-state-default ui-corner-all"
+            {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
+            {% if style.rows %}rows="{{ style.rows }}"{% endif %}>
+    {% if field.value %}{{ field.value }}{% endif %}
+  </textarea>
+{% endblock %}
