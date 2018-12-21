@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from typing import Union, List
 import pytz
 from django.conf import settings
 from django.db import models
@@ -199,7 +200,7 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
             return queryset.filter(**{field: value})
 
     @staticmethod
-    def generate_paged_loader(page_size: int = 30, ordering: str = 'id'):
+    def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = 'id'):
         """
         Generates a Pagination class that will handle dynamic data loading for ViewSets with a lot of data.
         Use by declaring `pagination_class = ModelViewSet.generate_paged_loader()` in class variables
