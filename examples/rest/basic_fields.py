@@ -9,6 +9,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
         'new': 'New basic fields object',
         'edit': 'Editing basic fields object',
     }
+    form_template = 'examples/form_cols.html'
 
     boolean_field = serializers.BooleanField()
     nullboolean_field = serializers.NullBooleanField()

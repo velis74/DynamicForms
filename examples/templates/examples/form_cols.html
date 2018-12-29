@@ -1,0 +1,37 @@
+{% load dynamicforms %}
+
+{% if form.has_non_field_errors %}
+  {% for error in form.errors.non_field_errors %}
+    <div class="text-danger">{{ error }}</div>
+  {% endfor %}
+{% endif %}
+
+{% block form_inner %}
+  {% for field in form %}
+    {% if forloop.counter|add:1|divisibleby:2 or forloop.first %}
+    <div class="row">
+      {% if DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v4' %}
+      <div class="col-6">
+      {% elif DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3' %}
+      <div class="col-xs-6">
+      {% else %}
+      <div style="float:left; width:45%; padding-left: 2.5%; padding-right: 2.5%">
+      {% endif %}
+        {% render_field field style=style %}
+      </div>
+    {% else %}
+      {% if DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v4' %}
+      <div class="col-6">
+      {% elif DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3' %}
+      <div class="col-xs-6">
+      {% else %}
+      <div style="float:left; width:45%; padding-left: 2.5%; padding-right: 2.5%">
+      {% endif %}
+        {% render_field field style=style %}
+      </div>
+    {% endif %}
+    {% if forloop.counter|divisibleby:2 or forloop.last %}
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

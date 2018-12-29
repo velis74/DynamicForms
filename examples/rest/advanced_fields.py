@@ -14,7 +14,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     regex_pattern = '(?<=abc)def'
     regex_field = serializers.RegexField(
         regex_pattern,
-        error_messages={'invalid': f'This value does not match the required pattern {regex_pattern}.'})
+        error_messages={'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
 
     choice_field = serializers.ChoiceField(choices=(
         (0, 'Choice 1'),
