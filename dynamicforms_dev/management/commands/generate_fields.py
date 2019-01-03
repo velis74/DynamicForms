@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
             print('from uuid import UUID\n', file=output)
             print('from rest_framework import fields, relations', file=output)
-            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn', file=output)
+            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, HiddenFieldMixin', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -55,8 +55,8 @@ class Command(BaseCommand):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
 
-                            if field_class == 'BooleanField' and parm.name == 'allow_null':
-                                # BooleanField doesn't like this one and wants us to use NullBooleanField
+                            if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
+                                # BooleanField and NullBooleanFiel don't like this one
                                 continue
 
                             parm_str = parm.name
@@ -103,25 +103,47 @@ class Command(BaseCommand):
                 field_params.insert(0, 'self')
                 field_params.append('**kw')
                 field_params = textwrap.wrap((', '.join(field_params)).replace(': ', ':_'), width=103)
-                field_params = textwrap.indent('\n'.join(field_params), ' ' * 37).lstrip(' ').replace(':_', ': ')
+
+                # Special case indentation for HStoreField
+                if field_class != 'HStoreField':
+                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 17).lstrip(' ').replace(':_', ': ')
+                else:
+                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 21).lstrip(' ').replace(':_', ': ')
 
                 additional_inspects = ''
                 if field_class in ('SerializerMethodField', 'HiddenField', 'ReadOnlyField'):
-                    additional_inspects += ',PyAbstractClass'
+                    additional_inspects += '# noinspection PyAbstractClass' if not additional_inspects else ',PyAbstractClass'
                 if 'format' in field_params_names:
-                    additional_inspects += ',PyShadowingBuiltins'
+                    additional_inspects += '# noinspection PyShadowingBuiltins' if not additional_inspects else ',PyShadowingBuiltins'
                 field_module = 'fields.' if field_class in fields.__dict__ else 'relations.'
 
-                print(textwrap.dedent(f"""
-                
-                    # noinspection PyRedeclaration{additional_inspects}
-                    class {field_class}(UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):
-                    
-                        def __init__({field_params}):
-                            kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}
-                            kwargs.update(kw)
-                            super().__init__(**kwargs)"""
-                                      ), file=output)
+                # Add additional_inspects and new line
+                if additional_inspects:
+                    print(textwrap.dedent(f"""
+
+                        {additional_inspects}"""), file=output)
+                else:
+                    print(textwrap.dedent('\n'), file=output)
+
+                # Check if field is HiddenField and substitute RenderToTableMixin with HiddenFieldMixin
+                render_to_table_mixin = 'RenderToTableMixin'
+                if field_class == 'HiddenField':
+                    render_to_table_mixin = 'HiddenFieldMixin'
+
+                # Check if field is HStoreField to add wrapper and adjust indentation
+                hstore_field_wrapper, hstore_field_indent = '', ''
+                if field_class == 'HStoreField':
+                    hstore_field_wrapper = "if hasattr(fields, 'HStoreField'):\n"
+                    hstore_field_indent = ' '*4
+
+                print(textwrap.dedent(
+                    f"""{hstore_field_wrapper}{hstore_field_indent}class {field_class}(UUIDMixIn, ActionMixin, {render_to_table_mixin}, {field_module}{field_class}):
+
+    {hstore_field_indent}def __init__({field_params}):
+        {hstore_field_indent}kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}
+        {hstore_field_indent}kwargs.update(kw)
+        {hstore_field_indent}super().__init__(**kwargs)"""
+                  ), file=output)
 
         print('fields.py successfully generated')
         # options['file']
