@@ -83,17 +83,17 @@ dynamicforms = {
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     var recordURL = dynamicforms.getRecordURL();
-    var recordID = data.id ? data.id : null;
+    var recordID  = data.id ? data.id : null;
 
     var formId = $('table')[0].getAttribute('id').replace('list-', '');
 
     $.ajax({
-             type:     method,
-             url:      $form.attr("action"),
-             data:     data,
-             dataType: 'html',
-             headers:  headers,
-           })
+      type:     method,
+      url:      $form.attr("action"),
+      data:     data,
+      dataType: 'html',
+      headers:  headers,
+    })
       .done(function (data) {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
@@ -133,24 +133,20 @@ dynamicforms = {
    * @param url: url for retrieving html
    * @param recordID: id of the data
    * @param refreshType: how to refresh the table
+   * @param formID: id of form
    */
-  refreshList: function refreshList(url, recordID, refreshType, formId) {
-    if (refreshType == undefined && recordID != false) {
-      $.ajax({
-               type:     'GET',
-               url:      url,
-               dataType: 'html',
-             })
+  refreshList: function refreshList(url, recordID, refreshType, formID) {
+    if ((refreshType == undefined || refreshType == 'record') && recordID != false) {
+      $.ajax({type: 'GET', url: url, dataType: 'html'})
         .done(function (data) {
-          dynamicforms.refreshRow(data, formId, recordID);
+          dynamicforms.refreshRow(data, formID, recordID);
         })
         .fail(function (xhr, status, error) {
           // TODO: this doesn't handle errors correctly
         });
     } else if (refreshType == 'table') {
-      dynamicforms.refreshTable(formId, recordID);
+      dynamicforms.refreshTable(formID, recordID);
     } else if (refreshType == 'no refresh') {
-      pass
     }
   },
 
@@ -158,23 +154,24 @@ dynamicforms = {
    * Replaces edited row
    * @param data
    * @param recordID: id of edited data
+   * @param formID: id of form
    */
   refreshRow: function refreshRow(data, formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-    var link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
+    var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
 
     // Case when table is smaller than pagination
     if (link_next == undefined) {
       var $htmlObject = $(data);
 
       if (recordID) {
-        var trSelector = "tr[data-id='" + recordID + "']";
-        var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
+        var trSelector    = "tr[data-id='" + recordID + "']";
+        var $editedRow    = $htmlObject.find(trSelector); // Edited record from ajax returned html
         var $rowToRefresh = $(trSelector); // Row to refresh
         $rowToRefresh.replaceWith($editedRow);
       } else {
         var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
-        var $newRow = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
+        var $newRow  = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
 
         // Insert new row after the last row or insert first row
         if ($lastRow.length) {
@@ -195,18 +192,18 @@ dynamicforms = {
    */
   refreshTable: function refreshTable(formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-    var link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
+    var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
 
     var recordURL = dynamicforms.getRecordURL();
-    var table = $("#list-" + formID).find("tbody:first");
+    var table     = $("#list-" + formID).find("tbody:first");
 
     // Case when table is smaller than pagination
     if (link_next == undefined) {
       $.ajax({
-               type:    'GET',
-               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     recordURL,
-             }).done(function (data) {
+        type:    'GET',
+        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+        url:     recordURL,
+      }).done(function (data) {
 
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
@@ -237,7 +234,8 @@ dynamicforms = {
 
   /**
    * Shows a dialog, attaches appropriate event handlers to buttons and gets initial data values
-   * @param $dlg
+   * @param $dlg: dialog (parsed) html to show
+   * @param refreshType: how to refresh the table after the dialog is finished with editing
    */
   showDialog: function showDialog($dlg, refreshType) {
     //TODO: adjust hashURL
@@ -291,9 +289,9 @@ dynamicforms = {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
-               url:     recordURL,
-               headers: {'X-DF-RENDER-TYPE': 'dialog'},
-             })
+        url:     recordURL,
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+      })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), refreshType);
         })
@@ -318,15 +316,16 @@ dynamicforms = {
   /**
    * Handles what should happen when user clicks to delete a record
    * @param recordURL: url to call to get data / html for the record / dialog
+   * @param recordID: pk of row to be deleted
    * @param refreshType: how to refresh the table
    */
   deleteRow: function deleteRow(recordURL, recordID, refreshType) {
     //TODO: Ask user for confirmation
     $.ajax({
-             url:     recordURL,
-             method:  'DELETE',
-             headers: {'X-CSRFToken': dynamicforms.csrf_token},
-           })
+      url:     recordURL,
+      method:  'DELETE',
+      headers: {'X-CSRFToken': dynamicforms.csrf_token},
+    })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -407,9 +406,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-           function (fieldID) {
-             dynamicforms.field_helpers.del(fieldID);
-           }
+      function (fieldID) {
+        dynamicforms.field_helpers.del(fieldID);
+      }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -697,8 +696,7 @@ dynamicforms = {
       link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
       if (filter != 'nofilter')
         link_next += '?' + filter;
-    }
-    else
+    } else
       link_next = tbl_pagination.link_next;
 
     /*console.log(link_next);
@@ -716,10 +714,10 @@ dynamicforms = {
       $("#loading-" + formID).show();
       //TODO: Remember sequence number... if data that comes back has other than last sequence number than just ignore it #114
       $.ajax({
-               type:    'GET',
-               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next,
-             }).done(function (data) {
+        type:    'GET',
+        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+        url:     link_next,
+      }).done(function (data) {
 
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
@@ -731,8 +729,7 @@ dynamicforms = {
             if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
               data.splice(i, 1);
           }
-        }
-        else if (table.find("tr").length > 0)
+        } else if (table.find("tr").length > 0)
           data = [];
 
         //TODO: If NoData comes back - I reached the end of dataset... do I even attempt further reading?
@@ -790,8 +787,7 @@ dynamicforms = {
           filter[element.attr("name")] = true;
         else if (!element.is('[readonly]'))
           filter[element.attr("name")] = false;
-      }
-      else if (element.val() != null && element.val().length)
+      } else if (element.val() != null && element.val().length)
         filter[element.attr("name")] = element.val();
     });
     filter = jQuery.param(filter);
@@ -809,7 +805,7 @@ dynamicforms = {
   defaultFilter: function defaultFilter(event) {
     var formId = $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
     dynamicforms.filterData(formId);
-  }
+  },
 
 };
 
