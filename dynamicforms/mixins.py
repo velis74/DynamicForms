@@ -104,3 +104,10 @@ class RenderToTableMixin(object):
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
         return drftt.format_value(value)
+
+
+class HiddenFieldMixin(RenderToTableMixin):
+
+    def __init__(self, *args, visible_in_table: bool=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.visible_in_table = False
