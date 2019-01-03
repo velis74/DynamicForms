@@ -17,6 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from dynamicforms.mixins import UUIDMixIn
+        from dynamicforms import mixins
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
 
@@ -31,9 +32,13 @@ class Command(BaseCommand):
                         issubclass(obj, relations.RelatedField) and obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
+            # get all the field-specific mixins
+            field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
+
             print('from uuid import UUID\n', file=output)
             print('from rest_framework import fields, relations', file=output)
-            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, HiddenFieldMixin', file=output)
+            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, ' + ', '.join(field_mixins),
+                  file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -125,10 +130,8 @@ class Command(BaseCommand):
                 else:
                     print(textwrap.dedent('\n'), file=output)
 
-                # Check if field is HiddenField and substitute RenderToTableMixin with HiddenFieldMixin
-                render_to_table_mixin = 'RenderToTableMixin'
-                if field_class == 'HiddenField':
-                    render_to_table_mixin = 'HiddenFieldMixin'
+                # Check if field has a dedicated mixin and add it to mixins
+                additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
                 hstore_field_wrapper, hstore_field_indent = '', ''
@@ -137,7 +140,8 @@ class Command(BaseCommand):
                     hstore_field_indent = ' '*4
 
                 print(textwrap.dedent(
-                    f"""{hstore_field_wrapper}{hstore_field_indent}class {field_class}(UUIDMixIn, ActionMixin, {render_to_table_mixin}, {field_module}{field_class}):
+                    f"""{hstore_field_wrapper}{hstore_field_indent}class {field_class}({additional_mixin}""" +
+                    f"""UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):
 
     {hstore_field_indent}def __init__({field_params}):
         {hstore_field_indent}kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}

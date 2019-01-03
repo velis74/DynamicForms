@@ -89,13 +89,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         return tbody.find_elements_by_tag_name("tr")
 
     def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertTrue(field.text == fld_text)
-        self.assertTrue(field.get_attribute("name") == fld_name)
-        self.assertTrue(field.get_attribute("type") == fld_type)
+        self.assertEqual(field.text, fld_text)
+        self.assertEqual(field.get_attribute("name"), fld_name)
+        self.assertEqual(field.get_attribute("type"), fld_type)
 
     def check_row(self, row, cell_cnt, cell_values):
         cells = row.find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == cell_cnt)
+        self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if cell_values[i] is not None:
                 self.assertTrue(cells[i], cell_values[i])
@@ -122,18 +122,18 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Go to validated html and check if there's a "+ Add" button
 
         try:
-            header = self.browser.find_element_by_class_name("card-header")
+            header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
             # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            header = self.browser.find_element_by_class_name('panel-heading')
 
-        add_btn = header.find_element_by_class_name("btn")
-        self.assertTrue(add_btn.text == "+ Add")
+        add_btn = header.find_element_by_class_name('btn')
+        self.assertEqual(add_btn.text, '+ Add')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
-        self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -145,7 +145,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0
-        self.assertTrue(self.check_error_text(dialog) is None)
+        self.assertIsNone(self.check_error_text(dialog))
 
         form = dialog.find_element_by_id(modal_serializer_id)
         containers = form.find_elements_by_tag_name("div")
@@ -175,21 +175,21 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(initial_choice.text == "Choice 1")
+                        self.assertEqual(initial_choice.text, "Choice 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 4)
-                        self.assertTrue(select2.get_attribute("name") == "item_type")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 4)
+                        self.assertEqual(select2.get_attribute("name"), "item_type")
+                        self.assertEqual(select2.tag_name, "select")
                         self.select_option_for_select2(container, field_id, text="Choice 4")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "Choice 1")
-                        self.assertTrue(field.get_attribute("name") == "item_type")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(selected_options[0].text, "Choice 1")
+                        self.assertEqual(field.get_attribute("name"), "item_type")
+                        self.assertEqual(field.tag_name, "select")
                         select.select_by_index(3)
                 elif label.text == "Item flags":
                     # Check if item_flags field is select2 element
@@ -321,7 +321,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
 
         # we delete the row we created
@@ -331,8 +331,8 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
-        self.assertTrue(rows[0].find_element_by_tag_name('td').text == 'No data')
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
 
 
 class BasicFieldsTest(StaticLiveServerTestCase):
@@ -517,14 +517,22 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
-        self.assertTrue(len(errors) == 7)
-        self.assertTrue(errors[0].get_attribute("innerHTML") == "Enter a valid email address.")
-        self.assertTrue(errors[1].get_attribute("innerHTML") == "Enter a valid URL.")
-        self.assertTrue(errors[2].get_attribute("innerHTML") == "Must be a valid UUID.")
-        self.assertTrue(errors[3].get_attribute("innerHTML") == "A valid integer is required.")
-        self.assertTrue(errors[4].get_attribute("innerHTML") == "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z].")
-        self.assertTrue(errors[5].get_attribute("innerHTML") == "Date has wrong format. Use one of these formats instead: YYYY-MM-DD.")
-        self.assertTrue(errors[6].get_attribute("innerHTML") == "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
+        self.assertEqual(len(errors), 7)
+        self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")
+        self.assertEqual(errors[1].get_attribute("innerHTML"), "Enter a valid URL.")
+        self.assertIn(errors[2].get_attribute("innerHTML"),
+                      ("Must be a valid UUID.", '"123e4567-e89b-12d3-a456-426655440000Test error" is not a valid UUID.')
+                      )
+        self.assertEqual(errors[3].get_attribute("innerHTML"), "A valid integer is required.")
+        self.assertEqual(errors[4].get_attribute("innerHTML"),
+                         "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]]"
+                         "[+HH:MM|-HH:MM|Z].")
+        self.assertIn(errors[5].get_attribute("innerHTML"),
+                      ("Date has wrong format. Use one of these formats instead: YYYY-MM-DD.",
+                       "Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]].",)
+        )
+        self.assertEqual(errors[6].get_attribute("innerHTML"),
+                         "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
 
 class AdvancedFieldsTest(StaticLiveServerTestCase):
@@ -694,18 +702,18 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                         self.assertTrue(initial_choice.text == "---------")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 12)
-                        self.assertTrue(select2.get_attribute("name") == "filepath_field")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 8)
+                        self.assertEqual(select2.get_attribute("name"), "filepath_field")
+                        self.assertEqual(select2.tag_name,  "select")
                         self.select_option_for_select2(container, field_id, text="admin.py")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "---------")
-                        self.assertTrue(field.get_attribute("name") == "filepath_field")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(selected_options[0].text, "---------")
+                        self.assertEqual(field.get_attribute("name"), "filepath_field")
+                        self.assertEqual(field.tag_name, "select")
                         select.select_by_index(3)
                 # Hidden field is not shown in dialog
                 elif label.text == "Primary key related field":
