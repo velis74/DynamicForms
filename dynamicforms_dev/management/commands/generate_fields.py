@@ -55,7 +55,7 @@ class Command(BaseCommand):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
 
-                            if field_class == 'BooleanField' or 'NullBooleanField' and parm.name == 'allow_null':
+                            if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
                                 # BooleanField and NullBooleanFiel don't like this one
                                 continue
 
