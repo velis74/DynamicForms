@@ -1,4 +1,4 @@
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields
 
@@ -11,21 +11,21 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     }
     form_template = 'examples/form_cols.html'
 
-    boolean_field = serializers.BooleanField()
-    nullboolean_field = serializers.NullBooleanField()
-    char_field = serializers.CharField()
-    email_field = serializers.EmailField()
-    slug_field = serializers.SlugField()
-    url_field = serializers.URLField()
-    uuid_field = serializers.UUIDField()
-    ipaddress_field = serializers.IPAddressField()
-    integer_field = serializers.IntegerField()
-    float_field = serializers.IntegerField()
-    decimal_field = serializers.DecimalField(max_digits=5, decimal_places=2)
-    datetime_field = serializers.DateTimeField()
-    date_field = serializers.DateField()
-    time_field = serializers.TimeField()
-    duration_field = serializers.DurationField()
+    boolean_field = fields.BooleanField()
+    nullboolean_field = fields.NullBooleanField()
+    char_field = fields.CharField()
+    email_field = fields.EmailField()
+    slug_field = fields.SlugField()
+    url_field = fields.URLField()
+    uuid_field = fields.UUIDField()
+    ipaddress_field = fields.IPAddressField()
+    integer_field = fields.IntegerField()
+    float_field = fields.IntegerField()
+    decimal_field = fields.DecimalField(max_digits=5, decimal_places=2)
+    datetime_field = fields.DateTimeField()
+    date_field = fields.DateField()
+    time_field = fields.TimeField()
+    duration_field = fields.DurationField()
 
     class Meta:
         model = BasicFields

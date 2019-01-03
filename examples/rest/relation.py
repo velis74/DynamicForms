@@ -1,4 +1,4 @@
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
 from ..models import Relation
 
@@ -10,7 +10,7 @@ class RelationSerializer(serializers.ModelSerializer):
         'edit': 'Editing relation object',
     }
 
-    name = serializers.CharField()
+    name = fields.CharField()
 
     class Meta:
         model = Relation

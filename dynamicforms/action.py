@@ -20,7 +20,8 @@ class Action(object):
      * rowend - Additional control column on right side of table
      * fieldleft - On left side of field value
      * fieldright -  On right side of field value
-    :param field_name: If position is set to fieldleft or fieldright then this parameter must contain name of field where commands will be set
+    :param field_name: If position is set to fieldleft or fieldright then this parameter must contain name of field
+      where commands will be set
     """
 
     def __init__(self, label, title, icon, action, position, field_name=None):

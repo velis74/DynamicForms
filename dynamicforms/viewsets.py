@@ -78,11 +78,11 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
     .. code-block:: python
 
        template_context = lambda self: dict(items=MyModel.objects.all())
-       
+
     or
-    
+
     .. code-block:: python
-    
+
        def template_context(self):
            return dict(items=MyModel.objects.all())
     """

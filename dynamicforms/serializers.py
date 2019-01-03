@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from dynamicforms.action import ActionControls
 from dynamicforms.settings import TEMPLATE
-from .fields import *
+from . import fields
 from .mixins import UUIDMixIn, ActionMixin
 
 
@@ -34,38 +34,38 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
     """
 
     serializer_field_mapping = {
-        models.AutoField: IntegerField,
-        models.BigIntegerField: IntegerField,
-        models.BooleanField: BooleanField,
-        models.CharField: CharField,
-        models.CommaSeparatedIntegerField: CharField,
-        models.DateField: DateField,
-        models.DateTimeField: DateTimeField,
-        models.DecimalField: DecimalField,
-        models.EmailField: EmailField,
-        models.Field: ModelField,
-        models.FileField: FileField,
-        models.FloatField: FloatField,
-        models.ImageField: ImageField,
-        models.IntegerField: IntegerField,
-        models.NullBooleanField: NullBooleanField,
-        models.PositiveIntegerField: IntegerField,
-        models.PositiveSmallIntegerField: IntegerField,
-        models.SlugField: SlugField,
-        models.SmallIntegerField: IntegerField,
-        models.TextField: CharField,
-        models.TimeField: TimeField,
-        models.URLField: URLField,
-        models.GenericIPAddressField: IPAddressField,
-        models.FilePathField: FilePathField,
+        models.AutoField: fields.IntegerField,
+        models.BigIntegerField: fields.IntegerField,
+        models.BooleanField: fields.BooleanField,
+        models.CharField: fields.CharField,
+        models.CommaSeparatedIntegerField: fields.CharField,
+        models.DateField: fields.DateField,
+        models.DateTimeField: fields.DateTimeField,
+        models.DecimalField: fields.DecimalField,
+        models.EmailField: fields.EmailField,
+        models.Field: fields.ModelField,
+        models.FileField: fields.FileField,
+        models.FloatField: fields.FloatField,
+        models.ImageField: fields.ImageField,
+        models.IntegerField: fields.IntegerField,
+        models.NullBooleanField: fields.NullBooleanField,
+        models.PositiveIntegerField: fields.IntegerField,
+        models.PositiveSmallIntegerField: fields.IntegerField,
+        models.SlugField: fields.SlugField,
+        models.SmallIntegerField: fields.IntegerField,
+        models.TextField: fields.CharField,
+        models.TimeField: fields.TimeField,
+        models.URLField: fields.URLField,
+        models.GenericIPAddressField: fields.IPAddressField,
+        models.FilePathField: fields.FilePathField,
     }
     if models.DurationField is not None:
-        serializer_field_mapping[models.DurationField] = DurationField
+        serializer_field_mapping[models.DurationField] = fields.DurationField
 
-    serializer_related_field = PrimaryKeyRelatedField
-    serializer_related_to_field = SlugRelatedField
-    serializer_url_field = HyperlinkedIdentityField
-    serializer_choice_field = ChoiceField
+    serializer_related_field = fields.PrimaryKeyRelatedField
+    serializer_related_to_field = fields.SlugRelatedField
+    serializer_url_field = fields.HyperlinkedIdentityField
+    serializer_choice_field = fields.ChoiceField
 
     template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
@@ -114,7 +114,7 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
             _filter_data = type(self)(instance=type(self).Meta.model())
             _filter_data.serializer_type = 'filter'
             for name, field in _filter_data.fields.fields.items():
-                if isinstance(field, ChoiceField):
+                if isinstance(field, fields.ChoiceField):
                     field.allow_blank = True
             type(self)._filter_data = _filter_data
         return type(self)._filter_data

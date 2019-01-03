@@ -51,7 +51,7 @@ class FilterFormTest(StaticLiveServerTestCase):
 
         try:
             element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException as e:
+        except ElementNotInteractableException:
             actions = ActionChains(driver)
             a = actions.move_to_element_with_offset(element, 50, 30)
             a.send_keys(Keys.ENTER)

@@ -87,7 +87,8 @@ class RenderToTableMixin(object):
     """
     Used for rendering individual field to table view
     """
-    def __init__(self, *args, visible_in_table: bool=True, **kwargs):
+
+    def __init__(self, *args, visible_in_table: bool = True, **kwargs):
         super().__init__(*args, **kwargs)
         self.visible_in_table = visible_in_table
 
@@ -108,6 +109,6 @@ class RenderToTableMixin(object):
 
 class HiddenFieldMixin(RenderToTableMixin):
 
-    def __init__(self, *args, visible_in_table: bool=True, **kwargs):
+    def __init__(self, *args, visible_in_table: bool = True, **kwargs):
         super().__init__(*args, **kwargs)
         self.visible_in_table = False
