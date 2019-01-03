@@ -46,7 +46,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
                 if old_id:
-                    self.assertFalse(element_id == f"dialog-{old_id}")
+                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -59,7 +59,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.5)
-                if self.browser.find_element_by_id(f"dialog-{dialog_id}") is not None:
+                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException as e:
@@ -102,7 +102,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         return cells
 
     def select_option_for_select2(self, driver, id, text=None):
-        element = driver.find_element_by_xpath(f"//*[@id='{id}']/following-sibling::*[1]")
+        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
         element.click()
 
         if text:
@@ -223,7 +223,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     field_count -= 1
                     check = label.text == "Code"
                     fname = field.get_attribute("name")
-                    self.assertTrue(False, f"Wrong field container - label: '{label.text}' {check} {fname}")
+                    self.assertTrue(False, "Wrong field container - label: '{label.text}' {check} {fname}".format(**locals()))
         self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
@@ -359,7 +359,7 @@ class BasicFieldsTest(StaticLiveServerTestCase):
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
                 if old_id:
-                    self.assertFalse(element_id == f"dialog-{old_id}")
+                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -372,7 +372,7 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.5)
-                if self.browser.find_element_by_id(f"dialog-{dialog_id}") is not None:
+                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException as e:
@@ -551,7 +551,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
                 if old_id:
-                    self.assertFalse(element_id == f"dialog-{old_id}")
+                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -564,7 +564,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.5)
-                if self.browser.find_element_by_id(f"dialog-{dialog_id}") is not None:
+                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException as e:
@@ -596,7 +596,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         return cells
 
     def select_option_for_select2(self, driver, id, text=None):
-        element = driver.find_element_by_xpath(f"//*[@id='{id}']/following-sibling::*[1]")
+        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
         element.click()
 
         if text:

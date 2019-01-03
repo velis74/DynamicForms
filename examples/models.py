@@ -161,4 +161,4 @@ class AdvancedFields(models.Model):
     )
 
     def __str__(self):
-        return f'Advanced field {self.id}'
+        return 'Advanced field {self.id}'.format(**locals())
