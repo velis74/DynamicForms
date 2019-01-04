@@ -50,15 +50,15 @@ class ActionControls(object):
         if add_default_crud:
             self.actions.append(
                 Action(label=_('+ Add'), title=_('Add new record'), icon='', position='header',
-                       action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}');"))
+                       action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='record');"))
             self.actions.append(
                 Action(label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
                        action="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')));"))
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')), refreshType='record');"))
             self.actions.append(
                 Action(label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
-                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', " +
-                       "deleteThisRow={{row.id}});"))
+                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+                       + "deleteThisRow={{row.id}}, refreshType='record');"))
         if add_default_filter:
             self.actions.append(Action(label=_('Filter'), title=_('Filter'), icon='', position='header',
                                        action="dynamicforms.defaultFilter(event);"))

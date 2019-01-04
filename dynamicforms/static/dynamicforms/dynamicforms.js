@@ -83,7 +83,7 @@ dynamicforms = {
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     var recordURL = dynamicforms.getRecordURL();
-    var recordID  = data.id ? data.id : null;
+    var recordID  = data.id ? data.id : false;
 
     var formId = $('table')[0].getAttribute('id').replace('list-', '');
 
@@ -134,9 +134,10 @@ dynamicforms = {
    * @param recordID: id of the data
    * @param refreshType: how to refresh the table
    * @param formID: id of form
+   * @param deletion: if present delete action happened
    */
-  refreshList: function refreshList(url, recordID, refreshType, formID) {
-    if ((refreshType == undefined || refreshType == 'record') && recordID != false) {
+  refreshList: function refreshList(url, recordID, refreshType, formID, deletion) {
+    if (refreshType == undefined || refreshType == 'record') {
       $.ajax({type: 'GET', url: url, dataType: 'html'})
         .done(function (data) {
           dynamicforms.refreshRow(data, formID, recordID);
@@ -146,6 +147,9 @@ dynamicforms = {
         });
     } else if (refreshType == 'table') {
       dynamicforms.refreshTable(formID, recordID);
+      if (deletion == true){
+        dynamicforms.wasLastRowDeleted();
+      }
     } else if (refreshType == 'no refresh') {
     }
   },
@@ -212,6 +216,9 @@ dynamicforms = {
         if (recordID) {
           table.find("tr").remove();
         } else if (!recordID) { // Added record
+          // Check if "no data" element is present and remove it
+          table.find("tr[data-title='NoData']").remove();
+          // Update records
           for (var i = data.length - 1; i >= 0; i--) {
             var data_id = data[i].getAttribute('data-id');
             if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
@@ -311,6 +318,20 @@ dynamicforms = {
   removeRow: function removeRow(recordID) {
     var $trToRemove = $("tr[data-id='" + recordID + "']");
     $trToRemove.remove();
+    dynamicforms.wasLastRowDeleted();
+  },
+
+  /**
+   * Checks if last row was deleted and appends "No data" element if so
+   */
+  wasLastRowDeleted: function wasLastRowDeleted() {
+    var $leftTrsCount = $("tr[data-id]").length;
+    if ($leftTrsCount == 0) {
+      // Count how many lines should "No data" element span
+      var colCount = $("th").length;
+      var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
+      var $tblBody = $("tbody").append(noDataElement);
+    }
   },
 
   /**
@@ -330,11 +351,12 @@ dynamicforms = {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
         // Remove row after deletion
-        if (refreshType == undefined) {
+        if (refreshType == undefined || refreshType == 'record') {
           dynamicforms.removeRow(recordID);
         } else if (refreshType == 'table') {
           var recordURL = dynamicforms.getRecordURL();
-          dynamicforms.refreshList(recordURL, false, refreshType);
+          var formId = $('table')[0].getAttribute('id').replace('list-', '');
+          dynamicforms.refreshList(recordURL, true, refreshType, formId, true);
         } else if (refreshType == 'no refresh') {
           // pass
         }
@@ -646,8 +668,8 @@ dynamicforms = {
    * @param link_prev: url with cursor definition for loading previous page
    */
   paginatorInitTable: function paginatorInitTable(formID, link_next, link_prev) {
-    if (link_next != "") {
-      dynamicforms.df_tbl_pagination.set(formID, 'link_next', link_next);
+    dynamicforms.df_tbl_pagination.set(formID, 'link_next', link_next);
+    if (link_next != '' && link_next != undefined) {
       var table_rows = $("#list-" + formID).find("tbody:first").find("tr");
       dynamicforms.df_tbl_pagination.set(formID, 'trigger_element', table_rows[0]);
     }
