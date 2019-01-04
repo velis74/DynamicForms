@@ -73,13 +73,19 @@ dynamicforms = {
    * status and values
    * @param $dlg: current dialog which will be updated with call results or closed on successful data store
    * @param $form: the edited form containing the data
+   * @param refreshType: how to refresh the table
    */
-  submitForm: function submitForm($dlg, $form) {
+  submitForm: function submitForm($dlg, $form, refreshType) {
     var data    = dynamicforms.getSerializedForm($form, 'final');
     var method  = data['data-dynamicforms-method'] || 'POST';
     var headers = {'X-DF-RENDER-TYPE': 'dialog'};
 
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
+
+    var recordURL = dynamicforms.getRecordURL();
+    var recordID = data.id ? data.id : null;
+
+    var formId = $('table')[0].getAttribute('id').replace('list-', '');
 
     $.ajax({
              type:     method,
@@ -88,24 +94,152 @@ dynamicforms = {
              dataType: 'html',
              headers:  headers,
            })
-      .done(function () {
+      .done(function (data) {
         // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
         dynamicforms.closeDialog($dlg);
+        dynamicforms.refreshList(recordURL, recordID, refreshType, formId);
       })
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         // also for any authorization errors, CSRF, etc, it will again fail
         // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
-        dynamicforms.replaceDialog($dlg, $(xhr.responseText));
+        dynamicforms.replaceDialog($dlg, $(xhr.responseText), refreshType);
       });
+  },
+
+  /**
+   * Holds record specific url
+   */
+  recordURL: '',
+
+  /**
+   * Sets record specific url
+   * @param url: url for record
+   */
+  setRecordURL: function setRecordURL(url) {
+    dynamicforms.recordURL = url;
+  },
+
+  /**
+   * Gets record specific url
+   */
+  getRecordURL: function getRecordURL() {
+    return dynamicforms.recordURL;
+  },
+
+  /**
+   * Gets refreshed html after add or edit
+   * @param url: url for retrieving html
+   * @param recordID: id of the data
+   * @param refreshType: how to refresh the table
+   */
+  refreshList: function refreshList(url, recordID, refreshType, formId) {
+    if (refreshType == undefined && recordID != false) {
+      $.ajax({
+               type:     'GET',
+               url:      url,
+               dataType: 'html',
+             })
+        .done(function (data) {
+          dynamicforms.refreshRow(data, formId, recordID);
+        })
+        .fail(function (xhr, status, error) {
+          // TODO: this doesn't handle errors correctly
+        });
+    } else if (refreshType == 'table') {
+      dynamicforms.refreshTable(formId, recordID);
+    } else if (refreshType == 'no refresh') {
+      pass
+    }
+  },
+
+  /**
+   * Replaces edited row
+   * @param data
+   * @param recordID: id of edited data
+   */
+  refreshRow: function refreshRow(data, formID, recordID) {
+    var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
+    var link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
+
+    // Case when table is smaller than pagination
+    if (link_next == undefined) {
+      var $htmlObject = $(data);
+
+      if (recordID) {
+        var trSelector = "tr[data-id='" + recordID + "']";
+        var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
+        var $rowToRefresh = $(trSelector); // Row to refresh
+        $rowToRefresh.replaceWith($editedRow);
+      } else {
+        var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
+        var $newRow = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
+
+        // Insert new row after the last row or insert first row
+        if ($lastRow.length) {
+          $newRow.insertAfter($lastRow);
+        } else {
+          $("table").find("tr[data-title]").replaceWith($newRow);
+        }
+      }
+    } else { // Case when table is larger than pagination
+      dynamicforms.filterData(formID);
+    }
+  },
+
+  /**
+   * Replaces entire table
+   * @param formID: id of form object
+   * @param recordID: id of edited data
+   */
+  refreshTable: function refreshTable(formID, recordID) {
+    var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
+    var link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
+
+    var recordURL = dynamicforms.getRecordURL();
+    var table = $("#list-" + formID).find("tbody:first");
+
+    // Case when table is smaller than pagination
+    if (link_next == undefined) {
+      $.ajax({
+               type:    'GET',
+               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+               url:     recordURL,
+             }).done(function (data) {
+
+        data                     = $(data).filter("tr");
+        tbl_pagination.link_next = data[0].getAttribute('data-next');
+
+        // Edited record
+        if (recordID) {
+          table.find("tr").remove();
+        } else if (!recordID) { // Added record
+          for (var i = data.length - 1; i >= 0; i--) {
+            var data_id = data[i].getAttribute('data-id');
+            if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
+              data.splice(i, 1);
+          }
+        }
+
+        if (data.length > 0) {
+          table.append(data);
+          tbl_pagination.trigger_element = data[0];
+        }
+        dynamicforms.paginatorCheckGetNextPage(formID);
+      }).fail(function (xhr, status, error) {
+        // TODO: what if the server returns an error? Do we continue with pagination? (Task #100)
+      });
+    } else { // Case when table is larger than pagination
+      dynamicforms.filterData(formID);
+    }
   },
 
   /**
    * Shows a dialog, attaches appropriate event handlers to buttons and gets initial data values
    * @param $dlg
    */
-  showDialog: function showDialog($dlg) {
+  showDialog: function showDialog($dlg, refreshType) {
     //TODO: adjust hashURL
     $(document.body).append($dlg);
     var $form = $dlg.find('.dynamicforms-form');
@@ -121,7 +255,7 @@ dynamicforms = {
 
     var saveId = '#save-' + $form.attr('id');
     $(saveId).on('click', function () {
-      dynamicforms.submitForm($dlg, $form);
+      dynamicforms.submitForm($dlg, $form, refreshType);
     });
     // And show the dialog
     $dlg.modal();
@@ -132,10 +266,11 @@ dynamicforms = {
    * TODO: change animation
    * @param $dlg: dialog to close
    * @param $newDlg: newdialog to show
+   * @param refreshType: how to refresh the table
    */
-  replaceDialog: function replaceDialog($dlg, $newDlg) {
+  replaceDialog: function replaceDialog($dlg, $newDlg, refreshType) {
     dynamicforms.closeDialog($dlg);
-    dynamicforms.showDialog($newDlg);
+    dynamicforms.showDialog($newDlg, refreshType);
   },
 
   /**
@@ -150,8 +285,9 @@ dynamicforms = {
   /**
    * Handles what should happen when user clicks to edit a record
    * @param recordURL: url to call to get data / html for the record / dialog
+   * @param refreshType: how to refresh the table
    */
-  editRow: function editRow(recordURL) {
+  editRow: function editRow(recordURL, refreshType) {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
@@ -159,9 +295,10 @@ dynamicforms = {
                headers: {'X-DF-RENDER-TYPE': 'dialog'},
              })
         .done(function (dialogHTML) {
-          dynamicforms.showDialog($(dialogHTML));
+          dynamicforms.showDialog($(dialogHTML), refreshType);
         })
         .fail(function (xhr, status, error) {
+          // TODO: this doesn't handle errors correctly
           dynamicforms.showAjaxError(xhr, status, error);
         });
     } else
@@ -169,10 +306,21 @@ dynamicforms = {
   },
 
   /**
+   * Removes table row after deletion
+   *
+   * @param recordID: data-id attribute of table row
+   */
+  removeRow: function removeRow(recordID) {
+    var $trToRemove = $("tr[data-id='" + recordID + "']");
+    $trToRemove.remove();
+  },
+
+  /**
    * Handles what should happen when user clicks to delete a record
    * @param recordURL: url to call to get data / html for the record / dialog
+   * @param refreshType: how to refresh the table
    */
-  deleteRow: function deleteRow(recordURL) {
+  deleteRow: function deleteRow(recordURL, recordID, refreshType) {
     //TODO: Ask user for confirmation
     $.ajax({
              url:     recordURL,
@@ -182,8 +330,18 @@ dynamicforms = {
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
+        // Remove row after deletion
+        if (refreshType == undefined) {
+          dynamicforms.removeRow(recordID);
+        } else if (refreshType == 'table') {
+          var recordURL = dynamicforms.getRecordURL();
+          dynamicforms.refreshList(recordURL, false, refreshType);
+        } else if (refreshType == 'no refresh') {
+          // pass
+        }
       })
       .fail(function (xhr, status, error) {
+        // TODO: this doesn't handle errors correctly
         dynamicforms.showAjaxError(xhr, status, error);
       });
   },
@@ -193,10 +351,11 @@ dynamicforms = {
    * Right now newRow doesn't do anything distinct, so let's just call editRow
    *
    * @param recordURL: url to call to get data / html for the record / dialog
+   * @param refreshType: how to refresh the table
    * @returns {*|void}
    */
-  newRow: function newRow(recordURL) {
-    return dynamicforms.editRow(recordURL);
+  newRow: function newRow(recordURL, refreshType) {
+    return dynamicforms.editRow(recordURL, refreshType);
   },
 
   /**************************************************************
@@ -542,6 +701,10 @@ dynamicforms = {
     else
       link_next = tbl_pagination.link_next;
 
+    /*console.log(link_next);
+    console.log(tbl_pagination.last_link_next);
+    console.log(filter.length);*/
+
     if (link_next != null && link_next != "None" && (link_next != tbl_pagination.last_link_next || filter.length)) {
       tbl_pagination.last_link_next = link_next;
 
@@ -647,6 +810,7 @@ dynamicforms = {
     var formId = $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
     dynamicforms.filterData(formId);
   }
+
 };
 
 $(document).ready(function () {
@@ -658,4 +822,3 @@ $(document).ready(function () {
   });
   window.setInterval(dynamicforms.paginatorCheckGetNextPageAll, 100);
 })
-
