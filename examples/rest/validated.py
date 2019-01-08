@@ -1,4 +1,6 @@
+from django.utils.translation import ugettext_lazy as _
 from dynamicforms import serializers
+from dynamicforms.action import Action, ActionControls
 from dynamicforms.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
 from ..models import Validated
@@ -10,6 +12,26 @@ class ValidatedSerializer(serializers.ModelSerializer):
         'new': 'New validated object',
         'edit': 'Editing validated object',
     }
+    controls = ActionControls([
+        Action(label=_('+ Add (refresh record)'), title=_('Add new record'), icon='', position='header',
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='record');"),
+        Action(label=_('+ Add (refresh table)'), title=_('Add new record'), icon='', position='header',
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='table');"),
+        Action(label=_('+ Add (no refresh)'), title=_('Add new record'), icon='', position='header',
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='no refresh');"),
+        Action(label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
+               action="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
+                      " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')), refreshType='record');"),
+        Action(label=_('Delete (refresh record)'), title=_('Delete record'), icon='', position='rowend',
+               action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+               + "deleteThisRow={{row.id}}, refreshType='record');"),
+        Action(label=_('Delete (refresh table)'), title=_('Delete record'), icon='', position='rowend',
+               action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+               + "deleteThisRow={{row.id}}, refreshType='table');"),
+        Action(label=_('Delete (no refresh)'), title=_('Delete record'), icon='', position='rowend',
+               action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+               + "deleteThisRow={{row.id}}, refreshType='no refresh');")
+    ])
 
     def validate(self, attrs):
         attrs = super().validate(attrs)

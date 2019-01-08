@@ -19,6 +19,7 @@ class RelationSerializer(serializers.ModelSerializer):
 
 class RelationViewset(ModelViewSet):
     template_context = dict(url_reverse='relation')
+    pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer

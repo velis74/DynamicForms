@@ -7,6 +7,7 @@ from selenium.common.exceptions import ElementNotInteractableException, NoSuchEl
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from examples.models import Validated
 
 MAX_WAIT = 10
 
@@ -118,6 +119,77 @@ class ValidatedFormTest(StaticLiveServerTestCase):
             a.send_keys(Keys.ENTER)
             a.perform()
 
+    def add_record(self, btn_position, amount, add_second_record=None):
+        try:
+            header = self.browser.find_element_by_class_name('card-header')
+        except NoSuchElementException:
+            # Bootstrap v3
+            header = self.browser.find_element_by_class_name('panel-heading')
+
+        add_btns = header.find_elements_by_class_name('btn')
+
+        add_btns[btn_position].click()
+
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        for container in containers:
+            container_id = container.get_attribute("id")
+            if container_id.startswith("container-"):
+                field_id = container_id.split('-', 1)[1]
+                label = container.find_element_by_id("label-" + field_id)
+                field = container.find_element_by_id(field_id)
+
+                if label.text == "Code":
+                    self.initial_check(field, "", "code", "text")
+                    field.send_keys("123")
+                elif label.text == "Enabled":
+                    self.initial_check(field, "", "enabled", "checkbox")
+                    field.click()
+                elif label.text == "Amount":
+                    self.initial_check(field, "", "amount", "number")
+                    field.send_keys(amount)
+                elif label.text == "Item type":
+                    # Check if item_type field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        self.select_option_for_select2(container, field_id, text="Choice 1")
+                    else:
+                        select = Select(field)
+                        select.select_by_index(0)
+                elif label.text == "Item flags":
+                    # Check if item_flags field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        self.select_option_for_select2(container, field_id, text="A")
+                    else:
+                        select = Select(field)
+                        select.select_by_index(0)
+                elif field.get_attribute("name") in ('id',):
+                    # Hidden fields
+                    pass
+
+        if add_second_record:
+            Validated.objects.create(
+                code="123",
+                enabled=True,
+                amount=6,
+                item_type=0,
+                item_flags='A'
+            )
+
+        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+
     def test_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
@@ -128,8 +200,10 @@ class ValidatedFormTest(StaticLiveServerTestCase):
             # Bootstrap v3
             header = self.browser.find_element_by_class_name('panel-heading')
 
-        add_btn = header.find_element_by_class_name('btn')
-        self.assertEqual(add_btn.text, '+ Add')
+        add_btns = header.find_elements_by_class_name('btn')
+        self.assertEqual(add_btns[0].text, '+ Add (refresh record)')
+        self.assertEqual(add_btns[1].text, '+ Add (refresh table)')
+        self.assertEqual(add_btns[2].text, '+ Add (no refresh)')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
@@ -140,11 +214,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
-        add_btn.click()
+        # Add a new record via the "+ Add (record refresh)" button and go back to model_single.html to check if the record had been added
+        # Test Add action with refreshType='record'
+        add_btns[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        # check if all fields are in the dialog and no excessive fields too
+        # Check if all fields are in the dialog and no excessive fields too
         field_count = 0
         self.assertIsNone(self.check_error_text(dialog))
 
@@ -238,7 +313,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
 
-        self.assertTrue(len(errors) == 1)
+        self.assertEqual(len(errors), 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == "Ensure this value is greater than or equal to 5.")
         field = errors[0].parent.find_element_by_name("amount")
         field.clear()
@@ -282,12 +357,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
-        # check if record was stored
+        # self.browser.refresh()
+        # Check if record was stored
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 7)
+        self.assertEqual(len(cells), 7)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -297,9 +372,9 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
+        # self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
 
         # Once more to editing and cancel it
@@ -322,20 +397,74 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_css_selector("[data-dismiss=modal]").click()
 
         # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
+        # self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
 
-        # we delete the row we created
-        del_btn = rows[0].find_elements_by_tag_name('td')[6].find_element_by_class_name('btn')
-        del_btn.click()
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
+        # We delete the row we created
+        # Test Delete action with refreshType='record'
+        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns[0].click()
+
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+
+        # ----------------------------------------------------------#
+        # Tests for refreshType='table' and refreshType='no refresh #'
+        # ----------------------------------------------------------#
+
+        # Test Add action with refreshType='table'
+        self.add_record(1, 5)
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+        cells = rows[0].find_elements_by_tag_name("td")
+        self.assertEqual(len(cells), 7)
+
+        self.add_record(1, 7, add_second_record=True)
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 3)
+
+        # Test Delete action with refreshType='table'
+        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns[1].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 2)
+
+        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns[1].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+
+        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns[1].click()
+
+        # Test that "no data" row is shown
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+
+        # Test Add action with refreshType='no refresh'
+        self.add_record(2, 5, add_second_record=True)
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 2)
+        cells = rows[0].find_elements_by_tag_name("td")
+        self.assertEqual(len(cells), 7)
+
+        # Test Delete action with refreshType='no refresh'
+        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns[2].click()
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
 
 
 class BasicFieldsTest(StaticLiveServerTestCase):

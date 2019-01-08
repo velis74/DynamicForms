@@ -34,6 +34,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
 
 class BasicFieldsViewset(ModelViewSet):
     template_context = dict(url_reverse='basic-fields')
+    pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = BasicFields.objects.all()
     serializer_class = BasicFieldsSerializer

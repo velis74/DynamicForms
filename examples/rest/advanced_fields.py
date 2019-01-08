@@ -91,6 +91,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
 class AdvancedFieldsViewset(ModelViewSet):
     template_context = dict(url_reverse='advanced-fields')
+    pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()
     serializer_class = AdvancedFieldsSerializer
