@@ -609,6 +609,8 @@ dynamicforms = {
    */
   fieldGetValue: function fieldGetValue(field) {
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    if ($field.attr('type') == 'checkbox')
+      return $field.is(':checked');
     return $field.val();
   },
 
@@ -620,6 +622,8 @@ dynamicforms = {
    */
   fieldSetValue: function fieldSetValue(field, value) {
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    if ($field.attr('type') == 'checkbox')
+      return $field.prop('checked', value);
     $field.val(value);
   },
 
