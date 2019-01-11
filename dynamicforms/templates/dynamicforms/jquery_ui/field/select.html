@@ -1,7 +1,7 @@
 {% extends DF.BSVER_FIELD_TEMPLATE %}
 {% load dynamicforms %}
 {% block field_input %}
-<select id="{{ field.uuid }}" class="ui-widget ui-state-default ui-corner-all" name="{{ field.name }}">
+<select id="{{ field.uuid }}" class="" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>--------</option>
   {% endif %}
@@ -15,4 +15,19 @@
     {% endif %}
   {% endfor %}
 </select>
+<script type="application/javascript">
+{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% else %}
+  // Selectmenus need to be created AFTER the dialog... So use the setTimeout because we don't know the dialog here.
+  window.setTimeout(function() {
+    $('#{{ field.uuid }}').selectmenu();
+  }, 1);
+{% endif %}
+</script>
+{% endblock %}
+{% block field_onchange %}$('#{{ field.uuid }}')
+{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% else %}
+  $('#{{ field.uuid }}').on('selectmenuselect', function () { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });
+{% endif %}
 {% endblock %}
