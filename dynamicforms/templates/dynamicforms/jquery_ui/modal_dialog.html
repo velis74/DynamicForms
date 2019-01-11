@@ -6,7 +6,7 @@
   {% set_var title=serializer.form_titles.new %}
 {% endif %}
 
-<div class="jquery-ui-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialog-tmp-{{ serializer.uuid }}" class="jquery-ui-dialog" tabindex="-1" role="dialog" aria-hidden="true">
 
   {% set_var template_list=DF.TEMPLATE|add:'base_form.html' %}
   {% include template_list with serializer=serializer data=data %}
@@ -19,18 +19,20 @@
   </div>
 
   <script type="text/javascript">
-    $(".jquery-ui-dialog").dialog({
+    var $dlgTmp = $('#dialog-tmp-{{ serializer.uuid }}');
+    $dlgTmp.dialog({
       title: "{{ title }}",
       modal: true,
       resizable: true,
-      dialogClass: "modal"
+      width: 'auto',
+      dialogClass: "modal",
+      close: function( event, ui ) { $dlgTmp.remove(); }
     });
 
-    $(".jquery-ui-dialog").parent().attr("id", "dialog-{{ serializer.uuid }}");
+    $dlgTmp.parent().attr("id", "dialog-{{ serializer.uuid }}");
 
-    $(".close-btn").click(function (event) {
-      $(".jquery-ui-dialog").dialog('close');
-    });
+    $dlgTmp.find('button').button();
+    $dlgTmp.find(".close-btn").click(function (event) { $dlgTmp.dialog('close'); });
   </script>
 
 </div>

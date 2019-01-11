@@ -59,3 +59,8 @@ else:
 
 # these entire settings will be passed to context of each form render
 CONTEXT_VARS = {k: v for k, v in globals().items() if k == k.upper()}
+
+
+def is_jquery_ui():
+    # noinspection PyUnresolvedReferences
+    return TEMPLATE_OPTIONS.JQUERY_UI
