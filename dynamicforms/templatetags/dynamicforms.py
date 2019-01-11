@@ -6,6 +6,7 @@ from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 
 from ..renderers import HTMLFormRenderer
+from .. import settings
 from ..struct import Struct
 
 register = template.Library()
@@ -163,10 +164,16 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                 rowrclick = action.action
         else:
             if field_name is None or (action.field_name == field_name):
-                ret += '<button class="btn btn-info" onClick="{stop_propagation} {action}">' \
-                       '{icon_def}{label}</button>'. \
-                    format(stop_propagation=stop_propagation, action=action.action, label=action.label,
+                from uuid import uuid1
+                btnid = uuid1()
+                ret += '<button id="df-action-btn-{btnid}" class="btn btn-info" onClick="{stop_propagation}' \
+                       ' {action}">{icon_def}{label}</button>'. \
+                    format(btnid=btnid, stop_propagation=stop_propagation, action=action.action,
+                           label=action.label,
                            icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
+                if settings.is_jquery_ui():
+                    ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>'\
+                        .format(btnid=btnid)
 
     if ret != '':
         if 'rowclick' not in position:

@@ -1,0 +1,108 @@
+{% load static dynamicforms %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<link href="{% static 'jquery_ui/css/jquery-ui.min.css' %}" rel="stylesheet">
+<link href="{% static 'jquery_ui/css/jquery-ui.structure.min.css' %}" rel="stylesheet">
+<link href="{% static 'jquery_ui/css/jquery-ui.theme.min.css' %}" rel="stylesheet">
+<script src="{% static 'jquery_ui/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
+<script type="application/javascript">
+  dynamicforms.DF = {{ DF|json }}
+    dynamicforms.csrf_token = '{{ csrf_token }}';
+</script>
+
+{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+  {% include DF.SELECT2 %}
+{% endif %}
+
+<style>
+  label, input {
+    display: inline-block;
+  }
+
+  input.text {
+    margin-bottom: .8em;
+    width: 94%;
+    padding: .4em;
+  }
+
+  select {
+    margin-bottom: .8em;
+    width: 100%;
+    padding: .4em;
+  }
+
+  fieldset {
+    padding: 0;
+    border: 0;
+    margin-top: 25px;
+  }
+
+  .ui-dialog .ui-state-error {
+    padding: .3em;
+  }
+
+  .ui-error-container {
+    margin-bottom: .8em;
+  }
+
+  .ui-checkbox-inline {
+    margin-bottom: .8em;
+    margin-left: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table td, table th {
+    border-top: 1px solid #ddd;
+    height: 3em;
+    padding-left: .5em;
+    padding-right: .5em;
+  }
+
+  .ui-widget-overlay {
+    background: #aaaaaa;
+    opacity: .3;
+  }
+
+  .add-btn {
+    float: right;
+  }
+
+  .accordion {
+    width: min-content;
+  }
+
+  .dynamicforms-actioncontrol {
+    padding: 0 .25rem;
+  }
+
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     .675rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  .75rem;
+    height: .75rem;
+  }
+
+  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
+    display: none !important;
+  }
+
+  .dynamicforms-filterrow div {
+    margin: 0;
+  }
+
+  .help-block {
+    font-size: 75%;
+    opacity: .5;
+  }
+</style>

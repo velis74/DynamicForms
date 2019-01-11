@@ -82,8 +82,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -123,8 +127,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name('panel-heading')
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btns = header.find_elements_by_class_name('btn')
 
@@ -197,8 +205,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name('panel-heading')
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btns = header.find_elements_by_class_name('btn')
         self.assertEqual(add_btns[0].text, '+ Add (refresh record)')
@@ -306,12 +318,16 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model
+
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
 
         self.assertEqual(len(errors), 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == "Ensure this value is greater than or equal to 5.")
@@ -321,15 +337,24 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be a field error because of validator set in serializer
-
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        try:
+            # jQueryUI
+            body = self.browser.find_element_by_class_name("ui-accordion-content")
+            dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        except NoSuchElementException:
+            dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
+
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
 
-        self.assertTrue(len(errors) == 1)
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
+
+        self.assertEqual(len(errors), 1)
         self.assertTrue(errors[0].get_attribute("innerHTML") == 'amount can only be different than 5 if code is "123"')
         field = errors[0].parent.find_element_by_name("code")
         field.clear()
@@ -356,8 +381,6 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # TODO: remove following line when task for auto refresh is done.
-        # self.browser.refresh()
         # Check if record was stored
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
@@ -371,8 +394,6 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # TODO: remove following line when task for auto refresh is done.
-        # self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
@@ -394,10 +415,14 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         else:
             Select(dialog.find_element_by_name("item_type")).select_by_index(2)
 
-        dialog.find_element_by_css_selector("[data-dismiss=modal]").click()
+        try:
+            # Bootstrap
+            close_dialog = dialog.find_element_by_css_selector("[data-dismiss=modal]")
+        except NoSuchElementException:
+            # jQueryUI
+            close_dialog = dialog.find_element_by_class_name("close-btn")
+        close_dialog.click()
 
-        # TODO: remove following line when task for auto refresh is done.
-        # self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
@@ -416,6 +441,8 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # ----------------------------------------------------------#
         # Tests for refreshType='table' and refreshType='no refresh #'
         # ----------------------------------------------------------#
+
+        self.browser.refresh()
 
         # Test Add action with refreshType='table'
         self.add_record(1, 5)
@@ -514,8 +541,12 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -534,15 +565,19 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
@@ -622,9 +657,9 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 17)
+        self.assertEqual(len(cells), 17)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -645,10 +680,16 @@ class BasicFieldsTest(StaticLiveServerTestCase):
 
         # Check for errors
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
+
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
+
         self.assertEqual(len(errors), 7)
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")
         self.assertEqual(errors[1].get_attribute("innerHTML"), "Enter a valid URL.")
@@ -714,8 +755,12 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         try:
             body = self.browser.find_element_by_class_name("card-body")
         except NoSuchElementException:
-            # Bootstrap 3
-            body = self.browser.find_element_by_class_name("panel-body")
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
 
         table = body.find_element_by_tag_name("table")
 
@@ -729,7 +774,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
 
     def check_row(self, row, cell_cnt, cell_values):
         cells = row.find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == cell_cnt)
+        self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if cell_values[i] is not None:
                 self.assertTrue(cells[i], cell_values[i])
@@ -758,15 +803,19 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
-            # Bootstrap v3
-            header = self.browser.find_element_by_class_name("panel-heading")
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
         self.assertTrue(add_btn.text == "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
@@ -911,9 +960,9 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 9)
+        self.assertEqual(len(cells), 9)
 
         # Check for relations
         self.assertTrue(cells[5].text == "Relation object 7")
@@ -949,9 +998,9 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
-        self.assertTrue(len(rows) == 1)
+        self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertTrue(len(cells) == 9)
+        self.assertEqual(len(cells), 9)
 
         # Check for changed values
         self.assertTrue(cells[2].text == "Choice 2")
@@ -973,10 +1022,15 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
 
         # Check for errors
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
         if not errors:
             errors = dialog.find_elements_by_class_name("help-block")
+
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].get_attribute("innerHTML"),
                          "This value does not match the required pattern (?&lt;=abc)def.")
