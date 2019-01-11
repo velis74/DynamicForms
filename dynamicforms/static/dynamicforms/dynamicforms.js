@@ -263,7 +263,7 @@ dynamicforms = {
       dynamicforms.submitForm($dlg, $form, refreshType);
     });
     // And show the dialog
-    $dlg.modal();
+    (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ? $dlg.dialog('open') : $dlg.modal();
   },
 
   /**
@@ -284,7 +284,7 @@ dynamicforms = {
    * @param $dlg: dialog to close
    */
   closeDialog: function closeDialog($dlg) {
-    $dlg.modal('hide');
+    (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ? $dlg.remove() : $dlg.modal('hide');
   },
 
   /**
@@ -829,7 +829,10 @@ dynamicforms = {
    * @param event: OnClick event from which we get id of table object
    */
   defaultFilter: function defaultFilter(event) {
-    var formId = $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
+    // And show the dialog
+    var formId = (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ?
+      $(event.currentTarget).parents('div.accordion').find('div.ui-accordion-content').find('table')[0].getAttribute('id').replace('list-', '') :
+      $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
     dynamicforms.filterData(formId);
   },
 

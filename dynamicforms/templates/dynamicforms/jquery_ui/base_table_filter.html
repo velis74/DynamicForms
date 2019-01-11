@@ -1,0 +1,38 @@
+{% load dynamicforms %}
+
+<tr class="dynamicforms-filterrow" id="{{ form.uuid }}">
+  {% for column in form %}
+    {% if column.visible_in_table %}
+      <th data-name="{{ column.field_name }}">
+      {% render_field column style=style %}
+    {% endif %}{% endfor %}
+</tr>
+<script type="application/javascript">
+  var $checkbox = $('.dynamicforms-filterrow input[type="checkbox"]')
+  $checkbox.addClass("position-static");
+  $checkbox.on("click", function () {
+    var $cb = $(this);
+
+    if ($cb.prop("readOnly")) {
+      $cb.prop({
+                 checked:  false,
+                 readOnly: false
+               });
+    }
+    else if (!$cb.prop("checked")) {
+      $cb.prop({
+                 readOnly:      true,
+                 indeterminate: true
+               });
+    }
+  });
+  //Initialize checkbox
+  $checkbox.prop({
+                   checked:  false,
+                   readOnly:  true,
+                   indeterminate: true
+                 });
+
+  var $form = $("#{{ form.uuid }}")
+  dynamicforms.serializeForm($form, 'final');
+</script>

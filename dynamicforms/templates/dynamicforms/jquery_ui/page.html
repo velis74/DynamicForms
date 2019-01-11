@@ -1,0 +1,25 @@
+{% extends 'dynamicforms/jquery_ui/base.html' %}
+{% load dynamicforms %}
+{% block title %}
+  {{ serializer.page_title }}
+{% endblock %}
+{% block body %}
+  {% get_data_template as data_template %}
+
+  <div class="accordion">
+    <div>{{ serializer.page_title }}
+      <span class="add-btn">{% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}</span>
+    </div>
+    <div>
+      {% include data_template with serializer=serializer data=data %}
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(".accordion").accordion({
+      heightStyle: "content",
+      collapsible: false,
+      icons: false,
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% load dynamicforms %}
+
+  {% for row in data %}
+    <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}" data-previous="{{ link_prev }}" {% endif %}>
+      {% render_table_commands serializer "rowstart" %}
+      {% for key, value in row|items %}
+        {% set_var column=serializer.fields|dict_item:key %}
+        {% if key in serializer.fields and column.visible_in_table %}
+          <td {{ value|add_nested_class }} data-name="{{ key }}">
+            {% render_table_commands serializer "fieldleft" key %}
+            {% render_field_to_table serializer key value row %}
+            {% render_table_commands serializer "fieldright" key %}
+          </td>
+        {% endif %}
+      {% endfor %}
+      {% render_table_commands serializer "rowend" %}
+    </tr>
+  {% empty %}
+    <tr data-title="NoData">
+      {% if columns_count == None %}
+        {% table_columns_count serializer as columns_count %}
+      {% endif %}
+      <td colspan="{{ columns_count }}" style="text-align: center">No data</td>
+    </tr>
+  {% endfor %}
