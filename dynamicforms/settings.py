@@ -21,7 +21,7 @@ TEMPLATE_OPTIONS = dict(
     # if False, the record will be displayed in a new page
     EDIT_IN_DIALOG=True,
     # Support for jQueryUI
-    JQUERY_UI=True
+    JQUERY_UI=False
 )
 
 MODAL_DIALOG = 'modal_dialog'
