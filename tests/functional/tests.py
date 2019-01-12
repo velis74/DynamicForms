@@ -47,8 +47,8 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                if old_id:
-                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                #if old_id:
+                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -104,7 +104,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if cell_values[i] is not None:
-                self.assertTrue(cells[i], cell_values[i])
+                self.assertEqual(cells[i].text, cell_values[i])
         return cells
 
     def select_option_for_select2(self, driver, id, text=None):
@@ -396,7 +396,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
+        cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "Choice 3", "C", None])
 
         # Once more to editing and cancel it
         cells[0].click()
@@ -425,7 +425,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.check_row(rows[0], 7, ["1", "123", "false", "8", "2", "", None])
+        self.check_row(rows[0], 7, ["1", "123", "false", "8", "Choice 3", "C", None])
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -493,6 +493,75 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
 
+        # -------------------------------------------#
+        # Tests for editing record and dialog update #'
+        # -------------------------------------------#
+
+        self.browser.refresh()
+
+        # Click on record for editing
+        rows = self.get_table_body()
+        cells = rows[0].find_elements_by_tag_name("td")
+        cells[0].click()
+
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        dialog_one_id = dialog.get_attribute("id")
+
+        # Check that dialog has Editing in title
+        dialog_title = dialog.find_element_by_class_name("modal-title")
+        if not dialog_title:
+            dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
+        self.assertEqual(dialog_title.text, 'Editing validated object')
+
+        # Change Amount field value
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        container_id = containers[3].get_attribute("id")
+        field_id = container_id.split('-', 1)[1]
+        field = containers[3].find_element_by_id(field_id)
+        field.clear()
+        field.send_keys(11)
+
+        # Submit form
+        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+
+        # Check for errors
+        errors = dialog.find_elements_by_class_name("invalid-feedback")
+        # Bootstrap v3
+        if not errors:
+            errors = dialog.find_elements_by_class_name("help-block")
+        # jQueryUI
+        if not errors:
+            errors = dialog.find_elements_by_class_name("ui-error-span")
+
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].get_attribute("innerHTML"), "Ensure this value is less than or equal to 10.")
+
+        # Check that dialog still has Editing in title
+        dialog_title = dialog.find_element_by_class_name("modal-title")
+        if not dialog_title:
+            dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
+        self.assertEqual(dialog_title.text, 'Editing validated object')
+
+        # Change Amount field back to valid value
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        container_id = containers[3].get_attribute("id")
+        field_id = container_id.split('-', 1)[1]
+        field = containers[3].find_element_by_id(field_id)
+        field.clear()
+        field.send_keys(6)
+
+        # Submit form
+        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+
+        # Check that edited record is updated
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+        cells = self.check_row(rows[0], 7, ["6", "123", "true", "6", "Choice 1", "A", None])
+
 
 class BasicFieldsTest(StaticLiveServerTestCase):
     def setUp(self):
@@ -517,8 +586,8 @@ class BasicFieldsTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                if old_id:
-                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                #if old_id:
+                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -731,8 +800,8 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                if old_id:
-                    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                #if old_id:
+                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
                 return element, element_id
@@ -777,7 +846,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if cell_values[i] is not None:
-                self.assertTrue(cells[i], cell_values[i])
+                self.assertEqual(cells[i].text, cell_values[i])
         return cells
 
     def select_option_for_select2(self, driver, id, text=None):

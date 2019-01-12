@@ -95,7 +95,7 @@ dynamicforms = {
       headers:  headers,
     })
       .done(function (data) {
-        // TODO: refresh list of items. Dialog just closes, but whatever we changed doesn't get updated in the list
+        var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
         dynamicforms.refreshList(recordURL, recordID, refreshType, formId);
       })
@@ -104,7 +104,7 @@ dynamicforms = {
         // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         // also for any authorization errors, CSRF, etc, it will again fail
         // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
-        dynamicforms.replaceDialog($dlg, $(xhr.responseText), refreshType);
+        dynamicforms.updateDialog($dlg, $(xhr.responseText));
       });
   },
 
@@ -267,15 +267,20 @@ dynamicforms = {
   },
 
   /**
-   * Replaces the current dialog with a new one. Different than close + open in animation
-   * TODO: change animation
-   * @param $dlg: dialog to close
-   * @param $newDlg: newdialog to show
-   * @param refreshType: how to refresh the table
+   * Updates the current dialog with errors.
+   * @param $dlg: dialog to update
+   * @param $newDlg: new dialog with errors in form
    */
-  replaceDialog: function replaceDialog($dlg, $newDlg, refreshType) {
-    dynamicforms.closeDialog($dlg);
-    dynamicforms.showDialog($newDlg, refreshType);
+  updateDialog: function updateDialog($dlg, $newDlg) {
+    // Replace current form with new form containing errors
+    var newForm = $newDlg.find("form");
+    var currentForm = $dlg.find("form");
+    currentForm.replaceWith(newForm);
+
+    // Set updated form's id to dialog id
+    var dlgId = $dlg.attr("id").split("-").slice(1).join("-");
+    var updatedForm = $dlg.find("form");
+    updatedForm.attr("id",dlgId);
   },
 
   /**
