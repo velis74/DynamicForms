@@ -47,7 +47,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                #if old_id:
+                # if old_id:
                 #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
@@ -226,7 +226,8 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        # Add a new record via the "+ Add (record refresh)" button and go back to model_single.html to check if the record had been added
+        # Add a new record via the "+ Add (record refresh)" button and go back to model_single.html to check if the
+        # record had been added
         # Test Add action with refreshType='record'
         add_btns[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
@@ -586,7 +587,7 @@ class BasicFieldsTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                #if old_id:
+                # if old_id:
                 #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
@@ -800,7 +801,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name("modal")
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute("id")
-                #if old_id:
+                # if old_id:
                 #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
