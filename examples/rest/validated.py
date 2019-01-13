@@ -30,7 +30,11 @@ class ValidatedSerializer(serializers.ModelSerializer):
                + "deleteThisRow={{row.id}}, refreshType='table');"),
         Action(label=_('Delete (no refresh)'), title=_('Delete record'), icon='', position='rowend',
                action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-               + "deleteThisRow={{row.id}}, refreshType='no refresh');")
+               + "deleteThisRow={{row.id}}, refreshType='no refresh');"),
+        # The following action is duplicated unnecessarily just to later eliminate it in suppress_action
+        Action(name='del 1', label=_('Delete (no refresh)'), title=_('Delete record'), icon='', position='rowend',
+               action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+                      + "deleteThisRow={{row.id}}, refreshType='no refresh');")
     ])
 
     def validate(self, attrs):
@@ -44,6 +48,11 @@ class ValidatedSerializer(serializers.ModelSerializer):
             raise ValidationError('When enabled you can only choose from first three item types')
 
         return attrs
+
+    def suppress_action(self, action, request, viewset):
+        if action.name == 'del 1':
+            return True
+        return super().suppress_action(action, request, viewset)
 
     class Meta:
         model = Validated

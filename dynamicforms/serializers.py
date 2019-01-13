@@ -118,3 +118,24 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
                     field.allow_blank = True
             type(self)._filter_data = _filter_data
         return type(self)._filter_data
+
+    def suppress_action(self, action, request, viewset):
+        """
+        Determines whether rendering an action into the DOM should be suppressed. Use when some users don't have access
+        to some of the functionality, e.g. when CRUD functionality is only enabled for administrative users
+        :param action: action to be checked
+        :param request: request that triggered the render (may be None)
+        :param viewset: viewset that provided the serialized data (may be None)
+        :return: boolean whether action should render (False) or not (True)
+        """
+        return False
+
+    @property
+    def renderable_actions(self):
+        """
+        Returns those actions that are not suppressed
+        :return: List[Action]
+        """
+        request = self.context.get('request', None)
+        viewset = self.context.get('view', None)
+        return [action for action in self.controls.actions if not self.suppress_action(action, request, viewset)]

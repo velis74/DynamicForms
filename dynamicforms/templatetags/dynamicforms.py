@@ -129,7 +129,7 @@ def table_columns_count(serializer):
     :param serializer: Serializer
     :return: Number of all columns
     """
-    actions = serializer.controls.actions
+    actions = serializer.renderable_actions
 
     return (len([f for f in serializer.fields.values() if f.visible_in_table])
             + (1 if any(action.position == "rowend" for action in actions) else 0)
@@ -152,7 +152,7 @@ def render_table_commands(context, serializer, position, field_name=None, table_
     ret = rowclick = rowrclick = ''
     stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
 
-    for action in serializer.controls.actions:
+    for action in serializer.renderable_actions:
         if action.position != position and not \
                 (position == 'onrowclick' and action.position in ('rowclick', 'rowrightclick')):
             continue
