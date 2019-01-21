@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 from django.conf import settings
@@ -189,10 +189,10 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
                     pass
             if date_time is None:
                 return queryset
-            date_time.replace(tzinfo=pytz.utc)
-            if date_time.hour == 0 and date_time.minute == 0 and date_time.second == 0:
-                return queryset.filter(**{field + '__contains': date_time.date()})
-            return queryset.filter(**{field + '__contains': date_time})
+            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+            if len(value) <= 10:
+                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
+            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(seconds=1)})
         else:
             if isinstance(model_meta.get_field(field), models.BooleanField):
                 value = (value == 'true')
