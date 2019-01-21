@@ -7,6 +7,7 @@ Quick start guide
 
 Then you need to add following setting to your project's settings.py
 .. code-block:: python
+
    :caption: settings.py
    :name: settings.py
 
@@ -28,6 +29,7 @@ Currently only the :py:class:`~dynamicforms.viewsets.ModelViewSet` is supported 
 but not implemented yet.
 
 .. code-block:: python
+
    :caption: examples/rest/page_load.py
    :name: examples/rest/page_load.py
 

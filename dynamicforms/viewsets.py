@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from typing import Union, List
 import pytz
 from django.conf import settings
 from django.db import models
@@ -77,11 +78,11 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
     .. code-block:: python
 
        template_context = lambda self: dict(items=MyModel.objects.all())
-       
+
     or
-    
+
     .. code-block:: python
-    
+
        def template_context(self):
            return dict(items=MyModel.objects.all())
     """
@@ -199,19 +200,22 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
             return queryset.filter(**{field: value})
 
     @staticmethod
-    def generate_paged_loader(page_size: int = 30):
+    def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = 'id'):
         """
         Generates a Pagination class that will handle dynamic data loading for ViewSets with a lot of data.
         Use by declaring `pagination_class = ModelViewSet.generate_paged_loader()` in class variables
 
         :param page_size: how many records should be fetched at a time
+        :param ordering: This should be a string, or list of strings, indicating the field against which the cursor
+           based pagination will be applied. For example: ordering = 'slug'
         :return: a Pagination class
         """
         from rest_framework.pagination import CursorPagination
         ps = page_size
+        ordr = ordering
 
         class MyCursorPagination(CursorPagination):
-            ordering = 'id'
+            ordering = ordr
             page_size = ps
 
         return MyCursorPagination

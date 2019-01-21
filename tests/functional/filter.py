@@ -42,7 +42,7 @@ class FilterFormTest(StaticLiveServerTestCase):
 
     # noinspection PyMethodMayBeStatic
     def select_option_for_select2(self, driver, element_id, text=None):
-        element = driver.find_element_by_xpath(f"//*[@id='{element_id}']/following-sibling::*[1]")
+        element = driver.find_element_by_xpath("//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
         element.click()
 
         if text:
@@ -51,7 +51,7 @@ class FilterFormTest(StaticLiveServerTestCase):
 
         try:
             element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException as e:
+        except ElementNotInteractableException:
             actions = ActionChains(driver)
             a = actions.move_to_element_with_offset(element, 50, 30)
             a.send_keys(Keys.ENTER)

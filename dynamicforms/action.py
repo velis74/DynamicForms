@@ -20,16 +20,20 @@ class Action(object):
      * rowend - Additional control column on right side of table
      * fieldleft - On left side of field value
      * fieldright -  On right side of field value
-    :param field_name: If position is set to fieldleft or fieldright then this parameter must contain name of field where commands will be set
+
+    :param field_name: If position is set to fieldleft or fieldright then this parameter must contain name of field
+      where commands will be set
+    :param name: optional name by which to recognise this action in further processing, e.g. Serializer.suppress_action
     """
 
-    def __init__(self, label, title, icon, action, position, field_name=None):
+    def __init__(self, label, title, icon, action, position, field_name=None, name=None):
         self.label = label
         self.title = title
         self.icon = icon
         self.action = action
         self.position = position
         self.field_name = field_name
+        self.name = name
 
 
 class ActionControls(object):
@@ -48,15 +52,18 @@ class ActionControls(object):
 
         if add_default_crud:
             self.actions.append(
-                Action(label=_('+ Add'), title=_('Add new record'), icon='', position='header',
-                       action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}');"))
+                Action(name='add', label=_('+ Add'), title=_('Add new record'), icon='', position='header',
+                       action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', "
+                              "refreshType='record');"))
             self.actions.append(
-                Action(label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
+                Action(name='edit', label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
                        action="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')));"))
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')), "
+                              "refreshType='record');"))
             self.actions.append(
-                Action(label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
-                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}');"))
+                Action(name='delete', label=_('Delete'), title=_('Delete record'), icon='', position='rowend',
+                       action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
+                       + "deleteThisRow={{row.id}}, refreshType='record');"))
         if add_default_filter:
-            self.actions.append(Action(label=_('Filter'), title=_('Filter'), icon='', position='header',
+            self.actions.append(Action(name='filter', label=_('Filter'), title=_('Filter'), icon='', position='header',
                                        action="dynamicforms.defaultFilter(event);"))

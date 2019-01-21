@@ -1,5 +1,6 @@
 from django.utils import timezone
-from dynamicforms import serializers
+
+from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
 from ..models import AdvancedFields, Relation
 
@@ -12,20 +13,20 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     }
 
     regex_pattern = '(?<=abc)def'
-    regex_field = serializers.RegexField(
+    regex_field = fields.RegexField(
         regex_pattern,
-        error_messages={'invalid': f'This value does not match the required pattern {regex_pattern}.'})
+        error_messages={'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
 
-    choice_field = serializers.ChoiceField(choices=(
+    choice_field = fields.ChoiceField(choices=(
         (0, 'Choice 1'),
         (1, 'Choice 2'),
         (2, 'Choice 3'),
         (3, 'Choice 4'),
     ))
 
-    hidden_field = serializers.HiddenField(default=timezone.now)
-    readonly_field = serializers.ReadOnlyField()
-    filepath_field = serializers.FilePathField(path='examples')
+    hidden_field = fields.HiddenField(default=timezone.now)
+    readonly_field = fields.ReadOnlyField()
+    filepath_field = fields.FilePathField(path='examples')
 
     # TODO: MultipleChoiceField
     # Problem: Not saved properly to the database. Saved as 'set()' string. Why?
@@ -73,9 +74,9 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     # model_field = serializers.ModelField()
 
     # Relations
-    string_related_field = serializers.StringRelatedField(source='primary_key_related_field')
-    primary_key_related_field = serializers.PrimaryKeyRelatedField(queryset=Relation.objects.all())
-    slug_related_field = serializers.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+    string_related_field = fields.StringRelatedField(source='primary_key_related_field')
+    primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
+    slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
     # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
@@ -90,6 +91,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
 class AdvancedFieldsViewset(ModelViewSet):
     template_context = dict(url_reverse='advanced-fields')
+    pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()
     serializer_class = AdvancedFieldsSerializer

@@ -7,7 +7,7 @@ import django.db.models.deletion
 def add_relation(apps, schema_editor):
     from ..models import Relation
     for i in range(1, 11):
-        Relation.objects.create(name=f'Relation object {i}')
+        Relation.objects.create(name='Relation object %d' % i)
 
 
 class Migration(migrations.Migration):

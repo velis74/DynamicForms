@@ -18,7 +18,7 @@ class ValidatedPageTest(TestCase):
         self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
 
     def test_get_return_correct_record(self):
-        other_record = Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
+        Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
         our_record = Validated.objects.create(code="12345", enabled=True, amount=5, item_type=1, item_flags='B')
         response = self.client.get(self.base_url.format(our_record.id, "/"))
         self.assertEqual(json.loads(response.content.decode('utf8')), {'id': our_record.id, 'code': our_record.code,
@@ -37,7 +37,7 @@ class ValidatedPageTest(TestCase):
         self.assertTrue(our_record is not None)
 
     def testPUTing_an_existing_record(self):
-        other_record = Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
+        Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
         our_record = Validated.objects.create(code="12345", enabled=True, amount=5, item_type=1, item_flags='B')
 
         response = self.client.put(

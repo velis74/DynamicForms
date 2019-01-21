@@ -1,0 +1,38 @@
+{% load dynamicforms %}
+
+{% if data.id %}
+  {% set_var title=serializer.form_titles.edit %}
+{% else %}
+  {% set_var title=serializer.form_titles.new %}
+{% endif %}
+
+<div id="dialog-tmp-{{ serializer.uuid }}" class="jquery-ui-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+
+  {% set_var template_list=DF.TEMPLATE|add:'base_form.html' %}
+  {% include template_list with serializer=serializer data=data %}
+
+  <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+    <div class="ui-dialog-buttonset">
+      <button type="button" class="ui-button ui-corner-all ui-widget" id="save-{{ serializer.uuid }}">Save changes</button>
+      <button type="button" class="ui-button ui-corner-all ui-widget close-btn">Close</button>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var $dlgTmp = $('#dialog-tmp-{{ serializer.uuid }}');
+    $dlgTmp.dialog({
+      title: "{{ title }}",
+      modal: true,
+      resizable: true,
+      width: 'auto',
+      dialogClass: "modal",
+      close: function( event, ui ) { $dlgTmp.remove(); }
+    });
+
+    $dlgTmp.parent().attr("id", "dialog-{{ serializer.uuid }}");
+
+    $dlgTmp.find('button').button();
+    $dlgTmp.find(".close-btn").click(function (event) { $dlgTmp.dialog('close'); });
+  </script>
+
+</div>

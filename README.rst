@@ -1,15 +1,20 @@
-.. intro.rst
-
 What is DynamicForms?
 =====================
 
-DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
+DynamicForms is a library that eliminates HTML form boilerplate by providing all the relevant functionality. Instead
+of having to program tables, dialog, data forms, DynamicForms already provides you with the functionality - all you have
+to do is declare a few extra properties to your DRF Serializers and ViewSets.
+
+It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
 fields, auto-filled default values, dynamic record loading and similar candy with little effort. To put it differently:
 once defined, a particular ViewSet / Serializer can be rendered in multiple ways allowing you to perform viewing and
 authoring operations on the data in question.
 
 It is based on `django-rest-framework <http://www.django-rest-framework.org/>`_
+
+Documentation `on readthedocs <https://dynamicforms.readthedocs.io/>`_
+
 
 Why DynamicForms
 ----------------
@@ -32,8 +37,6 @@ Why DynamicForms
 * Bootstrap 3 & 4 templates, jQuery UI coming soon, easy to make your own or enhance existing
 * Support for form validation, will show errors even if they are not tied to a field
 * Convenient JS functions for easier action scripting
-
-.. guides/quick_start.rst
 
 Quick start guide
 =================
@@ -103,6 +106,7 @@ add_default_filter = True.
 examples/rest/filter.py
 
 .. code-block:: python
+
    from dynamicforms import serializers, viewsets
    from dynamicforms.action import ActionControls
    from ..models import Filter
