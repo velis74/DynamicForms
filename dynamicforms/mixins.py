@@ -101,7 +101,10 @@ class RenderToTableMixin(object):
         :return: rendered value for table view
         """
         choices = getattr(self, 'choices', {})
-        if value in choices:
+        if isinstance(value, list) and choices:
+            # if value is a list, we're dealing with ManyRelatedField, so let's not do that
+            return ', '.join((drftt.format_value(choices[v]) for v in value))
+        elif value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
         return drftt.format_value(value)

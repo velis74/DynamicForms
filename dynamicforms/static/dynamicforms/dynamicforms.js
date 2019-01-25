@@ -88,11 +88,12 @@ dynamicforms = {
     var formId = $('table')[0].getAttribute('id').replace('list-', '');
 
     $.ajax({
-      type:     method,
-      url:      $form.attr("action"),
-      data:     data,
-      dataType: 'html',
-      headers:  headers,
+      type:        method,
+      url:         $form.attr("action"),
+      data:        data,
+      dataType:    'html',
+      headers:     headers,
+      traditional: true,
     })
       .done(function (data) {
         var formContent = $dlg.find("form").html();
@@ -147,7 +148,7 @@ dynamicforms = {
         });
     } else if (refreshType == 'table') {
       dynamicforms.refreshTable(formID, recordID);
-      if (deletion == true){
+      if (deletion == true) {
         dynamicforms.wasLastRowDeleted();
       }
     } else if (refreshType == 'no refresh') {
@@ -273,14 +274,14 @@ dynamicforms = {
    */
   updateDialog: function updateDialog($dlg, $newDlg) {
     // Replace current form with new form containing errors
-    var newForm = $newDlg.find("form");
+    var newForm     = $newDlg.find("form");
     var currentForm = $dlg.find("form");
     currentForm.replaceWith(newForm);
 
     // Set updated form's id to dialog id
-    var dlgId = $dlg.attr("id").split("-").slice(1).join("-");
+    var dlgId       = $dlg.attr("id").split("-").slice(1).join("-");
     var updatedForm = $dlg.find("form");
-    updatedForm.attr("id",dlgId);
+    updatedForm.attr("id", dlgId);
   },
 
   /**
@@ -333,9 +334,9 @@ dynamicforms = {
     var $leftTrsCount = $("tr[data-id]").length;
     if ($leftTrsCount == 0) {
       // Count how many lines should "No data" element span
-      var colCount = $("th").length;
+      var colCount      = $("th").length;
       var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
-      var $tblBody = $("tbody").append(noDataElement);
+      var $tblBody      = $("tbody").append(noDataElement);
     }
   },
 
@@ -360,7 +361,7 @@ dynamicforms = {
           dynamicforms.removeRow(recordID);
         } else if (refreshType == 'table') {
           var recordURL = dynamicforms.getRecordURL();
-          var formId = $('table')[0].getAttribute('id').replace('list-', '');
+          var formId    = $('table')[0].getAttribute('id').replace('list-', '');
           dynamicforms.refreshList(recordURL, true, refreshType, formId, true);
         } else if (refreshType == 'no refresh') {
           // pass

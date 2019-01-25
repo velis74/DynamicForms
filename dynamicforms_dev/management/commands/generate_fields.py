@@ -29,7 +29,8 @@ class Command(BaseCommand):
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                        issubclass(obj, relations.RelatedField) and obj.__name__.endswith('Field'):
+                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                        obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             # get all the field-specific mixins
@@ -78,6 +79,9 @@ class Command(BaseCommand):
 
                             p_an = parm.annotation
                             p_def = parm.default
+
+                            if field_class == 'ManyRelatedField' and parm.name == 'allow_null':
+                                p_def = True  # ManyRelatedField CAN of course live without any values being set
 
                             if p_an != inspect._empty:
                                 if isinstance(p_an, (str, int, float, bool,)) or p_an is None:

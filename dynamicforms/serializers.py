@@ -114,8 +114,15 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
             _filter_data = type(self)(instance=type(self).Meta.model())
             _filter_data.serializer_type = 'filter'
             for name, field in _filter_data.fields.fields.items():
-                if isinstance(field, fields.ChoiceField):
-                    field.allow_blank = True
+                # if isinstance(field, fields.ChoiceField):
+                #     field.allow_blank = True
+                # elif isinstance(field, fields.IntegerField):
+                # TODO: this doesn't work yet: the IntegerField will still have its valueset to whatever the default was
+                field.allow_blank = True
+                field.allow_null = True
+                field.default = None
+                _filter_data.data[name] = None
+
             type(self)._filter_data = _filter_data
         return type(self)._filter_data
 
