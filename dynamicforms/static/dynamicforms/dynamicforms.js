@@ -65,7 +65,7 @@ dynamicforms = {
    */
   showAjaxError: function showAjaxError(xhr, status, error) {
     //TODO: make proper error display message. You will probably also need some text about what you were trying to do
-    console.log(xhr, status, error);
+    console.log([xhr, status, error]);
   },
 
   /**
@@ -85,7 +85,7 @@ dynamicforms = {
     var recordURL = dynamicforms.getRecordURL();
     var recordID  = data.id ? data.id : false;
 
-    var formId = $('table')[0].getAttribute('id').replace('list-', '');
+    var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
     $.ajax({
       type:        method,
@@ -98,7 +98,7 @@ dynamicforms = {
       .done(function (data) {
         var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
-        dynamicforms.refreshList(recordURL, recordID, refreshType, formId);
+        dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
       })
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
@@ -244,11 +244,14 @@ dynamicforms = {
    * Shows a dialog, attaches appropriate event handlers to buttons and gets initial data values
    * @param $dlg: dialog (parsed) html to show
    * @param refreshType: how to refresh the table after the dialog is finished with editing
+   * @param listId: id of table element with records
    */
-  showDialog: function showDialog($dlg, refreshType) {
+  showDialog: function showDialog($dlg, refreshType, listId) {
     //TODO: adjust hashURL
     $(document.body).append($dlg);
     var $form = $dlg.find('.dynamicforms-form');
+    dynamicforms.form_helpers.set($form.attr('id'), 'listID', listId);
+
     $($dlg).on('hidden.bs.modal', function () {
       // dialog removes itself from DOM hierarchy
       $dlg.remove();
@@ -297,8 +300,9 @@ dynamicforms = {
    * Handles what should happen when user clicks to edit a record
    * @param recordURL: url to call to get data / html for the record / dialog
    * @param refreshType: how to refresh the table
+   * @param listId: id of table element with records
    */
-  editRow: function editRow(recordURL, refreshType) {
+  editRow: function editRow(recordURL, refreshType, listId) {
     if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
@@ -306,7 +310,7 @@ dynamicforms = {
         headers: {'X-DF-RENDER-TYPE': 'dialog'},
       })
         .done(function (dialogHTML) {
-          dynamicforms.showDialog($(dialogHTML), refreshType);
+          dynamicforms.showDialog($(dialogHTML), refreshType, listId);
         })
         .fail(function (xhr, status, error) {
           // TODO: this doesn't handle errors correctly
@@ -345,8 +349,9 @@ dynamicforms = {
    * @param recordURL: url to call to get data / html for the record / dialog
    * @param recordID: pk of row to be deleted
    * @param refreshType: how to refresh the table
+   * @param listId: id of table element with records
    */
-  deleteRow: function deleteRow(recordURL, recordID, refreshType) {
+  deleteRow: function deleteRow(recordURL, recordID, refreshType, listId) {
     //TODO: Ask user for confirmation
     $.ajax({
       url:     recordURL,
@@ -361,8 +366,8 @@ dynamicforms = {
           dynamicforms.removeRow(recordID);
         } else if (refreshType == 'table') {
           var recordURL = dynamicforms.getRecordURL();
-          var formId    = $('table')[0].getAttribute('id').replace('list-', '');
-          dynamicforms.refreshList(recordURL, true, refreshType, formId, true);
+          // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
+          dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
         } else if (refreshType == 'no refresh') {
           // pass
         }
@@ -379,10 +384,11 @@ dynamicforms = {
    *
    * @param recordURL: url to call to get data / html for the record / dialog
    * @param refreshType: how to refresh the table
+   * @param listId: id of table element with records
    * @returns {*|void}
    */
-  newRow: function newRow(recordURL, refreshType) {
-    return dynamicforms.editRow(recordURL, refreshType);
+  newRow: function newRow(recordURL, refreshType, listId) {
+    return dynamicforms.editRow(recordURL, refreshType, listId);
   },
 
   /**************************************************************

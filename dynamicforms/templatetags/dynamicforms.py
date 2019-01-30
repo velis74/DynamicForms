@@ -157,18 +157,26 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                 (position == 'onrowclick' and action.position in ('rowclick', 'rowrightclick')):
             continue
 
+        action_action = action.action
+        if position != 'header':
+            action_action = action_action.replace('__TABLEID__',
+                                                  "$(event.target).parents('table').attr('id').substr(5)")
+        else:
+            action_action = action_action.replace('__TABLEID__', "'" + str(serializer.uuid) + "'")
+
         if position == 'onrowclick':
             if action.position == 'rowclick':
-                rowclick = action.action
+                rowclick = action_action
             elif action.position == 'rowrightclick':
-                rowrclick = action.action
+                rowrclick = action_action
         else:
             if field_name is None or (action.field_name == field_name):
                 from uuid import uuid1
+
                 btnid = uuid1()
                 ret += '<button id="df-action-btn-{btnid}" class="btn btn-info" onClick="{stop_propagation}' \
                        ' {action}">{icon_def}{label}</button>'. \
-                    format(btnid=btnid, stop_propagation=stop_propagation, action=action.action,
+                    format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
                            label=action.label,
                            icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
                 if settings.is_jquery_ui():

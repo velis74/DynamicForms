@@ -40,3 +40,5 @@ For showing fields base template the one that is defined in settings.pyBSVER_
 template is field/base_field_v4.html. That template makes sure that the label, input, errors and help text is correctly
 shown. This template is extracted by templates that are used for rendering individual field types (e.g.: checkbox.html,
 input.html, radio.html, etc.)
+
+.. todo:: explain how to change template to another one

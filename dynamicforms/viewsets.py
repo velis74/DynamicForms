@@ -40,6 +40,8 @@ class NewMixin(object):
     # noinspection PyUnresolvedReferences
     def retrieve(self: viewsets.ModelViewSet, request, *args, **kwargs):
         try:
+            if not hasattr(super(), 'retrieve'):
+                raise Http404()  # This is not a ModelViewSet, so we don't have a retrieval mechanism
             return super().retrieve(request, *args, **kwargs)
         except Http404:
             lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
@@ -52,20 +54,7 @@ class NewMixin(object):
                 raise
 
 
-class ModelViewSet(NewMixin, viewsets.ModelViewSet):
-    """
-    In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
-
-    * Separate templates for rendering list or single record
-    * You can request a "new" record and even have it pre-populated with values
-    * To render viewset as API or JSON use the same method as in DRF: To render it in HTML just add ".html" to the URL.
-    * Standard DRF router URL patterns apply:
-
-       * To render a new record use pk=new.
-       * To render an existing record (for editing) use pk={record_id}.
-
-    """
-
+class TemplateRendererMixin():
     template_context = {}
     """
     template_context provides configuration to templates being rendered
@@ -136,6 +125,21 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
                     serializer.data_template = serializer.template_name
 
         return res
+
+
+class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+    """
+    In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
+
+    * Separate templates for rendering list or single record
+    * You can request a "new" record and even have it pre-populated with values
+    * To render viewset as API or JSON use the same method as in DRF: To render it in HTML just add ".html" to the URL.
+    * Standard DRF router URL patterns apply:
+
+       * To render a new record use pk=new.
+       * To render an existing record (for editing) use pk={record_id}.
+
+    """
 
     def get_queryset(self):
         """
@@ -219,3 +223,9 @@ class ModelViewSet(NewMixin, viewsets.ModelViewSet):
             page_size = ps
 
         return MyCursorPagination
+
+
+class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
+
+    def new_object(self):
+        raise NotImplementedError()

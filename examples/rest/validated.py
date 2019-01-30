@@ -14,27 +14,31 @@ class ValidatedSerializer(serializers.ModelSerializer):
     }
     controls = ActionControls([
         Action(label=_('+ Add (refresh record)'), title=_('Add new record'), icon='', position='header',
-               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='record');"),
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
+                      ", 'record', __TABLEID__);"),
         Action(label=_('+ Add (refresh table)'), title=_('Add new record'), icon='', position='header',
-               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='table');"),
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
+                      ", 'table', __TABLEID__);"),
         Action(label=_('+ Add (no refresh)'), title=_('Add new record'), icon='', position='header',
-               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', refreshType='no refresh');"),
+               action="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
+                      ", 'no refresh', __TABLEID__);"),
         Action(label=_('Edit'), title=_('Edit record'), icon='', position='rowclick',
                action="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                      " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id')), refreshType='record');"),
+                      " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id'))"
+                      ", 'record', __TABLEID__);"),
         Action(label=_('Delete (refresh record)'), title=_('Delete record'), icon='', position='rowend',
                action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-               + "deleteThisRow={{row.id}}, refreshType='record');"),
+               + "{{row.id}}, 'record', __TABLEID__);"),
         Action(label=_('Delete (refresh table)'), title=_('Delete record'), icon='', position='rowend',
                action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-               + "deleteThisRow={{row.id}}, refreshType='table');"),
+               + "{{row.id}}, 'table', __TABLEID__);"),
         Action(label=_('Delete (no refresh)'), title=_('Delete record'), icon='', position='rowend',
                action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-               + "deleteThisRow={{row.id}}, refreshType='no refresh');"),
+               + "{{row.id}}, 'no refresh', __TABLEID__);"),
         # The following action is duplicated unnecessarily just to later eliminate it in suppress_action
         Action(name='del 1', label=_('Delete (no refresh)'), title=_('Delete record'), icon='', position='rowend',
                action="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-                      + "deleteThisRow={{row.id}}, refreshType='no refresh');")
+                      + "{{row.id}}, 'no refresh', __TABLEID__);")
     ])
 
     def validate(self, attrs):

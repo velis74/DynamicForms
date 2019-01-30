@@ -8,65 +8,7 @@ from . import fields
 from .mixins import UUIDMixIn, ActionMixin
 
 
-class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
-    """
-    DynamicForms' ModelSerializer overrides the following behaviour over DRF's implementation:
-
-    * Uses own field types for construction
-    * Adds form UUID (rendered in html too)
-    * Adds processing for form-wide errors
-
-    DRF's docstring copied verbatim:
-
-    A `ModelSerializer` is just a regular `Serializer`, except that:
-
-    * A set of default fields are automatically populated.
-    * A set of default validators are automatically populated.
-    * Default `.create()` and `.update()` implementations are provided.
-
-    The process of automatically determining a set of serializer fields
-    based on the model fields is reasonably complex, but you almost certainly
-    don't need to dig into the implementation.
-
-    If the `ModelSerializer` class *doesn't* generate the set of fields that
-    you need you should either declare the extra/differing fields explicitly on
-    the serializer class, or simply use a `Serializer` class.
-    """
-
-    serializer_field_mapping = {
-        models.AutoField: fields.IntegerField,
-        models.BigIntegerField: fields.IntegerField,
-        models.BooleanField: fields.BooleanField,
-        models.CharField: fields.CharField,
-        models.CommaSeparatedIntegerField: fields.CharField,
-        models.DateField: fields.DateField,
-        models.DateTimeField: fields.DateTimeField,
-        models.DecimalField: fields.DecimalField,
-        models.EmailField: fields.EmailField,
-        models.Field: fields.ModelField,
-        models.FileField: fields.FileField,
-        models.FloatField: fields.FloatField,
-        models.ImageField: fields.ImageField,
-        models.IntegerField: fields.IntegerField,
-        models.NullBooleanField: fields.NullBooleanField,
-        models.PositiveIntegerField: fields.IntegerField,
-        models.PositiveSmallIntegerField: fields.IntegerField,
-        models.SlugField: fields.SlugField,
-        models.SmallIntegerField: fields.IntegerField,
-        models.TextField: fields.CharField,
-        models.TimeField: fields.TimeField,
-        models.URLField: fields.URLField,
-        models.GenericIPAddressField: fields.IPAddressField,
-        models.FilePathField: fields.FilePathField,
-    }
-    if models.DurationField is not None:
-        serializer_field_mapping[models.DurationField] = fields.DurationField
-
-    serializer_related_field = fields.PrimaryKeyRelatedField
-    serializer_related_to_field = fields.SlugRelatedField
-    serializer_url_field = fields.HyperlinkedIdentityField
-    serializer_choice_field = fields.ChoiceField
-
+class DynamicFormsSerializer(UUIDMixIn, ActionMixin):
     template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
     form_titles = {
@@ -126,6 +68,7 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
             type(self)._filter_data = _filter_data
         return type(self)._filter_data
 
+    # noinspection PyUnusedLocal
     def suppress_action(self, action, request, viewset):
         """
         Determines whether rendering an action into the DOM should be suppressed. Use when some users don't have access
@@ -146,3 +89,68 @@ class ModelSerializer(UUIDMixIn, ActionMixin, serializers.ModelSerializer):
         request = self.context.get('request', None)
         viewset = self.context.get('view', None)
         return [action for action in self.controls.actions if not self.suppress_action(action, request, viewset)]
+
+
+class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
+    """
+    DynamicForms' ModelSerializer overrides the following behaviour over DRF's implementation:
+
+    * Uses own field types for construction
+    * Adds form UUID (rendered in html too)
+    * Adds processing for form-wide errors
+
+    DRF's docstring copied verbatim:
+
+    A `ModelSerializer` is just a regular `Serializer`, except that:
+
+    * A set of default fields are automatically populated.
+    * A set of default validators are automatically populated.
+    * Default `.create()` and `.update()` implementations are provided.
+
+    The process of automatically determining a set of serializer fields
+    based on the model fields is reasonably complex, but you almost certainly
+    don't need to dig into the implementation.
+
+    If the `ModelSerializer` class *doesn't* generate the set of fields that
+    you need you should either declare the extra/differing fields explicitly on
+    the serializer class, or simply use a `Serializer` class.
+    """
+
+    serializer_field_mapping = {
+        models.AutoField: fields.IntegerField,
+        models.BigIntegerField: fields.IntegerField,
+        models.BooleanField: fields.BooleanField,
+        models.CharField: fields.CharField,
+        models.CommaSeparatedIntegerField: fields.CharField,
+        models.DateField: fields.DateField,
+        models.DateTimeField: fields.DateTimeField,
+        models.DecimalField: fields.DecimalField,
+        models.EmailField: fields.EmailField,
+        models.Field: fields.ModelField,
+        models.FileField: fields.FileField,
+        models.FloatField: fields.FloatField,
+        models.ImageField: fields.ImageField,
+        models.IntegerField: fields.IntegerField,
+        models.NullBooleanField: fields.NullBooleanField,
+        models.PositiveIntegerField: fields.IntegerField,
+        models.PositiveSmallIntegerField: fields.IntegerField,
+        models.SlugField: fields.SlugField,
+        models.SmallIntegerField: fields.IntegerField,
+        models.TextField: fields.CharField,
+        models.TimeField: fields.TimeField,
+        models.URLField: fields.URLField,
+        models.GenericIPAddressField: fields.IPAddressField,
+        models.FilePathField: fields.FilePathField,
+    }
+    if models.DurationField is not None:
+        serializer_field_mapping[models.DurationField] = fields.DurationField
+
+    serializer_related_field = fields.PrimaryKeyRelatedField
+    serializer_related_to_field = fields.SlugRelatedField
+    serializer_url_field = fields.HyperlinkedIdentityField
+    serializer_choice_field = fields.ChoiceField
+
+
+# noinspection PyAbstractClass
+class Serializer(DynamicFormsSerializer, serializers.Serializer):
+    pass
