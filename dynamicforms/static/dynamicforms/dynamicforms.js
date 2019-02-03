@@ -129,6 +129,10 @@ dynamicforms = {
     return dynamicforms.recordURL;
   },
 
+  isFunction: function isFunction(passedFunction) {
+    return typeof(eval(passedFunction) === "function") ? true : false;
+  },
+
   /**
    * Gets refreshed html after add or edit
    * @param url: url for retrieving html
@@ -151,7 +155,18 @@ dynamicforms = {
       if (deletion == true) {
         dynamicforms.wasLastRowDeleted();
       }
+    } else if (refreshType == 'page') {
+      window.location.reload(true);
+    } else if (refreshType.indexOf('redirect') !== -1) {
+      var redirectUrl = refreshType.split(':').pop();
+      window.location.href = redirectUrl;
     } else if (refreshType == 'no refresh') {
+      // pass
+    } else if (dynamicforms.isFunction(refreshType)){
+      // Change passed string to function call
+      var functionString = refreshType + "();";
+      var customFunction = new Function (functionString);
+      customFunction();
     }
   },
 
@@ -368,8 +383,18 @@ dynamicforms = {
           var recordURL = dynamicforms.getRecordURL();
           // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
           dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
+        } else if (refreshType == 'page') {
+          window.location.reload(true);
+        } else if (refreshType.indexOf('redirect') !== -1) {
+          var redirectUrl = refreshType.split(':').pop();
+          window.location.href = redirectUrl;
         } else if (refreshType == 'no refresh') {
           // pass
+        } else if (dynamicforms.isFunction(refreshType)){
+          // Change passed string to function call
+          var functionString = refreshType + "();";
+          var customFunction = new Function (functionString);
+          customFunction();
         }
       })
       .fail(function (xhr, status, error) {
@@ -377,6 +402,8 @@ dynamicforms = {
         dynamicforms.showAjaxError(xhr, status, error);
       });
   },
+
+
 
   /**
    * Handles what should happen when user clicks "Add new" button
