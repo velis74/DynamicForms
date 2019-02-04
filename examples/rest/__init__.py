@@ -7,6 +7,7 @@ from .advanced_fields import AdvancedFieldsViewset
 from .relation import RelationViewset
 from .validated import ValidatedViewSet
 from .page_load import PageLoadViewSet
+from .single_dialog import SingleDialogViewSet
 
 
 router = routers.DefaultRouter()
@@ -17,3 +18,4 @@ router.register(r'relation', RelationViewset, base_name='relation')
 router.register(r'validated', ValidatedViewSet, base_name='validated')
 router.register(r'page-load', PageLoadViewSet, base_name='page-load')
 router.register(r'filter', FilterViewSet, base_name='filter')
+router.register(r'single-dialog', SingleDialogViewSet, base_name='single-dialog')

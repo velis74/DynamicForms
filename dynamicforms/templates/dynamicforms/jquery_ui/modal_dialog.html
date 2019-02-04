@@ -13,8 +13,16 @@
 
   <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
     <div class="ui-dialog-buttonset">
-      <button type="button" class="ui-button ui-corner-all ui-widget" id="save-{{ serializer.uuid }}">Save changes</button>
-      <button type="button" class="ui-button ui-corner-all ui-widget close-btn">Close</button>
+      {% for btn in serializer.form_buttons %}
+        <button type="button" class="ui-button ui-corner-all ui-widget"
+          {% if btn.type == 1 %}
+            class="close-btn"
+          {% elif btn.type == 2 %}
+            id="save-{{ serializer.uuid }}"
+          {% endif %}>
+          {{ btn.label }}
+        </button>
+      {% endfor %}
     </div>
   </div>
 

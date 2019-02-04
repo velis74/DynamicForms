@@ -1,0 +1,13 @@
+{% load i18n dynamicforms%}
+
+{% if form.has_non_field_errors %}
+  {% for error in form.errors.non_field_errors %}
+    <div class="text-danger">{{ error }}</div>
+  {% endfor %}
+{% endif %}
+
+{% block form_inner %}
+<div class="row">
+  <div class="col-12">{% render_field form.test style=style %}</div>
+</div>
+{% endblock %}

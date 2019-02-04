@@ -1,4 +1,5 @@
 from django.db import models
+from enum import IntEnum
 
 from rest_framework import serializers
 
@@ -9,6 +10,10 @@ from .mixins import UUIDMixIn, ActionMixin
 
 
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin):
+    class FormButtonTypes(IntEnum):
+        CANCEL = 1
+        SAVE = 2
+
     template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
     form_titles = {
@@ -16,6 +21,10 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin):
         'new': '',
         'edit': '',
     }
+    form_buttons = [
+        dict(type=FormButtonTypes.CANCEL, label='Cancel'),
+        dict(type=FormButtonTypes.SAVE, label='Save changes')
+    ]
 
     show_filter = False  # When true, filter row is shown for list view
     serializer_type = None  # Current types: None, 'filter'

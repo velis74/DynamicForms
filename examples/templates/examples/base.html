@@ -87,9 +87,10 @@
 </head>
 <body>
 <div id="titlebar">
-  <div id="hamburger" onclick="togglemenu()">
+  <span id="hamburger" onclick="togglemenu()">
     &#9776; <span id="page-title"></span>
-  </div>
+  </span>
+  <span><button class="btn btn-info" type="button" name="button" onclick="singleDialog()">Single dialog</button></span>
 </div>
 <div id="side-nav" class="sidenav">
   <a href="{% url 'validated-list' format='html' %}">Validated</a>
@@ -98,6 +99,7 @@
   <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
   <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
+  <a href="#"></a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
@@ -120,6 +122,10 @@
         $overlay.hide();
       });
     }
+  }
+
+  function singleDialog() {
+    dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
   }
 </script>
 </body>
