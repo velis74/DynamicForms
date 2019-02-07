@@ -229,3 +229,6 @@ class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewS
 
     def new_object(self):
         raise NotImplementedError()
+
+    def create(self, request, *args, **kwargs):
+        raise NotImplementedError()
