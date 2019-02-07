@@ -98,6 +98,7 @@
   <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
   <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
+  <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
@@ -120,6 +121,10 @@
         $overlay.hide();
       });
     }
+  }
+
+  var testRefreshType = function () {
+    alert("Custom function refresh type.");
   }
 </script>
 </body>

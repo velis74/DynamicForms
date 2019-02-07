@@ -162,3 +162,10 @@ class AdvancedFields(models.Model):
 
     def __str__(self):
         return 'Advanced field {self.id}'.format(**locals())
+
+
+class RefreshType(models.Model):
+    """
+    Shows how DynamicForms handles different refresh types
+    """
+    description = models.CharField(max_length=20, help_text='Item description')

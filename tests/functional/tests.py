@@ -3,11 +3,12 @@ import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, WebDriverException
+from selenium.common.exceptions import (ElementNotInteractableException, NoSuchElementException, WebDriverException,
+                                        NoAlertPresentException)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
-from examples.models import Validated
+from examples.models import Validated, RefreshType
 
 MAX_WAIT = 10
 
@@ -1104,3 +1105,278 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].get_attribute("innerHTML"),
                          "This value does not match the required pattern (?&lt;=abc)def.")
+
+
+class RefreshTypesTest(StaticLiveServerTestCase):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        # print(self.live_server_url)
+        if staging_server:
+            # print('\n\nSTAGING SERVER\n\n')
+            self.live_server_url = 'http://' + staging_server
+        # print(self.live_server_url)
+
+    def tearDown(self):
+        self.browser.refresh()
+        self.browser.quit()
+        pass
+
+    def wait_for_new_element(self, element_id):
+        start_time = time.time()
+        while True:
+            try:
+                time.sleep(0.5)
+                element = self.browser.find_element_by_id(element_id)
+                self.assertTrue(element is not None)
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+
+    def wait_for_modal_dialog(self, old_id=None):
+        start_time = time.time()
+        while True:
+            try:
+                time.sleep(0.5)
+                element = self.browser.find_element_by_class_name("modal")
+                self.assertTrue(element is not None)
+                element_id = element.get_attribute("id")
+                # if old_id:
+                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                self.assertTrue(element_id.startswith("dialog-"))
+                element_id = element_id.split("-", 1)[1]
+                return element, element_id
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+
+    def wait_for_modal_dialog_disapear(self, dialog_id):
+        start_time = time.time()
+        while True:
+            try:
+                time.sleep(0.5)
+                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
+                    break
+                self.assertFalse(time.time() - start_time > MAX_WAIT)
+            except WebDriverException:
+                break
+
+    # noinspection PyMethodMayBeStatic
+    def check_error_text(self, dialog):
+        error_text = None
+        try:
+            error = dialog.find_element_by_class_name("text-danger")
+            if error is not None:
+                error_text = error.get_attribute("innerHTML")
+        except WebDriverException:
+            pass
+        return error_text
+
+    def get_table_body(self):
+        try:
+            body = self.browser.find_element_by_class_name("card-body")
+        except NoSuchElementException:
+            try:
+                # Bootstrap 3
+                body = self.browser.find_element_by_class_name("panel-body")
+            except NoSuchElementException:
+                # jQueryUI
+                body = self.browser.find_element_by_class_name("ui-accordion-content")
+
+        table = body.find_element_by_tag_name("table")
+
+        tbody = table.find_element_by_tag_name("tbody")
+        return tbody.find_elements_by_tag_name("tr")
+
+    def initial_check(self, field, fld_text, fld_name, fld_type):
+        self.assertEqual(field.text, fld_text)
+        self.assertEqual(field.get_attribute("name"), fld_name)
+        self.assertEqual(field.get_attribute("type"), fld_type)
+
+    def check_row(self, row, cell_cnt, cell_values):
+        cells = row.find_elements_by_tag_name("td")
+        self.assertEqual(len(cells), cell_cnt)
+        for i in range(len(cell_values)):
+            if cell_values[i] is not None:
+                self.assertEqual(cells[i].text, cell_values[i])
+        return cells
+
+    def add_record(self, btn_position, text, add_second_record=None):
+        try:
+            header = self.browser.find_element_by_class_name('card-header')
+        except NoSuchElementException:
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
+
+        add_btns = header.find_elements_by_class_name('btn')
+
+        add_btns[btn_position].click()
+
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        for container in containers:
+            container_id = container.get_attribute("id")
+            if container_id.startswith("container-"):
+                field_id = container_id.split('-', 1)[1]
+                label = container.find_element_by_id("label-" + field_id)
+                field = container.find_element_by_id(field_id)
+
+                if label.text == "Description":
+                    self.initial_check(field, "", "description", "text")
+                    field.send_keys(text)
+                elif field.get_attribute("name") in ('id',):
+                    # Hidden fields
+                    pass
+
+        if add_second_record:
+            RefreshType.objects.create(
+                description="Refresh type extra"
+            )
+
+        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+
+        try:
+            alert = self.browser.switch_to.alert
+            self.assertEqual(alert.text, 'Custom function refresh type.')
+            alert.accept()
+        except NoAlertPresentException:
+            pass
+
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+
+    def test_refresh_types_list(self):
+        self.browser.get(self.live_server_url + '/refresh-types.html')
+
+        try:
+            header = self.browser.find_element_by_class_name('card-header')
+        except NoSuchElementException:
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
+
+        add_btns = header.find_elements_by_class_name('btn')
+        self.assertEqual(add_btns[0].text, '+ Add (refresh record)')
+        self.assertEqual(add_btns[1].text, '+ Add (refresh table)')
+        self.assertEqual(add_btns[2].text, '+ Add (no refresh)')
+        self.assertEqual(add_btns[3].text, '+ Add (page reload)')
+        self.assertEqual(add_btns[4].text, '+ Add (redirect)')
+        self.assertEqual(add_btns[5].text, '+ Add (custom function)')
+
+        # Check if there's a "no data" table row
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+
+        # Test Add action with refreshType='record'
+        self.add_record(0, 'Refresh record')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 1)
+        cells = rows[0].find_elements_by_tag_name("td")
+        self.assertEqual(len(cells), 3)
+
+        # Test Add action with refreshType='table'
+        self.add_record(1, 'Refresh table')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 2)
+        cells = rows[0].find_elements_by_tag_name("td")
+
+        self.add_record(1, 'Refresh table 2', add_second_record=True)
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 4)
+
+        # Test Add action with refreshType='no refresh'
+        self.add_record(2, 'No refresh')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 4)
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 5)
+
+        # Test Add action with refreshType='reload'
+        self.add_record(3, 'Page reload')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 6)
+
+        # Test Add action with refreshType='redirect'
+        self.add_record(4, 'Redirect')
+        # Redirection to /validated.html defined in action happens
+        redirect_url = self.browser.current_url
+        self.assertRegex(redirect_url, '/validated.html')
+        # Back to /refresh-types.html
+        self.browser.get(self.live_server_url + '/refresh-types.html')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 7)
+
+        # Test Add action with refreshType='custom function'
+        self.add_record(5, 'Custom function')
+        # Alert is processed in add_record function
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 8)
+
+        # Test Delete action with refreshType='record'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[0].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 7)
+
+        # Test Delete action with refreshType='table'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[1].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 6)
+
+        # Test Delete action with refreshType='no refresh'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[2].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 6)
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 5)
+
+        # Test Delete action with refreshType='reload'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[3].click()
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 4)
+
+        # Test Delete action with refreshType='redirect'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[4].click()
+        # Redirection to /validated.html defined in action happens
+        redirect_url = self.browser.current_url
+        self.assertRegex(redirect_url, '/validated.html')
+        # Back to /refresh-types.html
+        self.browser.get(self.live_server_url + '/refresh-types.html')
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 3)
+
+        # Test Delete action with refreshType='custom function'
+        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns[5].click()
+
+        alert = self.browser.switch_to.alert
+        self.assertEqual(alert.text, 'Custom function refresh type.')
+        alert.accept()
+
+        self.browser.refresh()
+
+        rows = self.get_table_body()
+        self.assertEqual(len(rows), 2)
