@@ -100,7 +100,15 @@ class RenderToTableMixin(object):
         :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
-        choices = getattr(self, 'choices', {})
+        get_queryset = getattr(self, 'get_queryset', None)
+        if get_queryset:
+            # shortcut for getting display value for table without actually getting the entire table into choices
+            qs = get_queryset()
+            qs = qs.filter(pk=value)
+            choices = { self.to_representation(item): self.display_value(item) for item in qs }
+        else:
+            choices = getattr(self, 'choices', {})
+
         if isinstance(value, list) and choices:
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
             return ', '.join((drftt.format_value(choices[v]) for v in value))
