@@ -5,10 +5,10 @@ from rest_framework import serializers
 from dynamicforms.action import ActionControls
 from dynamicforms.settings import TEMPLATE
 from . import fields
-from .mixins import UUIDMixIn, ActionMixin
+from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
 
 
-class DynamicFormsSerializer(UUIDMixIn, ActionMixin):
+class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
     template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
     form_titles = {

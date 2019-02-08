@@ -211,6 +211,18 @@ def render_table_commands(context, serializer, position, field_name=None, table_
 
 
 @register.simple_tag(takes_context=True)
+def field_to_serializer_and_data(context, field):
+    """
+    Adjusts context such that the nested serializer field becomes THE serializer
+
+    :param field: field to be converted into context
+    :return: nothing
+    """
+    context.update(dict(serializer=field.child, data=field.value, **field.child.template_context))
+    return ''
+
+
+@register.simple_tag(takes_context=True)
 def get_data_template(context):
     """
     Returns template that should be used for rendering current serializer data
