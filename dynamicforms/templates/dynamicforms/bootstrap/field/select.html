@@ -22,6 +22,7 @@
     var BSVER = (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') ? "bootstrap" : "bootstrap4";
     $("#{{ field.uuid }}").select2({
       // Attaches select2 to dialog and enables input field
+      // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
       dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
       theme: BSVER
     });
