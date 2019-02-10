@@ -106,8 +106,12 @@ class RenderToTableMixin(object):
         if get_queryset:
             # shortcut for getting display value for table without actually getting the entire table into choices
             qs = get_queryset()
-            qs = qs.filter(pk=value)
-            choices = { self.to_representation(item): self.display_value(item) for item in qs }
+
+            try:
+                qs = qs.filter(pk=value)
+                choices = { self.to_representation(item): self.display_value(item) for item in qs }
+            except:
+                choices = getattr(self, 'choices', {})
         else:
             choices = getattr(self, 'choices', {})
 
