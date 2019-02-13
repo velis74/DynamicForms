@@ -98,6 +98,7 @@
   <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
   <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
+  <a href="#" onclick="singleDialog()">Pop-up dialog</a>
   <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
@@ -123,9 +124,25 @@
     }
   }
 
+  function singleDialog() {
+    togglemenu();
+    dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
+  }
+
+  function customSingleDialogBtn() {
+    var $dlg = $(".dynamicforms-dialog");
+    var $form = $(".dynamicforms-form");
+    dynamicforms.submitForm($dlg, $form, null, true);
+    // Wait for ajax to set returnedJsonData
+    setTimeout(function() {
+      alert(dynamicforms.returnedJsonData.test);
+    }, 100);
+  }
+
   var testRefreshType = function () {
     alert("Custom function refresh type.");
   }
+
 </script>
 </body>
 </html>

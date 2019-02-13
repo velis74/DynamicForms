@@ -1380,3 +1380,112 @@ class RefreshTypesTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
+
+
+class SingleDialogTest(StaticLiveServerTestCase):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        # print(self.live_server_url)
+        if staging_server:
+            # print('\n\nSTAGING SERVER\n\n')
+            self.live_server_url = 'http://' + staging_server
+        # print(self.live_server_url)
+
+    def tearDown(self):
+        self.browser.refresh()
+        self.browser.quit()
+        pass
+
+    def wait_for_modal_dialog(self, old_id=None):
+        start_time = time.time()
+        while True:
+            try:
+                time.sleep(0.5)
+                element = self.browser.find_element_by_class_name("modal")
+                self.assertTrue(element is not None)
+                element_id = element.get_attribute("id")
+                # if old_id:
+                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                self.assertTrue(element_id.startswith("dialog-"))
+                element_id = element_id.split("-", 1)[1]
+                return element, element_id
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+
+    def select_option_for_select2(self, driver, id, text=None):
+        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
+        element.click()
+
+        if text:
+            element = driver.find_element_by_xpath("//input[@type='search']")
+            element.send_keys(text)
+
+        try:
+            element.send_keys(Keys.ENTER)
+        except ElementNotInteractableException:
+            actions = ActionChains(driver)
+            a = actions.move_to_element_with_offset(element, 50, 30)
+            a.send_keys(Keys.ENTER)
+            a.perform()
+
+    def test_single_dialog(self):
+        self.browser.get(self.live_server_url + '/refresh-types.html')
+
+        hamburger = self.browser.find_element_by_id('hamburger')
+        hamburger.click()
+
+        pop_up_dialog = self.browser.find_element_by_link_text('Pop-up dialog')
+        pop_up_dialog.click()
+
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+
+        # check if all fields are in the dialog and no excessive fields too
+        field_count = 0
+
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        for container in containers:
+            container_id = container.get_attribute("id")
+            if container_id.startswith("container-"):
+                field_id = container_id.split('-', 1)[1]
+                label = container.find_element_by_id("label-" + field_id)
+                field = container.find_element_by_id(field_id)
+
+                field_count += 1
+
+                if label.text == "What should we say?":
+                    # Check if choice_field field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        initial_choice = container.find_element_by_class_name("select2-selection__rendered")
+                        self.assertEqual(initial_choice.text, "Today is sunny")
+
+                        select2_options = select2.find_elements_by_tag_name("option")
+                        self.assertEqual(len(select2_options), 2)
+                        self.assertEqual(select2.get_attribute("name"), "test")
+                        self.assertEqual(select2.tag_name, "select")
+                        self.select_option_for_select2(container, field_id, text="Never-ending rain")
+                    else:
+                        select = Select(field)
+                        selected_options = select.all_selected_options
+                        self.assertEqual(len(selected_options, 1))
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(selected_options[0].text, "Today is sunny")
+                        self.assertEqual(field.get_attribute("name"), "test")
+                        self.assertEqual(field.tag_name, "select")
+                        select.select_by_index(1)
+
+        dialog.find_element_by_class_name("btn").click()
+
+        try:
+            alert = self.browser.switch_to.alert
+            self.assertEqual(alert.text, 'Never-ending rain')
+            alert.accept()
+        except NoAlertPresentException:
+            pass

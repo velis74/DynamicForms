@@ -94,6 +94,9 @@ class TemplateRendererMixin():
         return super().initialize_request(request, *args, **kwargs)
 
     def finalize_response(self, request, response, *args, **kwargs):
+        if not isinstance(response, Response):
+            return response
+
         res = super().finalize_response(request, response, *args, **kwargs)
 
         if isinstance(res.accepted_renderer, TemplateHTMLRenderer) and \

@@ -68,6 +68,9 @@ dynamicforms = {
     console.log([xhr, status, error]);
   },
 
+
+  returnedJsonData: {},
+
   /**
    * Handles what happens when user says "Save data". Basically serialization, send to server, response to returned
    * status and values
@@ -75,7 +78,7 @@ dynamicforms = {
    * @param $form: the edited form containing the data
    * @param refreshType: how to refresh the table
    */
-  submitForm: function submitForm($dlg, $form, refreshType) {
+  submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
     var data    = dynamicforms.getSerializedForm($form, 'final');
     var method  = data['data-dynamicforms-method'] || 'POST';
     var headers = {'X-DF-RENDER-TYPE': 'dialog'};
@@ -91,14 +94,18 @@ dynamicforms = {
       type:        method,
       url:         $form.attr("action"),
       data:        data,
-      dataType:    'html',
+      dataType:    doneFunc ? 'json' : 'html',
       headers:     headers,
       traditional: true,
     })
       .done(function (data) {
-        var formContent = $dlg.find("form").html();
-        dynamicforms.closeDialog($dlg);
-        dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
+        if (!doneFunc) {
+          var formContent = $dlg.find("form").html();
+          dynamicforms.closeDialog($dlg);
+          dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
+        } else {
+          dynamicforms.returnedJsonData = data;
+        }
       })
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
