@@ -87,10 +87,9 @@
 </head>
 <body>
 <div id="titlebar">
-  <span id="hamburger" onclick="togglemenu()">
+  <div id="hamburger" onclick="togglemenu()">
     &#9776; <span id="page-title"></span>
-  </span>
-  <span><button class="btn btn-info" type="button" name="button" onclick="singleDialog()">Single dialog</button></span>
+  </div>
 </div>
 <div id="side-nav" class="sidenav">
   <a href="{% url 'validated-list' format='html' %}">Validated</a>
@@ -99,7 +98,7 @@
   <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
   <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
-  <a href="#"></a>
+  <a href="#" onclick="singleDialog()">Pop-up dialog</a>
   <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
@@ -126,8 +125,10 @@
   }
 
   function singleDialog() {
+    togglemenu();
     dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
   }
+
   var testRefreshType = function () {
     alert("Custom function refresh type.");
   }
