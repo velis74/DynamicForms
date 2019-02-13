@@ -9,7 +9,7 @@
     {% render_table_commands serializer "rowstart" table_header='Actions' %}
     {% for column in serializer.fields.values %}
       {% if column.visible_in_table %}
-        <th>{{ column.label }}</th>{% endif %}{% endfor %}
+        <th class="{{ column.table_classes }}">{{ column.label }}</th>{% endif %}{% endfor %}
     {% render_table_commands serializer "rowend" table_header='Actions' %}
   </tr>
   {% if serializer.show_filter %}

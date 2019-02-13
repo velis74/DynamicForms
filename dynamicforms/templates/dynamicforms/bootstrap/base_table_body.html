@@ -6,7 +6,7 @@
       {% for key, value in row|items %}
         {% set_var column=serializer.fields|dict_item:key %}
         {% if key in serializer.fields and column.visible_in_table %}
-          <td {{ value|add_nested_class }} data-name="{{ key }}">
+          <td class="{{ column.table_classes }}" {{ value|add_nested_class }} data-name="{{ key }}">
             {% render_table_commands serializer "fieldleft" key %}
             {% render_field_to_table serializer key value row %}
             {% render_table_commands serializer "fieldright" key %}

@@ -43,4 +43,14 @@
     margin: 0;
   }
 
+  .select2-container--bootstrap4 {
+    /* otherwise select2s are too narrow */
+    width: auto !important;
+  }
+
+  @media (max-width: 991px) {
+    .modal-lg {
+      max-width: calc(100% - 2em);
+    }
+  }
 </style>

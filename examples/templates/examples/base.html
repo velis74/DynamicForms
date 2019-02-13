@@ -100,6 +100,7 @@
   <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
   <a href="#"></a>
+  <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
@@ -126,6 +127,9 @@
 
   function singleDialog() {
     dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
+  }
+  var testRefreshType = function () {
+    alert("Custom function refresh type.");
   }
 </script>
 </body>

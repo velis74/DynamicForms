@@ -1,3 +1,4 @@
+import collections
 import uuid as uuid_module
 from typing import List
 
@@ -88,9 +89,10 @@ class RenderToTableMixin(object):
     Used for rendering individual field to table view
     """
 
-    def __init__(self, *args, visible_in_table: bool = True, **kwargs):
+    def __init__(self, *args, visible_in_table: bool = True, table_classes: str = '', **kwargs):
         super().__init__(*args, **kwargs)
         self.visible_in_table = visible_in_table
+        self.table_classes = table_classes
 
     def render_to_table(self, value, row_data):
         """
@@ -100,11 +102,23 @@ class RenderToTableMixin(object):
         :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
-        choices = getattr(self, 'choices', {})
+        get_queryset = getattr(self, 'get_queryset', None)
+        if get_queryset:
+            # shortcut for getting display value for table without actually getting the entire table into choices
+            qs = get_queryset()
+
+            try:
+                qs = qs.filter(pk=value)
+                choices = { self.to_representation(item): self.display_value(item) for item in qs }
+            except:
+                choices = getattr(self, 'choices', {})
+        else:
+            choices = getattr(self, 'choices', {})
+
         if isinstance(value, list) and choices:
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
             return ', '.join((drftt.format_value(choices[v]) for v in value))
-        elif value in choices:
+        elif isinstance(value, collections.Hashable) and value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
         return drftt.format_value(value)
