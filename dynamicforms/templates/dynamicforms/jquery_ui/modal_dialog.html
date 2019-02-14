@@ -14,19 +14,19 @@
   <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
     <div class="ui-dialog-buttonset">
       {% for btn in serializer.form_buttons.buttons %}
-        <button type="button" class="ui-button ui-corner-all ui-widget"
+        <button type="button" class="ui-button ui-corner-all ui-widget" id="formbutton-{{ btn.uuid }}"
           {% if btn.type == 1 %}
             class="close-btn"
           {% elif btn.type == 2 %}
             id="save-{{ serializer.uuid }}"
           {% elif btn.type == 3 %}
-            class="btn-custom-{{forloop.counter}}"
+            class="btn-custom-{{forloop.counter}} {{ btn.btn_classes }}"
           {% endif %}>
           {{ btn.label }}
         </button>
         {% if btn.btn_type == 3 %}
           <script type="text/javascript">
-            $(".btn-custom-{{forloop.counter}}").on("click", function() {
+            $("#formbutton-{{ btn.uuid }}").on("click", function() {
               {{ btn.js }}
             });
           </script>

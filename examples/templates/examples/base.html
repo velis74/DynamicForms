@@ -132,11 +132,19 @@
   function customSingleDialogBtn() {
     var $dlg = $(".dynamicforms-dialog");
     var $form = $(".dynamicforms-form");
-    dynamicforms.submitForm($dlg, $form, null, true);
-    // Wait for ajax to set returnedJsonData
-    setTimeout(function() {
-      alert(dynamicforms.returnedJsonData.test);
-    }, 100);
+    dynamicforms.submitForm($dlg, $form, null, function(data) {
+      dynamicforms.closeDialog($dlg);
+      alert(data.test);
+    });
+  }
+
+  function customSingleDialogBtnPost() {
+    var $dlg = $(".dynamicforms-dialog");
+    dynamicforms.closeDialog($dlg);
+
+    var $form = $(".dynamicforms-form");
+    $form.append($('<input type="hidden" name="download" value="1"/>'));
+    $form.submit();
   }
 
   var testRefreshType = function () {

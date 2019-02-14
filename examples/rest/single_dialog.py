@@ -20,7 +20,11 @@ class SingleDialogSerializer(serializers.Serializer):
     ))
 
     form_buttons = FormButtons([
-        Button(btn_type=FormButtonTypes.CUSTOM, label='Confirm', js="customSingleDialogBtn();")
+        Button(FormButtonTypes.CANCEL),
+        Button(btn_type=FormButtonTypes.CUSTOM, label='Download it', btn_classes='btn-info',
+               js="customSingleDialogBtnPost();"),
+        Button(btn_type=FormButtonTypes.CUSTOM, label='Say it', btn_classes='btn-primary',
+               js="customSingleDialogBtn();"),
     ])
 
 
@@ -36,5 +40,9 @@ class SingleDialogViewSet(viewsets.SingleRecordViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # return Response(, content_type='application/json')
-        return HttpResponse(JSONRenderer().render(serializer.data))
+        if request.data.get('download', '') == '1':
+            res = HttpResponse(serializer.data['test'].encode('utf-8'), content_type='text/plain; charset=UTF-8')
+            res['Content-Disposition'] = 'attachment; filename={}'.format('justsaying.txt')
+            return res
+
+        return HttpResponse(JSONRenderer().render(serializer.data), content_type='application/json')

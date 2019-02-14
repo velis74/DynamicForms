@@ -69,14 +69,13 @@ dynamicforms = {
   },
 
 
-  returnedJsonData: {},
-
   /**
    * Handles what happens when user says "Save data". Basically serialization, send to server, response to returned
    * status and values
    * @param $dlg: current dialog which will be updated with call results or closed on successful data store
    * @param $form: the edited form containing the data
    * @param refreshType: how to refresh the table
+   * @param doneFunc: if specified, this function will be called on successful data send
    */
   submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
     var data    = dynamicforms.getSerializedForm($form, 'final');
@@ -90,23 +89,26 @@ dynamicforms = {
 
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
+    var dataType = 'html';
+    if (doneFunc == undefined) {
+      doneFunc = function(data) {
+        //var formContent = $dlg.find("form").html();
+        dynamicforms.closeDialog($dlg);
+        dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
+      }
+    }
+    else
+      dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
+
     $.ajax({
       type:        method,
       url:         $form.attr("action"),
       data:        data,
-      dataType:    doneFunc ? 'json' : 'html',
+      dataType:    dataType,
       headers:     headers,
       traditional: true,
     })
-      .done(function (data) {
-        if (!doneFunc) {
-          var formContent = $dlg.find("form").html();
-          dynamicforms.closeDialog($dlg);
-          dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
-        } else {
-          dynamicforms.returnedJsonData = data;
-        }
-      })
+      .done(doneFunc)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail

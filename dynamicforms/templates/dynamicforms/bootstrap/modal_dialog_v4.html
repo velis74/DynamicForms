@@ -22,19 +22,19 @@
       </div>
       <div class="modal-footer">
         {% for btn in serializer.form_buttons.buttons %}
-          <button type="button"
+          <button type="button" id="formbutton-{{ btn.uuid }}"
             {% if btn.btn_type == 1 %}
               class="btn btn-secondary" data-dismiss="modal"
             {% elif btn.btn_type == 2 %}
               class="btn btn-primary" id="save-{{ serializer.uuid }}"
             {% elif btn.btn_type == 3 %}
-              class="btn-custom-{{forloop.counter}} btn btn-secondary"
+              class="btn-custom-{{forloop.counter}} btn {{ btn.btn_classes }}"
             {% endif %}>
             {{ btn.label }}
           </button>
           {% if btn.btn_type == 3 %}
             <script type="text/javascript">
-              $(".btn-custom-{{forloop.counter}}").on("click", function() {
+              $("#formbutton-{{ btn.uuid }}").on("click", function() {
                 {{ btn.js }}
               });
             </script>

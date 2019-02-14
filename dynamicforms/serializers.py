@@ -3,7 +3,7 @@ from django.db import models
 from rest_framework import serializers
 
 from dynamicforms.action import ActionControls
-from dynamicforms.buttons import FormButtons
+from dynamicforms.buttons import FormButtons, Button
 from dynamicforms.settings import TEMPLATE
 from . import fields
 from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
@@ -18,7 +18,7 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
         'new': '',
         'edit': '',
     }
-    form_buttons = FormButtons(add_default_buttons=True)
+    form_buttons = FormButtons(add_default_cancel=True, add_default_save=True)
 
     show_filter = False  # When true, filter row is shown for list view
     serializer_type = None  # Current types: None, 'filter'
