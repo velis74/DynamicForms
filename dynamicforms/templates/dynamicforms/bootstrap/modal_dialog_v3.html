@@ -19,8 +19,25 @@
         {% include template_list with serializer=serializer data=data %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="save-{{ serializer.uuid }}">Save changes</button>
+        {% for btn in serializer.form_buttons.buttons %}
+          <button type="button" id="formbutton-{{ btn.uuid }}"
+            {% if btn.type == 1 %}
+              class="btn btn-secondary" data-dismiss="modal"
+            {% elif btn.type == 2 %}
+              class="btn btn-primary" id="save-{{ serializer.uuid }}"
+            {% elif btn.type == 3 %}
+              class="btn-custom-{{forloop.counter}} btn {{ btn.btn_classes }}"
+            {% endif %}>
+            {{ btn.label }}
+          </button>
+          {% if btn.btn_type == 3 %}
+            <script type="text/javascript">
+              $("#formbutton-{{ btn.uuid }}").on("click", function() {
+                {{ btn.js }}
+              });
+            </script>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
   </div>

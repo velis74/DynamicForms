@@ -1,0 +1,21 @@
+{% load i18n dynamicforms%}
+
+<p>This dialog's form is pre-populated with data of your (the programmer) choosing. When you make your choice and
+  send it back to the server, the server will process the result and return it back to the client.</p>
+<ul>
+  It is up to you to choose how the data is going to be returned:
+
+  <li>Click "Say it" to have it returned as JSON and displayed in a dialog</li>
+  <li>Click "Download it" to have it returned as a downloadable text file</li>
+</ul>
+{% if form.has_non_field_errors %}
+  {% for error in form.errors.non_field_errors %}
+    <div class="text-danger">{{ error }}</div>
+  {% endfor %}
+{% endif %}
+
+{% block form_inner %}
+<div class="row">
+  <div class="col-12">{% render_field form.test style=style %}</div>
+</div>
+{% endblock %}
