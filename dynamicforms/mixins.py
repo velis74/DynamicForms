@@ -33,6 +33,12 @@ def _resolve_reference(serializer: Serializer, ref):
         return ref.uuid
     elif isinstance(ref, str) and ref in serializer.fields:
         return serializer[ref].uuid
+    elif isinstance(ref, str) and '.' in ref:
+        # This supports nested serializers and fields with . notation, e.g. master_serializer_field.child_field
+        f = serializer
+        for r in ref.split('.'):
+            f = f[r]
+        return f.uuid
     raise Exception('Unknown reference type for Action tracked field (%r)' % ref)
 
 
