@@ -20,13 +20,13 @@
       </div>
       <div class="modal-footer">
         {% for btn in serializer.form_buttons.buttons %}
-          <button type="button" id="formbutton-{{ btn.uuid }}"
+          <button type="button"
             {% if btn.type == 1 %}
               class="btn btn-secondary" data-dismiss="modal"
             {% elif btn.type == 2 %}
               class="btn btn-primary" id="save-{{ serializer.uuid }}"
             {% elif btn.type == 3 %}
-              class="btn-custom-{{forloop.counter}} btn {{ btn.btn_classes }}"
+              class="btn-custom-{{forloop.counter}} btn {{ btn.btn_classes }}" id="formbutton-{{ btn.uuid }}"
             {% endif %}>
             {{ btn.label }}
           </button>
