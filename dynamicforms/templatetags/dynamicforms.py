@@ -174,8 +174,8 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                 from uuid import uuid1
 
                 btnid = uuid1()
-                ret += '<button id="df-action-btn-{btnid}" class="btn btn-info" onClick="{stop_propagation}' \
-                       ' {action}">{icon_def}{label}</button>'. \
+                ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info" ' \
+                       'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
                     format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
                            label=action.label,
                            icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
@@ -206,6 +206,8 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                 format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
         if ret != '':
             ret = '<script type="application/javascript">%s</script>' % ret
+
+    ret = '{% load static i18n %}' + ret
 
     return mark_safe(context.template.engine.from_string(ret).render(context))
 

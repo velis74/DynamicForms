@@ -685,7 +685,11 @@ dynamicforms = {
     //TODO: we need to check parent container if everything inside it is hidden. If there is, the parent container needs to hide too
     var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
-    $field.parents('#container-' + fieldID).toggle(visible);
+    var $hide = $field.parents('#container-' + fieldID);
+    var $hideParent = $hide.parents('[data-hide-with-field]');
+    if ($hideParent.length > 0)
+      $hide = $hideParent;
+    $hide.toggle(visible);
   },
 
   /**
