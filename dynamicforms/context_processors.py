@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from .import settings
+from .settings import DYNAMICFORMS
 
 
 def add_dynamicforms_settings(request: HttpRequest):
@@ -10,7 +10,7 @@ def add_dynamicforms_settings(request: HttpRequest):
 
     .. code-block:: python
 
-       {% if DF.TEMPLATE_VARIANT.BOOTSTRAP_VERSION == 'v3' %}
+       {% if DYNAMICFORMS.bootstrap_version == 'v3' %}
          {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel_body' %}
        {% else %}
          {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
@@ -21,6 +21,6 @@ def add_dynamicforms_settings(request: HttpRequest):
 
     :param request: see `django documentation <https://docs.djangoproject.com/en/dev/ref/templates/api/
        #writing-your-own-context-processors>`_
-    :return: dict with `DF` context variable set
+    :return: dict with `DYNAMICFORMS` context variable set
     """
-    return dict(DF=settings.CONTEXT_VARS)
+    return dict(DYNAMICFORMS=DYNAMICFORMS)

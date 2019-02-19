@@ -15,17 +15,16 @@
         <h4 class="modal-title" id="exampleModalLongTitle">{{ title }}</h4>
       </div>
       <div class="modal-body">
-        {% set_var template_list=DF.TEMPLATE|add:'base_form.html' %}
-        {% include template_list with serializer=serializer data=data %}
+        {% include DYNAMICFORMS.form_base_template with serializer=serializer data=data %}
       </div>
       <div class="modal-footer">
         {% for btn in serializer.form_buttons.buttons %}
           <button type="button"
-            {% if btn.type == 1 %}
+            {% if btn.btn_type == 1 %}
               class="btn btn-secondary" data-dismiss="modal"
-            {% elif btn.type == 2 %}
+            {% elif btn.btn_type == 2 %}
               class="btn btn-primary" id="save-{{ serializer.uuid }}"
-            {% elif btn.type == 3 %}
+            {% elif btn.btn_type == 3 %}
               class="btn-custom-{{forloop.counter}} btn {{ btn.btn_classes }}" id="formbutton-{{ btn.uuid }}"
             {% endif %}>
             {{ btn.label }}

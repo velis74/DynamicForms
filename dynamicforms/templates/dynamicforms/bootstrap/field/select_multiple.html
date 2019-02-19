@@ -1,8 +1,8 @@
-{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% extends DYNAMICFORMS.field_base_template %}
 {% load i18n dynamicforms %}
 {% trans "No items to select." as no_items %}
 {% block field_input %}
-<select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}" class="form-control {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}select2-field{% endif %}" name="{{ field.name }}">
+<select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% for select in field.iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">
@@ -16,14 +16,13 @@
   {% endfor %}
 </select>
 
-{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
-    var BSVER = (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') ? "bootstrap" : "bootstrap4";
     $("#{{ field.uuid }}").select2({
       // Attaches select2 to dialog and enables input field
       dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
-      theme: BSVER
+      theme: '{{ DYNAMICFORMS.select2_theme }}'
     });
   </script>
 {% endif %}

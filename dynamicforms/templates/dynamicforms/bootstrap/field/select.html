@@ -1,7 +1,7 @@
-{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% extends DYNAMICFORMS.field_base_template %}
 {% load dynamicforms %}
 {% block field_input %}
-<select id="{{ field.uuid }}" class="form-control {% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}select2-field{% endif %}" name="{{ field.name }}">
+<select id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>--------</option>
   {% endif %}
@@ -16,15 +16,14 @@
   {% endfor %}
 </select>
 
-{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
-    var BSVER = (dynamicforms.DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3') ? "bootstrap" : "bootstrap4";
     $("#{{ field.uuid }}").select2({
       // Attaches select2 to dialog and enables input field
       // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
       dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
-      theme: BSVER
+      theme: '{{ DYNAMICFORMS.select2_theme }}'
     });
   </script>
 {% endif %}

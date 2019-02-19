@@ -6,7 +6,7 @@ from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 
 from ..renderers import HTMLFormRenderer
-from .. import settings
+from ..settings import DYNAMICFORMS
 from ..struct import Struct
 
 register = template.Library()
@@ -66,7 +66,7 @@ def render_form(serializer, form_template=None):
 
     .. code-block:: django
 
-       {% set_var template_pack=DF.TEMPLATE|add:'field' %}
+       {% set_var template_pack=DYNAMICFORMS.template|add:'field' %}
        {% render_form serializer template_pack=template_pack %}
 
     :param serializer: Serializer object
@@ -145,7 +145,7 @@ def render_table_commands(context, serializer, position, field_name=None, table_
     :param serializer: Serializer
     :param position: Position of command (See action.py->Action for more details)
     :param field_name: If position is left or right to the field, then this parameter must contain field name
-    :param table_header: Name of table header for column, fo commands. Only for row start and row end position.
+    :param table_header: Name of table header for column, for commands. Only for row start and row end position.
     :return: rendered command buttons. If table_header parameter is given and commands for position are defined,
         returns only rendered table header
     """
@@ -179,7 +179,7 @@ def render_table_commands(context, serializer, position, field_name=None, table_
                     format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
                            label=action.label,
                            icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
-                if settings.is_jquery_ui():
+                if DYNAMICFORMS.jquery_ui:
                     ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>'\
                         .format(btnid=btnid)
 

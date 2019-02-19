@@ -30,13 +30,13 @@ form (modal dialog or separate page) and can be edited there.
 Base_form.html can be used for rendering ViewSet in form mode. It shows one record, and if crud is enabled in Viewset,
 it can also be edited.
 
-Form can be shown as modal dialog. For that template which is defined in settings.py - BSVER_MODAL is used. When using
-bootstrap v4 default template is modal_dialog_v4.html.
+Form can be shown as modal dialog. For that template which is defined in settings.py - modal_dialog_template is used.
+When using bootstrap v4 default template is modal_dialog_v4.html.
 
 Template for dialog should have first div with »dynamicforms-dialog« class. JS searches for that to see if the response
 from server was a dialog or other error message.
 
-For showing fields base template the one that is defined in settings.pyBSVER_FIELD_TEMPLATE. For bootstrap v4 default
+For showing fields base template the one that is defined in settings.py -field_base_template. For bootstrap v4 default
 template is field/base_field_v4.html. That template makes sure that the label, input, errors and help text is correctly
 shown. This template is extracted by templates that are used for rendering individual field types (e.g.: checkbox.html,
 input.html, radio.html, etc.)

@@ -357,7 +357,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
             errors = dialog.find_elements_by_class_name("ui-error-span")
 
         self.assertEqual(len(errors), 1)
-        self.assertTrue(errors[0].get_attribute("innerHTML") == 'amount can only be different than 5 if code is "123"')
+        self.assertEqual(errors[0].get_attribute("innerHTML"), 'amount can only be different than 5 if code is "123"')
         field = errors[0].parent.find_element_by_name("code")
         field.clear()
         field.send_keys("123")
@@ -1474,14 +1474,17 @@ class SingleDialogTest(StaticLiveServerTestCase):
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertEqual(len(selected_options, 1))
+                        self.assertEqual(len(selected_options), 1)
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
                         self.assertEqual(selected_options[0].text, "Today is sunny")
                         self.assertEqual(field.get_attribute("name"), "test")
                         self.assertEqual(field.tag_name, "select")
                         select.select_by_index(1)
 
-        dialog.find_element_by_class_name("btn").click()
+        try:
+            dialog.find_element_by_class_name("btn").click()
+        except NoSuchElementException:
+            dialog.find_element_by_class_name("ui-button").click()
 
         try:
             alert = self.browser.switch_to.alert

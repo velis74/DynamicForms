@@ -41,20 +41,11 @@ TLD.prototype = {
 };
 
 dynamicforms = {
-  // DF is an object containing all dynamicforms settings as specified by defaults and in settings.py
-  DF: {
-    // This is only necessary so that IDE doesn't complain about members not found when you use any of the settings
-    // in code
-    "MODULE_PREFIX":        "DYNAMICFORMS_",
-    "TEMPLATE":             "dynamicforms/bootstrap/",
-    "TEMPLATE_OPTIONS":     {
-      "BOOTSTRAP_VERSION": "v4",
-      "EDIT_IN_DIALOG":    true,
-    },
-    "MODAL_DIALOG":         "modal_dialog",
-    "BSVER_INCLUDES":       "dynamicforms/bootstrap/base_includes_v4.html",
-    "BSVER_FIELD_TEMPLATE": "dynamicforms/bootstrap/field/base_field_v4.html",
-    "BSVER_MODAL":          "dynamicforms/bootstrap/modal_dialog_v4.html",
+  // DYNAMICFORMS is an object containing all dynamicforms settings as specified by defaults and in settings.py
+  DYNAMICFORMS: {
+    'template': 'dynamicforms/bootstrap/',
+    'jquery_ui': false,
+    'edit_in_dialog': true,
   },
 
   /**
@@ -291,7 +282,7 @@ dynamicforms = {
       dynamicforms.submitForm($dlg, $form, refreshType);
     });
     // And show the dialog
-    (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ? $dlg.dialog('open') : $dlg.modal();
+    (dynamicforms.DYNAMICFORMS.jquery_ui) ? $dlg.dialog('open') : $dlg.modal();
   },
 
   /**
@@ -317,7 +308,7 @@ dynamicforms = {
    * @param $dlg: dialog to close
    */
   closeDialog: function closeDialog($dlg) {
-    (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ? $dlg.remove() : $dlg.modal('hide');
+    (dynamicforms.DYNAMICFORMS.jquery_ui) ? $dlg.remove() : $dlg.modal('hide');
   },
 
   /**
@@ -327,7 +318,7 @@ dynamicforms = {
    * @param listId: id of table element with records
    */
   editRow: function editRow(recordURL, refreshType, listId) {
-    if (dynamicforms.DF.TEMPLATE_OPTIONS.EDIT_IN_DIALOG) {
+    if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
         url:     recordURL,
@@ -882,7 +873,7 @@ dynamicforms = {
    */
   defaultFilter: function defaultFilter(event) {
     // And show the dialog
-    var formId = (dynamicforms.DF.TEMPLATE_OPTIONS.JQUERY_UI) ?
+    var formId = (dynamicforms.DYNAMICFORMS.jquery_ui) ?
       $(event.currentTarget).parents('div.accordion').find('div.ui-accordion-content').find('table')[0].getAttribute('id').replace('list-', '') :
       $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
     dynamicforms.filterData(formId);

@@ -1,7 +1,7 @@
-{% extends DF.BSVER_FIELD_TEMPLATE %}
+{% extends DYNAMICFORMS.field_base_template %}
 {% load dynamicforms %}
 {% block field_input %}
-<select id="{{ field.uuid }}" class="" name="{{ field.name }}">
+<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>--------</option>
   {% endif %}
@@ -16,7 +16,14 @@
   {% endfor %}
 </select>
 <script type="application/javascript">
-{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% if DYNAMICFORMS.use_select2 %}
+  window.setTimeout(function() {
+    $("#{{ field.uuid }}").select2({
+      // Attaches select2 to dialog and enables input field
+      // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
+      dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
+    });
+  }, 1);
 {% else %}
   // Selectmenus need to be created AFTER the dialog... So use the setTimeout because we don't know the dialog here.
   window.setTimeout(function() {
@@ -25,8 +32,9 @@
 {% endif %}
 </script>
 {% endblock %}
-{% block field_onchange %}$('#{{ field.uuid }}')
-{% if DF.TEMPLATE_OPTIONS.USE_SELECT2 %}
+{% block field_onchange %}
+{% if DYNAMICFORMS.use_select2 %}
+  {{ block.super }}
 {% else %}
   $('#{{ field.uuid }}').on('selectmenuselect', function () { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });
 {% endif %}

@@ -2,25 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  {% include DF.BSVER_INCLUDES %}
+  {% include DYNAMICFORMS.page_includes %}
   <title>{% block title %}{% endblock %}</title>
   <script src="{% static 'examples/examples.js' %}"></script>
   {% block head_extra %}{% endblock %}
   <style>
-    /* action controls */
-    .dynamicforms-actioncontrol {
-      padding: 0 .25rem;
-    }
-
-    .dynamicforms-actioncontrol .btn {
-      margin-top:    -.25rem;
-      margin-right:  .5rem;
-      padding:       .15rem .3rem;
-      font-size:     .675rem;
-      line-height:   1.1;
-      border-radius: .13rem;
-    }
-
     /* side navigation bar */
     .sidenav {
       height:           100%;

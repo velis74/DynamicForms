@@ -115,4 +115,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-DYNAMICFORMS_PAGE_TEMPLATE = 'examples/page.html'
+DYNAMICFORMS = {
+    'page_template': 'examples/page.html'
+}

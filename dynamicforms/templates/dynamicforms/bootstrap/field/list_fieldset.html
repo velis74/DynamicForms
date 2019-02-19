@@ -1,19 +1,14 @@
 {% load dynamicforms %}
 
-{% if DF.TEMPLATE_OPTIONS.BOOTSTRAP_VERSION == 'v3' %}
-  {% set_var card_class='panel panel-default' card_header='panel-heading' card_body='panel-body' %}
-{% else %}
-  {% set_var card_class='card' card_header='card-header' card_body='card-body' %}
-{% endif %}
 {% field_to_serializer_and_data field %}
 {% get_data_template as data_template %}
 
-<div class="{{ card_class }} form-group">
-  <div class="{{ card_header }}">
+<div class="{{ DYNAMICFORMS.bs_card_class }} form-group">
+  <div class="{{ DYNAMICFORMS.bs_card_header }}">
     {{ field.label }}
     {% render_table_commands field.child 'header' %}
   </div>
-  <div class="{{ card_body }}">
+  <div class="{{ DYNAMICFORMS.bs_card_body }}">
     {% include data_template with serializer=serializer data=data %}
   </div>
 </div>

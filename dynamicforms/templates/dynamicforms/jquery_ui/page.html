@@ -6,7 +6,7 @@
 {% block body %}
   {% get_data_template as data_template %}
 
-  <div class="accordion">
+  <div class="accordion df-card">
     <div>{{ serializer.page_title }}
       <span class="add-btn">{% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}</span>
     </div>

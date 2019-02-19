@@ -13,12 +13,12 @@
     {% render_table_commands serializer "rowend" table_header='Actions' %}
   </tr>
   {% if serializer.show_filter %}
-    {% render_form serializer.filter_data form_template=DF.TEMPLATE|add:'base_table_filter.html' %}
+    {% render_form serializer.filter_data form_template=DYNAMICFORMS.table_filter_base_template %}
   {% endif %}
   </thead>
   <tbody>
 {% endif %}
-{% set_var template_table_body=DF.TEMPLATE|add:'base_table_body.html' %}{% include template_table_body %}
+{% include DYNAMICFORMS.table_body_base_template %}
 {% if serializer.render_type != 'table rows' %}
   </tbody>
   <tfoot>

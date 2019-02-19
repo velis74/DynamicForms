@@ -4,7 +4,7 @@ from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 from rest_framework.serializers import HiddenField, ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
-from . import settings
+from .settings import DYNAMICFORMS
 
 
 # noinspection PyRedeclaration
@@ -44,8 +44,8 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         return super().render(data, accepted_media_type, renderer_context)
 
     def get_template_names(self, response, view):
-        if view.render_type == 'page' and settings.PAGE_TEMPLATE:
-            return [settings.PAGE_TEMPLATE]
+        if view.render_type == 'page' and DYNAMICFORMS.page_template:
+            return [DYNAMICFORMS.page_template]
         return super().get_template_names(response, view)
 
     def get_template_context(self, data, renderer_context):
@@ -57,7 +57,7 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
             else:
                 res.update(view.template_context)
         res['df_render_type'] = view.render_type  # This one should not fail because it's set in initialize_request
-        res['DF'] = settings.CONTEXT_VARS
+        res['DYNAMICFORMS'] = DYNAMICFORMS
         return res
 
 
@@ -107,7 +107,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         context = {
             'field': field,
             'style': style,
-            'DF': settings.CONTEXT_VARS,
+            'DYNAMICFORMS': DYNAMICFORMS,
         }
         return template.render(context)
 
@@ -120,7 +120,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         form = data.serializer
 
         style = renderer_context.get('style', {})
-        style['template_pack'] = settings.TEMPLATE + 'field'
+        style['template_pack'] = DYNAMICFORMS.template + 'field'
         style['renderer'] = self
 
         template_pack = style['template_pack'].strip('/')
@@ -137,6 +137,6 @@ class HTMLFormRenderer(HTMLFormRenderer):
         context = {
             'form': form,
             'style': style,
-            'DF': settings.CONTEXT_VARS,
+            'DYNAMICFORMS': DYNAMICFORMS,
         }
         return template.render(context)

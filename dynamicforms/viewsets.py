@@ -10,9 +10,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
-from dynamicforms.settings import TEMPLATE
 from .renderers import TemplateHTMLRenderer
-from .settings import BSVER_MODAL
+from .settings import DYNAMICFORMS
 
 
 class NewMixin(object):
@@ -76,7 +75,7 @@ class TemplateRendererMixin():
            return dict(items=MyModel.objects.all())
     """
 
-    template_name = TEMPLATE + 'base_list.html'  #: template filename for listing multiple records (html renderer)
+    template_name = DYNAMICFORMS.table_base_template  #: template filename for listing multiple records (html renderer)
 
     # noinspection PyAttributeOutsideInit
     def initialize_request(self, request, *args, **kwargs):
@@ -115,8 +114,8 @@ class TemplateRendererMixin():
             if self.render_type in ('table', 'table rows'):
                 serializer.data_template = self.template_name
             elif self.render_type == 'dialog':
-                serializer.data_template = BSVER_MODAL
-                res.template_name = BSVER_MODAL
+                serializer.data_template = DYNAMICFORMS.modal_dialog_template
+                res.template_name = DYNAMICFORMS.modal_dialog_template
             elif self.render_type == 'form':
                 serializer.data_template = res.data.serializer.template_name
             else:

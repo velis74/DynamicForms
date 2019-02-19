@@ -4,14 +4,14 @@ from rest_framework import serializers
 
 from dynamicforms.action import ActionControls
 from dynamicforms.buttons import FormButtons, Button
-from dynamicforms.settings import TEMPLATE
+from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
 
 
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
 
-    template_name = TEMPLATE + 'base_form.html'  #: template filename for single record view (HTMLFormRenderer)
+    template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     controls = ActionControls(add_default_crud=True)
     form_titles = {
         'table': '',
