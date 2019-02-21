@@ -131,7 +131,7 @@ class FieldChangeAction(ActionBase):
         self.tracked_fields = tracked_fields
         assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         if serializer:
-            self.tracked_fields = (self._resolve_reference(f) for f in self.tracked_fields)
+            self.tracked_fields = [self._resolve_reference(f) for f in self.tracked_fields]
 
     def _resolve_reference(self, ref):
         from .mixins import UUIDMixIn
@@ -164,10 +164,21 @@ class FieldChangeAction(ActionBase):
         return res
 
 
-class FormFieldsHideAction(ActionBase):
+class FormInitAction(ActionBase):
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return FormFieldsHideAction(self.action_js, self.name, serializer)
+        return FormInitAction(self.action_js, self.name, serializer)
+
+    def render(self, serializer: Serializer, **kwds):
+        # we need window.setTimeout because at the time of form generation, the initial fields value collection
+        # hasn't been done yet
+        return 'window.setTimeout(function() {{ {0.action_js} }}, 1);;\n'.format(self)
+
+
+class FieldInitAction(FieldChangeAction):
+
+    def copy_and_resolve_reference(self, serializer: Serializer):
+        return FieldInitAction(self.tracked_fields, self.action_js, self.name, serializer)
 
     def render(self, serializer: Serializer, **kwds):
         # we need window.setTimeout because at the time of form generation, the initial fields value collection
@@ -226,11 +237,11 @@ class Actions(object):
         """
         res = ''
         for action in self.actions:
-            if isinstance(action, FieldChangeAction):
+            if isinstance(action, FieldChangeAction) and not isinstance(action, FieldInitAction):
                 res += action.render(serializer)
         return res
 
-    def render_form_initial_hide(self, serializer):
+    def render_form_init(self, serializer):
         """
         renders the function which will analyse initial form data and hide appropriate fields
 
@@ -238,7 +249,19 @@ class Actions(object):
         """
         res = ''
         for action in self.actions:
-            if isinstance(action, FormFieldsHideAction):
+            if isinstance(action, FormInitAction):
+                res += action.render(serializer)
+        return res
+
+    def render_field_init(self, serializer, field_name: str):
+        """
+        renders function that will initialise the field being rendered
+
+        :return: the actions rendered as template string
+        """
+        res = ''
+        for action in self.actions:
+            if isinstance(action, FieldInitAction) and field_name in action.tracked_fields:
                 res += action.render(serializer)
         return res
 
@@ -263,6 +286,7 @@ class Actions(object):
 
     def __iter__(self):
         return iter(self.actions)
+
 
 """
 tipi akcij

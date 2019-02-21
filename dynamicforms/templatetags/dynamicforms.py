@@ -153,7 +153,9 @@ def render_table_commands(context, serializer, position, field_name=None):
 
     if position == 'onfieldchange':
         ret = serializer.actions.render_field_onchange(serializer)
-        ret += serializer.actions.render_form_initial_hide(serializer)
+        ret += serializer.actions.render_form_init(serializer)
+    elif position == 'onfieldinit':
+        ret += serializer.actions.render_field_init(serializer, field_name)
     else:
         table_header = None
         if position.startswith('thead_'):

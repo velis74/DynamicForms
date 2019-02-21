@@ -1,5 +1,5 @@
 from dynamicforms import serializers
-from dynamicforms.action import FieldChangeAction, Actions, FormFieldsHideAction
+from dynamicforms.action import FieldChangeAction, Actions, FormInitAction, FieldInitAction
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields
 
@@ -14,7 +14,8 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     actions = Actions(
         FieldChangeAction(['note'], 'examples.action_hiddenfields_note'),
         FieldChangeAction(['unit'], 'examples.action_hiddenfields_unit'),
-        FormFieldsHideAction('examples.hide_fields_on_show("{{ serializer.uuid }}");'),
+        FormInitAction('examples.hide_fields_on_show("{{ serializer.uuid }}");'),
+        FieldInitAction(['note', 'unit'], 'alert("abc");'),
         add_default_crud=True, add_default_filter=False
     )
 
