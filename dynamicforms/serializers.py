@@ -2,7 +2,7 @@ from django.db import models
 
 from rest_framework import serializers
 
-from dynamicforms.action import ActionControls
+from dynamicforms.action import Actions
 from dynamicforms.buttons import FormButtons, Button
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
@@ -12,7 +12,7 @@ from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
 
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
-    controls = ActionControls(add_default_crud=True)
+    actions = Actions(add_default_crud=True)
     form_titles = {
         'table': '',
         'new': '',
@@ -84,7 +84,7 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
         return False
 
     @property
-    def renderable_actions(self):
+    def renderable_actions(self: 'serializers.Serializer'):
         """
         Returns those actions that are not suppressed
         :return: List[Action]

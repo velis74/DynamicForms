@@ -2,11 +2,12 @@ import json as jsonlib
 
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 
+from ..action import TablePosition
 from ..renderers import HTMLFormRenderer
-from ..settings import DYNAMICFORMS
 from ..struct import Struct
 
 register = template.Library()
@@ -129,7 +130,7 @@ def table_columns_count(serializer):
     :param serializer: Serializer
     :return: Number of all columns
     """
-    actions = serializer.renderable_actions
+    actions = serializer.actions.renderable_actions(serializer)
 
     return (len([f for f in serializer.fields.values() if f.visible_in_table])
             + (1 if any(action.position == "rowend" for action in actions) else 0)
@@ -137,7 +138,7 @@ def table_columns_count(serializer):
 
 
 @register.simple_tag(takes_context=True)
-def render_table_commands(context, serializer, position, field_name=None, table_header=None):
+def render_table_commands(context, serializer, position, field_name=None):
     """
     Renders commands that are defined in serializers controls attribute.
 
@@ -145,67 +146,34 @@ def render_table_commands(context, serializer, position, field_name=None, table_
     :param serializer: Serializer
     :param position: Position of command (See action.py->Action for more details)
     :param field_name: If position is left or right to the field, then this parameter must contain field name
-    :param table_header: Name of table header for column, for commands. Only for row start and row end position.
     :return: rendered command buttons. If table_header parameter is given and commands for position are defined,
         returns only rendered table header
     """
-    ret = rowclick = rowrclick = ''
-    stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
+    ret = ''
 
-    for action in serializer.renderable_actions:
-        if action.position != position and not \
-                (position == 'onrowclick' and action.position in ('rowclick', 'rowrightclick')):
-            continue
+    if position == 'onfieldchange':
+        ret = serializer.actions.render_field_onchange(serializer)
+        ret += serializer.actions.render_form_initial_hide(serializer)
+    else:
+        table_header = None
+        if position.startswith('thead_'):
+            position = position[6:]
+            table_header = _('Actions')
 
-        action_action = action.action
-        if position != 'header':
-            action_action = action_action.replace('__TABLEID__',
-                                                  "$(event.target).parents('table').attr('id').substr(5)")
-        else:
-            action_action = action_action.replace('__TABLEID__', "'" + str(serializer.uuid) + "'")
+        positions = dict(
+            onrowclick=(TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK),
+            header=(TablePosition.HEADER,),
+            rowstart=(TablePosition.ROW_START,),
+            rowend=(TablePosition.ROW_END,),
+            fieldleft=(TablePosition.FIELD_START,),
+            fieldright=(TablePosition.FIELD_END,),
+        )
+        ret_tmp = serializer.actions.render_renderable_actions(positions[position], field_name, serializer)
 
-        if position == 'onrowclick':
-            if action.position == 'rowclick':
-                rowclick = action_action
-            elif action.position == 'rowrightclick':
-                rowrclick = action_action
-        else:
-            if field_name is None or (action.field_name == field_name):
-                from uuid import uuid1
-
-                btnid = uuid1()
-                ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info" ' \
-                       'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
-                    format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
-                           label=action.label,
-                           icon_def='<img src="{icon}"/>'.format(icon=action.icon) if action.icon else '')
-                if DYNAMICFORMS.jquery_ui:
-                    ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>'\
-                        .format(btnid=btnid)
-
-    if ret != '':
-        if 'rowclick' not in position:
-            ret = '<div class="dynamicforms-actioncontrol float-{direction} pull-{direction}">{ret}</div>'.format(
-                ret=ret, direction='left' if position == 'fieldleft' else 'right'
-            )
-
-        if position in ('rowstart', 'rowend'):
-            if table_header:
-                ret = '<th>%s</th>' % table_header
-            else:
-                ret = '<td>%s</td>' % ret
-
-    if position == 'onrowclick':
-        if rowclick != '':
-            ret += "$('#list-{uuid}').find('tbody').click(" \
-                   "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
-                format(stop_propagation=stop_propagation, action=rowclick, uuid=serializer.uuid)
-        if rowrclick != '':
-            ret += "$('#list-{uuid}').find('tbody').contextmenu(" \
-                   "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
-                format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
-        if ret != '':
-            ret = '<script type="application/javascript">%s</script>' % ret
+        if ret_tmp and positions[position][0] in (TablePosition.ROW_START, TablePosition.ROW_END):
+            ret += ('<th>%s</th>' % table_header) if table_header else ('<td>%s</td>' % ret_tmp)
+        elif ret_tmp:
+            ret += ret_tmp
 
     ret = '{% load static i18n %}' + ret
 

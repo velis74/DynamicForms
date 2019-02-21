@@ -1,5 +1,5 @@
 from dynamicforms import serializers, viewsets
-from dynamicforms.action import ActionControls
+from dynamicforms.action import Actions
 from ..models import PageLoad
 
 
@@ -9,7 +9,7 @@ class PageLoadSerializer(serializers.ModelSerializer):
         'new': 'New object',
         'edit': 'Editing object',
     }
-    controls = ActionControls(add_default_crud=True)
+    actions = Actions(add_default_crud=True)
 
     class Meta:
         model = PageLoad

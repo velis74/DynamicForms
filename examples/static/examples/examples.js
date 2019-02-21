@@ -2,6 +2,14 @@
 examples = {
   Fields: {note: '', unit: '', int_fld: '', qty_fld: '', cst_fld: ''},
 
+  hide_fields_on_show: function hide_fields_on_show(formID) {
+    var rec = dynamicforms.getSerializedForm($('#' + formID), 'final');
+    var fields = dynamicforms.getFieldIDs(formID);  // fields: examples.Fields
+
+    this.action_hiddenfields_note(formID, rec, rec, [fields['note']]);
+    this.action_hiddenfields_unit(formID, rec, rec, [fields['unit']]);
+  },
+
   action_hiddenfields_note: function action_note(formID, newRec, oldRec, changedFields) {
     var fields = dynamicforms.getFieldIDs(formID);  // fields: examples.Fields
     if (changedFields.includes(fields.note)) {

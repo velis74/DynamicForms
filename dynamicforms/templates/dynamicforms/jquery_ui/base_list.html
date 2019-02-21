@@ -6,11 +6,11 @@
   <tr>
     {% table_columns_count serializer as columns_count %}
     {# TODO: Remove "Actions" strings #}
-    {% render_table_commands serializer "rowstart" table_header='Actions' %}
+    {% render_table_commands serializer "thead_rowstart" %}
     {% for column in serializer.fields.values %}
       {% if column.visible_in_table %}
         <th>{{ column.label }}</th>{% endif %}{% endfor %}
-    {% render_table_commands serializer "rowend" table_header='Actions' %}
+    {% render_table_commands serializer "thead_rowend" %}
   </tr>
   {% if serializer.show_filter %}
     {% render_form serializer.filter_data form_template=DYNAMICFORMS.form_filter_base_template %}

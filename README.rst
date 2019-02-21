@@ -100,7 +100,7 @@ examples/models.py  (excerpt)
 
 
 If you want filter in list view just set serializers property show_filter value to True. Filter will be applied if user
-press enter in filter field. If you want to have filter button in list header, call ActionControls with
+press enter in filter field. If you want to have filter button in list header, call Actions with
 add_default_filter = True.
 
 examples/rest/filter.py
@@ -108,7 +108,7 @@ examples/rest/filter.py
 .. code-block:: python
 
    from dynamicforms import serializers, viewsets
-   from dynamicforms.action import ActionControls
+   from dynamicforms.action import Actions
    from ..models import Filter
 
 
@@ -118,7 +118,7 @@ examples/rest/filter.py
            'new': 'New object',
            'edit': 'Editing object',
        }
-       controls = ActionControls(add_default_crud=True, add_default_filter=True)
+       actions = Actions(add_default_crud=True, add_default_filter=True)
        show_filter = True
 
        class Meta:
