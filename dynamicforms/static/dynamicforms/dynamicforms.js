@@ -130,7 +130,7 @@ dynamicforms = {
   },
 
   isFunction: function isFunction(passedFunction) {
-    return typeof(eval(passedFunction) === "function") ? true : false;
+    return typeof(eval(passedFunction)) == "function";
   },
 
   /**

@@ -296,7 +296,8 @@ class Actions(object):
         # move actions from Field to Serializer
         actions.extend([a.copy_and_resolve_reference(serializer)
                         for field in serializer.fields.values()
-                        for a in getattr(field, 'actions', Actions(None)).actions_not_suppressed(serializer)])
+                        for a in getattr(field, 'actions', Actions(None)).actions_not_suppressed(serializer)
+                        if isinstance(a, FieldChangeAction)])
 
         return Actions(*actions, add_form_buttons=False)
 
