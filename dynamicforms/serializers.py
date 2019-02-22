@@ -3,7 +3,6 @@ from django.db import models
 from rest_framework import serializers
 
 from dynamicforms.action import Actions
-from dynamicforms.buttons import FormButtons, Button
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
@@ -12,13 +11,12 @@ from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
 
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
-    actions = Actions(add_default_crud=True)
+    actions = Actions(add_default_crud=True, add_form_buttons=True)
     form_titles = {
         'table': '',
         'new': '',
         'edit': '',
     }
-    form_buttons = FormButtons(add_default_cancel=True, add_default_save=True)
 
     show_filter = False  # When true, filter row is shown for list view
     serializer_type = None  # Current types: None, 'filter'
@@ -154,6 +152,12 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     serializer_choice_field = fields.ChoiceField
 
 
-# noinspection PyAbstractClass
 class Serializer(DynamicFormsSerializer, serializers.Serializer):
-    pass
+
+    def update(self, instance, validated_data):
+        # Implemented just so IDE doesn't complain. Normally this will be handled in SingleRecordViewSet
+        pass
+
+    def create(self, validated_data):
+        # Implemented just so IDE doesn't complain. Normally this will be handled in SingleRecordViewSet
+        pass

@@ -1,9 +1,8 @@
 from django.http.response import HttpResponse
-from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
-from dynamicforms import serializers, viewsets, fields
-from dynamicforms.buttons import FormButtons, Button, FormButtonTypes
+from dynamicforms import fields, serializers, viewsets
+from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
 
 
 class SingleDialogSerializer(serializers.Serializer):
@@ -19,13 +18,13 @@ class SingleDialogSerializer(serializers.Serializer):
         ('Never-ending rain', 'Never-ending rain')
     ))
 
-    form_buttons = FormButtons([
-        Button(FormButtonTypes.CANCEL),
-        Button(btn_type=FormButtonTypes.CUSTOM, label='Download it', btn_classes='btn-info',
-               js="customSingleDialogBtnPost();"),
-        Button(btn_type=FormButtonTypes.CUSTOM, label='Say it', btn_classes='btn-primary',
-               js="customSingleDialogBtn();"),
-    ])
+    actions = Actions(
+        FormButtonAction(FormButtonTypes.CANCEL),
+        FormButtonAction(FormButtonTypes.CUSTOM, label='Download it', action_js="customSingleDialogBtnPost();"),
+        FormButtonAction(FormButtonTypes.CUSTOM, label='Say it', button_is_primary=True,
+                         action_js="customSingleDialogBtn();"),
+        add_form_buttons=False
+    )
 
 
 class SingleDialogViewSet(viewsets.SingleRecordViewSet):

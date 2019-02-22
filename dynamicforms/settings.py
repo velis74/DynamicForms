@@ -62,6 +62,12 @@ class Settings(Struct):
     # Path to template for modal dialog
     modal_dialog_template = property(lambda self: self.template + 'modal_dialog.html')
 
+    # classes to use on form buttons
+    form_button_classes = property(lambda self: '')
+    form_button_classes_cancel = property(lambda self: '')
+    form_button_classes_primary = property(lambda self: '')
+    form_button_classes_secondary = property(lambda self: '')
+
 
 def if3_4(if3, if4):
     def inner(self):
@@ -94,6 +100,12 @@ class SettingsBootstrap(Settings):
     field_base_template = property(lambda self: self.template + ('field/base_field_%s.html' % self.bootstrap_version))
     modal_dialog_template = property(lambda self: self.template + ('modal_dialog_%s.html' % self.bootstrap_version))
 
+    # classes to use on form buttons
+    form_button_classes = property(lambda self: 'btn ml-1')
+    form_button_classes_cancel = property(lambda self: '')
+    form_button_classes_primary = property(lambda self: 'btn-primary')
+    form_button_classes_secondary = property(lambda self: 'btn-secondary')
+
 
 class SettingsJqueryUI(Settings):
     jquery_ui = True
@@ -102,6 +114,12 @@ class SettingsJqueryUI(Settings):
         kwds.setdefault('page_template', DYNAMICFORMS_JQUERY_UI + 'page.html')
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
+
+    # classes to use on form buttons
+    form_button_classes = property(lambda self: 'ui-button ui-corner-all ui-widget')
+    form_button_classes_cancel = property(lambda self: 'close-btn')
+    form_button_classes_primary = property(lambda self: 'ui-state-highlight')
+    form_button_classes_secondary = property(lambda self: '')
 
 
 def get_settings():

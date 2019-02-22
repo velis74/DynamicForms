@@ -1,8 +1,11 @@
-from typing import Iterable, List, Union
+import uuid
+import uuid as uuid_module
 from enum import IntEnum
+from typing import Iterable, List, Union
+
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.serializers import Serializer
-import uuid as uuid_module
+
 from .settings import DYNAMICFORMS
 
 
@@ -16,7 +19,7 @@ class ActionBase(object):
         """
         self.name = name
         self.action_js = action_js
-        assert self.action_js, 'When declaring action, it must declare action JavaScript to execute'
+        assert self.action_js is not None, 'When declaring action, it must declare action JavaScript to execute'
         # serializer will be set when obtaining a resolved copy
         self.serializer = serializer
 
@@ -100,7 +103,7 @@ class TableAction(ActionBase, RenderableActionMixin):
                        label=self.label,
                        icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else '')
             if DYNAMICFORMS.jquery_ui:
-                ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>'\
+                ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>' \
                     .format(btnid=btnid)
 
         if self.position in (TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK):
@@ -159,7 +162,7 @@ class FieldChangeAction(ActionBase):
     def render(self, serializer: Serializer, **kwds):
         res = 'var action_func{0.action_id} = {0.action_js};\n'.format(self)
         for tracked_field in self.tracked_fields:
-            res += "dynamicforms.registerFieldAction('{ser.uuid}', '{tracked_field}', action_func{s.action_id});\n"\
+            res += "dynamicforms.registerFieldAction('{ser.uuid}', '{tracked_field}', action_func{s.action_id});\n" \
                 .format(ser=serializer, tracked_field=tracked_field, s=self)
         return res
 
@@ -186,10 +189,74 @@ class FieldInitAction(FieldChangeAction):
         return 'window.setTimeout(function() {{ {0.action_js} }}, 1);;\n'.format(self)
 
 
+class FormButtonTypes(IntEnum):
+    CANCEL = 1
+    SUBMIT = 2
+    CUSTOM = 3
+
+
+class FormButtonAction(ActionBase):
+    DEFAULT_LABELS = {
+        FormButtonTypes.CANCEL: _('Cancel'),
+        FormButtonTypes.SUBMIT: _('Save changes'),
+        FormButtonTypes.CUSTOM: _('Custom'),
+    }
+
+    def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
+                 button_is_primary: bool = None, positions: List[str] = None,
+                 name: Union[str, None] = None, serializer: Serializer = None):
+        super().__init__(action_js or False, name, serializer)
+        self.uuid = uuid.uuid1()
+        self.btn_type = btn_type
+        self.label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
+        self.positions = positions or ['dialog', 'form']
+
+        if button_is_primary is None:
+            button_is_primary = btn_type == FormButtonTypes.SUBMIT
+        self.button_is_primary = button_is_primary
+
+        self.btn_classes = btn_classes or (
+                DYNAMICFORMS.form_button_classes + ' ' +
+                (DYNAMICFORMS.form_button_classes_primary if button_is_primary
+                 else DYNAMICFORMS.form_button_classes_secondary) + ' ' +
+                (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
+        )
+
+    def copy_and_resolve_reference(self, serializer):
+        return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.action_js, self.button_is_primary,
+                                self.positions, self.name, serializer)
+
+    def render(self, serializer: Serializer, position=None, **kwds):
+        if self.btn_type == FormButtonTypes.CANCEL and position == 'form':
+            return ''
+        button_type = 'button' if self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog' else 'submit'
+        data_dismiss = 'data-dismiss="modal"' if self.btn_type == FormButtonTypes.CANCEL else ''
+        if self.btn_type == FormButtonTypes.SUBMIT:
+            button_id = 'save-' + str(serializer.uuid)
+        else:
+            button_id = 'formbutton-' + str(self.uuid)
+        if (self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog') and self.action_js:
+            button_js = ('<script type="text/javascript">'
+                         '  $("#{button_id}").on("click", function() {{'
+                         '    {self.action_js}'
+                         '  }});'
+                         '</script>').format(**locals())
+        else:
+            button_js = ''
+
+        return '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} id="{button_id}">' \
+               '{self.label}</button>{button_js}'.format(**locals())
+
+
 class Actions(object):
 
-    def __init__(self, *args, add_default_crud: bool = False, add_default_filter: bool = False) -> None:
+    def __init__(self, *args, add_default_crud: bool = False, add_default_filter: bool = False,
+                 add_form_buttons: bool = True) -> None:
         super().__init__()
+        if len(args) == 1 and args[0] is None:
+            self.actions = []
+            return
+
         self.actions = list(args)  # type: List[ActionBase]
         if add_default_crud:
             self.actions.append(
@@ -211,6 +278,10 @@ class Actions(object):
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',
                                             action_js="dynamicforms.defaultFilter(event);"))
 
+        if add_form_buttons:
+            self.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
+            self.actions.append(FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+
     def get_resolved_copy(self, serializer) -> 'Actions':
         """
         Returns a copy of declared actions bound to the serializer
@@ -218,16 +289,16 @@ class Actions(object):
         :return:
         """
         if not isinstance(serializer, Serializer):
-            return Actions()
+            return Actions(None)
 
         actions = [a.copy_and_resolve_reference(serializer) for a in self.actions]
 
         # move actions from Field to Serializer
         actions.extend([a.copy_and_resolve_reference(serializer)
                         for field in serializer.fields.values()
-                        for a in getattr(field, 'actions', Actions()).actions])
+                        for a in getattr(field, 'actions', Actions(None)).actions])
 
-        return Actions(*actions)
+        return Actions(*actions, add_form_buttons=False)
 
     def render_field_onchange(self, serializer):
         """
@@ -282,6 +353,18 @@ class Actions(object):
         for action in self.renderable_actions(serializer):
             if action.position in allowed_positions and (field_name is None or field_name == action.field_name):
                 res += action.render(serializer)
+        return res
+
+    def render_form_buttons(self, serializer: Serializer, position: str):
+        """
+        Renders form buttons
+        :return: List[Action]
+        """
+        res = ''
+
+        for button in self.actions:
+            if isinstance(button, FormButtonAction) and position in button.positions:
+                res += button.render(serializer, position=position)
         return res
 
     def __iter__(self):

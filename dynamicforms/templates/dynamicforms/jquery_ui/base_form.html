@@ -18,7 +18,7 @@
     {% render_form serializer %}
 
     {% if df_render_type != 'dialog' %}
-      <input type="submit" value="Save" class="ui-button ui-corner-all ui-widget">
+      {% render_table_commands serializer 'form-buttons' button_position='form' %}
     {% endif %}
   </fieldset>
 </form>

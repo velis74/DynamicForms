@@ -116,5 +116,5 @@ REST_FRAMEWORK = {
 }
 
 DYNAMICFORMS = {
-    'page_template': 'examples/page.html'
+    'page_template': 'examples/page.html',
 }

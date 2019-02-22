@@ -138,7 +138,7 @@ def table_columns_count(serializer):
 
 
 @register.simple_tag(takes_context=True)
-def render_table_commands(context, serializer, position, field_name=None):
+def render_table_commands(context, serializer, position, field_name=None, button_position=None):
     """
     Renders commands that are defined in serializers controls attribute.
 
@@ -146,6 +146,7 @@ def render_table_commands(context, serializer, position, field_name=None):
     :param serializer: Serializer
     :param position: Position of command (See action.py->Action for more details)
     :param field_name: If position is left or right to the field, then this parameter must contain field name
+    :param button_position: form button position one of (form, dialog, user-provided)
     :return: rendered command buttons. If table_header parameter is given and commands for position are defined,
         returns only rendered table header
     """
@@ -156,6 +157,8 @@ def render_table_commands(context, serializer, position, field_name=None):
         ret += serializer.actions.render_form_init(serializer)
     elif position == 'onfieldinit':
         ret += serializer.actions.render_field_init(serializer, field_name)
+    elif position == 'form-buttons':
+        ret += serializer.actions.render_form_buttons(serializer, button_position)
     else:
         table_header = None
         if position.startswith('thead_'):
