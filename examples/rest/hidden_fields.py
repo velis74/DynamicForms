@@ -15,7 +15,6 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         FieldChangeAction(['note'], 'examples.action_hiddenfields_note'),
         FieldChangeAction(['unit'], 'examples.action_hiddenfields_unit'),
         FormInitAction('examples.hide_fields_on_show("{{ serializer.uuid }}");'),
-        FieldInitAction(['note', 'unit'], 'alert("abc");'),
         add_default_crud=True, add_default_filter=False
     )
 

@@ -144,7 +144,7 @@ class FieldChangeAction(ActionBase):
             # TODO test what happens when Field instance is actually a Serializer (when should onchange trigger for it?)
             return ref.uuid
         elif isinstance(ref, str) and ref in self.serializer.fields:
-            return self.serializer[ref].uuid
+            return self.serializer.fields[ref].uuid
         elif isinstance(ref, str) and '.' in ref:
             # This supports nested serializers and fields with . notation, e.g. master_serializer_field.child_field
             f = self.serializer
