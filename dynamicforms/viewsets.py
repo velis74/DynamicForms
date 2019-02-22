@@ -90,6 +90,8 @@ class TemplateRendererMixin():
         if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
             request.method = request.POST.get('data-dynamicforms-method')
+            # If we don't set this META, django won't recognise our CSRF token
+            request.META['HTTP_X_CSRFTOKEN'] = request.POST['csrfmiddlewaretoken']
         return super().initialize_request(request, *args, **kwargs)
 
     def finalize_response(self, request, response, *args, **kwargs):
