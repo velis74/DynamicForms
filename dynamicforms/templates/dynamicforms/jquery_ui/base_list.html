@@ -35,6 +35,7 @@
       dynamicforms.registerFilterRowKeypress("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html'%}");
     {% endif %}
     dynamicforms.paginatorInitTable("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
+    dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
     {% block scriptend-includes %}{% endblock %}
   </script>
 {% endif %}

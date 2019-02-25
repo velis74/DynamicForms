@@ -75,7 +75,7 @@ dynamicforms = {
 
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
-    var recordURL = dynamicforms.getRecordURL();
+    var recordURL = dynamicforms.getRecordURL($form.attr('id'));
     var recordID  = data.id ? data.id : false;
 
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
@@ -110,23 +110,20 @@ dynamicforms = {
   },
 
   /**
-   * Holds record specific url
-   */
-  recordURL: '',
-
-  /**
    * Sets record specific url
+   * @param formID: id of form
    * @param url: url for record
    */
-  setRecordURL: function setRecordURL(url) {
-    dynamicforms.recordURL = url;
+  setRecordURL: function setRecordURL(formID, url) {
+    dynamicforms.form_helpers.set(formID, 'recordURL', url);
   },
 
   /**
    * Gets record specific url
+   * @param formID: id of form
    */
-  getRecordURL: function getRecordURL() {
-    return dynamicforms.recordURL;
+  getRecordURL: function getRecordURL(formID) {
+    return dynamicforms.form_helpers.get(formID, 'recordURL');
   },
 
   isFunction: function isFunction(passedFunction) {
@@ -214,7 +211,7 @@ dynamicforms = {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
     var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
 
-    var recordURL = dynamicforms.getRecordURL();
+    var recordURL = dynamicforms.getRecordURL(formID);
     var table     = $("#list-" + formID).find("tbody:first");
 
     // Case when table is smaller than pagination
@@ -380,7 +377,7 @@ dynamicforms = {
         if (refreshType == undefined || refreshType == 'record') {
           dynamicforms.removeRow(recordID);
         } else if (refreshType == 'table') {
-          var recordURL = dynamicforms.getRecordURL();
+          var recordURL = dynamicforms.getRecordURL(listId);
           // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
           dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
         } else if (refreshType == 'page') {

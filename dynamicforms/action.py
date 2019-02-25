@@ -152,7 +152,7 @@ class FieldChangeAction(ActionBase):
             # This supports nested serializers and fields with . notation, e.g. master_serializer_field.child_field
             f = self.serializer
             for r in ref.split('.'):
-                f = f[r]
+                f = f.fields[r]
             return f.uuid
         raise Exception('Unknown reference type for Action tracked field (%r)' % ref)
 
