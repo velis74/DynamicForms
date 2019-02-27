@@ -316,7 +316,6 @@ dynamicforms = {
    */
   editRow: function editRow(recordURL, refreshType, listId) {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
-      recordURL += '?df_render_type=dialog'; // TODO: is this necessary? we already add the header
       $.ajax({
         url:     recordURL,
         headers: {'X-DF-RENDER-TYPE': 'dialog'},
