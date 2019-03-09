@@ -2,6 +2,7 @@ import inspect
 import os
 import textwrap
 import uuid
+import typing
 
 from django.core.management.base import BaseCommand
 from rest_framework import fields
@@ -16,8 +17,9 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import UUIDMixIn
-        from dynamicforms import mixins
+        from dynamicforms.mixins import UUIDMixIn, RenderToTableMixin, ActionMixin, NullChoiceMixin, \
+            RelatedFieldAJAXMixin
+        from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
 
@@ -36,10 +38,13 @@ class Command(BaseCommand):
             # get all the field-specific mixins
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
+            print('from typing import Optional\n', file=output)
             print('from uuid import UUID\n', file=output)
             print('from rest_framework import fields, relations', file=output)
-            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, ' + ', '.join(field_mixins),
+            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, '
+                  'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins),
                   file=output)
+            print('from .action import Actions', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -49,6 +54,12 @@ class Command(BaseCommand):
                     param_classes.append(cls)
                     if cls[1] == fields.Field:
                         break
+                if issubclass(field, fields.ChoiceField):
+                    param_classes.append((0, NullChoiceMixin))
+                if issubclass(field, relations.RelatedField):
+                    param_classes.append((0, RelatedFieldAJAXMixin))
+                param_classes.append((0, ActionMixin))
+                param_classes.append((0, RenderToTableMixin))
                 param_classes.append((0, UUIDMixIn))
 
                 skip_depth = 0
@@ -86,8 +97,14 @@ class Command(BaseCommand):
                             if p_an != inspect._empty:
                                 if isinstance(p_an, (str, int, float, bool,)) or p_an is None:
                                     parm_str += ': ' + repr(p_an)
-                                elif p_an in (uuid.UUID,):
+                                elif inspect.isclass(p_an) and issubclass(p_an, (str, int, float, bool,)):
                                     parm_str += ': ' + p_an.__name__
+                                elif p_an in (uuid.UUID, action.Actions):
+                                    parm_str += ': ' + p_an.__name__
+                                elif p_an == typing.Union[str, None]:
+                                    parm_str += ': Optional[str]'
+                                elif p_an == typing.Union[dict, None]:
+                                    parm_str += ': Optional[dict]'
                                 else:
                                     # if you get this error, you need to add the type to includes at the top
                                     # of this function and then implement the actual printing just above here
@@ -95,10 +112,11 @@ class Command(BaseCommand):
                                           f'{parm.annotation}.')
 
                             if p_def != inspect._empty:
+                                equals = ' = ' if ':' in parm_str else '='
                                 if isinstance(p_def, (str, int, float, bool,)) or p_def is None:
-                                    parm_str += '=' + repr(p_def)
+                                    parm_str += equals + repr(p_def)
                                 elif p_def in (fields.empty,):
-                                    parm_str += '=' + '.'.join((p_def.__module__.split('.')[-1], p_def.__name__))
+                                    parm_str += equals + '.'.join((p_def.__module__.split('.')[-1], p_def.__name__))
                                 else:
                                     print(f'Error: parameter {parm.name} default is of unknown type {parm.default}.')
 
@@ -136,22 +154,35 @@ class Command(BaseCommand):
 
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
+                if issubclass(field, fields.ChoiceField):
+                    additional_mixin += 'NullChoiceMixin, '
+                if issubclass(field, relations.RelatedField):
+                    additional_mixin += 'RelatedFieldAJAXMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
                 hstore_field_wrapper, hstore_field_indent = '', ''
                 if field_class == 'HStoreField':
                     hstore_field_wrapper = "if hasattr(fields, 'HStoreField'):\n"
-                    hstore_field_indent = ' '*4
+                    hstore_field_indent = ' ' * 4
 
-                print(textwrap.dedent(
-                    f"""{hstore_field_wrapper}{hstore_field_indent}class {field_class}({additional_mixin}""" +
-                    f"""UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):
+                # Print class declaration
+                print(hstore_field_wrapper, file=output, end='')
+                class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
+                            f'UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):'
+                class_def = textwrap.wrap(class_def, 120)
+                print(class_def[0], file=output)
+                class_def = textwrap.wrap(''.join(class_def[1:]),
+                                          120 - len(f'{hstore_field_indent}class {field_class}('))
 
+                print(textwrap.indent("\n".join(class_def), ' ' * len(f'{hstore_field_indent}class {field_class}(')),
+                      file=output, end='')
+
+                # Print constructor
+                print(f"""
     {hstore_field_indent}def __init__({field_params}):
         {hstore_field_indent}kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}
         {hstore_field_indent}kwargs.update(kw)
-        {hstore_field_indent}super().__init__(**kwargs)"""
-                  ), file=output)
+        {hstore_field_indent}super().__init__(**kwargs)""", file=output)
 
-        print('fields.py successfully generated')
-        # options['file']
+    print('fields.py successfully generated')
+    # options['file']

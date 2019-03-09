@@ -3,14 +3,14 @@
 {% block field_input %}
 <select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
-    <option value="" {% if not field.value %}selected{% endif %}>--------</option>
+    <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
   {% for select in field.iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">
     {% elif select.end_option_group %}
       </optgroup>
-    {% else %}
+    {% elif select.value is not None %}
       <option value="{{ select.value }}" {% if select.value|as_string == field.value|as_string %}selected{% endif %} {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
     {% endif %}
   {% endfor %}
@@ -19,6 +19,31 @@
 {% if DYNAMICFORMS.use_select2 %}
   window.setTimeout(function() {
     $("#{{ field.uuid }}").select2({
+      {% if field.url_reverse %}
+      ajax: {
+        url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
+        dataType: 'json',
+        data: function(params) {
+          return { '{{ field.query_field }}': params.term };
+        },
+        processResults: function (data) {
+          console.log(data);
+          return {
+            results: $.map(data.results, function (item) {
+              return {
+                id: item.id,
+                text: item.display_text,
+              }
+            })
+          };
+        }
+      },
+      // Disables ajax request on dropdown opening
+      minimumInputLength: 1,
+      {% endif %}
+      {% if field.placeholder %}
+      placeholder: "{{ field.placeholder }}",
+      {% endif %}
       // Attaches select2 to dialog and enables input field
       // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
       dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),

@@ -1,10 +1,12 @@
 import collections
 import uuid as uuid_module
-from typing import Iterable
+from typing import Optional
 
-from rest_framework.serializers import Serializer
+from rest_framework.fields import ChoiceField
+from rest_framework.relations import RelatedField
 from rest_framework.templatetags import rest_framework as drftt
-from .action import Actions, FieldChangeAction
+
+from .action import Actions
 
 
 class UUIDMixIn(object):
@@ -37,6 +39,26 @@ class ActionMixin(object):
         self.actions = act.get_resolved_copy(self)
 
 
+class NullChoiceMixin(object):
+    """
+    Declaring ChoiceField's null_choice_text
+      (what should be rendered for "no selection"; DRF's default is ---------)
+      We also support user declaring a choice with None value and a different text (see hidden fields example)
+    """
+    @property
+    def null_choice_text(self):
+        res = '--------'
+        if isinstance(self, ChoiceField) and not getattr(self, 'get_queryset', None):
+            # Only do this for true ChoiceFields. ReladedFields would run a query here
+            # Possibly we will at some point have to enable this for relatedfields too
+            for opt in self.iter_options():
+                if opt.start_option_group or opt.end_option_group:
+                    pass
+                elif opt.value is None:
+                    res = opt.display_text
+        return res
+
+
 class RenderToTableMixin(object):
     """
     Used for rendering individual field to table view
@@ -47,6 +69,7 @@ class RenderToTableMixin(object):
         self.visible_in_table = visible_in_table
         self.table_classes = table_classes
 
+    # noinspection PyUnusedLocal
     def render_to_table(self, value, row_data):
         """
         Renders field value for table view
@@ -56,10 +79,9 @@ class RenderToTableMixin(object):
         :return: rendered value for table view
         """
         get_queryset = getattr(self, 'get_queryset', None)
-        if get_queryset:
+        if isinstance(self, RelatedField) or get_queryset:
             # shortcut for getting display value for table without actually getting the entire table into choices
             qs = get_queryset()
-
             try:
                 qs = qs.filter(pk=value)
                 choices = { self.to_representation(item): self.display_value(item) for item in qs }
@@ -82,3 +104,29 @@ class HiddenFieldMixin(RenderToTableMixin):
     def __init__(self, *args, visible_in_table: bool = True, **kwargs):
         super().__init__(*args, **kwargs)
         self.visible_in_table = False
+
+
+class RelatedFieldAJAXMixin(object):
+
+    def __init__(self, *args, url_reverse: Optional[str] = None, placeholder: Optional[str] = None,
+                 additional_parameters: Optional[dict] = None, query_field: str = 'query', **kwargs):
+        """
+        Allows us to use AJAX to populate select2 options instead of pre-populating at render time
+
+        :param args:
+        :param url_reverse: reverse url to ViewSet providing the JSON data
+        :param placeholder: select2 placeholder to display until user selects a value
+        :param additional_parameters: additional parameters to be sent to ViewSet as part of the query
+        :param query_field: field against which user search will be performed
+        :param kwargs:
+        """
+        super().__init__(*args, **kwargs)
+        self.url_reverse = url_reverse
+        self.placeholder = placeholder
+        self.additional_parameters = additional_parameters
+        self.query_field = query_field
+
+    @property
+    def additional_parameters_urlencoded(self):
+        from django.utils.http import urlencode
+        return '?' + urlencode(self.additional_parameters)

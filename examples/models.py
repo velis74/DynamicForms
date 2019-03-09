@@ -40,6 +40,7 @@ class HiddenFields(models.Model):
     """
     note = models.CharField(max_length=20, help_text='Enter abc to hide unit field')
     unit = models.CharField(max_length=10, choices=(
+        (None, 'No additional data'),
         ('pcs', 'Pieces'),
         ('wt', 'Weight'),
         ('cst', 'Custom'),
