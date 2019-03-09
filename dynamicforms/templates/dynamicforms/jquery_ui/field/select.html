@@ -5,7 +5,8 @@
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
-  {% for select in field.iter_options %}
+  {% iter_options_bound field as iter_options %}
+  {% for select in iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">
     {% elif select.end_option_group %}

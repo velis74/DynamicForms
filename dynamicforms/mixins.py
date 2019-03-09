@@ -130,3 +130,14 @@ class RelatedFieldAJAXMixin(object):
     def additional_parameters_urlencoded(self):
         from django.utils.http import urlencode
         return '?' + urlencode(self.additional_parameters)
+
+    # noinspection PyUnresolvedReferences
+    def iter_options_bound(self, value):
+        if self.url_reverse:
+            qry = self.get_queryset()
+            try:
+                qry = qry.filter(pk=value)
+                return [dict(value=value, display_text=self.display_value(qry.first()))]
+            except:
+                return []
+        return super().iter_options()

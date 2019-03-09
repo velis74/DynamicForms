@@ -248,6 +248,11 @@ def set_var_conditional(context, condition=None, condition_var=None, compare=Non
     return ''
 
 
+@register.simple_tag(takes_context=False)
+def iter_options_bound(field):
+    return field.iter_options_bound(field.value)
+
+
 @register.filter
 def json(value):
     """
