@@ -309,6 +309,9 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 elif field.get_attribute("name") in ('id',):
                     # Hidden fields
                     pass
+                elif label.text == "Comment":
+                    self.initial_check(field, "", "comment", "textarea")
+                    field.send_keys("Some comment")
                 else:
                     field_count -= 1
                     check = label.text == "Code"
@@ -316,7 +319,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                     self.assertTrue(
                         False, "Wrong field container - label: '{label.text}' {check} {fname}".format(**locals())
                     )
-        self.assertEqual(field_count, 6)
+        self.assertEqual(field_count, 7)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model
@@ -387,7 +390,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 7)
+        self.assertEqual(len(cells), 8)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -398,7 +401,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = self.check_row(rows[0], 7, ["1", "123", "false", "8", "Choice 3", "C", None])
+        cells = self.check_row(rows[0], 8, ['1', '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None])
 
         # Once more to editing and cancel it
         cells[0].click()
@@ -427,13 +430,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.check_row(rows[0], 7, ["1", "123", "false", "8", "Choice 3", "C", None])
+        self.check_row(rows[0], 8, ['1', '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None])
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # We delete the row we created
         # Test Delete action with refreshType='record'
-        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[0].click()
 
         rows = self.get_table_body()
@@ -451,24 +454,24 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 7)
+        self.assertEqual(len(cells), 8)
 
         self.add_record(1, 7, add_second_record=True)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='table'
-        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
-        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
 
-        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
 
         # Test that "no data" row is shown
@@ -484,10 +487,10 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 7)
+        self.assertEqual(len(cells), 8)
 
         # Test Delete action with refreshType='no refresh'
-        del_btns = rows[0].find_elements_by_tag_name('td')[6].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[2].click()
 
         self.browser.refresh()
@@ -563,7 +566,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = self.check_row(rows[0], 7, ["6", "123", "true", "6", "Choice 1", "A", None])
+        cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
 
 class BasicFieldsTest(StaticLiveServerTestCase):

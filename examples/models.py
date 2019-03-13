@@ -32,6 +32,7 @@ class Validated(models.Model):
     ), validators=[
         RegexValidator(r'^[ABC]*$', 'Only options A-C may be chosen', 'regex')
     ])
+    comment = models.TextField(null=True, blank=True)
 
 
 class HiddenFields(models.Model):
