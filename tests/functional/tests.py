@@ -527,6 +527,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         # Submit form
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
         # Check for errors
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3

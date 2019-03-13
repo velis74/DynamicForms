@@ -175,7 +175,7 @@ class FormInitAction(ActionBase):
     def render(self, serializer: Serializer, **kwds):
         # we need window.setTimeout because at the time of form generation, the initial fields value collection
         # hasn't been done yet
-        return 'window.setTimeout(function() {{ {0.action_js} }}, 1);;\n'.format(self)
+        return 'window.setTimeout(function() {{ {0.action_js} }}, 1);\n'.format(self)
 
 
 class FieldInitAction(FieldChangeAction):

@@ -58,6 +58,9 @@ class NullChoiceMixin(object):
                     res = opt.display_text
         return res
 
+    def iter_options_bound(self, value):
+        return super().iter_options()
+
 
 class RenderToTableMixin(object):
     """

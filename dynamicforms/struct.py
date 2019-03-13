@@ -21,6 +21,9 @@ class Struct(object):
     def __repr__(self):
         return "Struct: " + repr(self.__dict__)
 
+    def __len__(self):
+        return len(self.__dict__)
+
     def __to_dict__(self):
         res = {}
         res.update(self.__dict__)

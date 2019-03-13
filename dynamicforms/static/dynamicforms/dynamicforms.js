@@ -46,6 +46,7 @@ dynamicforms = {
     'template': 'dynamicforms/bootstrap/',
     'jquery_ui': false,
     'edit_in_dialog': true,
+    'bootstrap_version': 'v4',
   },
 
   /**
@@ -288,6 +289,10 @@ dynamicforms = {
    * @param $newDlg: new dialog with errors in form
    */
   updateDialog: function updateDialog($dlg, $newDlg) {
+    dynamicforms.closeDialog($dlg);
+    dynamicforms.showDialog($newDlg);
+
+    /*
     // Replace current form with new form containing errors
     var newForm     = $newDlg.find("form");
     var currentForm = $dlg.find("form");
@@ -297,6 +302,7 @@ dynamicforms = {
     var dlgId       = $dlg.attr("id").split("-").slice(1).join("-");
     var updatedForm = $dlg.find("form");
     updatedForm.attr("id", dlgId);
+    */
   },
 
   /**
@@ -305,7 +311,11 @@ dynamicforms = {
    * @param $dlg: dialog to close
    */
   closeDialog: function closeDialog($dlg) {
-    (dynamicforms.DYNAMICFORMS.jquery_ui) ? $dlg.remove() : $dlg.modal('hide');
+    if (!dynamicforms.DYNAMICFORMS.jquery_ui) {
+      $dlg.modal('hide');
+      $('.modal-backdrop').remove();
+    }
+    $dlg.remove();
   },
 
   /**
