@@ -59,6 +59,9 @@ class PageLoad(models.Model):
     Shows how DynamicForms handles dynamic loading of many records in ViewSet result
     """
     description = models.CharField(max_length=20, help_text='Item description')
+    choice = models.IntegerField(choices=((1, 'Choice 1'),
+                                          (2, 'Choice 2'),
+                                          (3, 'Choice 3')), null=False, blank=False, default=1)
 
 
 class Filter(models.Model):

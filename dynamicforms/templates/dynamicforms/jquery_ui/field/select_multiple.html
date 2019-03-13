@@ -21,7 +21,7 @@
   window.setTimeout(function() {
     $("#{{ field.uuid }}").select2({
       // Attaches select2 to dialog and enables input field
-      dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
+      dropdownParent: $('{% if not style.serializer.is_filter %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
     });
   }, 1);
   </script>

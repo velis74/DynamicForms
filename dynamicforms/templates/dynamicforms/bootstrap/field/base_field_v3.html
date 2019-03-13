@@ -1,6 +1,6 @@
 {% load dynamicforms %}
 <div id="container-{{ field.uuid }}"
-     class="{% block container_class %}form-group{% endblock %} {% if field.errors %}has-error{% endif %} {% if field.read_only and style.serializer.serializer_type != 'filter' or style.display == 'none' %}hidden{% endif %}">
+     class="{% block container_class %}form-group{% endblock %} {% if field.errors %}has-error{% endif %} {% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}hidden{% endif %}">
   {% block field_input_label %}
     {% if field.label %}
       <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="sr-only"{% endif %}>

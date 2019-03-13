@@ -1,3 +1,4 @@
+from collections import defaultdict
 from django.db import models
 
 from rest_framework import serializers
@@ -19,7 +20,17 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
     }
 
     show_filter = False  # When true, filter row is shown for list view
-    serializer_type = None  # Current types: None, 'filter'
+
+    def __init__(self, *args, is_filter: bool = False, **kwds):
+        self.is_filter = is_filter
+        if self.is_filter:
+            kwds.setdefault('instance', defaultdict(lambda: None))
+        super().__init__(*args, **kwds)
+        if self.is_filter:
+            for field in self.fields.values():
+                field.default = None
+                field.allow_blank = True
+                field.allow_null = True
 
     @property
     def has_non_field_errors(self):
@@ -53,21 +64,7 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
         Returns serializer for filter row in table
         :return:  Serializer
         """
-        if not getattr(type(self), '_filter_data', None):
-            _filter_data = type(self)(instance=type(self).Meta.model())
-            _filter_data.serializer_type = 'filter'
-            for name, field in _filter_data.fields.fields.items():
-                # if isinstance(field, fields.ChoiceField):
-                #     field.allow_blank = True
-                # elif isinstance(field, fields.IntegerField):
-                # TODO: this doesn't work yet: the IntegerField will still have its valueset to whatever the default was
-                field.allow_blank = True
-                field.allow_null = True
-                field.default = None
-                _filter_data.data[name] = None
-
-            type(self)._filter_data = _filter_data
-        return type(self)._filter_data
+        return type(self)(is_filter=True)  # Just create the same serializer in filter mode (None values, allow_nulls)
 
     # noinspection PyUnusedLocal
     def suppress_action(self, action, request, viewset):

@@ -48,7 +48,7 @@
       {% endif %}
       // Attaches select2 to dialog and enables input field
       // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
-      dropdownParent: $('{% if style.serializer.serializer_type != 'filter' %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
+      dropdownParent: $('{% if not style.serializer.is_filter %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
       theme: '{{ DYNAMICFORMS.select2_theme }}'
     });
   </script>

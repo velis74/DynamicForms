@@ -9,7 +9,8 @@ class PageLoadSerializer(serializers.ModelSerializer):
         'new': 'New object',
         'edit': 'Editing object',
     }
-    actions = Actions(add_default_crud=True)
+    actions = Actions(add_default_crud=True, add_default_filter=True)
+    show_filter = True
 
     class Meta:
         model = PageLoad
