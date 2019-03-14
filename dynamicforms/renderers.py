@@ -35,11 +35,24 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
                         link_next=link_next, link_prev=link_prev)
 
             if getattr(ser, '_errors', {}):
+                # CAUTION: bad hacks start here. This should be removed at some point
+
                 # unmark exception from response because this was a validation error
                 # This will allow TemplateHTMLRenderer to still render the template as if it was without problems
                 # If this is not done, the only result user will see will be a 404 error without any details
                 response = renderer_context['response']
                 response.exception = False
+
+                # Now we need to re-insert read-only fields from initial data into the returned data so that we get
+                # back fields like id
+                ser = data['serializer']
+                unused, d = ser.data, ser._data
+                from rest_framework.fields import empty
+                for field_name, field in ser.fields.items():
+                    field_value = field.get_value(ser.initial_data)
+                    if (field_value is not empty) and field_name not in d:
+                        d[field_name] = field_value
+                data['data'] = ReturnDict(d, serializer=ser)
 
         return super().render(data, accepted_media_type, renderer_context)
 

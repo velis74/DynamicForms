@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
+from typing import List, Union
 
-from typing import Union, List
 import pytz
 from django.conf import settings
 from django.db import models
@@ -186,6 +186,7 @@ class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
         if field not in (fld.name for fld in model_meta.get_fields()):
             return queryset
 
+        # TODO: this would probably be better moved into the fields themselves
         if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
             return queryset.filter(**{field + '__icontains': value})
         if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
