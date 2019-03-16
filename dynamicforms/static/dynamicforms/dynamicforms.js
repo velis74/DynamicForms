@@ -155,9 +155,8 @@ dynamicforms = {
       }
     } else if (refreshType == 'page') {
       window.location.reload(true);
-    } else if (refreshType.indexOf('redirect') !== -1) {
-      var redirectUrl = refreshType.split(':').pop();
-      window.location.href = redirectUrl;
+    } else if (refreshType.indexOf('redirect:') !== -1) {
+      window.location.href = refreshType.split(':').pop();
     } else if (refreshType == 'no refresh') {
       // pass
     } else if (dynamicforms.isFunction(refreshType)){
