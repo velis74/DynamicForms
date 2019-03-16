@@ -20,7 +20,8 @@
 {% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
-    $("#{{ field.uuid }}").select2({
+    var s2 = $("#{{ field.uuid }}");
+    s2.select2({
       {% if field.url_reverse %}
       ajax: {
         url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
@@ -46,9 +47,8 @@
       {% if field.placeholder %}
       placeholder: "{{ field.placeholder }}",
       {% endif %}
-      // Attaches select2 to dialog and enables input field
-      // TODO: if the render is not into dialog, the following line is redundant and causes select2 to malfunction
-      dropdownParent: $('{% if not style.serializer.is_filter %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
+      // Attaches select2 to its form parent and enables input field (in dialog)
+      dropdownParent: $('#{{ style.serializer.uuid }}'),
       theme: '{{ DYNAMICFORMS.select2_theme }}'
     });
   </script>

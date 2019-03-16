@@ -20,8 +20,8 @@
     // Check bootstrap version to set select2 theme
   window.setTimeout(function() {
     $("#{{ field.uuid }}").select2({
-      // Attaches select2 to dialog and enables input field
-      dropdownParent: $('{% if not style.serializer.is_filter %}[id*="dialog-"]{% else %}#{{ style.serializer.uuid }}{% endif %}'),
+      // Attaches select2 to its form parent and enables input field (in dialog)
+      dropdownParent: $('#{{ style.serializer.uuid }}'),
     });
   }, 1);
   </script>
