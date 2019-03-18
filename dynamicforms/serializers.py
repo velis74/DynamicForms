@@ -1,4 +1,6 @@
 from collections import defaultdict
+from typing import Any
+
 from django.db import models
 
 from rest_framework import serializers
@@ -87,6 +89,22 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
         request = self.context.get('request', None)
         viewset = self.context.get('view', None)
         return [action for action in self.controls.actions if not self.suppress_action(action, request, viewset)]
+
+    # noinspection PyUnresolvedReferences
+    def get_initial(self) -> Any:
+        if getattr(self, '_errors', None):
+            # This basically reproduces BaseSerializer.data property except that it disregards the _errors member
+            if self.instance:
+                res = self.to_representation(self.instance)
+            elif hasattr(self, '_validated_data'):
+                res = self.to_representation(self.validated_data)
+            else:
+                res = {}
+            res.update(super().get_initial())
+
+            return res
+
+        return super().get_initial()
 
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):

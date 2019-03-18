@@ -43,16 +43,8 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
                 response = renderer_context['response']
                 response.exception = False
 
-                # Now we need to re-insert read-only fields from initial data into the returned data so that we get
-                # back fields like id
-                ser = data['serializer']
-                unused, d = ser.data, ser._data
-                from rest_framework.fields import empty
-                for field_name, field in ser.fields.items():
-                    field_value = field.get_value(ser.initial_data)
-                    if (field_value is not empty) and field_name not in d:
-                        d[field_name] = field_value
-                data['data'] = ReturnDict(d, serializer=ser)
+                # result data should be object data otherwise nothing will render...
+                data['data'] = data['serializer'].data
 
         return super().render(data, accepted_media_type, renderer_context)
 
