@@ -279,7 +279,16 @@ dynamicforms = {
       dynamicforms.submitForm($dlg, $form, refreshType);
     });
     // And show the dialog
-    (dynamicforms.DYNAMICFORMS.jquery_ui) ? $dlg.dialog('open') : $dlg.modal();
+    if (dynamicforms.DYNAMICFORMS.jquery_ui)
+      $dlg.dialog('open')
+    else {
+      $dlg.on('hidden.bs.modal', function() {
+        $dlg.remove();
+        if ($dlg.showNewAfterHide)
+          dynamicforms.showDialog($dlg.showNewAfterHide);
+      });
+      $dlg.modal();
+    }
   },
 
   /**
@@ -288,8 +297,9 @@ dynamicforms = {
    * @param $newDlg: new dialog with errors in form
    */
   updateDialog: function updateDialog($dlg, $newDlg) {
+    $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
     dynamicforms.closeDialog($dlg);
-    dynamicforms.showDialog($newDlg);
+    // dynamicforms.showDialog($newDlg);
 
     /*
     // Replace current form with new form containing errors
@@ -310,11 +320,10 @@ dynamicforms = {
    * @param $dlg: dialog to close
    */
   closeDialog: function closeDialog($dlg) {
-    if (!dynamicforms.DYNAMICFORMS.jquery_ui) {
+    if (!dynamicforms.DYNAMICFORMS.jquery_ui)
       $dlg.modal('hide');
-      $('.modal-backdrop').remove();
-    }
-    $dlg.remove();
+    else
+      $dlg.remove();
   },
 
   /**
