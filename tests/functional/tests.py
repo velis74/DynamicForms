@@ -13,7 +13,8 @@ from examples.models import Validated, RefreshType
 MAX_WAIT = 10
 
 
-class ValidatedFormTest(StaticLiveServerTestCase):
+class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
+
     def setUp(self):
         self.browser = webdriver.Firefox()
         staging_server = os.environ.get('STAGING_SERVER')
@@ -26,13 +27,12 @@ class ValidatedFormTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.refresh()
         self.browser.quit()
-        pass
 
     def wait_for_new_element(self, element_id):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.5)
+                time.sleep(0.1)
                 element = self.browser.find_element_by_id(element_id)
                 self.assertTrue(element is not None)
                 return
@@ -44,15 +44,14 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_class_name("modal")
+                time.sleep(0.1)
+                element = self.browser.find_element_by_class_name('modal')
                 self.assertTrue(element is not None)
-                element_id = element.get_attribute("id")
+                element_id = element.get_attribute('id')
                 # if old_id:
                 #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith("dialog-"))
-                element_id = element_id.split("-", 1)[1]
-                time.sleep(.5)
+                self.assertTrue(element_id.startswith('dialog-'))
+                element_id = element_id.split('-', 1)[1]
                 return element, element_id
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
@@ -62,8 +61,8 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.5)
-                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
+                time.sleep(0.1)
+                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is not None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException:
@@ -73,41 +72,33 @@ class ValidatedFormTest(StaticLiveServerTestCase):
     def check_error_text(self, dialog):
         error_text = None
         try:
-            error = dialog.find_element_by_class_name("text-danger")
+            error = dialog.find_element_by_class_name('text-danger')
             if error is not None:
-                error_text = error.get_attribute("innerHTML")
+                error_text = error.get_attribute('innerHTML')
         except WebDriverException:
             pass
         return error_text
 
+    def initial_check(self, field, fld_text, fld_name, fld_type):
+        self.assertEqual(field.text, fld_text)
+        self.assertEqual(field.get_attribute('name'), fld_name)
+        self.assertEqual(field.get_attribute('type'), fld_type)
+
     def get_table_body(self):
         try:
-            body = self.browser.find_element_by_class_name("card-body")
+            body = self.browser.find_element_by_class_name('card-body')
         except NoSuchElementException:
             try:
                 # Bootstrap 3
-                body = self.browser.find_element_by_class_name("panel-body")
+                body = self.browser.find_element_by_class_name('panel-body')
             except NoSuchElementException:
                 # jQueryUI
-                body = self.browser.find_element_by_class_name("ui-accordion-content")
+                body = self.browser.find_element_by_class_name('ui-accordion-content')
 
-        table = body.find_element_by_tag_name("table")
+        table = body.find_element_by_tag_name('table')
 
-        tbody = table.find_element_by_tag_name("tbody")
-        return tbody.find_elements_by_tag_name("tr")
-
-    def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertEqual(field.text, fld_text)
-        self.assertEqual(field.get_attribute("name"), fld_name)
-        self.assertEqual(field.get_attribute("type"), fld_type)
-
-    def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), cell_cnt)
-        for i in range(len(cell_values)):
-            if cell_values[i] is not None:
-                self.assertEqual(cells[i].text, cell_values[i])
-        return cells
+        tbody = table.find_element_by_tag_name('tbody')
+        return tbody.find_elements_by_tag_name('tr')
 
     def select_option_for_select2(self, driver, id, text=None):
         element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
@@ -125,7 +116,18 @@ class ValidatedFormTest(StaticLiveServerTestCase):
             a.send_keys(Keys.ENTER)
             a.perform()
 
-    def add_record(self, btn_position, amount, add_second_record=None):
+    def check_row(self, row, cell_cnt, cell_values):
+        cells = row.find_elements_by_tag_name('td')
+        self.assertEqual(len(cells), cell_cnt)
+        for i in range(len(cell_values)):
+            if cell_values[i] is not None:
+                self.assertEqual(cells[i].text, cell_values[i])
+        return cells
+
+
+class ValidatedFormTest(WaitingStaticLiveServerTestCase):
+
+    def add_validated_record(self, btn_position, amount, add_second_record=None):
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
@@ -451,13 +453,13 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.browser.refresh()
 
         # Test Add action with refreshType='table'
-        self.add_record(1, 5)
+        self.add_validated_record(1, 5)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 8)
 
-        self.add_record(1, 7, add_second_record=True)
+        self.add_validated_record(1, 7, add_second_record=True)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 3)
 
@@ -481,7 +483,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
 
         # Test Add action with refreshType='no refresh'
-        self.add_record(2, 5, add_second_record=True)
+        self.add_validated_record(2, 5, add_second_record=True)
 
         self.browser.refresh()
 
@@ -568,71 +570,6 @@ class ValidatedFormTest(StaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
-
-
-class BasicFieldsTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        # print(self.live_server_url)
-        if staging_server:
-            # print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-        # print(self.live_server_url)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
-
-    def wait_for_modal_dialog(self, old_id=None):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_class_name("modal")
-                self.assertTrue(element is not None)
-                element_id = element.get_attribute("id")
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith("dialog-"))
-                element_id = element_id.split("-", 1)[1]
-                return element, element_id
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog_disapear(self, dialog_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
-                    break
-                self.assertFalse(time.time() - start_time > MAX_WAIT)
-            except WebDriverException:
-                break
-
-    def get_table_body(self):
-        try:
-            body = self.browser.find_element_by_class_name("card-body")
-        except NoSuchElementException:
-            try:
-                # Bootstrap 3
-                body = self.browser.find_element_by_class_name("panel-body")
-            except NoSuchElementException:
-                # jQueryUI
-                body = self.browser.find_element_by_class_name("ui-accordion-content")
-
-        table = body.find_element_by_tag_name("table")
-
-        tbody = table.find_element_by_tag_name("tbody")
-        return tbody.find_elements_by_tag_name("tr")
-
-    def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertTrue(field.text == fld_text)
-        self.assertTrue(field.get_attribute("name") == fld_name)
-        self.assertTrue(field.get_attribute("type") == fld_type)
 
     def test_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
@@ -783,95 +720,6 @@ class BasicFieldsTest(StaticLiveServerTestCase):
         self.assertEqual(errors[6].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
-
-class AdvancedFieldsTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        # print(self.live_server_url)
-        if staging_server:
-            # print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-        # print(self.live_server_url)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
-
-    def wait_for_modal_dialog(self, old_id=None):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_class_name("modal")
-                self.assertTrue(element is not None)
-                element_id = element.get_attribute("id")
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith("dialog-"))
-                element_id = element_id.split("-", 1)[1]
-                return element, element_id
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog_disapear(self, dialog_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
-                    break
-                self.assertFalse(time.time() - start_time > MAX_WAIT)
-            except WebDriverException:
-                break
-
-    def get_table_body(self):
-        try:
-            body = self.browser.find_element_by_class_name("card-body")
-        except NoSuchElementException:
-            try:
-                # Bootstrap 3
-                body = self.browser.find_element_by_class_name("panel-body")
-            except NoSuchElementException:
-                # jQueryUI
-                body = self.browser.find_element_by_class_name("ui-accordion-content")
-
-        table = body.find_element_by_tag_name("table")
-
-        tbody = table.find_element_by_tag_name("tbody")
-        return tbody.find_elements_by_tag_name("tr")
-
-    def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertTrue(field.text == fld_text)
-        self.assertTrue(field.get_attribute("name") == fld_name)
-        self.assertTrue(field.get_attribute("type") == fld_type)
-
-    def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), cell_cnt)
-        for i in range(len(cell_values)):
-            if cell_values[i] is not None:
-                self.assertEqual(cells[i].text, cell_values[i])
-        return cells
-
-    def select_option_for_select2(self, driver, id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
-        element.click()
-
-        if text:
-            element = driver.find_element_by_xpath("//input[@type='search']")
-            element.send_keys(text)
-
-        try:
-            element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException:
-            actions = ActionChains(driver)
-            a = actions.move_to_element_with_offset(element, 50, 30)
-            a.send_keys(Keys.ENTER)
-            a.perform()
-
     def test_advanced_fields(self):
         self.browser.get(self.live_server_url + '/advanced-fields.html')
         # Go to advanced-fields html and check if there's a "+ Add" button
@@ -984,21 +832,21 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(initial_choice.text == "Relation object 1")
+                        self.assertEqual(initial_choice.text, "Relation object 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 10)
-                        self.assertTrue(select2.get_attribute("name") == "primary_key_related_field")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 10)
+                        self.assertEqual(select2.get_attribute("name"), "primary_key_related_field")
+                        self.assertEqual(select2.tag_name, "select")
                         self.select_option_for_select2(container, field_id, text="Relation object 7")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "Relation object 1")
-                        self.assertTrue(field.get_attribute("name") == "primary_key_related_field")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(selected_options[0].text, "Relation object 1")
+                        self.assertEqual(field.get_attribute("name"), "primary_key_related_field")
+                        self.assertEqual(field.tag_name, "select")
                         select.select_by_index(6)
                 elif label.text == "Slug related field":
                     # Check if slug_related_field field is select2 element
@@ -1111,103 +959,7 @@ class AdvancedFieldsTest(StaticLiveServerTestCase):
         self.assertEqual(errors[0].get_attribute("innerHTML"),
                          "This value does not match the required pattern (?&lt;=abc)def.")
 
-
-class RefreshTypesTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        # print(self.live_server_url)
-        if staging_server:
-            # print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-        # print(self.live_server_url)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
-
-    def wait_for_new_element(self, element_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_id(element_id)
-                self.assertTrue(element is not None)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog(self, old_id=None):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_class_name("modal")
-                self.assertTrue(element is not None)
-                element_id = element.get_attribute("id")
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith("dialog-"))
-                element_id = element_id.split("-", 1)[1]
-                return element, element_id
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog_disapear(self, dialog_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                if self.browser.find_element_by_id("dialog-{dialog_id}".format(**locals())) is not None:
-                    break
-                self.assertFalse(time.time() - start_time > MAX_WAIT)
-            except WebDriverException:
-                break
-
-    # noinspection PyMethodMayBeStatic
-    def check_error_text(self, dialog):
-        error_text = None
-        try:
-            error = dialog.find_element_by_class_name("text-danger")
-            if error is not None:
-                error_text = error.get_attribute("innerHTML")
-        except WebDriverException:
-            pass
-        return error_text
-
-    def get_table_body(self):
-        try:
-            body = self.browser.find_element_by_class_name("card-body")
-        except NoSuchElementException:
-            try:
-                # Bootstrap 3
-                body = self.browser.find_element_by_class_name("panel-body")
-            except NoSuchElementException:
-                # jQueryUI
-                body = self.browser.find_element_by_class_name("ui-accordion-content")
-
-        table = body.find_element_by_tag_name("table")
-
-        tbody = table.find_element_by_tag_name("tbody")
-        return tbody.find_elements_by_tag_name("tr")
-
-    def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertEqual(field.text, fld_text)
-        self.assertEqual(field.get_attribute("name"), fld_name)
-        self.assertEqual(field.get_attribute("type"), fld_type)
-
-    def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), cell_cnt)
-        for i in range(len(cell_values)):
-            if cell_values[i] is not None:
-                self.assertEqual(cells[i].text, cell_values[i])
-        return cells
-
-    def add_record(self, btn_position, text, add_second_record=None):
+    def add_refresh_types_record(self, btn_position, text, add_second_record=None):
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
@@ -1283,24 +1035,24 @@ class RefreshTypesTest(StaticLiveServerTestCase):
         self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
 
         # Test Add action with refreshType='record'
-        self.add_record(0, 'Refresh record')
+        self.add_refresh_types_record(0, 'Refresh record')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 3)
 
         # Test Add action with refreshType='table'
-        self.add_record(1, 'Refresh table')
+        self.add_refresh_types_record(1, 'Refresh table')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
         cells = rows[0].find_elements_by_tag_name("td")
 
-        self.add_record(1, 'Refresh table 2', add_second_record=True)
+        self.add_refresh_types_record(1, 'Refresh table 2', add_second_record=True)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 4)
 
         # Test Add action with refreshType='no refresh'
-        self.add_record(2, 'No refresh')
+        self.add_refresh_types_record(2, 'No refresh')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 4)
 
@@ -1310,12 +1062,12 @@ class RefreshTypesTest(StaticLiveServerTestCase):
         self.assertEqual(len(rows), 5)
 
         # Test Add action with refreshType='reload'
-        self.add_record(3, 'Page reload')
+        self.add_refresh_types_record(3, 'Page reload')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 6)
 
         # Test Add action with refreshType='redirect'
-        self.add_record(4, 'Redirect')
+        self.add_refresh_types_record(4, 'Redirect')
         # Redirection to /validated.html defined in action happens
         redirect_url = self.browser.current_url
         self.assertRegex(redirect_url, '/validated.html')
@@ -1325,7 +1077,7 @@ class RefreshTypesTest(StaticLiveServerTestCase):
         self.assertEqual(len(rows), 7)
 
         # Test Add action with refreshType='custom function'
-        self.add_record(5, 'Custom function')
+        self.add_refresh_types_record(5, 'Custom function')
         # Alert is processed in add_record function
 
         self.browser.refresh()
@@ -1385,55 +1137,6 @@ class RefreshTypesTest(StaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
-
-
-class SingleDialogTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        # print(self.live_server_url)
-        if staging_server:
-            # print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-        # print(self.live_server_url)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
-
-    def wait_for_modal_dialog(self, old_id=None):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.5)
-                element = self.browser.find_element_by_class_name("modal")
-                self.assertTrue(element is not None)
-                element_id = element.get_attribute("id")
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith("dialog-"))
-                element_id = element_id.split("-", 1)[1]
-                return element, element_id
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def select_option_for_select2(self, driver, id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
-        element.click()
-
-        if text:
-            element = driver.find_element_by_xpath("//input[@type='search']")
-            element.send_keys(text)
-
-        try:
-            element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException:
-            actions = ActionChains(driver)
-            a = actions.move_to_element_with_offset(element, 50, 30)
-            a.send_keys(Keys.ENTER)
-            a.perform()
 
     def test_single_dialog(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')

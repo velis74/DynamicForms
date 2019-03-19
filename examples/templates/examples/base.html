@@ -69,6 +69,14 @@
       padding-left: 1em;
       color:        white;
     }
+    {% if DYNAMICFORMS.testing %}
+    * {
+      -webkit-transition: none !important;
+      -moz-transition: none !important;
+      -o-transition: none !important;
+      transition: none !important;
+    }
+    {% endif %}
   </style>
 </head>
 <body>
