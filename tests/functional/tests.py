@@ -52,6 +52,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
                 #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
                 self.assertTrue(element_id.startswith("dialog-"))
                 element_id = element_id.split("-", 1)[1]
+                time.sleep(.5)
                 return element, element_id
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
@@ -335,7 +336,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
             errors = dialog.find_elements_by_class_name("ui-error-span")
 
         self.assertEqual(len(errors), 1)
-        self.assertTrue(errors[0].get_attribute("innerHTML") == "Ensure this value is greater than or equal to 5.")
+        self.assertEqual(errors[0].get_attribute("innerHTML"), "Ensure this value is greater than or equal to 5.")
         field = errors[0].parent.find_element_by_name("amount")
         field.clear()
         field.send_keys("8")
@@ -368,7 +369,7 @@ class ValidatedFormTest(StaticLiveServerTestCase):
 
         # There should be a general/form error because of validator set in serializer
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
-        self.assertTrue(self.check_error_text(dialog) == "When enabled you can only choose from first three item types")
+        self.assertEqual(self.check_error_text(dialog), "When enabled you can only choose from first three item types")
 
         # Check if item_type field is select2 element
         form = dialog.find_element_by_id(modal_serializer_id)

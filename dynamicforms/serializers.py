@@ -96,8 +96,8 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
             # This basically reproduces BaseSerializer.data property except that it disregards the _errors member
             if self.instance:
                 res = self.to_representation(self.instance)
-            elif hasattr(self, '_validated_data'):
-                res = self.to_representation(self.validated_data)
+            # elif hasattr(self, '_validated_data'):
+            #     res = self.to_representation(self.validated_data)
             else:
                 res = {}
             res.update(super().get_initial())
