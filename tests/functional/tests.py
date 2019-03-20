@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -14,14 +15,26 @@ MAX_WAIT = 10
 
 
 class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
+    host = '0.0.0.0'
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        remote, this_server, browser = os.getenv('REMOTE_SELENIUM', ',').split(',')
+        if remote:
+            self.browser = webdriver.Remote(
+                command_executor='http://{remote}/wd/hub'.format(remote=remote),
+                desired_capabilities=dict(**getattr(webdriver.DesiredCapabilities, browser), javascriptEnabled=True)
+            )
+        else:
+            self.browser = webdriver.Firefox()
+
         staging_server = os.environ.get('STAGING_SERVER')
         # print(self.live_server_url)
         if staging_server:
             # print('\n\nSTAGING SERVER\n\n')
             self.live_server_url = 'http://' + staging_server
+        else:
+            self.live_server_url = 'http://{this_server}:{port}'.format(this_server=this_server,
+                                                                        port=self.live_server_url.split(':')[2])
         # print(self.live_server_url)
 
     def tearDown(self):
@@ -82,7 +95,10 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def initial_check(self, field, fld_text, fld_name, fld_type):
         self.assertEqual(field.text, fld_text)
         self.assertEqual(field.get_attribute('name'), fld_name)
-        self.assertEqual(field.get_attribute('type'), fld_type)
+        if isinstance(fld_type, tuple):
+            self.assertIn(field.get_attribute('type'), fld_type)
+        else:
+            self.assertEqual(field.get_attribute('type'), fld_type)
 
     def get_table_body(self):
         try:
@@ -615,51 +631,51 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                 field_count += 1
 
-                if label.text == "Boolean field":
-                    self.initial_check(field, "", "boolean_field", "checkbox")
+                if label.text == 'Boolean field':
+                    self.initial_check(field, '', 'boolean_field', 'checkbox')
                     field.click()
-                elif label.text == "Nullboolean field":
-                    self.initial_check(field, "", "nullboolean_field", "text")
-                    field.send_keys("True")
-                elif label.text == "Char field":
-                    self.initial_check(field, "", "char_field", "text")
-                    field.send_keys("Test")
-                elif label.text == "Email field":
-                    self.initial_check(field, "", "email_field", "email")
-                    field.send_keys("test@test.com")
-                elif label.text == "Slug field":
-                    self.initial_check(field, "", "slug_field", "text")
-                    field.send_keys("test-slug")
-                elif label.text == "Url field":
-                    self.initial_check(field, "", "url_field", "url")
-                    field.send_keys("http://test.test")
-                elif label.text == "Uuid field":
-                    self.initial_check(field, "", "uuid_field", "text")
-                    field.send_keys("123e4567-e89b-12d3-a456-426655440000")
-                elif label.text == "Ipaddress field":
-                    self.initial_check(field, "", "ipaddress_field", "text")
-                    field.send_keys("145.17.154.1")
-                elif label.text == "Integer field":
-                    self.initial_check(field, "", "integer_field", "number")
+                elif label.text == 'Nullboolean field':
+                    self.initial_check(field, '', 'nullboolean_field', 'text')
+                    field.send_keys('True')
+                elif label.text == 'Char field':
+                    self.initial_check(field, '', 'char_field', 'text')
+                    field.send_keys('Test')
+                elif label.text == 'Email field':
+                    self.initial_check(field, '', 'email_field', 'email')
+                    field.send_keys('test@test.com')
+                elif label.text == 'Slug field':
+                    self.initial_check(field, '', 'slug_field', 'text')
+                    field.send_keys('test-slug')
+                elif label.text == 'Url field':
+                    self.initial_check(field, '', 'url_field', 'url')
+                    field.send_keys('http://test.test')
+                elif label.text == 'Uuid field':
+                    self.initial_check(field, '', 'uuid_field', 'text')
+                    field.send_keys('123e4567-e89b-12d3-a456-426655440000')
+                elif label.text == 'Ipaddress field':
+                    self.initial_check(field, '', 'ipaddress_field', 'text')
+                    field.send_keys('145.17.154.1')
+                elif label.text == 'Integer field':
+                    self.initial_check(field, '', 'integer_field', 'number')
                     field.send_keys(1)
-                elif label.text == "Float field":
-                    self.initial_check(field, "", "float_field", "number")
+                elif label.text == 'Float field':
+                    self.initial_check(field, '', 'float_field', 'number')
                     field.send_keys(15)
-                elif label.text == "Decimal field":
-                    self.initial_check(field, "", "decimal_field", "text")
-                    field.send_keys("15.18")
-                elif label.text == "Datetime field":
-                    self.initial_check(field, "", "datetime_field", "text")
-                    field.send_keys("2018-12-08 08:15:00")
-                elif label.text == "Date field":
-                    self.initial_check(field, "", "date_field", "date")
-                    field.send_keys("2018-12-08")
-                elif label.text == "Time field":
-                    self.initial_check(field, "", "time_field", "time")
-                    field.send_keys("08:15:00")
-                elif label.text == "Duration field":
-                    self.initial_check(field, "", "duration_field", "text")
-                    field.send_keys("180")
+                elif label.text == 'Decimal field':
+                    self.initial_check(field, '', 'decimal_field', 'text')
+                    field.send_keys('15.18')
+                elif label.text == 'Datetime field':
+                    self.initial_check(field, '', 'datetime_field', ('datetime-local', 'text'))
+                    field.send_keys('2018-12-08 08:15:00')
+                elif label.text == 'Date field':
+                    self.initial_check(field, '', 'date_field', 'date')
+                    field.send_keys('2018-12-08')
+                elif label.text == 'Time field':
+                    self.initial_check(field, '', 'time_field', 'time')
+                    field.send_keys('08:15:00')
+                elif label.text == 'Duration field':
+                    self.initial_check(field, '', 'duration_field', 'text')
+                    field.send_keys('180')
                 else:
                     field_count -= 1
 
