@@ -18,7 +18,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     host = '0.0.0.0'
 
     def setUp(self):
-        remote, this_server, browser = os.getenv('REMOTE_SELENIUM', ',').split(',')
+        remote, this_server, browser = os.getenv('REMOTE_SELENIUM', ',,').split(',')
         if remote:
             self.browser = webdriver.Remote(
                 command_executor='http://{remote}/wd/hub'.format(remote=remote),
