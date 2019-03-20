@@ -3,23 +3,12 @@ import time
 
 from django.urls import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium import webdriver
+from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 MAX_WAIT = 10
 
 
-class PageLoadFormTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
+class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
     def test_validated_list(self):
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))

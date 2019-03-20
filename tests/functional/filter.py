@@ -1,30 +1,13 @@
-import os
 import time
 from datetime import timedelta
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from django.utils import timezone
-from selenium import webdriver
-from selenium.common.exceptions import ElementNotInteractableException
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 
-MAX_WAIT = 10
+from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 
-class FilterFormTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        pass
+class FilterFormTest(WaitingStaticLiveServerTestCase):
 
     # noinspection PyMethodMayBeStatic
     def wait_data_loading(self, loading_row):
@@ -39,23 +22,6 @@ class FilterFormTest(StaticLiveServerTestCase):
             return True
         except:
             return False
-
-    # noinspection PyMethodMayBeStatic
-    def select_option_for_select2(self, driver, element_id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
-        element.click()
-
-        if text:
-            element = driver.find_element_by_xpath("//input[@type='search']")
-            element.send_keys(text)
-
-        try:
-            element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException:
-            actions = ActionChains(driver)
-            a = actions.move_to_element_with_offset(element, 50, 30)
-            a.send_keys(Keys.ENTER)
-            a.perform()
 
     def test_filter_list(self):
         self.browser.get(self.live_server_url + reverse('filter-list', args=['html']))
