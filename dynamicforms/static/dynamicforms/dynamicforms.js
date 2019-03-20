@@ -874,9 +874,7 @@ dynamicforms = {
           filter[element.attr("name")] = false;
       } else if (element.val() != null && element.val().length)
         filter[element.attr("name")] = element.val();
-      debugger;
     });
-    debugger;
     filter = jQuery.param(filter);
     if (!filter.length)
       filter = 'nofilter';
