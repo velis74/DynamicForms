@@ -13,7 +13,7 @@
     {% render_table_commands serializer "thead_rowend" %}
   </tr>
   {% if serializer.show_filter %}
-    {% render_form serializer.filter_data form_template=DYNAMICFORMS.form_filter_base_template %}
+    {% render_form serializer.filter_data form_template=DYNAMICFORMS.table_filter_base_template %}
   {% endif %}
   </thead>
   <tbody>

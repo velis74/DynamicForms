@@ -299,7 +299,9 @@ dynamicforms = {
   updateDialog: function updateDialog($dlg, $newDlg) {
     $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
     dynamicforms.closeDialog($dlg);
-    // dynamicforms.showDialog($newDlg);
+    if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+      dynamicforms.showDialog($newDlg);
+    }
 
     /*
     // Replace current form with new form containing errors
@@ -872,7 +874,9 @@ dynamicforms = {
           filter[element.attr("name")] = false;
       } else if (element.val() != null && element.val().length)
         filter[element.attr("name")] = element.val();
+      debugger;
     });
+    debugger;
     filter = jQuery.param(filter);
     if (!filter.length)
       filter = 'nofilter';
