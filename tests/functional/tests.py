@@ -516,8 +516,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog_one_id = dialog.get_attribute("id")
 
         # Check that dialog has Editing in title
-        dialog_title = dialog.find_element_by_class_name("modal-title")
-        if not dialog_title:
+        try:
+            dialog_title = dialog.find_element_by_class_name("modal-title")
+        except NoSuchElementException:
             dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
         self.assertEqual(dialog_title.text, 'Editing validated object')
 
@@ -547,8 +548,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Ensure this value is less than or equal to 10.")
 
         # Check that dialog still has Editing in title
-        dialog_title = dialog.find_element_by_class_name("modal-title")
-        if not dialog_title:
+        try:
+            dialog_title = dialog.find_element_by_class_name("modal-title")
+        except NoSuchElementException:
             dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
         self.assertEqual(dialog_title.text, 'Editing validated object')
 
