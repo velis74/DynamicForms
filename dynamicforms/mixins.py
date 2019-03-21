@@ -45,6 +45,7 @@ class NullChoiceMixin(object):
       (what should be rendered for "no selection"; DRF's default is ---------)
       We also support user declaring a choice with None value and a different text (see hidden fields example)
     """
+
     @property
     def null_choice_text(self):
         res = '--------'
