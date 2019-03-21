@@ -1,4 +1,4 @@
-import uuid as uuid_module
+import uuid
 from enum import IntEnum
 from typing import Iterable, List, Union
 
@@ -205,7 +205,7 @@ class FormButtonAction(ActionBase):
                  button_is_primary: bool = None, positions: List[str] = None,
                  name: Union[str, None] = None, serializer: Serializer = None):
         super().__init__(action_js or False, name, serializer)
-        self.uuid = uuid_module.uuid1()
+        self.uuid = uuid.uuid1()
         self.btn_type = btn_type
         self.label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         self.positions = positions or ['dialog', 'form']
