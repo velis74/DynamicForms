@@ -21,8 +21,10 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 command_executor='http://{remote}/wd/hub'.format(remote=remote),
                 desired_capabilities=dict(**getattr(webdriver.DesiredCapabilities, browser), javascriptEnabled=True)
             )
+            olsu = self.live_server_url
             self.live_server_url = 'http://{this_server}:{port}'.format(this_server=this_server,
                                                                         port=self.live_server_url.split(':')[2])
+            print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
             self.browser = webdriver.Firefox()
 
