@@ -5,7 +5,7 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, RelatedFieldAJAXMixin, HiddenFieldMixin
+from .mixins import ActionMixin, HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderToTableMixin, UUIDMixIn
 from .settings import version_check
 
 

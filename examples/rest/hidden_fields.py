@@ -1,5 +1,5 @@
 from dynamicforms import serializers
-from dynamicforms.action import FieldChangeAction, Actions, FormInitAction, FieldInitAction
+from dynamicforms.action import Actions, FieldChangeAction, FormInitAction
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields
 

@@ -1,4 +1,5 @@
 from django.conf import settings as s
+
 from .struct import Struct
 
 DYNAMICFORMS_BOOTSTRAP = 'dynamicforms/bootstrap/'

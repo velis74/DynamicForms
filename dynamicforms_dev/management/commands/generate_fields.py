@@ -1,12 +1,11 @@
 import inspect
 import os
 import textwrap
-import uuid
 import typing
+import uuid
 
 from django.core.management.base import BaseCommand
-from rest_framework import fields
-from rest_framework import relations
+from rest_framework import fields, relations
 
 
 class Command(BaseCommand):
@@ -45,6 +44,7 @@ class Command(BaseCommand):
             print('import rest_framework', file=output)
             print('from rest_framework import fields, relations\n', file=output)
             print('from .action import Actions', file=output)
+
             print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, '
                   'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins),
                   file=output)

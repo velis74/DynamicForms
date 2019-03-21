@@ -2,13 +2,12 @@ from collections import defaultdict
 from typing import Any
 
 from django.db import models
-
 from rest_framework import serializers
 
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
-from .mixins import UUIDMixIn, ActionMixin, RenderToTableMixin
+from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn
 
 
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):

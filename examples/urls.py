@@ -1,8 +1,9 @@
-from examples.rest import router
-from django.conf.urls import url, include
-from .views import index
-from dynamicforms.settings import version_check
 import rest_framework
+from django.conf.urls import include, url
+
+from dynamicforms.settings import version_check
+from examples.rest import router
+from .views import index
 
 urlpatterns = [
     url(r'^$', index, name='index'),

@@ -1,4 +1,4 @@
-from selenium.common.exceptions import (NoAlertPresentException, NoSuchElementException)
+from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.support.select import Select
 
 from examples.models import RefreshType, Validated
