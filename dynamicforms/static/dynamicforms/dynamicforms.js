@@ -316,7 +316,6 @@ dynamicforms = {
    * Closes the current dialog
    * TODO: adjust hashURL
    * @param $dlg: dialog to close
-   * @param $newDialogToShowAfterClosedOne
    */
   closeDialog: function closeDialog($dlg) {
     if (!dynamicforms.DYNAMICFORMS.jquery_ui) {
