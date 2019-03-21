@@ -38,13 +38,17 @@ class Command(BaseCommand):
             # get all the field-specific mixins
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
-            print('from typing import Optional\n', file=output)
+
+
+            print('from typing import Optional', file=output)
             print('from uuid import UUID\n', file=output)
-            print('from rest_framework import fields, relations', file=output)
+            print('import rest_framework', file=output)
+            print('from rest_framework import fields, relations\n', file=output)
+            print('from .action import Actions', file=output)
             print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, '
                   'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins),
                   file=output)
-            print('from .action import Actions', file=output)
+            print('from .settings import version_check', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -178,11 +182,25 @@ class Command(BaseCommand):
                       file=output, end='')
 
                 # Print constructor
-                print(f"""
-    {hstore_field_indent}def __init__({field_params}):
-        {hstore_field_indent}kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}
-        {hstore_field_indent}kwargs.update(kw)
-        {hstore_field_indent}super().__init__(**kwargs)""", file=output)
+                indt = lambda n: ' ' * (n + len(hstore_field_indent))
+                print(f'', file=output)
+                print(indt(4) + f'def __init__({field_params}):', file=output)
+                print(indt(8) + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', "
+                      f"'kw'))}}", file=output)
+                print(indt(8) + f'kwargs.update(kw)', file=output)
+
+                if issubclass(field, fields.DecimalField):
+                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
+                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.7.2'):", file=output)
+                    print(indt(12) + "kwargs.pop('rounding', None)", file=output)
+                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.4.0'):", file=output)
+                    print(indt(12) + "kwargs.pop('localize', None)", file=output)
+                elif issubclass(field, fields.SlugField):
+                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
+                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.6.4'):", file=output)
+                    print(indt(12) + "kwargs.pop('allow_unicode', None)", file=output)
+
+                print(indt(8) + f'super().__init__(**kwargs)', file=output)
 
     print('fields.py successfully generated')
     # options['file']

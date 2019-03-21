@@ -139,3 +139,42 @@ def get_settings():
 
 
 DYNAMICFORMS = get_settings()
+
+
+def version_check(checked_version, min_version):
+    """
+    Checks whether checked version is higher or equal to given min version
+    :param checked_version: version being checked
+    :param min_version: minimum allowed version
+    :return: True when checked version is high enough
+    """
+
+    def version_transform(ver):
+        version = ''
+        vn = va = ''
+        stage = 0
+        ver = '.' + (ver or '')
+        for c in ver:
+            if c == '.':
+                if vn or va:
+                    version += '{0:0>3}{1: <2}.'.format(vn, va)
+                vn = va = ''
+                stage = 0
+                continue
+            if c.isdigit():
+                pass
+            elif c.isalpha():
+                stage = max(1, stage)
+            else:
+                stage = max(2, stage)
+            if stage == 0:
+                vn += c
+            elif stage == 1:
+                va += c
+        if vn or va:
+            version += '{0:0>3}{1: <2}.'.format(vn, va)
+        return version[:-1]
+
+    if not checked_version:
+        return False
+    return version_transform(checked_version) >= version_transform(min_version)

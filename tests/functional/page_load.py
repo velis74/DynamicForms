@@ -1,8 +1,7 @@
-import os
 import time
 
 from django.urls import reverse
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 MAX_WAIT = 10

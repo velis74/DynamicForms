@@ -1,10 +1,12 @@
 from typing import Optional
-
 from uuid import UUID
 
+import rest_framework
 from rest_framework import fields, relations
-from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, RelatedFieldAJAXMixin, HiddenFieldMixin
+
 from .action import Actions
+from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, RelatedFieldAJAXMixin, HiddenFieldMixin
+from .settings import version_check
 
 
 class BooleanField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.BooleanField):
@@ -70,6 +72,9 @@ class SlugField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.SlugField):
                  table_classes: str = '', uuid: UUID = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        # noinspection PyUnresolvedReferences
+        if not version_check(rest_framework.VERSION, '3.6.4'):
+            kwargs.pop('allow_unicode', None)
         super().__init__(**kwargs)
 
 
@@ -137,6 +142,11 @@ class DecimalField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DecimalFie
                  table_classes: str = '', uuid: UUID = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        # noinspection PyUnresolvedReferences
+        if not version_check(rest_framework.VERSION, '3.7.2'):
+            kwargs.pop('rounding', None)
+        if not version_check(rest_framework.VERSION, '3.4.0'):
+            kwargs.pop('localize', None)
         super().__init__(**kwargs)
 
 
