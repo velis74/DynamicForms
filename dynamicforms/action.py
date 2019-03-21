@@ -215,11 +215,12 @@ class FormButtonAction(ActionBase):
             button_is_primary = btn_type == FormButtonTypes.SUBMIT
         self.button_is_primary = button_is_primary
 
-        self.btn_classes = btn_classes or (DYNAMICFORMS.form_button_classes + ' '
-                                           + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
-                                              else DYNAMICFORMS.form_button_classes_secondary) + ' '
-                                           + (DYNAMICFORMS.form_button_classes_cancel if
-                                              btn_type == FormButtonTypes.CANCEL else ''))
+        self.btn_classes = btn_classes or (
+                DYNAMICFORMS.form_button_classes + ' ' +
+                (DYNAMICFORMS.form_button_classes_primary if button_is_primary
+                 else DYNAMICFORMS.form_button_classes_secondary) + ' ' +
+                (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
+        )
 
     def copy_and_resolve_reference(self, serializer):
         return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.action_js, self.button_is_primary,
