@@ -20,7 +20,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     uuid_field = fields.UUIDField()
     ipaddress_field = fields.IPAddressField()
     integer_field = fields.IntegerField()
-    float_field = fields.IntegerField()
+    float_field = fields.FloatField()
     decimal_field = fields.DecimalField(max_digits=5, decimal_places=2)
     datetime_field = fields.DateTimeField()
     date_field = fields.DateField()

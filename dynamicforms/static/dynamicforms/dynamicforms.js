@@ -299,8 +299,6 @@ dynamicforms = {
   updateDialog: function updateDialog($dlg, $newDlg) {
     $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
     dynamicforms.closeDialog($dlg);
-    // dynamicforms.showDialog($newDlg);
-
     /*
     // Replace current form with new form containing errors
     var newForm     = $newDlg.find("form");
@@ -320,10 +318,14 @@ dynamicforms = {
    * @param $dlg: dialog to close
    */
   closeDialog: function closeDialog($dlg) {
-    if (!dynamicforms.DYNAMICFORMS.jquery_ui)
+    if (!dynamicforms.DYNAMICFORMS.jquery_ui) {
       $dlg.modal('hide');
-    else
+    } else {
       $dlg.remove();
+      if ($dlg.showNewAfterHide) {
+        dynamicforms.showDialog($dlg.showNewAfterHide);
+      }
+    }
   },
 
   /**

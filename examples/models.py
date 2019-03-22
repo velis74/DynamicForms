@@ -94,7 +94,7 @@ class BasicFields(models.Model):
     uuid_field = models.UUIDField(null=True)
     ipaddress_field = models.GenericIPAddressField(null=True)
     integer_field = models.IntegerField(null=True)
-    float_field = models.IntegerField(null=True)
+    float_field = models.FloatField(null=True)
     decimal_field = models.DecimalField(null=True, max_digits=5, decimal_places=2)
     datetime_field = models.DateTimeField(null=True)
     date_field = models.DateField(null=True)
