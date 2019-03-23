@@ -549,8 +549,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
@@ -827,7 +825,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Check for errors
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3

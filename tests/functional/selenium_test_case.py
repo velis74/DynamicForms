@@ -3,9 +3,15 @@ import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, WebDriverException
+from selenium.common.exceptions import (
+    ElementNotInteractableException, NoSuchElementException, WebDriverException, TimeoutException
+)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
 
@@ -52,10 +58,22 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 element = self.browser.find_element_by_class_name('modal')
                 self.assertTrue(element is not None)
                 element_id = element.get_attribute('id')
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
+                if old_id and element_id == "dialog-{old_id}".format(**locals()):
+                    # The new dialog must not have same id as the old one
+                    # if it does, this means that we're still looking at the old dialog - let's wait for it to go away
+                    continue
                 self.assertTrue(element_id.startswith('dialog-'))
                 element_id = element_id.split('-', 1)[1]
+
+                # this is a dialog - let's wait for its animations to stop
+                try:
+                    WebDriverWait(element, .5).until(EC.element_to_be_clickable(
+                        (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
+                    )
+                except TimeoutException:
+                    # dialog not ready yet or we found a bad dialog with no buttons
+                    continue
+
                 return element, element_id
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
@@ -66,7 +84,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.1)
-                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is not None:
+                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException:
