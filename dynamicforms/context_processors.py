@@ -1,4 +1,5 @@
 from django.http import HttpRequest
+
 from .settings import DYNAMICFORMS
 
 

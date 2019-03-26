@@ -1,128 +1,8 @@
-import os
-import time
-
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium import webdriver
-from selenium.common.exceptions import (ElementNotInteractableException, NoSuchElementException, WebDriverException,
-                                        NoAlertPresentException)
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.support.select import Select
-from examples.models import Validated, RefreshType
 
-MAX_WAIT = 10
-
-
-class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
-
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        # print(self.live_server_url)
-        if staging_server:
-            # print('\n\nSTAGING SERVER\n\n')
-            self.live_server_url = 'http://' + staging_server
-        # print(self.live_server_url)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-
-    def wait_for_new_element(self, element_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.1)
-                element = self.browser.find_element_by_id(element_id)
-                self.assertTrue(element is not None)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog(self, old_id=None):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.1)
-                element = self.browser.find_element_by_class_name('modal')
-                self.assertTrue(element is not None)
-                element_id = element.get_attribute('id')
-                # if old_id:
-                #    self.assertFalse(element_id == "dialog-{old_id}".format(**locals()))
-                self.assertTrue(element_id.startswith('dialog-'))
-                element_id = element_id.split('-', 1)[1]
-                return element, element_id
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-
-    def wait_for_modal_dialog_disapear(self, dialog_id):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.1)
-                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is not None:
-                    break
-                self.assertFalse(time.time() - start_time > MAX_WAIT)
-            except WebDriverException:
-                break
-
-    # noinspection PyMethodMayBeStatic
-    def check_error_text(self, dialog):
-        error_text = None
-        try:
-            error = dialog.find_element_by_class_name('text-danger')
-            if error is not None:
-                error_text = error.get_attribute('innerHTML')
-        except WebDriverException:
-            pass
-        return error_text
-
-    def initial_check(self, field, fld_text, fld_name, fld_type):
-        self.assertEqual(field.text, fld_text)
-        self.assertEqual(field.get_attribute('name'), fld_name)
-        self.assertEqual(field.get_attribute('type'), fld_type)
-
-    def get_table_body(self):
-        try:
-            body = self.browser.find_element_by_class_name('card-body')
-        except NoSuchElementException:
-            try:
-                # Bootstrap 3
-                body = self.browser.find_element_by_class_name('panel-body')
-            except NoSuchElementException:
-                # jQueryUI
-                body = self.browser.find_element_by_class_name('ui-accordion-content')
-
-        table = body.find_element_by_tag_name('table')
-
-        tbody = table.find_element_by_tag_name('tbody')
-        return tbody.find_elements_by_tag_name('tr')
-
-    def select_option_for_select2(self, driver, id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{id}']/following-sibling::*[1]".format(**locals()))
-        element.click()
-
-        if text:
-            element = driver.find_element_by_xpath("//input[@type='search']")
-            element.send_keys(text)
-
-        try:
-            element.send_keys(Keys.ENTER)
-        except ElementNotInteractableException:
-            actions = ActionChains(driver)
-            a = actions.move_to_element_with_offset(element, 50, 30)
-            a.send_keys(Keys.ENTER)
-            a.perform()
-
-    def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name('td')
-        self.assertEqual(len(cells), cell_cnt)
-        for i in range(len(cell_values)):
-            if cell_values[i] is not None:
-                self.assertEqual(cells[i].text, cell_values[i])
-        return cells
+from examples.models import RefreshType, Validated
+from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
@@ -617,51 +497,51 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                 field_count += 1
 
-                if label.text == "Boolean field":
-                    self.initial_check(field, "", "boolean_field", "checkbox")
+                if label.text == 'Boolean field':
+                    self.initial_check(field, '', 'boolean_field', 'checkbox')
                     field.click()
-                elif label.text == "Nullboolean field":
-                    self.initial_check(field, "", "nullboolean_field", "text")
-                    field.send_keys("True")
-                elif label.text == "Char field":
-                    self.initial_check(field, "", "char_field", "text")
-                    field.send_keys("Test")
-                elif label.text == "Email field":
-                    self.initial_check(field, "", "email_field", "email")
-                    field.send_keys("test@test.com")
-                elif label.text == "Slug field":
-                    self.initial_check(field, "", "slug_field", "text")
-                    field.send_keys("test-slug")
-                elif label.text == "Url field":
-                    self.initial_check(field, "", "url_field", "url")
-                    field.send_keys("http://test.test")
-                elif label.text == "Uuid field":
-                    self.initial_check(field, "", "uuid_field", "text")
-                    field.send_keys("123e4567-e89b-12d3-a456-426655440000")
-                elif label.text == "Ipaddress field":
-                    self.initial_check(field, "", "ipaddress_field", "text")
-                    field.send_keys("145.17.154.1")
-                elif label.text == "Integer field":
-                    self.initial_check(field, "", "integer_field", "number")
+                elif label.text == 'Nullboolean field':
+                    self.initial_check(field, '', 'nullboolean_field', 'text')
+                    field.send_keys('True')
+                elif label.text == 'Char field':
+                    self.initial_check(field, '', 'char_field', 'text')
+                    field.send_keys('Test')
+                elif label.text == 'Email field':
+                    self.initial_check(field, '', 'email_field', 'email')
+                    field.send_keys('test@test.com')
+                elif label.text == 'Slug field':
+                    self.initial_check(field, '', 'slug_field', 'text')
+                    field.send_keys('test-slug')
+                elif label.text == 'Url field':
+                    self.initial_check(field, '', 'url_field', 'url')
+                    field.send_keys('http://test.test')
+                elif label.text == 'Uuid field':
+                    self.initial_check(field, '', 'uuid_field', 'text')
+                    field.send_keys('123e4567-e89b-12d3-a456-426655440000')
+                elif label.text == 'Ipaddress field':
+                    self.initial_check(field, '', 'ipaddress_field', 'text')
+                    field.send_keys('145.17.154.1')
+                elif label.text == 'Integer field':
+                    self.initial_check(field, '', 'integer_field', 'number')
                     field.send_keys(1)
-                elif label.text == "Float field":
-                    self.initial_check(field, "", "float_field", "number")
+                elif label.text == 'Float field':
+                    self.initial_check(field, '', 'float_field', 'number')
                     field.send_keys(15)
-                elif label.text == "Decimal field":
-                    self.initial_check(field, "", "decimal_field", "text")
-                    field.send_keys("15.18")
-                elif label.text == "Datetime field":
-                    self.initial_check(field, "", "datetime_field", "text")
-                    field.send_keys("2018-12-08 08:15:00")
-                elif label.text == "Date field":
-                    self.initial_check(field, "", "date_field", "date")
-                    field.send_keys("2018-12-08")
-                elif label.text == "Time field":
-                    self.initial_check(field, "", "time_field", "time")
-                    field.send_keys("08:15:00")
-                elif label.text == "Duration field":
-                    self.initial_check(field, "", "duration_field", "text")
-                    field.send_keys("180")
+                elif label.text == 'Decimal field':
+                    self.initial_check(field, '', 'decimal_field', 'text')
+                    field.send_keys('15.18')
+                elif label.text == 'Datetime field':
+                    self.initial_check(field, '', 'datetime_field', ('datetime-local', 'text'))
+                    field.send_keys('2018-12-08 08:15:00')
+                elif label.text == 'Date field':
+                    self.initial_check(field, '', 'date_field', 'date')
+                    field.send_keys('2018-12-08')
+                elif label.text == 'Time field':
+                    self.initial_check(field, '', 'time_field', 'time')
+                    field.send_keys('08:15:00')
+                elif label.text == 'Duration field':
+                    self.initial_check(field, '', 'duration_field', 'text')
+                    field.send_keys('180')
                 else:
                     field_count -= 1
 
@@ -669,8 +549,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
@@ -947,7 +825,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Check for errors
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3

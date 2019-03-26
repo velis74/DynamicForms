@@ -2,5 +2,5 @@ six
 pytz
 coreapi>=1.32
 django>=1.10
-djangorestframework>=3.7
+djangorestframework>=3.4
 

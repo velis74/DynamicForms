@@ -1,8 +1,9 @@
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.exceptions import ValidationError
+
 from dynamicforms import serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.viewsets import ModelViewSet
-from rest_framework.exceptions import ValidationError
 from ..models import Validated
 
 
