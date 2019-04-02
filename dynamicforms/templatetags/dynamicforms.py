@@ -203,13 +203,15 @@ def field_to_serializer_and_data(context, serializer):
 
 
 @register.simple_tag(takes_context=True)
-def get_data_template(context):
+def get_data_template(context, context_data=None):
     """
     Returns template that should be used for rendering current serializer data
 
     :param context: template context (automatically provided by django)
     :return: template file name
     """
+    if context_data:
+        context = context_data
     serializer = context['serializer']
     return serializer.data_template
 
