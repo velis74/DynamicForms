@@ -3,7 +3,6 @@ from typing import List, Union
 
 import pytz
 from django.conf import settings
-from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from rest_framework import status, viewsets
@@ -101,41 +100,34 @@ class TemplateRendererMixin():
 
         res = super().finalize_response(request, response, *args, **kwargs)
 
-        def get_query_params():
-            if request.query_params:
-                return '?' + '&'.join(['%s=%s' % (key, value) for key, value in request.query_params.items()])
-            return ''
+        if isinstance(res.accepted_renderer, TemplateHTMLRenderer) and \
+                (status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST):
+            if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
+                    isinstance(res.data['results'], (ReturnList, ReturnDict)):
+                serializer = res.data['results'].serializer
+            else:
+                serializer = res.data.serializer
 
-        if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
-            if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
-                if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
-                        isinstance(res.data['results'], (ReturnList, ReturnDict)):
-                    serializer = res.data['results'].serializer
-                else:
-                    serializer = res.data.serializer
+            if isinstance(serializer, ListSerializer):
+                serializer.child.render_type = self.render_type
+            else:
+                serializer.render_type = self.render_type
 
+            if self.render_type in ('table', 'table rows'):
+                serializer.data_template = self.template_name
+            elif self.render_type == 'dialog':
+                serializer.data_template = DYNAMICFORMS.modal_dialog_template
+                res.template_name = DYNAMICFORMS.modal_dialog_template
+            elif self.render_type == 'form':
+                serializer.data_template = res.data.serializer.template_name
+            else:
                 if isinstance(serializer, ListSerializer):
-                    serializer.child.render_type = self.render_type
+                    serializer.child.render_type = 'table'
+                    serializer.child.data_template = self.template_name
                 else:
-                    serializer.render_type = self.render_type
+                    serializer.render_type = 'form'
+                    serializer.data_template = serializer.template_name
 
-                if self.render_type in ('table', 'table rows'):
-                    serializer.data_template = self.template_name
-                elif self.render_type == 'dialog':
-                    serializer.data_template = DYNAMICFORMS.modal_dialog_template
-                    res.template_name = DYNAMICFORMS.modal_dialog_template
-                elif self.render_type == 'form':
-                    serializer.data_template = res.data.serializer.template_name
-                else:
-                    if isinstance(serializer, ListSerializer):
-                        serializer.child.render_type = 'table'
-                        serializer.child.data_template = self.template_name
-                    else:
-                        serializer.render_type = 'form'
-                        serializer.data_template = serializer.template_name
-            elif res.status_code == status.HTTP_403_FORBIDDEN and self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action
-                res = redirect_to_login(request.path_info + get_query_params())
         return res
 
 

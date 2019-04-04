@@ -5,8 +5,7 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import ActionMixin, DateFieldMixin, DateTimeFieldMixin, HiddenFieldMixin, NullChoiceMixin, \
-    RelatedFieldAJAXMixin, RenderToTableMixin, TimeFieldMixin, UUIDMixIn
+from .mixins import ActionMixin, HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderToTableMixin, UUIDMixIn
 from .settings import version_check
 
 
@@ -152,7 +151,7 @@ class DecimalField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DecimalFie
 
 
 # noinspection PyShadowingBuiltins
-class DateTimeField(DateTimeFieldMixin, UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DateTimeField):
+class DateTimeField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DateTimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, default_timezone=None, read_only=False,
                  write_only=False, required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -164,7 +163,7 @@ class DateTimeField(DateTimeFieldMixin, UUIDMixIn, ActionMixin, RenderToTableMix
 
 
 # noinspection PyShadowingBuiltins
-class DateField(DateFieldMixin, UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DateField):
+class DateField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.DateField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -176,7 +175,7 @@ class DateField(DateFieldMixin, UUIDMixIn, ActionMixin, RenderToTableMixin, fiel
 
 
 # noinspection PyShadowingBuiltins
-class TimeField(TimeFieldMixin, UUIDMixIn, ActionMixin, RenderToTableMixin, fields.TimeField):
+class TimeField(UUIDMixIn, ActionMixin, RenderToTableMixin, fields.TimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
