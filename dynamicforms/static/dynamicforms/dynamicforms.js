@@ -823,6 +823,9 @@ dynamicforms = {
         if (data.length > 0) {
           table.append(data);
           tbl_pagination.trigger_element = data[0];
+          if (table.find("tr[data-title=NoData]").length > 0) {
+            table.find("tr[data-title=NoData]").remove()
+          }
         }
         dynamicforms.paginatorCheckGetNextPage(formID);
       }).fail(function (xhr, status, error) {
