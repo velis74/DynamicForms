@@ -8,19 +8,20 @@
 {% endif %}
 
 <form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
-  <fieldset>
-    {% if data.id %}
-      {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
-      <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
-    {% endif %}
+  <div style="display: table" class="form-table-row">
+    <fieldset>
+  {% if data.id %}
+    {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
+    <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
+  {% endif %}
 
-    {% csrf_token %}
-    {% render_form serializer %}
-
-    {% if df_render_type != 'dialog' %}
-      {% render_table_commands serializer 'form-buttons' button_position='form' %}
-    {% endif %}
-  </fieldset>
+  {% csrf_token %}
+  {% render_form serializer %}
+    </fieldset>
+  </div>
+  {% if df_render_type != 'dialog' %}
+    {% render_table_commands serializer 'form-buttons' button_position='form' %}
+  {% endif %}
 </form>
 <script type="application/javascript">
   {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}

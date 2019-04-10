@@ -1,21 +1,25 @@
 {% load dynamicforms %}
 <div id="container-{{ field.uuid }}"
      class="{% if field.errors %}ui-error-container{% endif %}
-{% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}ui-helper-hidden{% endif %}">
+{% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}ui-helper-hidden{% endif %}"
+{% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}{% else %}style="display: table-row;"{% endif %}>
+
   {% block field_input_label %}
     {% if field.label %}
-      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %}>
+      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} style="display:table-cell">
         {{ field.label }}
       </label>
     {% endif %}
 
+    <div style="display:table-cell">
     {% block field_input %}{% endblock %}
+    </div>
   {% endblock %}
 
   {% if field.errors %}
       <br>
     {% for error in field.errors %}
-      <span class="ui-error-span">{{ error }}</span>
+      <span class="ui-error-span" style="display:table-cell">{{ error }}</span>
     {% endfor %}
   {% endif %}
 
