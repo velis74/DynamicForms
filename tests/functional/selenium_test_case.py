@@ -32,6 +32,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                                                                         port=self.live_server_url.split(':')[2])
             print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
+            self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
             self.browser = webdriver.Firefox()
 
     def tearDown(self):

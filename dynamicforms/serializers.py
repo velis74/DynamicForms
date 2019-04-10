@@ -8,10 +8,10 @@ from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn
+from .struct import StructDefault
 
 
 class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
-
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     actions = Actions(add_default_crud=True, add_form_buttons=True)
     form_titles = {
@@ -25,7 +25,13 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
     def __init__(self, *args, is_filter: bool = False, **kwds):
         self.is_filter = is_filter
         if self.is_filter:
-            kwds.setdefault('instance', defaultdict(lambda: None))
+            try:
+                instance = self.Meta.model()
+                for fld in instance._meta.fields:
+                    setattr(instance, fld.name, None)
+            except:
+                instance = StructDefault(_default_=None)
+            kwds.setdefault('instance', instance)
         super().__init__(*args, **kwds)
         if self.is_filter:
             for field in self.fields.values():
@@ -65,7 +71,10 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
         Returns serializer for filter row in table
         :return:  Serializer
         """
-        return type(self)(is_filter=True)  # Just create the same serializer in filter mode (None values, allow_nulls)
+        if getattr(self, '_filter_ser', None) is None:
+            # noinspection PyAttributeOutsideInit
+            self._filter_ser = type(self)(is_filter=True)
+        return self._filter_ser  # Just create the same serializer in filter mode (None values, allow_nulls)
 
     # noinspection PyUnusedLocal
     def suppress_action(self, action, request, viewset):
