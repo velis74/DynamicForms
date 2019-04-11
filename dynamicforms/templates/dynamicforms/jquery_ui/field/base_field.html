@@ -6,7 +6,7 @@
 
   {% block field_input_label %}
     {% if field.label %}
-      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} style="display:table-cell">
+      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} class="dynamicforms-label">
         {{ field.label }}
       </label>
     {% endif %}
@@ -18,7 +18,7 @@
 
   {% if field.errors %}
     {% for error in field.errors %}
-        <span class="ui-error-span">{{ error }}</span>
+        <span class="ui-error-span dynamicforms-field-error-message">{{ error }}</span>
     {% endfor %}
   {% endif %}
 
