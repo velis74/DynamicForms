@@ -8,7 +8,7 @@
 {% endif %}
 
 <form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
-  <div style="display: table" class="form-table-row">
+  <div style="display: table">
     <fieldset>
   {% if data.id %}
     {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}

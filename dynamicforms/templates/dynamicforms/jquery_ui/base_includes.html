@@ -1,6 +1,6 @@
 {% load static dynamicforms %}
 
-{% if DYNAMICFORMS.include_libs %}
+{% if include_libs != False %}
 <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
 <link href="{% static 'jquery_ui/css/jquery-ui.min.css' %}" rel="stylesheet">
 <link href="{% static 'jquery_ui/css/jquery-ui.structure.min.css' %}" rel="stylesheet">
@@ -23,7 +23,10 @@
   fieldset {
     border: none;
     padding: 0;
-    border-spacing: 0;
+  }
+
+  form fieldset {
+    border-spacing: .4em;
   }
 
   .ui-dialog .ui-state-error {
@@ -34,11 +37,23 @@
     margin-bottom: .8em;
   }
 
-  table td, table th {
+  table {
+    border-collapse: collapse;
+  }
+
+  table td {
     border-top: 1px solid #ddd;
-    height: 3em;
+    height: 2em;
     padding-left: .5em;
     padding-right: .5em;
+  }
+
+  table tr:nth-child(even):not(.dynamicforms-filterrow){
+    background: rgba(0, 0, 0, .1)
+  }
+
+  table tr:nth-child(odd){
+    background: rgba(255, 255, 255, .1)
   }
 
   .ui-widget-overlay {
@@ -70,14 +85,6 @@
     height: .75rem;
   }
 
-  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
-    display: none !important;
-  }
-
-  .dynamicforms-filterrow div {
-    margin: 0;
-  }
-
   .df-card {
     display: inline-block;
     margin: 1em;
@@ -91,5 +98,13 @@
 
   .dynamicforms-label {
       display: table-cell;
+  }
+
+  .dynamicforms-table-row {
+    display: table-row;
+  }
+
+  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
+    display: none !important;
   }
 </style>
