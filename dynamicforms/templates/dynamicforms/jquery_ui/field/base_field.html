@@ -11,20 +11,19 @@
       </label>
     {% endif %}
 
-    <div style="display:table-cell">
+    <div>
     {% block field_input %}{% endblock %}
     </div>
   {% endblock %}
 
   {% if field.errors %}
-      <br>
     {% for error in field.errors %}
-      <span class="ui-error-span" style="display:table-cell">{{ error }}</span>
+        <span class="ui-error-span">{{ error }}</span>
     {% endfor %}
   {% endif %}
 
   {% if field.help_text %}
-    <span id="help-{{ field.uuid }}" class="help-block">{{ field.help_text|safe }}</span>
+      <span id="help-{{ field.uuid }}" class="help-block">{{ field.help_text|safe }}</span>
   {% endif %}
 </div>
 <script type="application/javascript">
