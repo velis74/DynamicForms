@@ -48,7 +48,7 @@
       placeholder: "{{ field.placeholder }}",
       {% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}'),
+      dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent()
     });
   }, 1);
 {% else %}

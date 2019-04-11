@@ -1,7 +1,9 @@
 {% load static dynamicforms %}
+{% if DYNAMICFORMS.include_libs %}
 <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
 <link href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
 <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
+{% endif %}
 <script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
 <script type="application/javascript">
   dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};

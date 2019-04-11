@@ -22,6 +22,9 @@ class Settings(Struct):
     # specifies the basepage template to be used for TemplateHTMLRenderer
     page_template = ''
 
+    # includes libs in base_includes.html
+    include_libs = True
+
     def __init__(self, data=None, **kwds):
         kwds.setdefault('page_template', DYNAMICFORMS_BOOTSTRAP + 'page.html')
         super().__init__(data, **kwds)
