@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from django.utils import timezone
-from dynamicforms.fields import ManyRelatedField
+from rest_framework.relations import ManyRelatedField
 from rest_framework.fields import ChoiceField, DateField, TimeField
 from rest_framework.relations import RelatedField
 from rest_framework.serializers import ListSerializer
