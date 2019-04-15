@@ -875,8 +875,12 @@ dynamicforms = {
           filter[element.attr("name")] = true;
         else if (!element.is('[readonly]'))
           filter[element.attr("name")] = false;
-      } else if (element.val() != null && element.val().length)
-        filter[element.attr("name")] = element.val();
+      } else if (element.val() != null && element.val().length) {
+        if (element.is('select') && element.is("[multiple]"))
+          filter[element.attr("name")] = element.val().join('');
+        else
+          filter[element.attr("name")] = element.val();
+      }
     });
     filter = jQuery.param(filter);
     if (!filter.length)
