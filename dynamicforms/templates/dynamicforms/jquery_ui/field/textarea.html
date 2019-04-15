@@ -2,7 +2,7 @@
 {% block field_input %}
   <textarea id="{{ field.uuid }}"
             name="{{ field.name }}"
-            class="ui-widget ui-state-default ui-corner-all"
+            class="ui-widget ui-state-default ui-corner-all dynamicforms-inputs"
             {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
             {% if style.rows %}rows="{{ style.rows }}"{% endif %}
   >{% if field.value %}{{ field.value }}{% endif %}</textarea>

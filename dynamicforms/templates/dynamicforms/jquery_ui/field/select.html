@@ -1,7 +1,7 @@
 {% extends DYNAMICFORMS.field_base_template %}
 {% load dynamicforms %}
 {% block field_input %}
-<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
+<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
