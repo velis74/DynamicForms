@@ -2,11 +2,11 @@
 <div id="container-{{ field.uuid }}"
      class="{% if field.errors %}ui-error-container{% endif %}
 {% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}ui-helper-hidden{% endif %}
-{% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}{% else %}dynamicforms-table-row"{% endif %}>
+{% if field.read_only and not style.serializer.is_filter or style.display == 'none' %}{% else %}dynamicforms-table-row{% endif %}">
 
   {% block field_input_label %}
     {% if field.label %}
-      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} class="dynamicforms-label">
+      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %}class="dynamicforms-label">
         {{ field.label }}
       </label>
     {% endif %}
