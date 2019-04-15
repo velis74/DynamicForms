@@ -405,9 +405,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Change Amount field value
         form = dialog.find_element_by_id(modal_serializer_id)
         containers = form.find_elements_by_tag_name("div")
-        container_id = containers[3].get_attribute("id")
+        container_id = containers[6].get_attribute("id")
         field_id = container_id.split('-', 1)[1]
-        field = containers[3].find_element_by_id(field_id)
+        field = containers[6].find_element_by_id(field_id)
         field.clear()
         field.send_keys(11)
 
@@ -437,9 +437,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Change Amount field back to valid value
         form = dialog.find_element_by_id(modal_serializer_id)
         containers = form.find_elements_by_tag_name("div")
-        container_id = containers[3].get_attribute("id")
+        container_id = containers[6].get_attribute("id")
         field_id = container_id.split('-', 1)[1]
-        field = containers[3].find_element_by_id(field_id)
+        field = containers[6].find_element_by_id(field_id)
         field.clear()
         field.send_keys(6)
 
@@ -639,8 +639,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             container_id = container.get_attribute("id")
             if container_id.startswith("container-"):
                 field_id = container_id.split('-', 1)[1]
-                label = container.find_element_by_id("label-" + field_id)
                 field = container.find_element_by_id(field_id)
+                label = container.find_element_by_id("label-" + field_id)
 
                 field_count += 1
 

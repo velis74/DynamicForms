@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from django.utils import timezone
+from rest_framework.relations import ManyRelatedField
 from rest_framework.fields import ChoiceField, DateField, TimeField
 from rest_framework.relations import RelatedField
 from rest_framework.serializers import ListSerializer
@@ -95,13 +96,14 @@ class RenderToTableMixin(object):
                 choices = {self.to_representation(item): self.display_value(item) for item in qs}
             except:
                 choices = getattr(self, 'choices', {})
+        elif isinstance(self, ManyRelatedField):
+            # if value is a list, we're dealing with ManyRelatedField, so let's not do that
+            cr = self.child_relation
+            return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         else:
             choices = getattr(self, 'choices', {})
 
-        if isinstance(value, list) and choices:
-            # if value is a list, we're dealing with ManyRelatedField, so let's not do that
-            return ', '.join((drftt.format_value(choices[v]) for v in value))
-        elif isinstance(value, collections.Hashable) and value in choices:
+        if isinstance(value, collections.Hashable) and value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
         return drftt.format_value(value)

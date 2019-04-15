@@ -1,7 +1,7 @@
 {% extends DYNAMICFORMS.field_base_template %}
 {% load dynamicforms %}
 {% block field_input %}
-<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
+<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
@@ -30,9 +30,9 @@
           return { '{{ field.query_field }}': params.term };
         },
         processResults: function (data) {
-          console.log(data);
+          var results = data.results ? data.results : data;  //data is paginated (or it isn't)
           return {
-            results: $.map(data.results, function (item) {
+            results: $.map(results, function (item) {
               return {
                 id: item.choice_id,
                 text: item.choice_text,
@@ -48,7 +48,7 @@
       placeholder: "{{ field.placeholder }}",
       {% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}'),
+      dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent()
     });
   }, 1);
 {% else %}

@@ -30,9 +30,9 @@
           return { '{{ field.query_field }}': params.term };
         },
         processResults: function (data) {
-          console.log(data);
+          var results = data.results ? data.results : data;  //data is paginated (or it isn't)
           return {
-            results: $.map(data.results, function (item) {
+            results: $.map(results, function (item) {
               return {
                 id: item.choice_id,
                 text: item.choice_text,
