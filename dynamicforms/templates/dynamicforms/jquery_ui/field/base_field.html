@@ -6,7 +6,7 @@
 
   {% block field_input_label %}
     {% if field.label %}
-      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %}class="dynamicforms-label">
+      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} class="dynamicforms-label">
         {{ field.label }}
       </label>
     {% endif %}
