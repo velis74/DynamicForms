@@ -18,12 +18,12 @@
 
   {% if field.errors %}
     {% for error in field.errors %}
-        <span class="ui-error-span dynamicforms-field-error-message">{{ error }}</span>
+      <span class="ui-error-span dynamicforms-field-error-message">{{ error }}</span>
     {% endfor %}
   {% endif %}
 
   {% if field.help_text %}
-      <span id="help-{{ field.uuid }}" class="help-block">{{ field.help_text|safe }}</span>
+    <span id="help-{{ field.uuid }}" class="help-block">{{ field.help_text|safe }}</span>
   {% endif %}
 </div>
 <script type="application/javascript">
