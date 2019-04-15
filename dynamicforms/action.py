@@ -228,16 +228,19 @@ class FormButtonAction(ActionBase):
     def render(self, serializer: Serializer, position=None, **kwds):
         if self.btn_type == FormButtonTypes.CANCEL and position == 'form':
             return ''
+        action_js = self.action_js
+        if isinstance(action_js, str):
+            action_js = action_js.format(**locals())
         button_type = 'button' if self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog' else 'submit'
         data_dismiss = 'data-dismiss="modal"' if self.btn_type == FormButtonTypes.CANCEL else ''
         if self.btn_type == FormButtonTypes.SUBMIT:
             button_id = 'save-' + str(serializer.uuid)
         else:
             button_id = 'formbutton-' + str(self.uuid)
-        if (self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog') and self.action_js:
+        if (self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog') and action_js:
             button_js = ('<script type="text/javascript">'
                          '  $("#{button_id}").on("click", function() {{'
-                         '    {self.action_js}'
+                         '    {action_js}'
                          '  }});'
                          '</script>').format(**locals())
         else:

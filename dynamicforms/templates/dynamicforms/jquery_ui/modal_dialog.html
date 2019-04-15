@@ -6,7 +6,7 @@
   {% set_var title=serializer.form_titles.new %}
 {% endif %}
 
-<div id="dialog-tmp-{{ serializer.uuid }}" class="jquery-ui-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialog-tmp-{{ serializer.uuid }}" class="jquery-ui-dialog dynamicforms-dialog" tabindex="-1" role="dialog" aria-hidden="true">
 
   {% include DYNAMICFORMS.form_base_template with serializer=serializer data=data %}
 
