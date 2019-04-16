@@ -404,10 +404,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         # Change Amount field value
         form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
-        container_id = containers[6].get_attribute("id")
-        field_id = container_id.split('-', 1)[1]
-        field = containers[6].find_element_by_id(field_id)
+        field = form.find_elements_by_css_selector('input[name=amount]')[0]
         field.clear()
         field.send_keys(11)
 
@@ -436,10 +433,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         # Change Amount field back to valid value
         form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
-        container_id = containers[6].get_attribute("id")
-        field_id = container_id.split('-', 1)[1]
-        field = containers[6].find_element_by_id(field_id)
+        field = form.find_elements_by_css_selector('input[name=amount]')[0]
         field.clear()
         field.send_keys(6)
 
