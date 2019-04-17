@@ -44,6 +44,8 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
                 field.default = None
                 field.allow_blank = True
                 field.allow_null = True
+                field.read_only = False
+                field.display_form = field.display_table  # filter's form is same as non-filter's table
 
     @property
     def has_non_field_errors(self):
