@@ -34,9 +34,11 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         super().__init__(*args, **kwds)
         try:
             # hide the primary key field (DRF only marks it as R/O)
-            pk_field = self.fields[self.Meta.model._meta.pk.name]
-            pk_field.display_form = fields.DisplayMode.HIDDEN
-            pk_field.display_table = fields.DisplayMode.FULL
+            field_name = self.Meta.model._meta.pk.name
+            if field_name not in self._declared_fields:
+                pk_field = self.fields[field_name]
+                pk_field.display_form = fields.DisplayMode.HIDDEN
+                pk_field.display_table = fields.DisplayMode.FULL
         except:
             pass
         if self.is_filter:
