@@ -403,6 +403,8 @@ dynamicforms = {
           dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
         } else if (refreshType == 'page') {
           window.location.reload(true);
+        } else if (typeof(refreshType) == 'function') {
+          refreshType();
         } else if (refreshType.indexOf('redirect') !== -1) {
           var redirectUrl = refreshType.split(':').pop();
           window.location.href = redirectUrl;

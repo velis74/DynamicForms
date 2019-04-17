@@ -6,5 +6,7 @@
          type="{{ style.input_type }}"
          {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
          {% if field.value is not None %}value="{{ field.value }}"{% endif %}
-         {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}/>
+         {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
+         {% if field.read_only %}readonly{% endif %}
+  />
 {% endblock %}

@@ -136,11 +136,11 @@ class FieldChangeAction(ActionBase):
             self.tracked_fields = [self._resolve_reference(f) for f in self.tracked_fields]
 
     def _resolve_reference(self, ref):
-        from .mixins import UUIDMixIn
+        from .mixins import RenderMixin
 
         if isinstance(ref, uuid_module.UUID):
             return str(ref)
-        elif isinstance(ref, UUIDMixIn):
+        elif isinstance(ref, RenderMixin):
             # TODO unit tests!!!
             # TODO test what happens if the Field instance given is from another serializer
             # TODO test what happens when Field instance is actually a Serializer (when should onchange trigger for it?)

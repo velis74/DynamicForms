@@ -35,6 +35,12 @@ class Settings(Struct):
                 res[p] = getattr(self, p)
         return res
 
+    # noinspection PyPep8Naming
+    @property
+    def DisplayMode(self):
+        from .mixins import DisplayMode
+        return {e.name: e.value for e in DisplayMode}  # A copy to be accessible in the templates
+
     # ****************************************************************************
     # These are constants, generated from settings. They are shortcuts for quick use in templates and are specific
     # to the chosen template pack.

@@ -5,14 +5,17 @@
 {% block field_input %}
   {% if field.allow_null or field.allow_blank %}
     <div class="form-check">
-      <input id="{{ field.uuid }}" type="radio" name="{{ field.name }}" value="" {% if not field.value %}checked{% endif %}>
+      <input id="{{ field.uuid }}" type="radio" name="{{ field.name }}" value=""
+             {% if not field.value %}checked{% elif field.read_only %}disabled{% endif %}>
       <label id="label-{{ field.uuid }}">{{ none_choice }}</label>
     </div>
   {% endif %}
 
   {% for key, text in field.choices|items %}
     <div class="form-check">
-      <input id="{{ field.uuid }}" type="radio" name="{{ field.name }}" value="{{ key }}" {% if key|as_string == field.value|as_string %}checked{% endif %}>
+      <input id="{{ field.uuid }}" type="radio" name="{{ field.name }}" value="{{ key }}"
+             {% if key|as_string == field.value|as_string %}checked{% elif field.read_only %}disabled{% endif %}
+      >
       <label id="label-{{ field.uuid }}">{{ text }}</label>
     </div>
   {% endfor %}

@@ -2,7 +2,11 @@
 {% load i18n dynamicforms %}
 {% trans "No items to select." as no_items %}
 {% block field_input %}
-<select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }} {% if field.errors %}is-invalid{% endif %}" style="width: 100%" name="{{ field.name }}">
+<select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }}
+        {% if field.errors %}is-invalid{% endif %}"
+        {% if field.read_only %}disabled{% endif %}
+        style="width: 100%" name="{{ field.name }}"
+  >
   {% for select in field.iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">

@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Any
 
 from django.db import models
@@ -7,11 +6,11 @@ from rest_framework import serializers
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
-from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn
+from .mixins import ActionMixin, RenderMixin
 from .struct import StructDefault
 
 
-class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
+class DynamicFormsSerializer(RenderMixin, ActionMixin):
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     actions = Actions(add_default_crud=True, add_form_buttons=True)
     form_titles = {
@@ -33,6 +32,13 @@ class DynamicFormsSerializer(UUIDMixIn, ActionMixin, RenderToTableMixin):
                 instance = StructDefault(_default_=None)
             kwds.setdefault('instance', instance)
         super().__init__(*args, **kwds)
+        try:
+            # hide the primary key field (DRF only marks it as R/O)
+            pk_field = self.fields[self.Meta.model._meta.pk.name]
+            pk_field.display_form = fields.DisplayMode.HIDDEN
+            pk_field.display_table = fields.DisplayMode.FULL
+        except:
+            pass
         if self.is_filter:
             for field in self.fields.values():
                 field.default = None

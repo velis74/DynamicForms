@@ -6,6 +6,7 @@
          type="checkbox"
          name="{{ field.name }}"
          value="true"
+         {% if field.read_only %}disabled{% endif %}
          {% if field.value %}checked{% endif %}
   />
   {% if field.label %}

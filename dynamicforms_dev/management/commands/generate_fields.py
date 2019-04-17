@@ -16,7 +16,7 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import UUIDMixIn, RenderToTableMixin, ActionMixin, NullChoiceMixin, \
+        from dynamicforms.mixins import RenderMixin, ActionMixin, NullChoiceMixin, \
             RelatedFieldAJAXMixin
         from dynamicforms import mixins, action
 
@@ -37,17 +37,15 @@ class Command(BaseCommand):
             # get all the field-specific mixins
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
-
-
+            print('import warnings', file=output)
             print('from typing import Optional', file=output)
             print('from uuid import UUID\n', file=output)
             print('import rest_framework', file=output)
             print('from rest_framework import fields, relations\n', file=output)
             print('from .action import Actions', file=output)
 
-            print('from .mixins import ActionMixin, RenderToTableMixin, UUIDMixIn, NullChoiceMixin, '
-                  'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins),
-                  file=output)
+            print('from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, ' +
+                  'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins), file=output)
             print('from .settings import version_check', file=output)
 
             for field in field_list:
@@ -63,8 +61,7 @@ class Command(BaseCommand):
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 param_classes.append((0, ActionMixin))
-                param_classes.append((0, RenderToTableMixin))
-                param_classes.append((0, UUIDMixIn))
+                param_classes.append((0, RenderMixin))
 
                 skip_depth = 0
                 for depth, cls in param_classes:
@@ -172,7 +169,7 @@ class Command(BaseCommand):
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'UUIDMixIn, ActionMixin, RenderToTableMixin, {field_module}{field_class}):'
+                            f'RenderMixin, ActionMixin, {field_module}{field_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),
@@ -185,6 +182,18 @@ class Command(BaseCommand):
                 indt = lambda n: ' ' * (n + len(hstore_field_indent))
                 print(f'', file=output)
                 print(indt(4) + f'def __init__({field_params}):', file=output)
+
+                if issubclass(field, fields.ReadOnlyField):
+                    print(indt(8) + "warnings.warn('deprecated - wrong approach! Use read_only attribute "
+                                    "instead.',", file=output)
+                    print(indt(22) + "DeprecationWarning, stacklevel=2)", file=output)
+                    print(indt(8) + "read_only = True", file=output)
+                elif issubclass(field, fields.HiddenField):
+                    print(indt(8) + "warnings.warn('deprecated - wrong approach! Use display(|_table|_form) "
+                                    "attributes instead.',", file=output)
+                    print(indt(22) + "DeprecationWarning, stacklevel=2)", file=output)
+                    print(indt(8) + "display = DisplayMode.HIDDEN", file=output)
+
                 print(indt(8) + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', "
                       f"'kw'))}}", file=output)
                 print(indt(8) + f'kwargs.update(kw)', file=output)
@@ -193,13 +202,13 @@ class Command(BaseCommand):
                     print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
                     print(indt(8) + "if not version_check(rest_framework.VERSION, '3.7.2'):", file=output)
                     print(indt(12) + "kwargs.pop('rounding', None)", file=output)
+                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
                     print(indt(8) + "if not version_check(rest_framework.VERSION, '3.4.0'):", file=output)
                     print(indt(12) + "kwargs.pop('localize', None)", file=output)
                 elif issubclass(field, fields.SlugField):
                     print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
                     print(indt(8) + "if not version_check(rest_framework.VERSION, '3.6.4'):", file=output)
                     print(indt(12) + "kwargs.pop('allow_unicode', None)", file=output)
-
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 
     print('fields.py successfully generated')

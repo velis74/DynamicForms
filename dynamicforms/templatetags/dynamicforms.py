@@ -9,6 +9,8 @@ from rest_framework.utils.encoders import JSONEncoder
 from ..action import TablePosition
 from ..renderers import HTMLFormRenderer
 from ..struct import Struct
+from ..mixins import DisplayMode
+
 
 register = template.Library()
 
@@ -132,7 +134,7 @@ def table_columns_count(serializer):
     """
     actions = serializer.actions.renderable_actions(serializer)
 
-    return (len([f for f in serializer.fields.values() if f.visible_in_table])
+    return (len([f for f in serializer.fields.values() if f.display_table == DisplayMode.FULL])
             + (1 if any(action.position == "rowend" for action in actions) else 0)
             + (1 if any(action.position == "rowstart" for action in actions) else 0))
 

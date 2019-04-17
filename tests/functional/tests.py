@@ -202,7 +202,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     self.assertTrue(
                         False, "Wrong field container - label: '{label.text}' {check} {fname}".format(**locals())
                     )
-        self.assertEqual(field_count, 7)
+        self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model
@@ -667,8 +667,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                         self.assertTrue(field.tag_name == "select")
                         select.select_by_index(3)
                 elif label.text == "Readonly field":
-                    self.initial_check(field, "", "readonly_field", "text")
-                    self.assertTrue(field.text == "true")
+                    self.initial_check(field, "", "readonly_field", "checkbox")
+                    self.assertEqual(field.get_attribute('checked'), 'true')
                 elif label.text == "Filepath field":
                     # Check if filepath_field field is select2 element
                     try:
@@ -751,7 +751,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 else:
                     field_count -= 1
 
-        self.assertEqual(field_count, 5)
+        self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 

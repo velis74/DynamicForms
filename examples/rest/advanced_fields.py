@@ -24,8 +24,8 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         (3, 'Choice 4'),
     ))
 
-    hidden_field = fields.HiddenField(default=timezone.now)
-    readonly_field = fields.ReadOnlyField()
+    hidden_field = fields.DateTimeField(default=timezone.now, display=fields.DisplayMode.HIDDEN)
+    readonly_field = fields.BooleanField(read_only=True)
     filepath_field = fields.FilePathField(path='examples')
 
     # TODO: MultipleChoiceField

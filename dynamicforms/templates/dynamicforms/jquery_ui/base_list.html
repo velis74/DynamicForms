@@ -8,7 +8,7 @@
     {# TODO: Remove "Actions" strings #}
     {% render_table_commands serializer "thead_rowstart" %}
     {% for column in serializer.fields.values %}
-      {% if column.visible_in_table %}
+      {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL %}
         <th>{{ column.label }}</th>{% endif %}{% endfor %}
     {% render_table_commands serializer "thead_rowend" %}
   </tr>

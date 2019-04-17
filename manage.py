@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import os
 import sys
+import warnings
+
 
 if __name__ == "__main__":  # pragma: no cover
+    warnings.filterwarnings("default", category=DeprecationWarning)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "setup.settings")
     try:
         from django.core.management import execute_from_command_line

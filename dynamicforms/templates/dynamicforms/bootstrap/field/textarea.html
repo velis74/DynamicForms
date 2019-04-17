@@ -7,5 +7,6 @@
             "
             {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
             {% if style.rows %}rows="{{ style.rows }}"{% endif %}
+            {% if field.read_only %}readonly{% endif %}
   >{% if field.value %}{{ field.value }}{% endif %}</textarea>
 {% endblock %}

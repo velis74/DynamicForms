@@ -3,7 +3,10 @@
 {% block field_input %}
   {% for key, text in field.choices|items %}
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" name="{{ field.name }}" value="{{ key }}" {% if key|as_string in field.value|as_list_of_strings %}checked{% endif %}>
+      <input class="form-check-input" type="checkbox" name="{{ field.name }}" value="{{ key }}"
+             {% if key|as_string in field.value|as_list_of_strings %}checked{% endif %}
+             {% if field.read_only %}disabled{% endif %}
+      >
       <label class="form-check-label">{{ text }}</label>
     </div>
   {% endfor %}
