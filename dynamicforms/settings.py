@@ -99,9 +99,9 @@ class SettingsBootstrap(Settings):
     select2_bs_css = property(if3_4('select2/css/select2-bootstrap3.min.css', 'select2/css/select2-bootstrap4.min.css'))
 
     # classes for card divs
-    bs_card_class = property(if3_4('panel panel-default', 'card'))
-    bs_card_header = property(if3_4('panel-heading', 'card-header'))
-    bs_card_body = property(if3_4('panel-body', 'card-body'))
+    bs_card_class = property(if3_4('panel panel-default df-card', 'card df-card'))
+    bs_card_header = property(if3_4('panel-heading df-card-header', 'card-header df-card-header'))
+    bs_card_body = property(if3_4('panel-body df-card-body', 'card-body df-card-body'))
 
     page_includes = property(lambda self: self.template + ('base_includes_%s.html' % self.bootstrap_version))
     field_base_template = property(lambda self: self.template + ('field/base_field_%s.html' % self.bootstrap_version))
