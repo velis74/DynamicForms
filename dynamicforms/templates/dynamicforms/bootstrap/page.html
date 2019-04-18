@@ -6,7 +6,7 @@
 {% block body %}
   {% get_data_template as data_template %}
 
-<div class="{{ DYNAMICFORMS.bs_card_class }} df-card">
+<div class="{{ DYNAMICFORMS.bs_card_class }}">
   <div class="{{ DYNAMICFORMS.bs_card_header }}">
     {{ serializer.page_title }}
     {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}

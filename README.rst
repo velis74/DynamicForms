@@ -148,7 +148,7 @@ and render the actual data, be it table or form. See DYNAMICFORMS_PAGE_TEMPLATE.
    {% block body %}
      {% get_data_template as data_template %}
 
-   <div class="{{ DYNAMICFORMS.bs_card_class }}" style="display: inline-block; margin: 1em">
+   <div class="{{ DYNAMICFORMS.bs_card_class }}">
      <div class="{{ DYNAMICFORMS.bs_card_header }}">
        {{ serializer.page_title }}
        {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}

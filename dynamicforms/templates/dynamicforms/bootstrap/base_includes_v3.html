@@ -44,7 +44,7 @@
   }
 
   .df-card {
-    display: inline-block;
+    /* display: inline-block; */
     margin: 1em;
   }
 
@@ -59,6 +59,38 @@
   .select2-container--bootstrap {
     /* otherwise select2s are too narrow */
     width: 100% !important;
+  }
+
+  .d-inline {
+    display: inline;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  /* md modifiers */
+  @media (min-width: 60em) {
+    .d-md-inline {
+      display: inline;
+    }
+    .d-md-none {
+      display: none;
+    }
+  }
+
+  /* lg modifiers */
+  @media (min-width: 75em) {
+    .d-lg-inline {
+      display: inline;
+    }
+    .d-lg-none {
+      display: none;
+    }
+  }
+
+  input[type=number] {
+    max-width: 8em;
   }
 
   @media (max-width: 991px) {
