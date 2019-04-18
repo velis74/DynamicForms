@@ -3,7 +3,7 @@
 {% trans "No items to select." as no_items %}
 {% block field_input %}
 <select multiple {{ field.choices|yesno:",disabled" }} id="{{field.uuid}}"
-        class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs{{ DYNAMICFORMS.select2_form_field_class }}"
+        class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs {{ DYNAMICFORMS.select2_form_field_class }}"
         name="{{ field.name }}"
         {% if field.read_only %}disabled{% endif %}
   >
