@@ -4,7 +4,7 @@
 <select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs
         {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}"
         {% if field.read_only %}disabled{% endif %}
-  >
+  style="min-width: 6em">
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
@@ -47,11 +47,12 @@
       // Disables ajax request on dropdown opening
       minimumInputLength: 1,
       {% endif %}
-      {% if field.placeholder %}
-      placeholder: "{{ field.placeholder }}",
+      {% if field.placeholder or field.url_reverse %}
+      placeholder: "{{ field.placeholder|default_if_none:_("Search for a value") }}",
       {% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent()
+      dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent(),
+      width: '100%'
     });
   }, 1);
 {% else %}
