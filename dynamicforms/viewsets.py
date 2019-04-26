@@ -133,8 +133,9 @@ class TemplateRendererMixin():
                     else:
                         serializer.render_type = 'form'
                         serializer.data_template = serializer.template_name
-            elif res.status_code == status.HTTP_403_FORBIDDEN and self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action
+            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
+                    self.render_type != 'dialog':
+                # TODO: We should show a message here that user is not authorized for this action (only for 403)
                 res = redirect_to_login(request.path_info + get_query_params())
         return res
 
