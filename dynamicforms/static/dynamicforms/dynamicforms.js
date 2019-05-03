@@ -678,11 +678,21 @@ dynamicforms = {
    *
    * @param field: id or jQuery object of the field
    * @param value: new value to set
+   * @param select2_ajax_option_text: label of selected option to be added to select2 options list. Only use when select2 is ajax
    */
-  fieldSetValue: function fieldSetValue(field, value) {
+  fieldSetValue: function fieldSetValue(field, value, select2_ajax_option_text) {
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     if ($field.attr('type') == 'checkbox')
       return $field.prop('checked', value);
+    if ($field.data('select2')) {
+      if ($field.data('select2').options.options.ajax) {
+        var opt = $('<option value="' + value + '"></option>').text(select2_ajax_option_text);
+        $field.append(opt);
+      }
+      $field.val(value);
+      $field.trigger('change');
+      return;
+    }
     $field.val(value);
   },
 
