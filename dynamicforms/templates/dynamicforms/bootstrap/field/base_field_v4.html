@@ -23,8 +23,8 @@
   {% endif %}
   {% comment %}</div>{% endcomment %}
 
-  {% if field.help_text %}
-    <span id="help-{{ field.uuid }}" class="form-text text-muted">{{ field.help_text|safe }}</span>
+  {% if field.help_text_form %}
+    <span id="help-{{ field.uuid }}" class="form-text text-muted">{{ field.help_text_form|safe }}</span>
   {% endif %}
 </div>
 <script type="application/javascript">

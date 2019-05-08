@@ -241,3 +241,28 @@ class DateTimeFieldMixin(NaturalDateTimeMixin):
 
     def __init__(self, *args, table_format: str = '', **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
+
+
+class FieldHelpTextMixin(object):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    @property
+    def help_text(self):
+        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('form', None)
+
+    @help_text.setter
+    def help_text(self, value):
+        self._help_text = value
+
+    @property
+    def help_text_form(self):
+        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('form')
+
+    @property
+    def help_text_doc(self):
+        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('doc')
+
+    @help_text.deleter
+    def help_text(self):
+        del self._help_text

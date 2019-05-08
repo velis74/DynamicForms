@@ -6,11 +6,12 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin, HiddenFieldMixin
+from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, DateTimeFieldMixin, \
+    DateFieldMixin, TimeFieldMixin, HiddenFieldMixin, FieldHelpTextMixin
 from .settings import version_check
 
 
-class BooleanField(RenderMixin, ActionMixin, fields.BooleanField):
+class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -22,7 +23,7 @@ class BooleanField(RenderMixin, ActionMixin, fields.BooleanField):
         super().__init__(**kwargs)
 
 
-class NullBooleanField(RenderMixin, ActionMixin, fields.NullBooleanField):
+class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -34,7 +35,7 @@ class NullBooleanField(RenderMixin, ActionMixin, fields.NullBooleanField):
         super().__init__(**kwargs)
 
 
-class CharField(RenderMixin, ActionMixin, fields.CharField):
+class CharField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -46,7 +47,7 @@ class CharField(RenderMixin, ActionMixin, fields.CharField):
         super().__init__(**kwargs)
 
 
-class EmailField(RenderMixin, ActionMixin, fields.EmailField):
+class EmailField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -58,7 +59,7 @@ class EmailField(RenderMixin, ActionMixin, fields.EmailField):
         super().__init__(**kwargs)
 
 
-class RegexField(RenderMixin, ActionMixin, fields.RegexField):
+class RegexField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField):
 
     def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -70,7 +71,7 @@ class RegexField(RenderMixin, ActionMixin, fields.RegexField):
         super().__init__(**kwargs)
 
 
-class SlugField(RenderMixin, ActionMixin, fields.SlugField):
+class SlugField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
 
     def __init__(self, allow_unicode=False, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -85,7 +86,7 @@ class SlugField(RenderMixin, ActionMixin, fields.SlugField):
         super().__init__(**kwargs)
 
 
-class URLField(RenderMixin, ActionMixin, fields.URLField):
+class URLField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -97,7 +98,7 @@ class URLField(RenderMixin, ActionMixin, fields.URLField):
         super().__init__(**kwargs)
 
 
-class UUIDField(RenderMixin, ActionMixin, fields.UUIDField):
+class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -109,7 +110,7 @@ class UUIDField(RenderMixin, ActionMixin, fields.UUIDField):
         super().__init__(**kwargs)
 
 
-class IPAddressField(RenderMixin, ActionMixin, fields.IPAddressField):
+class IPAddressField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddressField):
 
     def __init__(self, protocol='both', read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -121,7 +122,7 @@ class IPAddressField(RenderMixin, ActionMixin, fields.IPAddressField):
         super().__init__(**kwargs)
 
 
-class IntegerField(RenderMixin, ActionMixin, fields.IntegerField):
+class IntegerField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -133,7 +134,7 @@ class IntegerField(RenderMixin, ActionMixin, fields.IntegerField):
         super().__init__(**kwargs)
 
 
-class FloatField(RenderMixin, ActionMixin, fields.FloatField):
+class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -145,7 +146,7 @@ class FloatField(RenderMixin, ActionMixin, fields.FloatField):
         super().__init__(**kwargs)
 
 
-class DecimalField(RenderMixin, ActionMixin, fields.DecimalField):
+class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalField):
 
     def __init__(self, max_digits, decimal_places, coerce_to_string=None, max_value=None, min_value=None,
                  localize=False, rounding=None, read_only=False, write_only=False, required=None, default=fields.empty,
@@ -165,7 +166,7 @@ class DecimalField(RenderMixin, ActionMixin, fields.DecimalField):
 
 
 # noinspection PyShadowingBuiltins
-class DateTimeField(DateTimeFieldMixin, RenderMixin, ActionMixin, fields.DateTimeField):
+class DateTimeField(DateTimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateTimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, default_timezone=None, read_only=False,
                  write_only=False, required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -178,7 +179,7 @@ class DateTimeField(DateTimeFieldMixin, RenderMixin, ActionMixin, fields.DateTim
 
 
 # noinspection PyShadowingBuiltins
-class DateField(DateFieldMixin, RenderMixin, ActionMixin, fields.DateField):
+class DateField(DateFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -191,7 +192,7 @@ class DateField(DateFieldMixin, RenderMixin, ActionMixin, fields.DateField):
 
 
 # noinspection PyShadowingBuiltins
-class TimeField(TimeFieldMixin, RenderMixin, ActionMixin, fields.TimeField):
+class TimeField(TimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.TimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -203,7 +204,7 @@ class TimeField(TimeFieldMixin, RenderMixin, ActionMixin, fields.TimeField):
         super().__init__(**kwargs)
 
 
-class DurationField(RenderMixin, ActionMixin, fields.DurationField):
+class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DurationField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -215,7 +216,7 @@ class DurationField(RenderMixin, ActionMixin, fields.DurationField):
         super().__init__(**kwargs)
 
 
-class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, fields.ChoiceField):
+class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ChoiceField):
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -227,7 +228,7 @@ class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, fields.ChoiceField)
         super().__init__(**kwargs)
 
 
-class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, fields.MultipleChoiceField):
+class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.MultipleChoiceField):
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -239,7 +240,7 @@ class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, fields.Mult
         super().__init__(**kwargs)
 
 
-class FilePathField(NullChoiceMixin, RenderMixin, ActionMixin, fields.FilePathField):
+class FilePathField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FilePathField):
 
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -251,7 +252,7 @@ class FilePathField(NullChoiceMixin, RenderMixin, ActionMixin, fields.FilePathFi
         super().__init__(**kwargs)
 
 
-class FileField(RenderMixin, ActionMixin, fields.FileField):
+class FileField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -263,7 +264,7 @@ class FileField(RenderMixin, ActionMixin, fields.FileField):
         super().__init__(**kwargs)
 
 
-class ImageField(RenderMixin, ActionMixin, fields.ImageField):
+class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -275,7 +276,7 @@ class ImageField(RenderMixin, ActionMixin, fields.ImageField):
         super().__init__(**kwargs)
 
 
-class ListField(RenderMixin, ActionMixin, fields.ListField):
+class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -287,7 +288,7 @@ class ListField(RenderMixin, ActionMixin, fields.ListField):
         super().__init__(**kwargs)
 
 
-class DictField(RenderMixin, ActionMixin, fields.DictField):
+class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -300,7 +301,7 @@ class DictField(RenderMixin, ActionMixin, fields.DictField):
 
 
 if hasattr(fields, 'HStoreField'):
-    class HStoreField(RenderMixin, ActionMixin, fields.HStoreField):
+    class HStoreField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.HStoreField):
 
         def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                      source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -312,7 +313,7 @@ if hasattr(fields, 'HStoreField'):
             super().__init__(**kwargs)
 
 
-class JSONField(RenderMixin, ActionMixin, fields.JSONField):
+class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -325,7 +326,7 @@ class JSONField(RenderMixin, ActionMixin, fields.JSONField):
 
 
 # noinspection PyAbstractClass
-class ReadOnlyField(RenderMixin, ActionMixin, fields.ReadOnlyField):
+class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnlyField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -341,7 +342,7 @@ class ReadOnlyField(RenderMixin, ActionMixin, fields.ReadOnlyField):
 
 
 # noinspection PyAbstractClass
-class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, fields.HiddenField):
+class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.HiddenField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -357,7 +358,7 @@ class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, fields.HiddenField
 
 
 # noinspection PyAbstractClass
-class SerializerMethodField(RenderMixin, ActionMixin, fields.SerializerMethodField):
+class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SerializerMethodField):
 
     def __init__(self, method_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -369,7 +370,7 @@ class SerializerMethodField(RenderMixin, ActionMixin, fields.SerializerMethodFie
         super().__init__(**kwargs)
 
 
-class ModelField(RenderMixin, ActionMixin, fields.ModelField):
+class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField):
 
     def __init__(self, model_field, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -381,7 +382,8 @@ class ModelField(RenderMixin, ActionMixin, fields.ModelField):
         super().__init__(**kwargs)
 
 
-class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relations.StringRelatedField):
+class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                         relations.StringRelatedField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -394,7 +396,8 @@ class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relati
         super().__init__(**kwargs)
 
 
-class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relations.PrimaryKeyRelatedField):
+class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                             relations.PrimaryKeyRelatedField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -407,7 +410,8 @@ class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, re
         super().__init__(**kwargs)
 
 
-class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relations.HyperlinkedRelatedField):
+class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                              relations.HyperlinkedRelatedField):
 
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -420,7 +424,8 @@ class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, r
         super().__init__(**kwargs)
 
 
-class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relations.HyperlinkedIdentityField):
+class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                               relations.HyperlinkedIdentityField):
 
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -433,7 +438,7 @@ class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, 
         super().__init__(**kwargs)
 
 
-class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relations.SlugRelatedField):
+class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, relations.SlugRelatedField):
 
     def __init__(self, slug_field=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -446,7 +451,7 @@ class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, relation
         super().__init__(**kwargs)
 
 
-class ManyRelatedField(RenderMixin, ActionMixin, relations.ManyRelatedField):
+class ManyRelatedField(RenderMixin, ActionMixin, FieldHelpTextMixin, relations.ManyRelatedField):
 
     def __init__(self, child_relation=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
