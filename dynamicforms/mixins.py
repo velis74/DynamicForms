@@ -3,7 +3,7 @@ import re
 import uuid as uuid_module
 from datetime import datetime
 from enum import IntEnum
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from django.utils import timezone
 from rest_framework.fields import ChoiceField, DateField, TimeField
@@ -244,25 +244,35 @@ class DateTimeFieldMixin(NaturalDateTimeMixin):
 
 
 class FieldHelpTextMixin(object):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    """
+    Redefines help_text property such that we can set help text for api docs and form help text
+    """
 
-    @property
-    def help_text(self):
-        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('form', None)
+    def __init__(self, *args, help_text: Union[str, dict, None] = None, help_text_form: Optional[str] = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs, help_text=help_text)
+        self.help_text = help_text
+        if help_text_form or not isinstance(help_text, dict):
+            self.help_text_form = help_text_form or self.help_text
 
-    @help_text.setter
-    def help_text(self, value):
-        self._help_text = value
+    def get_help_text(self):
+        return self._help_text
 
-    @property
-    def help_text_form(self):
-        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('form')
+    def set_help_text(self, value):
+        if isinstance(value, dict):
+            self._help_text = value.get('doc', None)
+            self._help_text_form = value.get('form', None)
+        else:
+            self._help_text = value
+            self._help_text_form = getattr(self, '_help_text_form', None) or value
 
-    @property
-    def help_text_doc(self):
-        return self._help_text if not isinstance(self._help_text, dict) else self._help_text.get('doc')
+    def get_help_text_form(self):
+        return self._help_text_form
 
-    @help_text.deleter
-    def help_text(self):
-        del self._help_text
+    def set_help_text_form(self, value):
+        if isinstance(value, dict):
+            self._help_text = value.get('form', None)
+        else:
+            self._help_text_form = value
+
+    help_text = property(get_help_text, set_help_text)
+    help_text_form = property(get_help_text_form, set_help_text_form)

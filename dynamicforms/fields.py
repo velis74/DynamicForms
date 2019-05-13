@@ -6,8 +6,7 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, DateTimeFieldMixin, \
-    DateFieldMixin, TimeFieldMixin, HiddenFieldMixin, FieldHelpTextMixin
+from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin, DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin, HiddenFieldMixin
 from .settings import version_check
 
 
@@ -15,9 +14,8 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None, display_table: DisplayMode =
+                 None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -27,9 +25,8 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None, display_table: DisplayMode =
+                 None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -40,8 +37,7 @@ class CharField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -52,8 +48,7 @@ class EmailField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -63,9 +58,9 @@ class RegexField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField
 
     def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -75,9 +70,9 @@ class SlugField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
 
     def __init__(self, allow_unicode=False, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         # noinspection PyUnresolvedReferences
@@ -91,8 +86,7 @@ class URLField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -103,8 +97,7 @@ class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -114,9 +107,9 @@ class IPAddressField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddr
 
     def __init__(self, protocol='both', read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -127,8 +120,7 @@ class IntegerField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerF
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -139,8 +131,7 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -151,9 +142,9 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
     def __init__(self, max_digits, decimal_places, coerce_to_string=None, max_value=None, min_value=None,
                  localize=False, rounding=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         # noinspection PyUnresolvedReferences
@@ -184,8 +175,8 @@ class DateField(DateFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
                  error_messages=None, validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -197,8 +188,8 @@ class TimeField(TimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
                  error_messages=None, validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -209,8 +200,7 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -220,9 +210,9 @@ class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -232,9 +222,9 @@ class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTe
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -257,8 +247,7 @@ class FileField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -269,8 +258,7 @@ class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -281,8 +269,7 @@ class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -293,8 +280,7 @@ class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -306,8 +292,7 @@ if hasattr(fields, 'HStoreField'):
         def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                      source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                      allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                     display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                     '', **kw):
+                     display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
             kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
             kwargs.update(kw)
             super().__init__(**kwargs)
@@ -318,8 +303,7 @@ class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -331,8 +315,7 @@ class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnl
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         warnings.warn('deprecated - wrong approach! Use read_only attribute instead.',
                       DeprecationWarning, stacklevel=2)
         read_only = True
@@ -347,8 +330,7 @@ class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str =
-                 '', **kw):
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         warnings.warn('deprecated - wrong approach! Use display(|_table|_form) attributes instead.',
                       DeprecationWarning, stacklevel=2)
         display = DisplayMode.HIDDEN
@@ -362,9 +344,9 @@ class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields
 
     def __init__(self, method_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -374,9 +356,9 @@ class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField
 
     def __init__(self, model_field, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -384,7 +366,6 @@ class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField
 
 class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
                          relations.StringRelatedField):
-
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, url_reverse: Optional[str] = None, placeholder: Optional[str] = None,
@@ -398,7 +379,6 @@ class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldH
 
 class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
                              relations.PrimaryKeyRelatedField):
-
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
                  allow_null=False, url_reverse: Optional[str] = None, placeholder: Optional[str] = None,
@@ -412,7 +392,6 @@ class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, Fi
 
 class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
                               relations.HyperlinkedRelatedField):
-
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
                  validators=None, allow_null=False, url_reverse: Optional[str] = None, placeholder: Optional[str] =
@@ -426,7 +405,6 @@ class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, F
 
 class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
                                relations.HyperlinkedIdentityField):
-
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
                  validators=None, allow_null=False, url_reverse: Optional[str] = None, placeholder: Optional[str] =
@@ -455,9 +433,9 @@ class ManyRelatedField(RenderMixin, ActionMixin, FieldHelpTextMixin, relations.M
 
     def __init__(self, child_relation=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=True, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None,
-                 display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 validators=None, allow_null=True, actions: Actions = None, uuid: UUID = None, display: DisplayMode =
+                 None, display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
