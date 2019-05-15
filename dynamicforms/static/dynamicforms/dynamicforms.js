@@ -183,20 +183,30 @@ dynamicforms = {
     if (link_next == undefined) {
       var $htmlObject = $(data);
 
+      var oldTableKey = undefined;
+      var oldTable =  $($('table[id*="list-"]').filter(function(key, item) {
+          if ($(item).attr('id').includes(formID)) {
+            oldTableKey=key;
+            return item;
+          }
+      }));
+
+      $htmlObject = $($htmlObject.find("table[id*='list-']")[oldTableKey]);
+
       if (recordID) {
         var trSelector    = "tr[data-id='" + recordID + "']";
         var $editedRow    = $htmlObject.find(trSelector); // Edited record from ajax returned html
-        var $rowToRefresh = $(trSelector); // Row to refresh
+        var $rowToRefresh = $(oldTable.find(trSelector)); // Row to refresh
         $rowToRefresh.replaceWith($editedRow);
       } else {
-        var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
-        var $newRow  = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
+        var $lastRow = oldTable.find("tr[data-id]").last(); // Last row before adding new record
+        var $newRow  = $htmlObject.find("tr[data-id]").last(); // Added record from ajax returned html
 
         // Insert new row after the last row or insert first row
         if ($lastRow.length) {
           $newRow.insertAfter($lastRow);
         } else {
-          $("table").find("tr[data-title]").replaceWith($newRow);
+          oldTable.find("tr[data-title]").replaceWith($newRow);
         }
       }
     } else { // Case when table is larger than pagination
