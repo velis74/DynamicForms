@@ -45,7 +45,7 @@ class Command(BaseCommand):
             print('from .action import Actions', file=output)
 
             print('from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, ' +
-                  'RelatedFieldAJAXMixin, ' + ', '.join(field_mixins), file=output)
+                  'RelatedFieldAJAXMixin, FieldHelpTextMixin, ' + ', '.join(field_mixins), file=output)
             print('from .settings import version_check', file=output)
 
             for field in field_list:
@@ -169,7 +169,7 @@ class Command(BaseCommand):
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'RenderMixin, ActionMixin, {field_module}{field_class}):'
+                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{field_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),
