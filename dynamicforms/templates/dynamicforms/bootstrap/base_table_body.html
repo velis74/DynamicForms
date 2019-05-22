@@ -1,32 +1,35 @@
 {% load dynamicforms %}
 
-  {% for row in data %}
-    <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}" data-previous="{{ link_prev }}" {% endif %}
-        {% for key, value in row|items %}
-          {% set_var column=serializer.fields|dict_item:key %}
-          {% if key in serializer.fields and column.display_table == DYNAMICFORMS.DisplayMode.HIDDEN %}
-            data-{{ key }}="{{ value }}"
-          {% endif %}
-        {% endfor %}
-      >
-      {% render_table_commands serializer "rowstart" %}
+{% for row in data %}
+  <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}"
+      data-previous="{{ link_prev }}" {% endif %}
       {% for key, value in row|items %}
         {% set_var column=serializer.fields|dict_item:key %}
-        {% if key in serializer.fields and column.display_table == DYNAMICFORMS.DisplayMode.FULL %}
-          <td class="{{ column.table_classes }}" {{ value|add_nested_class }} data-name="{{ key }}">
+        {% if key in serializer.fields and column.display_table == DYNAMICFORMS.DisplayMode.HIDDEN %}
+      data-{{ key }}="{{ value }}"
+        {% endif %}
+      {% endfor %}
+  >
+    {% render_table_commands serializer "rowstart" %}
+    {% for key, value in row|items %}
+      {% set_var column=serializer.fields|dict_item:key %}
+      {% if key in serializer.fields %}
+        {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
+          <td class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}" {{ value|add_nested_class }} data-name="{{ key }}">
             {% render_table_commands serializer "fieldleft" key %}
             {% render_field_to_table serializer key value row %}
             {% render_table_commands serializer "fieldright" key %}
           </td>
         {% endif %}
-      {% endfor %}
-      {% render_table_commands serializer "rowend" %}
-    </tr>
-  {% empty %}
-    <tr data-title="NoData">
-      {% if columns_count == None %}
-        {% table_columns_count serializer as columns_count %}
       {% endif %}
-      <td colspan="{{ columns_count }}" style="text-align: center">No data</td>
-    </tr>
-  {% endfor %}
+    {% endfor %}
+    {% render_table_commands serializer "rowend" %}
+  </tr>
+{% empty %}
+  <tr data-title="NoData">
+    {% if columns_count == None %}
+      {% table_columns_count serializer as columns_count %}
+    {% endif %}
+    <td colspan="{{ columns_count }}" style="text-align: center">No data</td>
+  </tr>
+{% endfor %}

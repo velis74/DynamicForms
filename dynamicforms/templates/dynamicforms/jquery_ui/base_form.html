@@ -23,9 +23,12 @@
     {% render_table_commands serializer 'form-buttons' button_position='form' %}
   {% endif %}
 </form>
+{% block formend_includes %}{% endblock %}
 <script type="application/javascript">
   {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}
   {% block field_actions %}
     {% render_table_commands serializer 'onfieldchange' %}
   {% endblock %}
+
+  {% block scriptend-includes %}{% endblock %}
 </script>
