@@ -44,8 +44,13 @@ class Command(BaseCommand):
             print('from rest_framework import fields, relations\n', file=output)
             print('from .action import Actions', file=output)
 
-            print('from .mixins import ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, ' +
-                  'RelatedFieldAJAXMixin, FieldHelpTextMixin, ' + ', '.join(field_mixins), file=output)
+            print('from .mixins import (', file=output, end='')
+            print('\n    '.join(
+                [''] +
+                textwrap.wrap('ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
+                              'FieldHelpTextMixin, ' + ', '.join(field_mixins), 115)
+            ), file=output)
+            print(')', file=output)
             print('from .settings import version_check', file=output)
 
             for field in field_list:
@@ -130,13 +135,16 @@ class Command(BaseCommand):
 
                 field_params.insert(0, 'self')
                 field_params.append('**kw')
-                field_params = textwrap.wrap((', '.join(field_params)).replace(': ', ':_'), width=103)
+                field_params = textwrap.wrap((', '.join(field_params)).replace(': ', ':_').replace(' = ', '_=_'),
+                                             width=102 if field_class != 'HStoreField' else 98)
 
                 # Special case indentation for HStoreField
                 if field_class != 'HStoreField':
-                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 17).lstrip(' ').replace(':_', ': ')
+                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 17)
                 else:
-                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 21).lstrip(' ').replace(':_', ': ')
+                    field_params = textwrap.indent('\n'.join(field_params), ' ' * 21)
+
+                field_params = field_params.lstrip(' ').replace(':_', ': ').replace('_=_', ' = ')
 
                 additional_inspects = ''
                 if field_class in ('SerializerMethodField', 'HiddenField', 'ReadOnlyField'):
@@ -187,15 +195,15 @@ class Command(BaseCommand):
                     print(indt(8) + "warnings.warn('deprecated - wrong approach! Use read_only attribute "
                                     "instead.',", file=output)
                     print(indt(22) + "DeprecationWarning, stacklevel=2)", file=output)
-                    print(indt(8) + "read_only = True", file=output)
+                    print(indt(8) + "read_only = True  # NOQA", file=output)
                 elif issubclass(field, fields.HiddenField):
                     print(indt(8) + "warnings.warn('deprecated - wrong approach! Use display(|_table|_form) "
                                     "attributes instead.',", file=output)
                     print(indt(22) + "DeprecationWarning, stacklevel=2)", file=output)
-                    print(indt(8) + "display = DisplayMode.HIDDEN", file=output)
+                    print(indt(8) + "display = DisplayMode.HIDDEN  # NOQA", file=output)
 
                 print(indt(8) + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', "
-                      f"'kw'))}}", file=output)
+                f"'kw'))}}", file=output)
                 print(indt(8) + f'kwargs.update(kw)', file=output)
 
                 if issubclass(field, fields.DecimalField):

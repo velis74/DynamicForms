@@ -3,7 +3,6 @@ import os
 import sys
 import warnings
 
-
 if __name__ == "__main__":  # pragma: no cover
     warnings.filterwarnings("default", category=DeprecationWarning)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "setup.settings")
