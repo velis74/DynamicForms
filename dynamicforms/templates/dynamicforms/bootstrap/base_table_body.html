@@ -10,7 +10,7 @@
         {% endif %}
       {% endfor %}
   >
-    {% render_table_commands serializer "rowstart" %}
+    {% render_table_commands serializer "rowstart" row_data=row %}
     {% for key, value in row|items %}
       {% set_var column=serializer.fields|dict_item:key %}
       {% if key in serializer.fields %}
@@ -23,7 +23,7 @@
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% render_table_commands serializer "rowend" %}
+    {% render_table_commands serializer "rowend" row_data=row %}
   </tr>
 {% empty %}
   <tr data-title="NoData">
