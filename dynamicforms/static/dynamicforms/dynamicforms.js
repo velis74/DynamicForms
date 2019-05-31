@@ -199,7 +199,11 @@ dynamicforms = {
         var $rowToRefresh = $(oldTable.find(trSelector)); // Row to refresh
         $rowToRefresh.replaceWith($editedRow);
       } else {
-        var $lastRow = oldTable.find("tr[data-id]").last(); // Last row before adding new record
+        var $lastRow = oldTable.find("tr[data-id]").last();
+        if (!$lastRow) {
+          $lastRow = oldTable.find("tr[data-title='NoData']")
+        }
+        // Last row before adding new record
         var $newRow  = $htmlObject.find("tr[data-id]").last(); // Added record from ajax returned html
 
         // Insert new row after the last row or insert first row
@@ -368,22 +372,23 @@ dynamicforms = {
    *
    * @param recordID: data-id attribute of table row
    */
-  removeRow: function removeRow(recordID) {
-    var $trToRemove = $("tr[data-id='" + recordID + "']");
+  removeRow: function removeRow(recordID, listId) {
+    var $trToRemove = $('[id*=' + listId + ']').find("tr[data-id='" + recordID + "']");
     $trToRemove.remove();
-    dynamicforms.wasLastRowDeleted();
+    dynamicforms.wasLastRowDeleted(listId);
   },
 
   /**
    * Checks if last row was deleted and appends "No data" element if so
    */
-  wasLastRowDeleted: function wasLastRowDeleted() {
-    var $leftTrsCount = $("tr[data-id]").length;
+  wasLastRowDeleted: function wasLastRowDeleted(listId) {
+    var mainSelector = $('[id*=' + listId + ']');
+    var $leftTrsCount = mainSelector.find("tr[data-id]").length;
     if ($leftTrsCount == 0) {
       // Count how many lines should "No data" element span
-      var colCount      = $("th").length;
+      var colCount      = mainSelector.find("th").length;
       var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
-      var $tblBody      = $("tbody").append(noDataElement);
+      mainSelector.find("tbody").first().append(noDataElement);
     }
   },
 
@@ -406,7 +411,7 @@ dynamicforms = {
         //  TODO: make a proper notification
         // Remove row after deletion
         if (refreshType == undefined || refreshType == 'record') {
-          dynamicforms.removeRow(recordID);
+          dynamicforms.removeRow(recordID, listId);
         } else if (refreshType == 'table') {
           var recordURL = dynamicforms.getRecordURL(listId);
           // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
