@@ -23,14 +23,25 @@
 {% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
-    $("#{{ field.uuid }}").select2({
-      // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}')
-     {# TODO: #165 theme setting is commented because currently does't look good with bootstrap4 theme... #}
-     {#  (options in mutiple lines, too narrow borders) #}
-     {#, theme: '{{ DYNAMICFORMS.select2_theme }}'#}
-
-    });
+      var $sel2 = $("#{{ field.uuid }}").select2({
+                                                   // Attaches select2 to its form parent and enables input field (in dialog)
+                                                   dropdownParent: $('#{{ style.serializer.uuid }}')
+                                                   {# TODO: #165 theme setting is commented because currently does't look good with bootstrap4 theme... #}
+                                                   {#  (options in mutiple lines, too narrow borders) #}
+                                                   , theme: '{{ DYNAMICFORMS.select2_theme }}'
+                                                 });
+      $sel2.on("change", function (evt) {
+        if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
+          {#  If select2 is for filter#}
+          $(evt.currentTarget).parents('table').each(function (key, value) {
+            var id = value.getAttribute('id');
+            if (id.startsWith('list-')) {
+              dynamicforms.filterData(id.replace('list-', ''));
+              return false;
+            }
+          });
+        }
+      });
   </script>
 {% endif %}
 
