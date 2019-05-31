@@ -1,9 +1,9 @@
-#@IgnoreInspection BashAddShebang
 pipeline {
   agent any
   stages {
     stage('build steps') {
       steps {
+/*
         echo "building steps"
         script {
           def psteps = [:]
@@ -23,6 +23,18 @@ pipeline {
           parallel psteps
         }
         echo 'done building steps'
+*/
+      sh """
+      #!/bin/bash
+      export PATH="/home/jure/.pyenv/bin:$PATH"
+      eval "\$(pyenv init -)"
+      eval "\$(pyenv virtualenv-init -)"
+
+      pyenv local 3.7.3
+      ls -l
+      export REMOTE_SELENIUM=\$REMOTE_SELENIUM_FIREFOX
+      tox -p auto
+      """
       }
     }
   }
@@ -34,8 +46,7 @@ def transformIntoStep(env) {
   // To do this, you need to wrap the code below in { }, and either return
   // that explicitly, or use { -> } syntax.
   return {
-    stage(env) {
-      steps {
+    node {
       echo "testing ${env}"
       sh """
       #!/bin/bash
@@ -45,9 +56,8 @@ def transformIntoStep(env) {
 
       pyenv local 3.7.3
       ls -l
-      export REMOTE_SELENIUM=\$(REMOTE_SELENIUM_FIREFOX)
+      export REMOTE_SELENIUM=\$REMOTE_SELENIUM_FIREFOX
       tox -e ${env}"""
-      }
     }
   }
 }
