@@ -178,8 +178,8 @@ dynamicforms = {
   refreshRow: function refreshRow(data, formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
     var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
-
     // Case when table is smaller than pagination
+
     if (link_next == undefined) {
       var $htmlObject = $(data);
 
