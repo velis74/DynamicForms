@@ -23,8 +23,7 @@
 {% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">
     // Check bootstrap version to set select2 theme
-    var s2 = $("#{{ field.uuid }}");
-    s2.select2({
+    var $sel2 = $("#{{ field.uuid }}").select2({
       {% if field.url_reverse %}
       ajax: {
         url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
@@ -54,6 +53,20 @@
       dropdownParent: $('#{{ style.serializer.uuid }}'),
       theme: '{{ DYNAMICFORMS.select2_theme }}'
     });
+
+    $sel2.on("change", function (evt) {
+      if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
+        {#  If select2 is for filter#}
+        $(evt.currentTarget).parents('table').each(function (key, value) {
+          var id = value.getAttribute('id');
+          if (id.startsWith('list-')) {
+            dynamicforms.filterData(id.replace('list-', ''));
+            return false;
+          }
+        });
+      }
+    });
+
   </script>
 {% endif %}
 

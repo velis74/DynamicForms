@@ -7,10 +7,9 @@ from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 
 from ..action import TablePosition
+from ..mixins import DisplayMode
 from ..renderers import HTMLFormRenderer
 from ..struct import Struct
-from ..mixins import DisplayMode
-
 
 register = template.Library()
 

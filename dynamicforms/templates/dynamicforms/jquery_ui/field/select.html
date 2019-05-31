@@ -24,7 +24,7 @@
 <script type="application/javascript">
 {% if DYNAMICFORMS.use_select2 %}
   window.setTimeout(function() {
-    $("#{{ field.uuid }}").select2({
+    var $sel2 = $("#{{ field.uuid }}").select2({
       {% if field.url_reverse %}
       ajax: {
         url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
@@ -54,6 +54,20 @@
       dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent(),
       width: '100%'
     });
+
+    $sel2.on("change", function (evt) {
+      if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
+        {#  If select2 is for filter#}
+        $(evt.currentTarget).parents('table').each(function (key, value) {
+          var id = value.getAttribute('id');
+          if (id.startsWith('list-')) {
+            dynamicforms.filterData(id.replace('list-', ''));
+            return false;
+          }
+        });
+      }
+    });
+
   }, 1);
 {% else %}
   // Selectmenus need to be created AFTER the dialog... So use the setTimeout because we don't know the dialog here.
