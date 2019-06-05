@@ -52,6 +52,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
   // To do this, you need to wrap the code below in { }, and either return
   // that explicitly, or use { -> } syntax.
   return {
+    agent {
     node {
       customWorkspace "${workspace}"
       echo "testing ${env}"
@@ -65,6 +66,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       pwd
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
+    }
     }
   }
 }
