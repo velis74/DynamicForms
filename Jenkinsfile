@@ -36,16 +36,19 @@ pipeline {
       tox -p auto
       """
 */
-        parallel(
-          'standard': transformIntoStep('3.7.3', 'FIREFOX', 'all'),
-          'check': transformIntoStep('3.7.3', 'CHROME', 'check'),
-          'doc': transformIntoStep('3.7.3', 'CHROME', 'doc'),
-          'chrome': transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39'),
-          'edge': transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39'),
-          'ie': transformIntoStep('3.7.3', 'IE', 'py-django22-drf39'),
-          'safari': transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39'),
-          'python34': transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing'),
-        )
+        script {
+          def psteps = [:]
+          psteps['standard'] = transformIntoStep('3.7.3', 'FIREFOX', 'all'),
+          psteps['check'] = transformIntoStep('3.7.3', 'CHROME', 'check'),
+          psteps['doc'] = transformIntoStep('3.7.3', 'CHROME', 'doc'),
+          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39'),
+          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39'),
+          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39'),
+          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39'),
+          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing'),
+          
+          parallel psteps
+        }
       }
     }
   }
