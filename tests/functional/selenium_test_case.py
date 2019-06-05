@@ -85,7 +85,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         #  Options are in JSON format. All commas must be replaced with '{comma}' string (see example below)
         #
         # remote_selenium = 'MAC-SERVER:4444,myserver,SAFARI'
-        # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"{comma} "headless": true}'
+        # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
+        #      Firefox\\\\firefox.exe"{comma} "headless": true}'
 
         remote, this_server, browser_options = remote_selenium.split(',')
         if remote:
