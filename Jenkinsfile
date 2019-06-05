@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  options {
+    checkoutToSubdirectory('foo')
+  }
   stages {
     stage('build steps') {
       steps {
@@ -60,8 +63,8 @@ def transformIntoStep(pyver, browser, env, workspace) {
       eval "\$(pyenv init -)"
       eval "\$(pyenv virtualenv-init -)"
 
+      cp -r ${workspace} .
       pyenv local ${pyver}
-      cd ${workspace}   # gave up on Jenkins' pipeline custom workspace
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
     }
