@@ -36,6 +36,8 @@ pipeline {
       tox -p auto
       """
 */
+        echo 'jure'
+        echo ${env.WORKSPACE}
         script {
           def psteps = [:]
           psteps['standard'] = transformIntoStep('3.7.3', 'FIREFOX', 'all')
