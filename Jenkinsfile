@@ -44,8 +44,8 @@ pipeline {
           'edge': transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39'),
           'ie': transformIntoStep('3.7.3', 'IE', 'py-django22-drf39'),
           'safari': transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39'),
-          'python34': transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing')
-        }
+          'python34': transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing'),
+        )
       }
     }
   }
