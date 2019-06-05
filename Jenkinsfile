@@ -63,7 +63,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
   // that explicitly, or use { -> } syntax.
   return {
     node {
-      customWorkspace "${workspace}"
+      ws("${workspace}") {
       echo "testing ${env}"
       sh """
       #!/bin/bash
@@ -75,6 +75,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       pwd
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
+      }
     }
   }
 }
