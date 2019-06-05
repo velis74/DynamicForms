@@ -101,7 +101,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
             self.browser = webdriver.Remote(
                 command_executor='http://{remote}/wd/hub'.format(remote=remote),
-                desired_capabilities=dict(**getattr(webdriver.DesiredCapabilities, browser), javascriptEnabled=True),
+                desired_capabilities=dict(javascriptEnabled=True, **getattr(webdriver.DesiredCapabilities, browser)),
                 options=opts
             )
 
