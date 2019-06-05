@@ -21,6 +21,7 @@ setuptools.setup(
     packages=setuptools.find_packages(include=('dynamicforms',)),
     include_package_data=True,
     install_requires=requirements,
+    python_requires='>=3.4',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
