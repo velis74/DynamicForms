@@ -53,8 +53,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
   // that explicitly, or use { -> } syntax.
   return {
     node {
-      echo "${workspace}"
-      ws("${workspace}") {
+      customWorkspace "${workspace}"
       echo "testing ${env}"
       sh """
       #!/bin/bash
