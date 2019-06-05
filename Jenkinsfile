@@ -40,14 +40,14 @@ pipeline {
         echo "${env.WORKSPACE}"
         script {
           def psteps = [:]
-          psteps['standard'] = transformIntoStep('3.7.3', 'FIREFOX', 'all')
-          psteps['check'] = transformIntoStep('3.7.3', 'CHROME', 'check')
-          psteps['doc'] = transformIntoStep('3.7.3', 'CHROME', 'doc')
-          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39')
-          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39')
-          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39')
-          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39')
-          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing')
+          psteps['standard'] = transformIntoStep('3.7.3', 'FIREFOX', 'all', "${env.WORKSPACE}")
+          psteps['check'] = transformIntoStep('3.7.3', 'CHROME', 'check', "${env.WORKSPACE}")
+          psteps['doc'] = transformIntoStep('3.7.3', 'CHROME', 'doc', "${env.WORKSPACE}")
+          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${env.WORKSPACE}")
           
           parallel psteps
         }
@@ -56,13 +56,14 @@ pipeline {
   }
 }
 
-def transformIntoStep(pyver, browser, env) {
+def transformIntoStep(pyver, browser, env, workspace) {
   // We need to wrap what we return in a Groovy closure, or else it's invoked
   // when this method is called, not when we pass it to parallel.
   // To do this, you need to wrap the code below in { }, and either return
   // that explicitly, or use { -> } syntax.
   return {
     node {
+      customWorkspace "${workspace}"
       echo "testing ${env}"
       sh """
       #!/bin/bash
