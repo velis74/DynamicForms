@@ -3,7 +3,6 @@ pipeline {
   stages {
     stage('build steps') {
       steps {
-/*
         echo "building steps"
         script {
           def psteps = [:]
@@ -18,12 +17,17 @@ pipeline {
           ''', returnStdout: true).trim().split('\n')
           envs.each { env ->
             echo env
-            psteps[env] = transformIntoStep(env)
+            psteps[env] = transformIntoStep('3.7.3', 'FIREFOX', env, "${env.WORKSPACE}")
           }
+          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${env.WORKSPACE}")
+          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${env.WORKSPACE}")
+
           parallel psteps
         }
         echo 'done building steps'
-*/
 /*
       sh """
       #!/bin/bash
@@ -36,21 +40,6 @@ pipeline {
       tox -p auto
       """
 */
-        echo 'jure'
-        echo "${env.WORKSPACE}"
-        script {
-          def psteps = [:]
-          psteps['standard'] = transformIntoStep('3.7.3', 'FIREFOX', 'all', "${env.WORKSPACE}")
-          psteps['check'] = transformIntoStep('3.7.3', 'CHROME', 'check', "${env.WORKSPACE}")
-          psteps['doc'] = transformIntoStep('3.7.3', 'CHROME', 'doc', "${env.WORKSPACE}")
-          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39', "${env.WORKSPACE}")
-          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39', "${env.WORKSPACE}")
-          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${env.WORKSPACE}")
-          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${env.WORKSPACE}")
-          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${env.WORKSPACE}")
-          
-          parallel psteps
-        }
       }
     }
   }
@@ -63,6 +52,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
   // that explicitly, or use { -> } syntax.
   return {
     node {
+      echo "${workspace}"
       ws("${workspace}") {
       echo "testing ${env}"
       sh """
