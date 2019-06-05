@@ -65,7 +65,6 @@ def transformIntoStep(pyver, browser, env, workspace) {
       pwd
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
-      }
     }
   }
 }
