@@ -60,7 +60,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       eval "\$(pyenv init -)"
       eval "\$(pyenv virtualenv-init -)"
 
-      cp -r ${workspace} .
+      cp -r ${workspace}/. .
       pyenv local ${pyver}
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
