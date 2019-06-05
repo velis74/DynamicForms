@@ -67,6 +67,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       pyenv local ${pyver}
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
+      deleteDir()
     }
   }
 }
