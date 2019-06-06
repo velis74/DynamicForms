@@ -86,6 +86,14 @@ dynamicforms = {
       doneFunc = function(data) {
         //var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
+        if(!recordID){
+          try {
+            recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
+            if(recordID == '')
+              recordID = false;
+          }
+          catch (e) {}
+        }
         dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
       }
     }
@@ -103,9 +111,9 @@ dynamicforms = {
       .done(doneFunc)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
-        // but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
-        // also for any authorization errors, CSRF, etc, it will again fail
-        // Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
+        //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
+        //  also for any authorization errors, CSRF, etc, it will again fail
+        //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         dynamicforms.updateDialog($dlg, $(xhr.responseText));
       });
   },
@@ -168,7 +176,19 @@ dynamicforms = {
       customFunction();
     }
   },
-
+  /**
+   * Insert new row after the last row or insert first row
+   * @param $newRow
+   */
+  insertRow: function insertRow($newRow){
+      // Insert new row after the last row or insert first row
+      var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
+      if ($lastRow.length) {
+        $newRow.insertAfter($lastRow);
+      } else {
+        $("table").find("tr[data-title]").replaceWith($newRow);
+      }
+  },
   /**
    * Replaces edited row
    * @param data

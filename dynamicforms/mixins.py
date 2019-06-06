@@ -250,7 +250,7 @@ class FieldHelpTextMixin(object):
 
     def __init__(self, *args, help_text: Union[str, dict, None] = None, help_text_form: Optional[str] = None,
                  **kwargs) -> None:
-        super().__init__(*args, **kwargs, help_text=help_text)
+        super().__init__(*args, help_text=help_text, **kwargs)
         self.help_text = help_text
         if help_text_form or not isinstance(help_text, dict):
             self._help_text_form = help_text_form or self.help_text

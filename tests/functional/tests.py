@@ -1,8 +1,9 @@
 from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
 from examples.models import RefreshType, Validated
-from .selenium_test_case import WaitingStaticLiveServerTestCase
+from .selenium_test_case import WaitingStaticLiveServerTestCase, Browsers
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
@@ -32,17 +33,18 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field_id = container_id.split('-', 1)[1]
                 label = container.find_element_by_id("label-" + field_id)
                 field = container.find_element_by_id(field_id)
+                label_text = self.get_element_text(label)
 
-                if label.text == "Code":
+                if label_text == "Code":
                     self.initial_check(field, "", "code", "text")
                     field.send_keys("123")
-                elif label.text == "Enabled":
+                elif label_text == "Enabled":
                     self.initial_check(field, "", "enabled", "checkbox")
                     field.click()
-                elif label.text == "Amount":
+                elif label_text == "Amount":
                     self.initial_check(field, "", "amount", "number")
                     field.send_keys(amount)
-                elif label.text == "Item type":
+                elif label_text == "Item type":
                     # Check if item_type field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -54,7 +56,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     else:
                         select = Select(field)
                         select.select_by_index(0)
-                elif label.text == "Item flags":
+                elif label_text == "Item flags":
                     # Check if item_flags field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -97,14 +99,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btns = header.find_elements_by_class_name('btn')
-        self.assertEqual(add_btns[0].text, '+ Add (refresh record)')
-        self.assertEqual(add_btns[1].text, '+ Add (refresh table)')
-        self.assertEqual(add_btns[2].text, '+ Add (no refresh)')
+        self.assertEqual(self.get_element_text(add_btns[0]), '+ Add (refresh record)')
+        self.assertEqual(self.get_element_text(add_btns[1]), '+ Add (refresh table)')
+        self.assertEqual(self.get_element_text(add_btns[2]), '+ Add (no refresh)')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -128,18 +130,20 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field_id = container_id.split('-', 1)[1]
                 label = container.find_element_by_id("label-" + field_id)
                 field = container.find_element_by_id(field_id)
+                field_tag_name = self.get_tag_name(field)
+                label_text = self.get_element_text(label)
 
                 field_count += 1
-                if label.text == "Code":
+                if label_text == "Code":
                     self.initial_check(field, "", "code", "text")
                     field.send_keys("12345")
-                elif label.text == "Enabled":
+                elif label_text == "Enabled":
                     self.initial_check(field, "", "enabled", "checkbox")
                     field.click()
-                elif label.text == "Amount":
+                elif label_text == "Amount":
                     self.initial_check(field, "", "amount", "number")
                     field.send_keys("3")
-                elif label.text == "Item type":
+                elif label_text == "Item type":
                     # Check if item_type field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -148,23 +152,23 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertEqual(initial_choice.text, "Choice 1")
+                        self.assertEqual(self.get_element_text(initial_choice), "Choice 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
                         self.assertEqual(len(select2_options), 4)
                         self.assertEqual(select2.get_attribute("name"), "item_type")
-                        self.assertEqual(select2.tag_name, "select")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Choice 4")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
                         self.assertEqual(len(selected_options), 1)
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(selected_options[0].text, "Choice 1")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "Choice 1")
                         self.assertEqual(field.get_attribute("name"), "item_type")
-                        self.assertEqual(field.tag_name, "select")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(3)
-                elif label.text == "Item flags":
+                elif label_text == "Item flags":
                     # Check if item_flags field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -173,34 +177,34 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         empty_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(empty_choice.text == "--------")
+                        self.assertEqual(self.get_element_text(empty_choice), "--------")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 5)
-                        self.assertTrue(select2.get_attribute("name") == "item_flags")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 5)
+                        self.assertEqual(select2.get_attribute("name"), "item_flags")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="C")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "--------")
-                        self.assertTrue(field.get_attribute("name") == "item_flags")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "--------")
+                        self.assertEqual(field.get_attribute("name"), "item_flags")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(3)
                 elif field.get_attribute("name") in ('id',):
                     # Hidden fields
                     pass
-                elif label.text == "Comment":
+                elif label_text == "Comment":
                     self.initial_check(field, "", "comment", "textarea")
                     field.send_keys("Some comment")
                 else:
                     field_count -= 1
-                    check = label.text == "Code"
+                    check = label_text == "Code"
                     fname = field.get_attribute("name")
                     self.assertTrue(
-                        False, "Wrong field container - label: '{label.text}' {check} {fname}".format(**locals())
+                        False, "Wrong field container - label: '{label_text}' {check} {fname}".format(**locals())
                     )
         self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
@@ -324,7 +328,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # ----------------------------------------------------------#
         # Tests for refreshType='table' and refreshType='no refresh #'
@@ -360,7 +364,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Test that "no data" row is shown
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # Test Add action with refreshType='no refresh'
         self.add_validated_record(2, 5, add_second_record=True)
@@ -400,7 +404,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             dialog_title = dialog.find_element_by_class_name("modal-title")
         except NoSuchElementException:
             dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
-        self.assertEqual(dialog_title.text, 'Editing validated object')
+        self.assertEqual(self.get_element_text(dialog_title), 'Editing validated object')
 
         # Change Amount field value
         form = dialog.find_element_by_id(modal_serializer_id)
@@ -429,7 +433,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             dialog_title = dialog.find_element_by_class_name("modal-title")
         except NoSuchElementException:
             dialog_title = dialog.find_element_by_class_name("ui-dialog-title")
-        self.assertEqual(dialog_title.text, 'Editing validated object')
+        self.assertEqual(self.get_element_text(dialog_title), 'Editing validated object')
 
         # Change Amount field back to valid value
         form = dialog.find_element_by_id(modal_serializer_id)
@@ -462,12 +466,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
-        self.assertTrue(add_btn.text == "+ Add")
+        self.assertEqual(self.get_element_text(add_btn), "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name("td")), "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -490,50 +494,75 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field = container.find_element_by_id(field_id)
 
                 field_count += 1
+                label_text = self.get_element_text(label)
 
-                if label.text == 'Boolean field':
+                if label_text == 'Boolean field':
                     self.initial_check(field, '', 'boolean_field', 'checkbox')
                     field.click()
-                elif label.text == 'Nullboolean field':
+                elif label_text == 'Nullboolean field':
                     self.initial_check(field, '', 'nullboolean_field', 'text')
                     field.send_keys('True')
-                elif label.text == 'Char field':
+                elif label_text == 'Char field':
                     self.initial_check(field, '', 'char_field', 'text')
                     field.send_keys('Test')
-                elif label.text == 'Email field':
+                elif label_text == 'Email field':
                     self.initial_check(field, '', 'email_field', 'email')
                     field.send_keys('test@test.com')
-                elif label.text == 'Slug field':
+                elif label_text == 'Slug field':
                     self.initial_check(field, '', 'slug_field', 'text')
                     field.send_keys('test-slug')
-                elif label.text == 'Url field':
+                elif label_text == 'Url field':
                     self.initial_check(field, '', 'url_field', 'url')
                     field.send_keys('http://test.test')
-                elif label.text == 'Uuid field':
+                elif label_text == 'Uuid field':
                     self.initial_check(field, '', 'uuid_field', 'text')
                     field.send_keys('123e4567-e89b-12d3-a456-426655440000')
-                elif label.text == 'Ipaddress field':
+                elif label_text == 'Ipaddress field':
                     self.initial_check(field, '', 'ipaddress_field', 'text')
                     field.send_keys('145.17.154.1')
-                elif label.text == 'Integer field':
+                elif label_text == 'Integer field':
                     self.initial_check(field, '', 'integer_field', 'number')
                     field.send_keys(1)
-                elif label.text == 'Float field':
+                elif label_text == 'Float field':
                     self.initial_check(field, '', 'float_field', 'number')
                     field.send_keys(15)
-                elif label.text == 'Decimal field':
+                elif label_text == 'Decimal field':
                     self.initial_check(field, '', 'decimal_field', 'text')
                     field.send_keys('15.18')
-                elif label.text == 'Datetime field':
+                elif label_text == 'Datetime field':
                     self.initial_check(field, '', 'datetime_field', ('datetime-local', 'text'))
-                    field.send_keys('2018-12-08 08:15:00')
-                elif label.text == 'Date field':
-                    self.initial_check(field, '', 'date_field', 'date')
-                    field.send_keys('2018-12-08')
-                elif label.text == 'Time field':
-                    self.initial_check(field, '', 'time_field', 'time')
-                    field.send_keys('08:15:00')
-                elif label.text == 'Duration field':
+                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                        field.send_keys('08122018')
+                        field.send_keys(Keys.TAB)
+                        field.send_keys('0815')
+                    elif self.selected_browser == Browsers.EDGE:
+                        # There is a bug when sending keys to EDGE.
+                        # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
+                        # Workaround is to do this with javascript using execute_script method
+                        self.update_edge_field(field_id, '2018-12-08T08:15')
+                    else:
+                        field.send_keys('2018-12-08 08:15:00')
+                elif label_text == 'Date field':
+                    self.initial_check(field, '', 'date_field',
+                                       ('date', 'text') if self.selected_browser in (
+                                           Browsers.IE, Browsers.SAFARI) else 'date')
+                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                        field.send_keys('08122018')
+                    elif self.selected_browser == Browsers.EDGE:
+                        field.send_keys(Keys.ENTER)
+                    else:
+                        field.send_keys('2018-12-08')
+                elif label_text == 'Time field':
+                    self.initial_check(field, '', 'time_field',
+                                       ('time', 'text') if self.selected_browser in (
+                                           Browsers.IE, Browsers.SAFARI) else 'time')
+                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                        field.send_keys('0815')
+                    elif self.selected_browser == Browsers.EDGE:
+                        field.send_keys(Keys.ENTER)
+                    else:
+                        field.send_keys('08:15:00')
+                elif label_text == 'Duration field':
                     self.initial_check(field, '', 'duration_field', 'text')
                     field.send_keys('180')
                 else:
@@ -557,9 +586,22 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_name("url_field").send_keys("Test error")
         dialog.find_element_by_name("uuid_field").send_keys("Test error")
         dialog.find_element_by_name("integer_field").send_keys("Test error")
-        dialog.find_element_by_name("datetime_field").send_keys("Test error")
-        dialog.find_element_by_name("date_field").send_keys("Test error")
-        dialog.find_element_by_name("time_field").send_keys("Test error")
+        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+            dialog.find_element_by_name("datetime_field").send_keys("1111111111")
+            dialog.find_element_by_name("date_field").send_keys("1111111111")
+            dialog.find_element_by_name("time_field").send_keys(Keys.DELETE)
+        elif self.selected_browser == Browsers.EDGE:
+            self.update_edge_field(self.get_field_id_by_name(dialog, "datetime_field"), "1111111111")
+            self.update_edge_field(self.get_field_id_by_name(dialog, "date_field"), "1111111111")
+            self.update_edge_field(self.get_field_id_by_name(dialog, "time_field"), "1111111111")
+        elif self.selected_browser == Browsers.IE:
+            dialog.find_element_by_name("datetime_field").clear()
+            dialog.find_element_by_name("date_field").clear()
+            dialog.find_element_by_name("time_field").clear()
+        else:
+            dialog.find_element_by_name("datetime_field").send_keys("Test error")
+            dialog.find_element_by_name("date_field").send_keys("Test error")
+            dialog.find_element_by_name("time_field").send_keys("Test error")
 
         # Submit
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
@@ -581,7 +623,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")
         self.assertEqual(errors[1].get_attribute("innerHTML"), "Enter a valid URL.")
         self.assertIn(errors[2].get_attribute("innerHTML"),
-                      ("Must be a valid UUID.", '"123e4567-e89b-12d3-a456-426655440000Test error" is not a valid UUID.')
+                      ("Must be a valid UUID.", '"123e4567-e89b-12d3-a456-426655440000Test error" is not a valid UUID.',
+                       '"Test error" is not a valid UUID.')
                       )
         self.assertEqual(errors[3].get_attribute("innerHTML"), "A valid integer is required.")
         self.assertEqual(errors[4].get_attribute("innerHTML"),
@@ -609,12 +652,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
-        self.assertTrue(add_btn.text == "+ Add")
+        self.assertEqual(self.get_element_text(add_btn), "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertTrue(rows[0].find_element_by_tag_name("td").text == "No data")
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name("td")), "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -635,41 +678,43 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field_id = container_id.split('-', 1)[1]
                 field = container.find_element_by_id(field_id)
                 label = container.find_element_by_id("label-" + field_id)
+                field_tag_name = self.get_tag_name(field)
 
                 field_count += 1
+                print(label.text)
+                label_text = self.get_element_text(label)
 
-                if label.text == "Regex field":
+                if label_text == "Regex field":
                     self.initial_check(field, "", "regex_field", "text")
                     field.send_keys("abcdef")
-                elif label.text == "Choice field":
+                elif label_text == "Choice field":
                     # Check if choice_field field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
                     except NoSuchElementException:
                         select2 = None
-
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(initial_choice.text == "Choice 1")
+                        self.assertEqual(self.get_element_text(initial_choice), "Choice 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 4)
-                        self.assertTrue(select2.get_attribute("name") == "choice_field")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 4)
+                        self.assertEqual(select2.get_attribute("name"), "choice_field")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Choice 4")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "Choice 1")
-                        self.assertTrue(field.get_attribute("name") == "choice_field")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "Choice 1")
+                        self.assertEqual(field.get_attribute("name"), "choice_field")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(3)
-                elif label.text == "Readonly field":
+                elif label_text == "Readonly field":
                     self.initial_check(field, "", "readonly_field", "checkbox")
                     self.assertEqual(field.get_attribute('checked'), 'true')
-                elif label.text == "Filepath field":
+                elif label_text == "Filepath field":
                     # Check if filepath_field field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -678,26 +723,26 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(initial_choice.text == "---------")
+                        self.assertEqual(self.get_element_text(initial_choice), "---------")
 
                         # Checking number of items seems to yield different values for each different way of running
                         # tests (tox, manual, etc)
                         # select2_options = select2.find_elements_by_tag_name("option")
                         # self.assertEqual(len(select2_options), 8)
                         self.assertEqual(select2.get_attribute("name"), "filepath_field")
-                        self.assertEqual(select2.tag_name, "select")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="admin.py")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
                         self.assertEqual(len(selected_options), 1)
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(selected_options[0].text, "---------")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "---------")
                         self.assertEqual(field.get_attribute("name"), "filepath_field")
-                        self.assertEqual(field.tag_name, "select")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(3)
                 # Hidden field is not shown in dialog
-                elif label.text == "Primary key related field":
+                elif label_text == "Primary key related field":
                     # Check if primary_key_related_field field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -706,23 +751,23 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertEqual(initial_choice.text, "Relation object 1")
+                        self.assertEqual(self.get_element_text(initial_choice), "Relation object 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
                         self.assertEqual(len(select2_options), 10)
                         self.assertEqual(select2.get_attribute("name"), "primary_key_related_field")
-                        self.assertEqual(select2.tag_name, "select")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Relation object 7")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
                         self.assertEqual(len(selected_options), 1)
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(selected_options[0].text, "Relation object 1")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "Relation object 1")
                         self.assertEqual(field.get_attribute("name"), "primary_key_related_field")
-                        self.assertEqual(field.tag_name, "select")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(6)
-                elif label.text == "Slug related field":
+                elif label_text == "Slug related field":
                     # Check if slug_related_field field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
@@ -731,21 +776,21 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertTrue(initial_choice.text == "Relation object 1")
+                        self.assertEqual(self.get_element_text(initial_choice), "Relation object 1")
 
                         select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertTrue(len(select2_options) == 10)
-                        self.assertTrue(select2.get_attribute("name") == "slug_related_field")
-                        self.assertTrue(select2.tag_name == "select")
+                        self.assertEqual(len(select2_options), 10)
+                        self.assertEqual(select2.get_attribute("name"), "slug_related_field")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Relation object 5")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
-                        self.assertTrue(len(selected_options) == 1)
-                        self.assertTrue(selected_options[0].get_attribute("index") == "0")
-                        self.assertTrue(selected_options[0].text == "Relation object 1")
-                        self.assertTrue(field.get_attribute("name") == "slug_related_field")
-                        self.assertTrue(field.tag_name == "select")
+                        self.assertEqual(len(selected_options), 1)
+                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "Relation object 1")
+                        self.assertEqual(field.get_attribute("name"), "slug_related_field")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(4)
                 # StringRelatedField is read only with primary_key_related_field as source and is not shown in dialog
                 else:
@@ -763,9 +808,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(cells), 9)
 
         # Check for relations
-        self.assertTrue(cells[5].text == "Relation object 7")
-        self.assertTrue(cells[6].text == "Relation object 7")
-        self.assertTrue(cells[7].text == "Relation object 5")
+        self.assertEqual(self.get_element_text(cells[5]), "Relation object 7")
+        self.assertEqual(self.get_element_text(cells[6]), "Relation object 7")
+        self.assertEqual(self.get_element_text(cells[7]), "Relation object 5")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -801,9 +846,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(cells), 9)
 
         # Check for changed values
-        self.assertTrue(cells[2].text == "Choice 2")
-        self.assertTrue(cells[5].text == "Relation object 9")
-        self.assertTrue(cells[6].text == "Relation object 9")
+        self.assertEqual(self.get_element_text(cells[2]), "Choice 2")
+        self.assertEqual(self.get_element_text(cells[5]), "Relation object 9")
+        self.assertEqual(self.get_element_text(cells[6]), "Relation object 9")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -859,7 +904,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 label = container.find_element_by_id("label-" + field_id)
                 field = container.find_element_by_id(field_id)
 
-                if label.text == "Description":
+                if self.get_element_text(label) == "Description":
                     self.initial_check(field, "", "description", "text")
                     field.send_keys(text)
                 elif field.get_attribute("name") in ('id',):
@@ -874,8 +919,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         try:
-            alert = self.browser.switch_to.alert
-            self.assertEqual(alert.text, 'Custom function refresh type.')
+            alert = self.get_alert()
+            self.assertEqual(self.get_element_text(alert), 'Custom function refresh type.')
             alert.accept()
         except NoAlertPresentException:
             pass
@@ -896,17 +941,17 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btns = header.find_elements_by_class_name('btn')
-        self.assertEqual(add_btns[0].text, '+ Add (refresh record)')
-        self.assertEqual(add_btns[1].text, '+ Add (refresh table)')
-        self.assertEqual(add_btns[2].text, '+ Add (no refresh)')
-        self.assertEqual(add_btns[3].text, '+ Add (page reload)')
-        self.assertEqual(add_btns[4].text, '+ Add (redirect)')
-        self.assertEqual(add_btns[5].text, '+ Add (custom function)')
+        self.assertEqual(self.get_element_text(add_btns[0]), '+ Add (refresh record)')
+        self.assertEqual(self.get_element_text(add_btns[1]), '+ Add (refresh table)')
+        self.assertEqual(self.get_element_text(add_btns[2]), '+ Add (no refresh)')
+        self.assertEqual(self.get_element_text(add_btns[3]), '+ Add (page reload)')
+        self.assertEqual(self.get_element_text(add_btns[4]), '+ Add (redirect)')
+        self.assertEqual(self.get_element_text(add_btns[5]), '+ Add (custom function)')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0].find_element_by_tag_name('td').text, 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # Test Add action with refreshType='record'
         self.add_refresh_types_record(0, 'Refresh record')
@@ -943,7 +988,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Test Add action with refreshType='redirect'
         self.add_refresh_types_record(4, 'Redirect')
         # Redirection to /validated.html defined in action happens
-        redirect_url = self.browser.current_url
+        redirect_url = self.get_current_url()
         self.assertRegex(redirect_url, '/validated.html')
         # Back to /refresh-types.html
         self.browser.get(self.live_server_url + '/refresh-types.html')
@@ -992,7 +1037,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
         del_btns[4].click()
         # Redirection to /validated.html defined in action happens
-        redirect_url = self.browser.current_url
+        redirect_url = self.get_current_url()
         self.assertRegex(redirect_url, '/validated.html')
         # Back to /refresh-types.html
         self.browser.get(self.live_server_url + '/refresh-types.html')
@@ -1003,8 +1048,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
         del_btns[5].click()
 
-        alert = self.browser.switch_to.alert
-        self.assertEqual(alert.text, 'Custom function refresh type.')
+        alert = self.get_alert()
+        self.assertEqual(self.get_element_text(alert), 'Custom function refresh type.')
         alert.accept()
 
         self.browser.refresh()
@@ -1046,21 +1091,21 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
                     if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertEqual(initial_choice.text, "Today is sunny")
+                        self.assertEqual(self.get_element_text(initial_choice), "Today is sunny")
 
                         select2_options = select2.find_elements_by_tag_name("option")
                         self.assertEqual(len(select2_options), 2)
                         self.assertEqual(select2.get_attribute("name"), "test")
-                        self.assertEqual(select2.tag_name, "select")
+                        self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Never-ending rain")
                     else:
                         select = Select(field)
                         selected_options = select.all_selected_options
                         self.assertEqual(len(selected_options), 1)
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(selected_options[0].text, "Today is sunny")
+                        self.assertEqual(self.get_element_text(selected_options[0]), "Today is sunny")
                         self.assertEqual(field.get_attribute("name"), "test")
-                        self.assertEqual(field.tag_name, "select")
+                        self.assertEqual(self.get_tag_name(field), "select")
                         select.select_by_index(1)
 
         try:
@@ -1069,8 +1114,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             dialog.find_element_by_class_name("ui-button").click()
 
         try:
-            alert = self.browser.switch_to.alert
-            self.assertEqual(alert.text, 'Never-ending rain')
+            alert = self.get_alert()
+            self.assertEqual(self.get_element_text(alert), 'Never-ending rain')
             alert.accept()
         except NoAlertPresentException:
             pass
