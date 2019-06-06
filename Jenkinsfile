@@ -25,23 +25,12 @@ pipeline {
           psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${workspace}")
           psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${workspace}")
           psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${workspace}")
-
-          parallel psteps
         }
         echo 'done building steps'
-/*
-      sh """
-      #!/bin/bash
-      export PATH="/home/jure/.pyenv/bin:$PATH"
-      eval "\$(pyenv init -)"
-      eval "\$(pyenv virtualenv-init -)"
-
-      pyenv local 3.7.3
-      export REMOTE_SELENIUM=\$REMOTE_SELENIUM_FIREFOX
-      tox -p auto
-      """
-*/
       }
+    }
+    stage('tests') {
+      parallel psteps
     }
   }
 }
@@ -60,12 +49,13 @@ def transformIntoStep(pyver, browser, env, workspace) {
       eval "\$(pyenv init -)"
       eval "\$(pyenv virtualenv-init -)"
 
-      # cp -r ${workspace}/. .
-      cd ${workspace}
+      rsync -rtpl ${workspace}/. .
+      rsync -rtpl ${workspace}/.tox/${env} .tox
 
       pyenv local ${pyver}
       export REMOTE_SELENIUM=\$REMOTE_SELENIUM_${browser}
       tox -e ${env}"""
+      rsync -rtpl .tox/${env} ${workspace}/.tox
       // deleteDir()
     }
   }
