@@ -51,6 +51,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       eval "\$(pyenv init -)"
       eval "\$(pyenv virtualenv-init -)"
 
+      deleteDir()
       rsync -rtpl ${workspace}/. .
       if [ -d "${workspace}/.tox/${env}" ]; then
         rsync -rtpl ${workspace}/.tox/${env} .tox
@@ -61,7 +62,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       tox -e ${env}
       rsync -rtpl .tox/${env} ${workspace}/.tox
       """
-      // deleteDir()
+      deleteDir()
     }
   }
 }
