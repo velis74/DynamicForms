@@ -16,22 +16,21 @@ pipeline {
             pyenv local 3.7.3
             tox -l
           ''', returnStdout: true).trim().split('\n')
-          envs.each { env ->
-            echo env
-            psteps[env] = transformIntoStep('3.7.3', 'FIREFOX', env, "${workspace}")
+
+          stage('tests') {
+            envs.each { env ->
+              echo env
+              psteps[env] = transformIntoStep('3.7.3', 'FIREFOX', env, "${workspace}")
+            }
+            psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39', "${workspace}")
+            psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39', "${workspace}")
+            psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${workspace}")
+            psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${workspace}")
+            psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${workspace}")
           }
-          psteps['chrome'] = transformIntoStep('3.7.3', 'CHROME', 'py-django22-drf39', "${workspace}")
-          psteps['edge'] = transformIntoStep('3.7.3', 'EDGE', 'py-django22-drf39', "${workspace}")
-          psteps['ie'] = transformIntoStep('3.7.3', 'IE', 'py-django22-drf39', "${workspace}")
-          psteps['safari'] = transformIntoStep('3.7.3', 'SAFARI', 'py-django22-drf39', "${workspace}")
-          psteps['python34'] = transformIntoStep('3.4.9', 'FIREFOX', 'py34-django1tip-drf39-typing', "${workspace}")
+          parallel psteps
         }
         echo 'done building steps'
-      }
-    }
-    stage('tests') {
-      steps {
-        parallel psteps
       }
     }
   }
