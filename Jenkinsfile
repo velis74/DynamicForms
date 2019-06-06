@@ -30,7 +30,9 @@ pipeline {
       }
     }
     stage('tests') {
-      parallel psteps
+      steps {
+        parallel psteps
+      }
     }
   }
 }
