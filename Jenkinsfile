@@ -45,13 +45,13 @@ def transformIntoStep(pyver, browser, env, workspace) {
   return {
     node {
       echo "testing ${env}"
+      deleteDir()
       sh """
       #!/bin/bash
       export PATH="/home/jure/.pyenv/bin:$PATH"
       eval "\$(pyenv init -)"
       eval "\$(pyenv virtualenv-init -)"
 
-      deleteDir()
       rsync -rtpl ${workspace}/. .
       if [ -d "${workspace}/.tox/${env}" ]; then
         rsync -rtpl ${workspace}/.tox/${env} .tox
