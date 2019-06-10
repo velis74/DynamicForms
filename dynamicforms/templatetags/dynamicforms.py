@@ -177,7 +177,7 @@ def render_table_commands(context, serializer, position, field_name=None, button
         serializer.__dynamic_forms_row_data = row_data
         ret_tmp = serializer.actions.render_renderable_actions(positions[position], field_name, serializer)
         if ret_tmp and positions[position][0] in (TablePosition.ROW_START, TablePosition.ROW_END):
-            ret += ('<th>%s</th>' % table_header) if table_header else ('<td>%s</td>' % ret_tmp)
+            ret += ('<th class="actions-header">%s</th>' % table_header) if table_header else ('<td>%s</td>' % ret_tmp)
         elif ret_tmp:
             ret += ret_tmp
     if hasattr(serializer, '__dynamic_forms_row_data'):
