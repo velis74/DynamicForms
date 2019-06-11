@@ -115,7 +115,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
             self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.109\\opera.exe'
-            self.selected_browser = Browsers.OPERA
+            self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()
 
     def tearDown(self):
