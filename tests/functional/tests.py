@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
 from examples.models import RefreshType, Validated
-from .selenium_test_case import WaitingStaticLiveServerTestCase, Browsers
+from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
@@ -191,7 +191,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                         self.assertEqual(selected_options[0].get_attribute("index"), "0")
                         self.assertEqual(self.get_element_text(selected_options[0]), "--------")
                         self.assertEqual(field.get_attribute("name"), "item_flags")
-                        self.assertEqual(field_tag_name,  "select")
+                        self.assertEqual(field_tag_name, "select")
                         select.select_by_index(3)
                 elif field.get_attribute("name") in ('id',):
                     # Hidden fields

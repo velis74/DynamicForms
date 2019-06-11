@@ -5,8 +5,10 @@ from enum import Enum
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import (ElementNotInteractableException, NoAlertPresentException,
-                                        NoSuchElementException, TimeoutException, WebDriverException)
+from selenium.common.exceptions import (
+    ElementNotInteractableException, NoAlertPresentException, NoSuchElementException, TimeoutException,
+    WebDriverException
+)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -85,7 +87,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         #  Options are in JSON format. All commas must be replaced with '{comma}' string (see example below)
         #
         # remote_selenium = 'MAC-SERVER:4444,myserver,SAFARI'
-        # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"{comma} "headless": true}'
+        # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
+        #      Firefox\\\\firefox.exe"{comma} "headless": true}'
 
         remote, this_server, browser_options = remote_selenium.split(',')
         if remote:
@@ -101,7 +104,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
             self.browser = webdriver.Remote(
                 command_executor='http://{remote}/wd/hub'.format(remote=remote),
-                desired_capabilities=dict(**getattr(webdriver.DesiredCapabilities, browser), javascriptEnabled=True),
+                desired_capabilities=dict(javascriptEnabled=True, **getattr(webdriver.DesiredCapabilities, browser)),
                 options=opts
             )
 
@@ -112,7 +115,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
             self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.109\\opera.exe'
-            self.selected_browser = Browsers.OPERA
+            self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()
 
     def tearDown(self):
