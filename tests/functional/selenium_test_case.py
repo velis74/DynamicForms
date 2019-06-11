@@ -5,8 +5,10 @@ from enum import Enum
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import (ElementNotInteractableException, NoAlertPresentException,
-                                        NoSuchElementException, TimeoutException, WebDriverException)
+from selenium.common.exceptions import (
+    ElementNotInteractableException, NoAlertPresentException, NoSuchElementException, TimeoutException,
+    WebDriverException
+)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -113,7 +115,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
             self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.109\\opera.exe'
-            self.selected_browser = Browsers.OPERA
+            self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()
 
     def tearDown(self):
