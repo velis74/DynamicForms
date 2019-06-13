@@ -180,11 +180,17 @@ dynamicforms = {
    * Insert new row after the last row or insert first row
    * @param $newRow
    */
-  insertRow: function insertRow($newRow){
+  insertRow: function insertRow($newRow, listId){
+      if (listId !== undefined) {
+        var $lastRow = $('#' + listId).find("tr[data-id]").last();
+      } else {
+        var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
+      }
       // Insert new row after the last row or insert first row
-      var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
       if ($lastRow.length) {
         $newRow.insertAfter($lastRow);
+      } else if (listId) {
+        $('#' + listId).find("tr[data-title]").replaceWith($newRow);
       } else {
         $("table").find("tr[data-title]").replaceWith($newRow);
       }
@@ -220,7 +226,7 @@ dynamicforms = {
         if ($rowToRefresh.length)
           $rowToRefresh.replaceWith($editedRow);
         else
-          dynamicforms.insertRow($editedRow);
+          dynamicforms.insertRow($editedRow, oldTable.attr('id'));
       } else {
         var $lastRow = oldTable.find("tr[data-id]").last();
         if (!$lastRow) {
