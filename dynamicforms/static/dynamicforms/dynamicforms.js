@@ -217,7 +217,10 @@ dynamicforms = {
         var trSelector    = "tr[data-id='" + recordID + "']";
         var $editedRow    = $htmlObject.find(trSelector); // Edited record from ajax returned html
         var $rowToRefresh = $(oldTable.find(trSelector)); // Row to refresh
-        $rowToRefresh.replaceWith($editedRow);
+        if ($rowToRefresh.length)
+          $rowToRefresh.replaceWith($editedRow);
+        else
+          dynamicforms.insertRow($editedRow);
       } else {
         var $lastRow = oldTable.find("tr[data-id]").last();
         if (!$lastRow) {
