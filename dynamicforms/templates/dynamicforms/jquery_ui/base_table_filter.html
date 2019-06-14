@@ -3,7 +3,7 @@
 <tr class="dynamicforms-filterrow" id="{{ form.uuid }}">
   {% for column in form %}
     {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-      <th {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}style="display: none" {% endif %}data-name="{{ column.field_name }}">
+      <th {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}style="visibility: hidden" {% endif %}data-name="{{ column.field_name }}">
       {% render_field column style=style %}
     {% endif %}{% endfor %}
 </tr>
@@ -15,23 +15,22 @@
 
     if ($cb.prop("readOnly")) {
       $cb.prop({
-                 checked:  false,
-                 readOnly: false
-               });
-    }
-    else if (!$cb.prop("checked")) {
+        checked:  false,
+        readOnly: false,
+      });
+    } else if (!$cb.prop("checked")) {
       $cb.prop({
-                 readOnly:      true,
-                 indeterminate: true
-               });
+        readOnly:      true,
+        indeterminate: true,
+      });
     }
   });
   //Initialize checkbox
   $checkbox.prop({
-                   checked:  false,
-                   readOnly:  true,
-                   indeterminate: true
-                 });
+    checked:       false,
+    readOnly:      true,
+    indeterminate: true,
+  });
 
   var $form = $("#{{ form.uuid }}")
   dynamicforms.serializeForm($form, 'final');
