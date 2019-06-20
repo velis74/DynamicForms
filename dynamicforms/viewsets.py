@@ -166,7 +166,6 @@ class TemplateRendererMixin():
                     # this is just faking data for rendering nothing in template, so that 204 goes through
                     from dynamicforms.serializers import Serializer
                     if not res.data:
-                        # this is just faking data for rendering nothing in template, so that 204 goes through
                         serializer = Serializer({})
                         serializer.render_type = 'form'
                         serializer.data_template = DYNAMICFORMS.modal_dialog_template
@@ -176,7 +175,6 @@ class TemplateRendererMixin():
                         res.data.serializer.render_type = 'form'
                         res.data.serializer.data_template = DYNAMICFORMS.modal_dialog_template
             elif res.status_code == status.HTTP_401_UNAUTHORIZED and self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action (only for 403)
                 res = redirect_to_login(request.path_info + get_query_params())
             elif res.status_code == status.HTTP_403_FORBIDDEN:
                 response_html = render_to_response(

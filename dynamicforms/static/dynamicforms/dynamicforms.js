@@ -113,7 +113,8 @@ dynamicforms = {
                 //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
                 //  also for any authorization errors, CSRF, etc, it will again fail
                 //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
-                dynamicforms.updateDialog($dlg, $(xhr.responseText).find('.dynamicforms-dialog'));
+                dynamicforms.updateDialog($dlg, $(xhr.responseText).find('.dynamicforms-dialog').length ?
+                    $(xhr.responseText).find('.dynamicforms-dialog') : $(xhr.responseText));
             });
     },
 
@@ -420,7 +421,7 @@ dynamicforms = {
         }
     },
 
-    deleteRow: function deleteRow(recordURL, recordID, refreshType, listId) {
+    deleteRowWithConfirmation: function deleteRowWithConfirmation(recordURL, recordID, refreshType, listId) {
         $.ajax({
             url: recordURL + 'confirm_delete.html',
             method: 'GET',
@@ -441,6 +442,10 @@ dynamicforms = {
                 });
             }
         });
+    },
+
+    deleteRow: function deleteRow(recordURL, recordID, refreshType, listId) {
+        dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId);
     },
 
     /**
