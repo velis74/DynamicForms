@@ -6,13 +6,15 @@ from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
-from rest_framework import status, viewsets
+from django.shortcuts import render_to_response
+from rest_framework import status, viewsets, exceptions
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
+from django.utils.translation import ugettext_lazy as _
 
 
 class NewMixin(object):
@@ -133,11 +135,60 @@ class TemplateRendererMixin():
                     else:
                         serializer.render_type = 'form'
                         serializer.data_template = serializer.template_name
-            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
-                    self.render_type != 'dialog':
+            elif res.status_code == status.HTTP_401_UNAUTHORIZED and self.render_type != 'dialog':
                 # TODO: We should show a message here that user is not authorized for this action (only for 403)
                 res = redirect_to_login(request.path_info + get_query_params())
+            elif res.status_code == status.HTTP_403_FORBIDDEN:
+                response_html = render_to_response(
+                    DYNAMICFORMS.template + 'exceptions/exception.html', dict(
+                        detail=str(res.data.get('detail')),
+                        title=_('Action denied')
+                    ))
+                response_html.status_code = status.HTTP_403_FORBIDDEN
+                return response_html
+            elif res.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR:
+                response_html = render_to_response(
+                    DYNAMICFORMS.template + 'exceptions/exception.html', dict(
+                        detail=_('Please contact system administrator'),
+                        title=_('Unexpected error occured')
+                    ))
+                response_html.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+                return response_html
         return res
+
+    def handle_exception(self, exc):
+        """
+        Handle any exception that occurs, by returning an appropriate response,
+        or re-raising the error.
+        """
+        if isinstance(exc, (exceptions.NotAuthenticated,
+                            exceptions.AuthenticationFailed)):
+            # WWW-Authenticate header for 401 responses, else coerce to 403
+            auth_header = self.get_authenticate_header(self.request)
+
+            if auth_header:
+                exc.auth_header = auth_header
+            else:
+                exc.status_code = status.HTTP_403_FORBIDDEN
+
+        exception_handler = super().get_exception_handler()
+
+        context = super().get_exception_handler_context()
+        response = exception_handler(exc, context)
+
+        if response is None and isinstance(exc, Exception):
+            # raise exception only for debug=True
+            if settings.DEBUG:
+                super().raise_uncaught_exception(exc)
+            # if debug=False render html with error notification
+            import logging
+            logger = logging.getLogger('django.request')
+            logger.exception(exc)
+
+            response = Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        response.exception = True
+        return response
 
 
 class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
