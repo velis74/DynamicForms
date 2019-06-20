@@ -8,10 +8,12 @@ from django.db import models
 from django.http import Http404
 from django.shortcuts import render_to_response
 from rest_framework import status, viewsets, exceptions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
+from dynamicforms.action import FormButtonAction, FormButtonTypes
 from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
 from django.utils.translation import ugettext_lazy as _
@@ -54,6 +56,30 @@ class NewMixin(object):
                 return Response(serializer.data)
             else:
                 raise
+
+
+class DeleteMixin(object):
+    @action(detail=True, methods=['get'])
+    def confirm_delete(self: viewsets.ModelViewSet, request, pk=None, format=None):
+        record = self.get_object()
+        serializer = self.get_serializer(record)
+        record_id = request.GET.get('record_id')
+        list_id = request.GET.get('list_id')
+        confirm_delete_button = FormButtonAction(
+            btn_type=FormButtonTypes.CUSTOM, label=_('Confirm'), name='confirm', positions=['dialog'],
+            button_is_primary=False, btn_classes=DYNAMICFORMS.form_button_classes + ' btn-danger {}'.format(
+                "{}_{}".format(record_id, list_id)
+            ))
+        for action in serializer.actions:
+            if action.name != 'cancel':
+                serializer.actions.actions.remove(action)
+        serializer.actions.actions.append(confirm_delete_button)
+        return render_to_response(
+            DYNAMICFORMS.template + 'confirm_delete_dialog.html', dict(
+                serializer=serializer,
+                confirmation_text=_('Do you really want to delete selected record?'),
+                title=_('Delete action confirmation')
+            ))
 
 
 class TemplateRendererMixin():
@@ -110,31 +136,45 @@ class TemplateRendererMixin():
 
         if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
             if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
-                if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
-                        isinstance(res.data['results'], (ReturnList, ReturnDict)):
-                    serializer = res.data['results'].serializer
-                else:
-                    serializer = res.data.serializer
-
-                if isinstance(serializer, ListSerializer):
-                    serializer.child.render_type = self.render_type
-                else:
-                    serializer.render_type = self.render_type
-
-                if self.render_type in ('table', 'table rows'):
-                    serializer.data_template = self.template_name
-                elif self.render_type == 'dialog':
-                    serializer.data_template = DYNAMICFORMS.modal_dialog_template
-                    res.template_name = DYNAMICFORMS.modal_dialog_template
-                elif self.render_type == 'form':
-                    serializer.data_template = res.data.serializer.template_name
-                else:
-                    if isinstance(serializer, ListSerializer):
-                        serializer.child.render_type = 'table'
-                        serializer.child.data_template = self.template_name
+                if request.method.lower() != 'delete':
+                    if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
+                            isinstance(res.data['results'], (ReturnList, ReturnDict)):
+                        serializer = res.data['results'].serializer
                     else:
+                        serializer = res.data.serializer
+
+                    if isinstance(serializer, ListSerializer):
+                        serializer.child.render_type = self.render_type
+                    else:
+                        serializer.render_type = self.render_type
+
+                    if self.render_type in ('table', 'table rows'):
+                        serializer.data_template = self.template_name
+                    elif self.render_type == 'dialog':
+                        serializer.data_template = DYNAMICFORMS.modal_dialog_template
+                        res.template_name = DYNAMICFORMS.modal_dialog_template
+                    elif self.render_type == 'form':
+                        serializer.data_template = res.data.serializer.template_name
+                    else:
+                        if isinstance(serializer, ListSerializer):
+                            serializer.child.render_type = 'table'
+                            serializer.child.data_template = self.template_name
+                        else:
+                            serializer.render_type = 'form'
+                            serializer.data_template = serializer.template_name
+                else:
+                    # this is just faking data for rendering nothing in template, so that 204 goes through
+                    from dynamicforms.serializers import Serializer
+                    if not res.data:
+                        # this is just faking data for rendering nothing in template, so that 204 goes through
+                        serializer = Serializer({})
                         serializer.render_type = 'form'
-                        serializer.data_template = serializer.template_name
+                        serializer.data_template = DYNAMICFORMS.modal_dialog_template
+                        res.data = serializer.data
+                    else:
+                        # faking if error would be 400
+                        res.data.serializer.render_type = 'form'
+                        res.data.serializer.data_template = DYNAMICFORMS.modal_dialog_template
             elif res.status_code == status.HTTP_401_UNAUTHORIZED and self.render_type != 'dialog':
                 # TODO: We should show a message here that user is not authorized for this action (only for 403)
                 res = redirect_to_login(request.path_info + get_query_params())
@@ -185,13 +225,13 @@ class TemplateRendererMixin():
             logger = logging.getLogger('django.request')
             logger.exception(exc)
 
-            response = Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            response = Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         response.exception = True
         return response
 
 
-class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+class ModelViewSet(NewMixin, DeleteMixin, TemplateRendererMixin, viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
 
