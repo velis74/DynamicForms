@@ -98,6 +98,16 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         """
         return False
 
+    def confirm_delete_warning(self, request, model_instance):
+        """
+        When deleting object, we sometimes have to display also some custom warning text. This method
+        enables us to do this. This method is used in DeleteMixin in viewsets.py
+        :param request: Request object
+        :param model_instance: Model instance
+        :return: None or string
+        """
+        return None
+
     @property
     def renderable_actions(self: 'serializers.Serializer'):
         """

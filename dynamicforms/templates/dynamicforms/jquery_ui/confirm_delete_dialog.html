@@ -4,6 +4,10 @@
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
         <div>
             {{ confirmation_text }}
+            {% if confirm_delete_warning %}
+                <br>
+                {{ confirm_delete_warning }}
+            {% endif %}
         </div>
         <br>
         <div class="ui-dialog-buttonset">

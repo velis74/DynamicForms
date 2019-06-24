@@ -74,12 +74,16 @@ class DeleteMixin(object):
             if action.name != 'cancel':
                 serializer.actions.actions.remove(action)
         serializer.actions.actions.append(confirm_delete_button)
+        confirm_delete_warning = serializer.confirm_delete_warning(request, self.get_object())
+        render_data = dict(
+            serializer=serializer,
+            confirmation_text=_('Do you really want to delete selected record?'),
+            title=_('Delete action confirmation'),
+        )
+        if confirm_delete_warning:
+            render_data['confirm_delete_warning'] = confirm_delete_warning
         return render_to_response(
-            DYNAMICFORMS.template + 'confirm_delete_dialog.html', dict(
-                serializer=serializer,
-                confirmation_text=_('Do you really want to delete selected record?'),
-                title=_('Delete action confirmation')
-            ))
+            DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
 
 
 class TemplateRendererMixin():
