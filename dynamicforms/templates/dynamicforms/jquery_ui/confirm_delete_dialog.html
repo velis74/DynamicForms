@@ -1,9 +1,16 @@
+{% load dynamicforms %}
+
 <div id="dialog-exception" class="jquery-ui-dialog dynamicforms-dialog" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <div>
+            {{ confirmation_text }}
+        </div>
+        <br>
         <div class="ui-dialog-buttonset">
-            {{ detail }}
+            {% render_table_commands serializer 'form-buttons' button_position='dialog' %}
         </div>
     </div>
+
 
     <script type="text/javascript">
         var $dlgTmp = $('#dialog-exception');

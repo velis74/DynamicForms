@@ -499,6 +499,8 @@ dynamicforms = {
               if (dialog !== undefined) {
                   dynamicforms.updateDialog(
                       dialog, $(xhr.responseText));
+              } else {
+                  dynamicforms.showDialog($(xhr.responseText))
               }
           });
   },
