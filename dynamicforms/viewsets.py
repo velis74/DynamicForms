@@ -226,6 +226,9 @@ class TemplateRendererMixin():
 
             response = Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        if response.status_code == status.HTTP_403_FORBIDDEN and hasattr(exc, 'args') and exc.args:
+            response.data['detail'] = exc.args[0]
+
         response.exception = True
         return response
 
