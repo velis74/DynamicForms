@@ -12,10 +12,6 @@
             </div>
             <div class="modal-body">
                 {{ confirmation_text }}
-                {% if confirm_delete_warning %}
-                    <br>
-                    {{ confirm_delete_warning }}
-                {% endif %}
             </div>
             <div class="modal-footer" style="border-top: none;">
                 {% render_table_commands serializer 'form-buttons' button_position='dialog' %}

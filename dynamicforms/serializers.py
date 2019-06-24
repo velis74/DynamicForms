@@ -8,6 +8,7 @@ from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import ActionMixin, RenderMixin
 from .struct import StructDefault
+from django.utils.translation import ugettext as __
 
 
 class DynamicFormsSerializer(RenderMixin, ActionMixin):
@@ -98,15 +99,19 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         """
         return False
 
-    def confirm_delete_warning(self, request, model_instance):
+    def confirm_delete_text(self, request, model_instance):
         """
-        When deleting object, we sometimes have to display also some custom warning text. This method
-        enables us to do this. This method is used in DeleteMixin in viewsets.py
+        Returns general confirmation text. This method is used in DeleteMixin in viewsets.py
         :param request: Request object
         :param model_instance: Model instance
         :return: None or string
         """
-        return None
+
+        return "{} {}: {}.".format(
+            __('Do you really want to delete selected record?'),
+            __('Record'),
+            str(model_instance)
+        )
 
     @property
     def renderable_actions(self: 'serializers.Serializer'):
