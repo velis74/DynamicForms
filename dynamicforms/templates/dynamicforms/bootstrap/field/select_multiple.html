@@ -25,10 +25,8 @@
     // Check bootstrap version to set select2 theme
       var $sel2 = $("#{{ field.uuid }}").select2({
                                                    // Attaches select2 to its form parent and enables input field (in dialog)
-                                                   dropdownParent: $('#{{ style.serializer.uuid }}')
-                                                   {# TODO: #165 theme setting is commented because currently does't look good with bootstrap4 theme... #}
-                                                   {#  (options in mutiple lines, too narrow borders) #}
-                                                   , theme: '{{ DYNAMICFORMS.select2_theme }}'
+                                                   dropdownParent: $('#{{ style.serializer.uuid }}'),
+                                                   theme: '{{ DYNAMICFORMS.select2_theme }}'
                                                  });
       $sel2.on("change", function (evt) {
         if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
