@@ -60,10 +60,8 @@
         {#  If select2 is for filter#}
         $(evt.currentTarget).parents('table').each(function (key, value) {
           var id = value.getAttribute('id');
-          if (id.startsWith('list-')) {
-            dynamicforms.filterData(id.replace('list-', ''));
-            return false;
-          }
+          if (id.startsWith('list-'))
+            setTimeout(function(){dynamicforms.filterData(id.replace('list-', ''));}, 1);
         });
       }
     });
