@@ -8,7 +8,7 @@
 
 <div id="dialog-tmp-{{ serializer.uuid }}" class="jquery-ui-dialog dynamicforms-dialog" tabindex="-1" role="dialog" aria-hidden="true">
 
-  {% include DYNAMICFORMS.form_base_template with serializer=serializer data=data %}
+  {% include serializer.template_name with serializer=serializer data=data %}
 
   <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
     <div class="ui-dialog-buttonset">
