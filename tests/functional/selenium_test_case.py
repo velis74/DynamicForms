@@ -204,7 +204,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.assertEqual(field.get_attribute('type'), fld_type)
 
-    def get_table_body(self):
+    def get_table_body(self, whole_table=False):
         time.sleep(0.1)
         try:
             body = self.browser.find_element_by_class_name('card-body')
@@ -217,6 +217,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 body = self.browser.find_element_by_class_name('ui-accordion-content')
 
         table = body.find_element_by_tag_name('table')
+        if whole_table:
+            return table
 
         tbody = table.find_element_by_tag_name('tbody')
         return tbody.find_elements_by_tag_name('tr')

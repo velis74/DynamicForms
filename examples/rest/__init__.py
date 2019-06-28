@@ -9,6 +9,7 @@ from .refresh_types import RefreshTypesViewSet
 from .relation import RelationViewset
 from .single_dialog import SingleDialogViewSet
 from .validated import ValidatedViewSet
+from .write_only_fields import WriteOnlyFieldsViewSet
 
 router = routers.DefaultRouter()
 router.register(r'hidden-fields', HiddenFieldsViewSet, base_name='hidden-fields')
@@ -20,3 +21,4 @@ router.register(r'page-load', PageLoadViewSet, base_name='page-load')
 router.register(r'filter', FilterViewSet, base_name='filter')
 router.register(r'refresh-types', RefreshTypesViewSet, base_name='refresh-types')
 router.register(r'single-dialog', SingleDialogViewSet, base_name='single-dialog')
+router.register(r'write-only-fields', WriteOnlyFieldsViewSet, base_name='write-only-fields')

@@ -11,16 +11,14 @@
       {% endfor %}
   >
     {% render_table_commands serializer "rowstart" %}
-    {% for key, value in row|items %}
-      {% set_var column=serializer.fields|dict_item:key %}
-      {% if key in serializer.fields %}
-        {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-          <td class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}" {{ value|add_nested_class }} data-name="{{ key }}">
-            {% render_table_commands serializer "fieldleft" key %}
-            {% render_field_to_table serializer key value row %}
-            {% render_table_commands serializer "fieldright" key %}
-          </td>
-        {% endif %}
+    {% for key, column in serializer.fields.items %}
+      {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
+        {% dict_item_default var='value' d=row k=key default='' %}
+        <td class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}" {{ value|add_nested_class }} data-name="{{ key }}">
+          {% render_table_commands serializer "fieldleft" key %}
+          {% render_field_to_table serializer key value row %}
+          {% render_table_commands serializer "fieldright" key %}
+        </td>
       {% endif %}
     {% endfor %}
     {% render_table_commands serializer "rowend" %}
