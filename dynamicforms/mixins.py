@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Hashable
 import re
 import uuid as uuid_module
 from datetime import datetime
@@ -54,8 +54,8 @@ class RenderMixin(object):
         super().__init__(*args, **kwargs)
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
-        self.display_table = display_table or display or (
-            DisplayMode.FULL if not (hasattr(self, 'write_only') and self.write_only) else DisplayMode.SUPPRESS)
+        self.display_table = display_table or display or \
+                             (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
 
@@ -89,7 +89,7 @@ class RenderMixin(object):
         else:
             choices = getattr(self, 'choices', {})
 
-        if isinstance(value, collections.Hashable) and value in choices:
+        if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
         return drftt.format_value(value)
