@@ -681,7 +681,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field_tag_name = self.get_tag_name(field)
 
                 field_count += 1
-                print(label.text)
                 label_text = self.get_element_text(label)
 
                 if label_text == "Regex field":
