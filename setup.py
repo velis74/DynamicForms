@@ -22,6 +22,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     python_requires='>=3.4',
+    license='BSD-3-Clause',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
