@@ -77,7 +77,7 @@ class DeleteMixin(object):
         render_data = dict(
             serializer=serializer,
             confirmation_text=serializer.confirm_delete_text(request, self.get_object()),
-            title=_('Delete action confirmation'),
+            title=serializer.confirm_delete_title(),
         )
         return render_to_response(
             DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
