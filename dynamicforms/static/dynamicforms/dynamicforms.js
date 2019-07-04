@@ -187,11 +187,11 @@ dynamicforms = {
     }
   },
 
-    /**
-     * Insert new row after the last row or insert first row
-     * @param $newRow
-     * @param listId
-     */
+  /**
+   * Insert new row after the last row or insert first row
+   * @param $newRow
+   * @param listId
+   */
   insertRow: function insertRow($newRow, listId){
       if (listId !== undefined) {
           var $lastRow = $('#' + listId).find("tr[data-id]").last();
@@ -214,49 +214,34 @@ dynamicforms = {
    * @param recordID: id of edited data
    * @param formID: id of form
    */
-  refreshRow: function refreshRow(data, formID, recordID) {
+  refreshRow:  function refreshRow(data, formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-    var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
 
-    // Case when table is smaller than pagination
-    if (link_next == undefined) {
+    var $rowToRefresh = null; // Row to refresh
+
+    if (recordID) {
+      var trSelector = "tr[data-id='" + recordID + "']";
+      $rowToRefresh  = $(trSelector); // Row to refresh
+    }
+
+    // Case when all records are loaded or edited record is loaded
+    if (!dynamicforms.isLinkNext(tbl_pagination.link_next) || ($rowToRefresh != null && $rowToRefresh.length)) {
       var $htmlObject = $(data);
 
-      var oldTableKey = undefined;
-      var oldTable = $($('table[id*="list-"]').filter(function (key, item) {
-         if ($(item).attr('id').includes(formID)) {
-              oldTableKey = key;
-              return item;
-          }
-      }));
-
-      $htmlObject = $($htmlObject.find("table[id*='list-']")[oldTableKey]);
-
       if (recordID) {
-          var trSelector = "tr[data-id='" + recordID + "']";
-          var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
-          var $rowToRefresh = $(oldTable.find(trSelector)); // Row to refresh
+        var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
+        if ($editedRow.length) {
           if ($rowToRefresh.length)
-              $rowToRefresh.replaceWith($editedRow);
+            $rowToRefresh.replaceWith($editedRow);
           else
-              dynamicforms.insertRow($editedRow, oldTable.attr('id'));
+            dynamicforms.insertRow($editedRow);
+        }
       } else {
-          var $lastRow = oldTable.find("tr[data-id]").last();
-          if (!$lastRow) {
-              $lastRow = oldTable.find("tr[data-title='NoData']")
-          }
-          // Last row before adding new record
-          var $newRow = $htmlObject.find("tr[data-id]").last(); // Added record from ajax returned html
-           // Insert new row after the last row or insert first row
-          if ($lastRow.length) {
-              $newRow.insertAfter($lastRow);
-          } else {
-              oldTable.find("tr[data-title]").replaceWith($newRow);
-          }
+        var $newRow = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
+        dynamicforms.insertRow($newRow);
       }
-    } else { // Case when table is larger than pagination
-        dynamicforms.filterData(formID);
     }
+    // else do nothing. Paginator will take care of new record when necessary
   },
 
   /**
@@ -265,6 +250,7 @@ dynamicforms = {
    * @param recordID: id of edited data
    */
   refreshTable: function refreshTable(formID, recordID) {
+
     //If it is set to refresh table, we also want to see all the changes, that was made by other users.
     //We can only get them by reread data.
     dynamicforms.filterData(formID);
@@ -510,7 +496,7 @@ dynamicforms = {
     return dynamicforms.editRow(recordURL, refreshType, listId);
   },
 
-/**************************************************************
+   /**************************************************************
    * Form current values support functions
    **************************************************************/
 
