@@ -265,48 +265,9 @@ dynamicforms = {
    * @param recordID: id of edited data
    */
   refreshTable: function refreshTable(formID, recordID) {
-    var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-    var link_next      = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
-
-    var recordURL = dynamicforms.getRecordURL(formID);
-    var table     = $("#list-" + formID).find("tbody:first");
-
-    // Case when table is smaller than pagination
-    if (link_next == undefined) {
-      $.ajax({
-        type:    'GET',
-        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-        url:     recordURL,
-      }).done(function (data) {
-
-        data                     = $(data).filter("tr");
-        tbl_pagination.link_next = data[0].getAttribute('data-next');
-
-        // Edited record
-        if (recordID) {
-          table.find("tr").remove();
-        } else if (!recordID) { // Added record
-          // Check if "no data" element is present and remove it
-          table.find("tr[data-title='NoData']").remove();
-          // Update records
-          for (var i = data.length - 1; i >= 0; i--) {
-            var data_id = data[i].getAttribute('data-id');
-            if (data_id == null || table.find("tr[data-id='" + data_id + "']").length > 0)
-              data.splice(i, 1);
-          }
-        }
-
-        if (data.length > 0) {
-          table.append(data);
-          tbl_pagination.trigger_element = data[0];
-        }
-        dynamicforms.paginatorCheckGetNextPage(formID);
-      }).fail(function (xhr, status, error) {
-        // TODO: what if the server returns an error? Do we continue with pagination? (Task #100)
-      });
-    } else { // Case when table is larger than pagination
-      dynamicforms.filterData(formID);
-    }
+    //If it is set to refresh table, we also want to see all the changes, that was made by other users.
+    //We can only get them by reread data.
+    dynamicforms.filterData(formID);
   },
 
   /**
