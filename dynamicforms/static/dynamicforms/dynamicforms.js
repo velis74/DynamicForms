@@ -400,6 +400,23 @@ dynamicforms = {
       window.location = recordURL;
   },
 
+  showReadOnlyRow: function showReadOnlyRow(recordURL, listId) {
+    if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
+      $.ajax({
+        url:     recordURL,
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+      })
+        .done(function (dialogHTML) {
+          dynamicforms.showDialog($(dialogHTML), 'no refresh', listId);
+        })
+        .fail(function (xhr, status, error) {
+          // TODO: this doesn't handle errors correctly
+          dynamicforms.showAjaxError(xhr, status, error);
+        });
+    } else
+      window.location = recordURL;
+  },
+
   /**
    * Removes table row after deletion
    *

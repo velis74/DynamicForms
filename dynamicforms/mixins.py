@@ -99,11 +99,16 @@ class ActionMixin(object):
     """
 
     def __init__(self, *args, actions: Actions = None, **kwargs):
+        read_only_detail = kwargs.get('read_only_detail')
+        kwargs.pop('read_only_detail', None)
         super().__init__(*args, **kwargs)
-        act = actions or Actions(None)
-        act.actions.extend(getattr(self, 'actions', Actions()).actions)
-        # Obtain a personalised list of actions
-        self.actions = act.get_resolved_copy(self)
+        if read_only_detail:
+            self.actions = Actions(None).get_resolved_copy(self)
+        else:
+            act = actions or Actions(None)
+            act.actions.extend(getattr(self, 'actions', Actions()).actions)
+            # Obtain a personalised list of actions
+            self.actions = act.get_resolved_copy(self)
 
 
 class NullChoiceMixin(object):

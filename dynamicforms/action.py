@@ -215,10 +215,10 @@ class FormButtonAction(ActionBase):
         self.button_is_primary = button_is_primary
 
         self.btn_classes = btn_classes or (
-            DYNAMICFORMS.form_button_classes + ' '
-            + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
-               else DYNAMICFORMS.form_button_classes_secondary) + ' '
-            + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
+                DYNAMICFORMS.form_button_classes + ' '
+                + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
+                   else DYNAMICFORMS.form_button_classes_secondary) + ' '
+                + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
         )
 
     def copy_and_resolve_reference(self, serializer):
@@ -276,6 +276,13 @@ class Actions(object):
                 TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
                             action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                                       "{{row.id}}, 'record', __TABLEID__);"))
+            self.actions.append(
+                TableAction(TablePosition.ROW_CLICK, _('View details'), title=_('View details'), name='view-details',
+                            action_js="dynamicforms.showReadOnlyRow("
+                                      "'{% url url_reverse|add:'-view-readonly-detail' pk='__ROWID__' "
+                                      "format='html' %}'.replace('__ROWID__', $(event.target).parents('tr')."
+                                      "attr('data-id')), __TABLEID__);")
+            )
         if add_default_filter:
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',
                                             action_js="dynamicforms.defaultFilter(event);"))
@@ -342,8 +349,24 @@ class Actions(object):
     def renderable_actions(self, serializer: Serializer):
         request = serializer.context.get('request', None)
         viewset = serializer.context.get('view', None)
-        return (a for a in self.actions
-                if isinstance(a, TableAction) and not serializer.suppress_action(a, request, viewset))
+        actions = []
+        for action in self.actions:
+            supress = serializer.suppress_action(action, request, viewset)
+            if isinstance(action, TableAction) and not supress:
+                if action.name == 'edit':
+                    if serializer.is_row_editable(
+                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                                serializer, '__dynamic_forms_row_data') else None):
+                        actions.append(action)
+                elif action.name == 'view-details':
+                    if not serializer.is_row_editable(
+                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                                serializer, '__dynamic_forms_row_data') else None):
+                        actions.append(action)
+                else:
+                    actions.append(action)
+
+        return tuple(actions)
 
     def render_renderable_actions(self, allowed_positions: Iterable[TablePosition], field_name: str,
                                   serializer: Serializer):

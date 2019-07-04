@@ -49,6 +49,11 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
                 field.allow_null = True
                 field.read_only = False
                 field.display_form = field.display_table  # filter's form is same as non-filter's table
+        if kwds.get('read_only_detail'):
+            for field in self.fields.values():
+                field.read_only = True
+                field.set_help_text(None)
+                field.set_help_text_form(None)
 
     @property
     def has_non_field_errors(self):
@@ -138,6 +143,14 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
             return res
 
         return super().get_initial()
+
+    def is_row_editable(self, row_data: object) -> bool:
+        """
+        Determines if row can be edited. If row is editable, dialog for editing record is writable, else
+        inputs are read-only without any actions in form
+        :return: bool
+        """
+        return True
 
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):

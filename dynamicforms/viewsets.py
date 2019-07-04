@@ -83,6 +83,14 @@ class DeleteMixin(object):
             DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
 
 
+class ReadOnlyMixin(object):
+    @action(detail=True, methods=['get'])
+    def view_readonly_detail(self: viewsets.ModelViewSet, request, pk=None, format=None):
+        record = self.get_object()
+        serializer = self.get_serializer(record, read_only_detail=True)
+        return Response(serializer.data)
+
+
 class TemplateRendererMixin():
     template_context = {}
     """
@@ -233,7 +241,7 @@ class TemplateRendererMixin():
         return response
 
 
-class ModelViewSet(NewMixin, DeleteMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, TemplateRendererMixin, viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
 
