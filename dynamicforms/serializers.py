@@ -118,6 +118,14 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
             str(model_instance)
         )
 
+    def confirm_delete_title(self):
+        """
+        Returns delete confirmation dialog title. This method is used in DeleteMixin in viewsets.py
+        :return: string
+        """
+
+        return __('Delete action confirmation')
+
     @property
     def renderable_actions(self: 'serializers.Serializer'):
         """
