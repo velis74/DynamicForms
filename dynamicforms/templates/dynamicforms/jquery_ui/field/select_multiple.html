@@ -1,47 +1,46 @@
-{% extends DYNAMICFORMS.field_base_template %}
-{% load i18n dynamicforms %}
-{% trans "No items to select." as no_items %}
+{% extends DYNAMICFORMS.field_base_template %}{% load i18n dynamicforms %}{% trans "No items to select." as no_items %}
 {% block field_input %}
-<select multiple {{ field.choices|yesno:",disabled" }} id="{{field.uuid}}"
-        class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs{{ DYNAMICFORMS.select2_form_field_class }}"
-        name="{{ field.name }}"
-        {% if field.read_only %}disabled{% endif %}
-  >
-  {% for select in field.iter_options %}
-    {% if select.start_option_group %}
-      <optgroup label="{{ select.label }}">
-    {% elif select.end_option_group %}
-      </optgroup>
-    {% else %}
-      <option value="{{ select.value }}" {% if select.value|as_string in field.value|as_list_of_strings %}selected{% endif %} {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
-    {% endif %}
-  {% empty %}
-    <option>{{ no_items }}</option>
-  {% endfor %}
-</select>
-{% if DYNAMICFORMS.use_select2 %}
-  <script type="text/javascript">
-    // Check bootstrap version to set select2 theme
-  window.setTimeout(function() {
-    var $sel2 = $("#{{ field.uuid }}").select2({
-      // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}'),
-    });
+  <select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}"
+          class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs{{ DYNAMICFORMS.select2_form_field_class }}"
+          name="{{ field.name }}" {% if field.read_only %}disabled{% endif %}>
+    {% for select in field.iter_options %}
+      {% if select.start_option_group %}
+        <optgroup label="{{ select.label }}">
+          {% elif select.end_option_group %}
+        </optgroup>
+      {% else %}
+        <option value="{{ select.value }}"
+                {% if select.value|as_string in field.value|as_list_of_strings %}selected{% endif %}
+                {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
+      {% endif %}
+    {% empty %}
+      <option>{{ no_items }}</option>
+    {% endfor %}
+  </select>
+  {% if DYNAMICFORMS.use_select2 %}
+    <script type="text/javascript">
+      // Check bootstrap version to set select2 theme
+      window.setTimeout(function () {
+        var $sel2 = $("#{{ field.uuid }}").select2({
+                                                     // Attaches select2 to its form parent and enables input field (in dialog)
+                                                     {% if field.placeholder %}
+                                                       placeholder: "{{ field.placeholder }}",
+                                                     {% endif %}
+                                                     dropdownParent: $('#{{ style.serializer.uuid }}')
+                                                   });
 
-    $sel2.on("change", function (evt) {
-      if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
-        {#  If select2 is for filter#}
-        $(evt.currentTarget).parents('table').each(function (key, value) {
-          var id = value.getAttribute('id');
-          if (id.startsWith('list-')) {
-            dynamicforms.filterData(id.replace('list-', ''));
-            return false;
+        $sel2.on("change", function (evt) {
+          if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
+            {#  If select2 is for filter#}
+            $(evt.currentTarget).parents('table').each(function (key, value) {
+              var id = value.getAttribute('id');
+              if (id.startsWith('list-'))
+                setTimeout(function () {dynamicforms.filterData(id.replace('list-', ''));}, 1);
+            });
           }
         });
-      }
-    });
 
-  }, 1);
-  </script>
-{% endif %}
+      }, 1);
+    </script>
+  {% endif %}
 {% endblock %}

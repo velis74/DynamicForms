@@ -273,3 +273,10 @@ def json(value):
             return super().default(obj)
 
     return mark_safe(jsonlib.dumps(value, cls=Encoder))
+
+
+@register.simple_tag(takes_context=True)
+def dict_item_default(context, var, d, k, default):
+    context[var] = d.get(k, default)
+
+    return ''

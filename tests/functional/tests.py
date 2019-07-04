@@ -2,7 +2,7 @@ from selenium.common.exceptions import NoAlertPresentException, NoSuchElementExc
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
-from examples.models import RefreshType, Validated
+from examples.models import RefreshType, Validated, AdvancedFields
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
@@ -681,7 +681,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 field_tag_name = self.get_tag_name(field)
 
                 field_count += 1
-                print(label.text)
                 label_text = self.get_element_text(label)
 
                 if label_text == "Regex field":
@@ -1119,3 +1118,20 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             alert.accept()
         except NoAlertPresentException:
             pass
+
+    def test_write_only_fields(self):
+        af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
+        self.browser.get(self.live_server_url + '/write-only-fields.html')
+        table = self.get_table_body(whole_table=True)
+        header = table.find_elements_by_css_selector('thead tr th')
+        self.assertEqual(len(header), 3)
+        for idx, th in enumerate(header):
+            if idx == 1:
+                self.assertEqual(th.text.strip(), 'Shown')
+            else:
+                self.assertNotEqual(th.text.strip(), 'Hidden')
+        body = table.find_elements_by_css_selector('tbody tr td')
+        self.assertEqual(len(body), 3)
+        self.assertNotEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="choice_field"]')), 0)
+        self.assertEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="regex_field"]')), 0)
+        af.delete()

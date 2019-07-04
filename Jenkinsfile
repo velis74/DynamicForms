@@ -44,6 +44,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
   // To do this, you need to wrap the code below in { }, and either return
   // that explicitly, or use { -> } syntax.
   return {
+    agent {
     node {
       echo "testing ${env}"
       deleteDir()
@@ -64,6 +65,7 @@ def transformIntoStep(pyver, browser, env, workspace) {
       rsync -rtpl .tox/${env} ${workspace}/.tox
       """
       deleteDir()
+    }
     }
   }
 }

@@ -178,6 +178,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     the serializer class, or simply use a `Serializer` class.
     """
 
+    def __init__(self, *args, is_filter: bool = False, **kwds):
+        super().__init__(*args, is_filter=is_filter, **kwds)
+        self.manage_changed_flds()
+
     serializer_field_mapping = {
         models.AutoField: fields.IntegerField,
         models.BigIntegerField: fields.IntegerField,
@@ -211,6 +215,24 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     serializer_related_to_field = fields.SlugRelatedField
     serializer_url_field = fields.HyperlinkedIdentityField
     serializer_choice_field = fields.ChoiceField
+
+    def manage_changed_flds(self):
+        """
+        When there is a need to only change few parameters of a field put those fields and changed parameters in
+        serializers Meta class in parameter changed_flds.
+
+        Exsample:
+        changed_flds = {'id': dict(display=DisplayMode.HIDDEN),
+                        'comment': dict(label='Comm', help_text='Help text for comment field')
+                        }
+        :return:
+        """
+        if hasattr(self.Meta, 'changed_flds'):
+            for field, params in self.Meta.changed_flds.items():
+                field_def = self.fields.get(field, None)
+                if field_def:
+                    for key, val in params.items():
+                        setattr(field_def, key, val)
 
 
 class Serializer(DynamicFormsSerializer, serializers.Serializer):

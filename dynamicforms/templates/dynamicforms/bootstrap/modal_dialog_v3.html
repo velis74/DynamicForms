@@ -15,7 +15,7 @@
         <h4 class="modal-title" id="exampleModalLongTitle">{{ title }}</h4>
       </div>
       <div class="modal-body">
-        {% include DYNAMICFORMS.form_base_template with serializer=serializer data=data %}
+        {% include serializer.template_name with serializer=serializer data=data %}
       </div>
       <div class="modal-footer">
         {% render_table_commands serializer 'form-buttons' button_position='dialog' %}
