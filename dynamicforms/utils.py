@@ -21,4 +21,5 @@ def set_progress_value(progress_key, value):
     :param value: Progress in percentages (0.00 - 1.00)
     :return:
     """
-    cache.set('df_progress.%s' % progress_key, value)
+    if progress_key is not None:
+        cache.set('df_progress.%s' % progress_key, value)

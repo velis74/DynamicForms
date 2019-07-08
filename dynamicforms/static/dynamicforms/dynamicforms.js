@@ -207,7 +207,8 @@ dynamicforms = {
 
     var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
     var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
-    headers['X-DF-TIMESTAMP'] = timestamp
+    headers['X-DF-TIMESTAMP'] = timestamp;
+    ajaxSettings['headers'] = headers;
 
     return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);
   },
