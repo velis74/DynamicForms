@@ -55,11 +55,162 @@ dynamicforms = {
    * @param status
    * @param error
    */
-  showAjaxError: function showAjaxError(xhr, status, error) {
+  showAjaxError:   function showAjaxError(xhr, status, error) {
     //TODO: make proper error display message. You will probably also need some text about what you were trying to do
     console.log([xhr, status, error]);
   },
+  /**
+   * Shows progress dialog if operation takes longer than 0.5 seconds. Also sets z-index of progress bar and overlay
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  showProgressDlg: function showProgressDialog(progressDlgID, progressSettings) {
+    var zIndexElement = null;
+    var progressDlg   = $('#' + progressDlgID);
+    if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+      if (progressSettings === undefined)
+        progressSettings = {value: 25};
+      $("#df-progress-bar-indeterminate").progressbar(progressSettings);
+      progressSettings['value'] = 0;
+      $("#df-progress-bar-determinate").progressbar(progressSettings);
 
+      if (dynamicforms.shouldShowProgressDlg) {
+        dynamicforms.progressDlgShown = true;
+        progressDlg.dialog({dialogClass: 'progress-bar', closeOnEscape: false, resizable: false});
+      }
+      zIndexElement = progressDlg.parents().first();
+    } else {
+      if (progressSettings === undefined)
+        progressSettings = {keyboard: false, backdrop: 'static'};
+      if (dynamicforms.shouldShowProgressDlg) {
+        dynamicforms.progressDlgShown = true;
+        progressDlg.modal(progressSettings);
+      }
+      zIndexElement = progressDlg;
+    }
+    var zIndexOrig = zIndexElement.css('z-index');
+    var zIndex     = parseInt(zIndexOrig);
+    if (zIndex == NaN)
+      zIndex = zIndexOrig;
+    else {
+      // Because all bootstrap modules have same z-index. If we want that clickable progress bar will be on top of all
+      // we must raise z-index. At the same time we must set overlay z-index, so nothing else will be clickable.
+      zIndex += 1;
+      zIndexElement.css('z-index', zIndex + 1);
+    }
+
+    $('#df-overlay').css('z-index', zIndex);
+  },
+
+  progressCheckInterval: null,
+  /**
+   * Sets continuous checking on server about operation progress. After first check shows progress dialog if necessary.
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  progressCheck:         function progressCheck(progressDlgID, timestamp, progressSettings) {
+    if (!dynamicforms.progressDlgShown && dynamicforms.progressCheckInterval != null) {
+      clearInterval(dynamicforms.progressCheckInterval);
+      dynamicforms.progressCheckInterval = null;
+    } else {
+      $.ajax({url: '/dynamicforms/progress/', headers: {'X-DF-TIMESTAMP': timestamp}})
+        .done(function (data, textStatus, jqXHR) {
+          var pb_indet   = $('#df-progress-bar-indeterminate');
+          var pb_det     = $('#df-progress-bar-determinate');
+          var percent    = data['value'];
+          var show_indet = percent == null;
+          if (!show_indet) {
+            if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+              pb_det.progressbar("value", parseInt(percent));
+            } else {
+              pb_det.css('width', percent + '%').attr('aria-valuenow', percent)
+            }
+          }
+          pb_indet.toggle(show_indet);
+          pb_det.toggle(!show_indet);
+
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
+            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
+          }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
+            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
+          }
+        });
+    }
+  },
+  /**
+   * Starts continuous checking on operations progress. After first check progress dialog is opened if necessary
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  startProgressChecker:  function startProgressChecker(progressDlgID, timestamp, progressSettings) {
+    dynamicforms.progressCheck(progressDlgID, timestamp, progressSettings);
+    dynamicforms.progressCheckInterval = setInterval(dynamicforms.progressCheck, 500, progressDlgID, timestamp, progressSettings);
+  },
+  shouldShowProgressDlg: false,
+  progressDlgShown:      false,
+  /**
+   * Sets overlay so nothing can be clicked while operation last. If it last for more than 0.5 second it starts progress checker.
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  setProgressDlg:        function setProgressDlg(progressDlgID, timestamp, progressSettings) {
+    $('#df-overlay').css('z-index', 10000).show();
+    dynamicforms.shouldShowProgressDlg = true;
+    window.setTimeout(function () {
+      if (dynamicforms.shouldShowProgressDlg) {
+        dynamicforms.startProgressChecker(progressDlgID, timestamp, progressSettings);
+      }
+    }, 500);
+  },
+  /**
+   * Closes progress dialog (if it is opened) and hides overlay that prevents clicks on other elements
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   */
+  closeProgressDlg:      function closeProgressDlg(progressDlgID) {
+    dynamicforms.shouldShowProgressDlg = false
+    if (dynamicforms.progressCheckInterval != null) {
+      clearInterval(dynamicforms.progressCheckInterval);
+      dynamicforms.progressCheckInterval = null;
+    }
+
+    $('#df-overlay').hide();
+    if (dynamicforms.progressDlgShown) {
+      dynamicforms.progressDlgShown = false;
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        $('#' + progressDlgID).dialog('close');
+      } else {
+        $('#' + progressDlgID).modal('hide');
+      }
+    }
+  },
+  /**
+   * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
+   * If operation lasts for more than 0.5 seconds progress dialog is shown.
+   * @param options: Dict with options for ajax call ('ajax_setts'), and custom progress dialog ('progress_id', 'progress_sets')
+   * @returns ajax promise with everything set for progress dialog: X-DF-TIMESTAMP header for progress checking and
+   *  callbacks for closing progress dialog after operation completes
+   */
+  ajaxWithProgress:      function ajaxWithProgress(options) {
+    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
+    var timestamp     = $.now()
+
+    dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
+    var closeProgressDialogFunc = function () {
+      dynamicforms.closeProgressDlg(progressDlgID);
+    };
+
+    var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
+    var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
+    headers['X-DF-TIMESTAMP'] = timestamp
+
+    return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);
+  },
 
   /**
    * Handles what happens when user says "Save data". Basically serialization, send to server, response to returned
@@ -98,14 +249,16 @@ dynamicforms = {
     } else
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
 
-    $.ajax({
-             type:        method,
-             url:         $form.attr("action"),
-             data:        data,
-             dataType:    dataType,
-             headers:     headers,
-             traditional: true,
-           })
+    dynamicforms.ajaxWithProgress({
+                                    ajax_setts: {
+                                      type:        method,
+                                      url:         $form.attr("action"),
+                                      data:        data,
+                                      dataType:    dataType,
+                                      headers:     headers,
+                                      traditional: true,
+                                    }
+                                  })
       .done(doneFunc)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
@@ -158,7 +311,7 @@ dynamicforms = {
         var data = dynamicforms.filterData(formID, true);
         if (recordID)
           data.id = recordID
-        $.ajax({type: 'GET', url: url, data: data, dataType: 'html'})
+        dynamicforms.ajaxWithProgress({ajax_setts: {type: 'GET', url: url, data: data, dataType: 'html'}})
           .done(function (data) {
             dynamicforms.refreshRow(data, formID, recordID);
           })
@@ -337,10 +490,12 @@ dynamicforms = {
    */
   editRow: function editRow(recordURL, refreshType, listId) {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
-      $.ajax({
-               url:     recordURL,
-               headers: {'X-DF-RENDER-TYPE': 'dialog'},
-             })
+      dynamicforms.ajaxWithProgress({
+                                      ajax_setts: {
+                                        url:     recordURL,
+                                        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+                                      }
+                                    })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), refreshType, listId);
         })
@@ -385,11 +540,13 @@ dynamicforms = {
    */
   deleteRow: function deleteRow(recordURL, recordID, refreshType, listId) {
     //TODO: Ask user for confirmation
-    $.ajax({
-             url:     recordURL,
-             method:  'DELETE',
-             headers: {'X-CSRFToken': dynamicforms.csrf_token},
-           })
+    dynamicforms.ajaxWithProgress({
+                                    ajax_setts: {
+                                      url:     recordURL,
+                                      method:  'DELETE',
+                                      headers: {'X-CSRFToken': dynamicforms.csrf_token},
+                                    }
+                                  })
       .done(function (dialogHTML) {
         console.log('Record successfully deleted.');
         //  TODO: make a proper notification
@@ -895,11 +1052,10 @@ dynamicforms = {
       } else if (element.val() != null && element.val().length) {
         if (element.is('select') && element.is("[multiple]")) {
           var delimiter = element.attr('value_delimiter');
-          if(delimiter == undefined)
+          if (delimiter == undefined)
             delimiter = ',';
           filter[element.attr("name")] = element.val().join(delimiter);
-        }
-        else
+        } else
           filter[element.attr("name")] = element.val();
       }
     });
@@ -951,4 +1107,8 @@ $(document).ready(function () {
     dynamicforms.serializeForm($(form), 'final');
   });
   window.setInterval(dynamicforms.paginatorCheckGetNextPageAll, 100);
+
+  var $overlay = $("<div id='df-overlay' style='position: fixed; display: none; width: 100%; height: 100%; top: 0; " +
+                     "left: 0; right: 0; bottom: 0; cursor: pointer; z-index: auto'></div>");
+  $("body").append($overlay);
 })

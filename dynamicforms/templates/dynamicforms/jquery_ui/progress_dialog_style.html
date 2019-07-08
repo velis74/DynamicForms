@@ -1,0 +1,23 @@
+<style>
+
+  .progress-bar .ui-dialog-titlebar-close {
+    display: none;
+  }
+
+  .progress-bar .indeterminate .ui-progressbar-value {
+    position:  relative;
+    animation: progress-indeterminate 3s linear infinite;
+  }
+
+  @keyframes progress-indeterminate {
+    from {
+      left:  -25%;
+      width: 25%;
+    }
+    to {
+      left:  100%;
+      width: 25%;
+    }
+  }
+
+</style>
