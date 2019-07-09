@@ -43,9 +43,9 @@ TLD.prototype = {
 dynamicforms = {
   // DYNAMICFORMS is an object containing all dynamicforms settings as specified by defaults and in settings.py
   DYNAMICFORMS: {
-    'template':          'dynamicforms/bootstrap/',
-    'jquery_ui':         false,
-    'edit_in_dialog':    true,
+    'template': 'dynamicforms/bootstrap/',
+    'jquery_ui': false,
+    'edit_in_dialog': true,
     'bootstrap_version': 'v4',
   },
 
@@ -60,6 +60,32 @@ dynamicforms = {
     console.log([xhr, status, error]);
   },
 
+  submitFormWithConfirmation: function submitFormWithConfirmation(url, $dlg, $form) {
+    var data = dynamicforms.getSerializedForm($form, 'final');
+    var method = data['data-dynamicforms-method'] || 'POST';
+    var headers = {'X-DF-RENDER-TYPE': 'dialog'};
+
+    headers['X-CSRFToken'] = dynamicforms.csrf_token;
+
+    var dataType = 'html';
+
+    $.ajax({
+      type: method,
+      url: url + 'confirm_create.html', //+ 'confirm_delete.html'
+      data: data,
+      dataType: dataType,
+      headers: headers,
+      traditional: true
+    }).always(function (data, status, response) {
+      dynamicforms.closeDialog($dlg);
+      var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
+      dynamicforms.showDialog(newDialog, 'page')
+    });
+  },
+
+  submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
+    return dynamicforms.makeSubmitForm($dlg, $form, refreshType, doneFunc)
+  },
 
   /**
    * Handles what happens when user says "Save data". Basically serialization, send to server, response to returned
@@ -69,15 +95,15 @@ dynamicforms = {
    * @param refreshType: how to refresh the table
    * @param doneFunc: if specified, this function will be called on successful data send
    */
-  submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
-    var data    = dynamicforms.getSerializedForm($form, 'final');
-    var method  = data['data-dynamicforms-method'] || 'POST';
+  makeSubmitForm: function makeSubmitForm($dlg, $form, refreshType, doneFunc) {
+    var data = dynamicforms.getSerializedForm($form, 'final');
+    var method = data['data-dynamicforms-method'] || 'POST';
     var headers = {'X-DF-RENDER-TYPE': 'dialog'};
 
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     var recordURL = dynamicforms.getRecordURL($form.attr('id'));
-    var recordID  = data.id ? data.id : false;
+    var recordID = data.id ? data.id : false;
 
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
@@ -91,7 +117,8 @@ dynamicforms = {
             recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
             if (recordID == '')
               recordID = false;
-          } catch (e) {}
+          } catch (e) {
+          }
         }
         dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
       }
@@ -99,13 +126,13 @@ dynamicforms = {
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
 
     $.ajax({
-             type:        method,
-             url:         $form.attr("action"),
-             data:        data,
-             dataType:    dataType,
-             headers:     headers,
-             traditional: true,
-           })
+      type: method,
+      url: $form.attr("action"),
+      data: data,
+      dataType: dataType,
+      headers: headers,
+      traditional: true,
+    })
       .done(doneFunc)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
@@ -149,7 +176,7 @@ dynamicforms = {
     if (refreshType == undefined || refreshType == 'record') {
       if (recordID) {
         var trSelector = "tr[data-id='" + recordID + "']";
-        $rowToRefresh  = $(trSelector); // Row to refresh
+        $rowToRefresh = $(trSelector); // Row to refresh
       }
 
       // If table will not change we wont even fetch new record
@@ -192,21 +219,21 @@ dynamicforms = {
    * @param $newRow
    * @param listId
    */
-  insertRow: function insertRow($newRow, listId){
-      if (listId !== undefined) {
-          var $lastRow = $('#' + listId).find("tr[data-id]").last();
-      } else {
-          var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
-      }
-      // Insert new row after the last row or insert first row
-      if ($lastRow.length) {
-          $newRow.insertAfter($lastRow);
-      } else if (listId) {
-          $('#' + listId).find("tr[data-title]").replaceWith($newRow);
-      } else {
-          $("table").find("tr[data-title]").replaceWith($newRow);
-      }
-    },
+  insertRow: function insertRow($newRow, listId) {
+    if (listId !== undefined) {
+      var $lastRow = $('#' + listId).find("tr[data-id]").last();
+    } else {
+      var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
+    }
+    // Insert new row after the last row or insert first row
+    if ($lastRow.length) {
+      $newRow.insertAfter($lastRow);
+    } else if (listId) {
+      $('#' + listId).find("tr[data-title]").replaceWith($newRow);
+    } else {
+      $("table").find("tr[data-title]").replaceWith($newRow);
+    }
+  },
 
   /**
    * Replaces edited row
@@ -214,14 +241,14 @@ dynamicforms = {
    * @param recordID: id of edited data
    * @param formID: id of form
    */
-  refreshRow:  function refreshRow(data, formID, recordID) {
+  refreshRow: function refreshRow(data, formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
 
     var $rowToRefresh = null; // Row to refresh
 
     if (recordID) {
       var trSelector = "tr[data-id='" + recordID + "']";
-      $rowToRefresh  = $(trSelector); // Row to refresh
+      $rowToRefresh = $(trSelector); // Row to refresh
     }
 
     // Case when all records are loaded or edited record is loaded
@@ -265,7 +292,7 @@ dynamicforms = {
   showDialog: function showDialog($dlg, refreshType, listId) {
     //TODO: adjust hashURL
     $dlg = $dlg.find('.dynamicforms-dialog').length ?
-          $dlg.find('.dynamicforms-dialog') : $dlg;
+      $dlg.find('.dynamicforms-dialog') : $dlg;
     $(document.body).append($dlg);
     var $form = $dlg.find('.dynamicforms-form');
     dynamicforms.form_helpers.set($form.attr('id'), 'listID', listId);
@@ -304,7 +331,7 @@ dynamicforms = {
    */
   updateDialog: function updateDialog($dlg, $newDlg) {
     $newDlg = $newDlg.find('.dynamicforms-dialog').length ?
-       $newDlg.find('.dynamicforms-dialog') : $newDlg;
+      $newDlg.find('.dynamicforms-dialog') : $newDlg;
     $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
     dynamicforms.closeDialog($dlg);
     /*
@@ -347,9 +374,9 @@ dynamicforms = {
   editRow: function editRow(recordURL, refreshType, listId) {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       $.ajax({
-               url:     recordURL,
-               headers: {'X-DF-RENDER-TYPE': 'dialog'},
-             })
+        url: recordURL,
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+      })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), refreshType, listId);
         })
@@ -363,7 +390,7 @@ dynamicforms = {
   showReadOnlyRow: function showReadOnlyRow(recordURL, listId) {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       $.ajax({
-        url:     recordURL,
+        url: recordURL,
         headers: {'X-DF-RENDER-TYPE': 'dialog'},
       })
         .done(function (dialogHTML) {
@@ -394,38 +421,38 @@ dynamicforms = {
     var mainSelector = $('[id*=' + listId + ']');
     var $leftTrsCount = mainSelector.find("tr[data-id]").length;
     if ($leftTrsCount == 0) {
-       // Count how many lines should "No data" element span
-       var colCount = mainSelector.find("th").length;
-       var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
-       mainSelector.find("tbody").first().append(noDataElement);
+      // Count how many lines should "No data" element span
+      var colCount = mainSelector.find("th").length;
+      var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
+      mainSelector.find("tbody").first().append(noDataElement);
     }
   },
 
   deleteRowWithConfirmation: function deleteRowWithConfirmation(recordURL, recordID, refreshType, listId) {
-      $.ajax({
-          url: recordURL + 'confirm_delete.html',
-          method: 'GET',
-          data: {
-              record_id: recordID,
-              list_id: listId
-          },
-          dataType: 'html',
-          headers: {'X-CSRFToken': dynamicforms.csrf_token}
-      }).always(function (dialog) {
-          //show dialog
-          var confirmDialog = $(dialog.responseText ? dialog.responseText : dialog);
-          dynamicforms.showDialog(confirmDialog);
-          var confirmButton = $("button[class*='" + recordID + '_' + listId + "']");
-          if (confirmButton.length) {
-              confirmButton.on('click', function (e) {
-                  dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId, confirmDialog);
-              });
-          }
-      });
+    $.ajax({
+      url: recordURL + 'confirm_delete.html',
+      method: 'GET',
+      data: {
+        record_id: recordID,
+        list_id: listId
+      },
+      dataType: 'html',
+      headers: {'X-CSRFToken': dynamicforms.csrf_token}
+    }).always(function (dialog) {
+      //show dialog
+      var confirmDialog = $(dialog.responseText ? dialog.responseText : dialog);
+      dynamicforms.showDialog(confirmDialog);
+      var confirmButton = $("button[class*='" + recordID + '_' + listId + "']");
+      if (confirmButton.length) {
+        confirmButton.on('click', function (e) {
+          dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId, confirmDialog);
+        });
+      }
+    });
   },
 
   deleteRow: function deleteRow(recordURL, recordID, refreshType, listId) {
-      dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId);
+    dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId);
   },
 
   /**
@@ -437,48 +464,48 @@ dynamicforms = {
    * @param dialog
    */
   makeDeleteRow: function makeDeleteRow(recordURL, recordID, refreshType, listId, dialog) {
-      $.ajax({
-          url: recordURL + '?format=html',
-          method: 'DELETE',
-          headers: {'X-CSRFToken': dynamicforms.csrf_token}
+    $.ajax({
+      url: recordURL + '?format=html',
+      method: 'DELETE',
+      headers: {'X-CSRFToken': dynamicforms.csrf_token}
+    })
+      .done(function () {
+        console.log('Record successfully deleted.');
+        if (dialog !== undefined) {
+          dynamicforms.closeDialog(dialog);
+        }
+        //  TODO: make a proper notification
+        // Remove row after deletion
+        if (refreshType == undefined || refreshType == 'record') {
+          dynamicforms.removeRow(recordID, listId);
+        } else if (refreshType == 'table') {
+          var recordURL = dynamicforms.getRecordURL(listId);
+          // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
+          dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
+        } else if (refreshType == 'page') {
+          window.location.reload(true);
+        } else if (typeof (refreshType) == 'function') {
+          refreshType();
+        } else if (refreshType.indexOf('redirect') !== -1) {
+          var redirectUrl = refreshType.split(':').pop();
+          window.location.href = redirectUrl;
+        } else if (refreshType == 'no refresh') {
+          // pass
+        } else if (dynamicforms.isFunction(refreshType)) {
+          // Change passed string to function call
+          var functionString = refreshType + "();";
+          var customFunction = new Function(functionString);
+          customFunction();
+        }
       })
-          .done(function () {
-              console.log('Record successfully deleted.');
-              if (dialog !== undefined) {
-                  dynamicforms.closeDialog(dialog);
-              }
-              //  TODO: make a proper notification
-              // Remove row after deletion
-              if (refreshType == undefined || refreshType == 'record') {
-                  dynamicforms.removeRow(recordID, listId);
-              } else if (refreshType == 'table') {
-                  var recordURL = dynamicforms.getRecordURL(listId);
-                  // var formId    = $('table')[0].getAttribute('id').replace('list-', '');
-                  dynamicforms.refreshList(recordURL, true, refreshType, listId, true);
-              } else if (refreshType == 'page') {
-                  window.location.reload(true);
-              } else if (typeof (refreshType) == 'function') {
-                  refreshType();
-              } else if (refreshType.indexOf('redirect') !== -1) {
-                  var redirectUrl = refreshType.split(':').pop();
-                  window.location.href = redirectUrl;
-              } else if (refreshType == 'no refresh') {
-                  // pass
-              } else if (dynamicforms.isFunction(refreshType)) {
-                  // Change passed string to function call
-                  var functionString = refreshType + "();";
-                  var customFunction = new Function(functionString);
-                  customFunction();
-              }
-          })
-          .fail(function (xhr, status, error) {
-              if (dialog !== undefined) {
-                  dynamicforms.updateDialog(
-                      dialog, $(xhr.responseText));
-              } else {
-                  dynamicforms.showDialog($(xhr.responseText))
-              }
-          });
+      .fail(function (xhr, status, error) {
+        if (dialog !== undefined) {
+          dynamicforms.updateDialog(
+            dialog, $(xhr.responseText));
+        } else {
+          dynamicforms.showDialog($(xhr.responseText))
+        }
+      });
   },
 
   /**
@@ -494,7 +521,7 @@ dynamicforms = {
     return dynamicforms.editRow(recordURL, refreshType, listId);
   },
 
-   /**************************************************************
+  /**************************************************************
    * Form current values support functions
    **************************************************************/
 
@@ -511,7 +538,7 @@ dynamicforms = {
 
   serializeForm: function serializeForm($form, final) {
     dynamicforms._checkFinalParam(final);
-    var formID    = $form.attr('id');
+    var formID = $form.attr('id');
     var form_data = dynamicforms.form_helpers.getOrCreate(formID, final, {});
     $.each(dynamicforms.form_helpers.get(formID, 'fields'), function (fieldID, field) {
       form_data[field.name] = field.getValue(field.$field);
@@ -543,9 +570,9 @@ dynamicforms = {
   removeFormDeclarations: function removeFormDeclarations($form) {
     var formID = $form.attr('id');
     $.each(dynamicforms.form_helpers.getOrCreate(formID, 'fields', {}),
-           function (fieldID) {
-             dynamicforms.field_helpers.del(fieldID);
-           }
+      function (fieldID) {
+        dynamicforms.field_helpers.del(fieldID);
+      }
     );
     dynamicforms.form_helpers.del(formID);
   },
@@ -554,7 +581,7 @@ dynamicforms = {
    **************************************************************/
 
   // A helper obj containing all getters, setters, previous onchanging values, etc.
-  field_helpers:          new TLD(),
+  field_helpers: new TLD(),
 
   /**
    * fieldChange function is called whenever field's value changes. Some fields support even "changing" events where
@@ -574,18 +601,18 @@ dynamicforms = {
   fieldChange: function fieldChange(fieldID, final) {
     dynamicforms._checkFinalParam(final);
 
-    var field       = dynamicforms.field_helpers.get(fieldID),
-        $field      = field.$field,
-        $form       = field.$form,
-        newValue    = field.getValue($field),
-        oldValue,
-        newFormData = dynamicforms.getSerializedFormFinal($form, final),
-        oldFormData = {};
+    var field = dynamicforms.field_helpers.get(fieldID),
+      $field = field.$field,
+      $form = field.$form,
+      newValue = field.getValue($field),
+      oldValue,
+      newFormData = dynamicforms.getSerializedFormFinal($form, final),
+      oldFormData = {};
 
     // Copy the current form values to "old" object and adjust the current values with the change
     $.extend(true, oldFormData, newFormData);
-    var field_name          = $field.attr('name');
-    oldValue                = newFormData[field_name];
+    var field_name = $field.attr('name');
+    oldValue = newFormData[field_name];
     newFormData[field_name] = newValue;
 
     // Process the change if there was any
@@ -606,11 +633,11 @@ dynamicforms = {
 
     //Apply field actions
     $.each(fields, function (idx, fieldID) {
-      var field      = dynamicforms.field_helpers.get(fieldID),
-          $field     = field.$field,
-          field_name = $field.attr('name'),
-          $form      = field.$form,
-          formID     = $form.attr('id');
+      var field = dynamicforms.field_helpers.get(fieldID),
+        $field = field.$field,
+        field_name = $field.attr('name'),
+        $form = field.$form,
+        formID = $form.attr('id');
 
       if (changedHelper.get(formID, 'visibility') == undefined) {
         // Remember current field visibility
@@ -628,13 +655,13 @@ dynamicforms = {
     });
 
     $.each(changedHelper.storage, function (formID, ignored) {
-      var $form         = $('#' + formID),
-          // Get new field values & visibility
-          oldFormData   = changedHelper.get(formID, 'old'),
-          newFormData   = dynamicforms.getSerializedFormFinal($form, final),
-          oldVisibility = changedHelper.get(formID, 'visibility'),
-          newVisibility = dynamicforms.getVisibleFields(formID),
-          changedFields = [];
+      var $form = $('#' + formID),
+        // Get new field values & visibility
+        oldFormData = changedHelper.get(formID, 'old'),
+        newFormData = dynamicforms.getSerializedFormFinal($form, final),
+        oldVisibility = changedHelper.get(formID, 'visibility'),
+        newVisibility = dynamicforms.getVisibleFields(formID),
+        changedFields = [];
 
       // get diff for visibility & union it with diff for field values
       $.each(dynamicforms.form_helpers.get(formID, 'fields'), function (fieldID, field) {
@@ -670,7 +697,7 @@ dynamicforms = {
    * @param func: function to be called for getting current field value
    */
   registerFieldGetter: function registerFieldGetter(formID, fieldID, func) {
-    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.getValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -682,7 +709,7 @@ dynamicforms = {
    * @param func: function to be called for setting current field value
    */
   registerFieldSetter: function registerFieldSetter(formID, fieldID, func) {
-    var field      = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
+    var field = dynamicforms.field_helpers.getOrCreate(fieldID, undefined, {});
     field.setValue = func;
     dynamicforms.updateFieldHelpers(formID, fieldID, field);
   },
@@ -696,12 +723,12 @@ dynamicforms = {
   updateFieldHelpers: function updateFieldHelpers(formID, fieldID, field) {
     if (field.$field == undefined) {
       field.$field = $('#' + fieldID);
-      field.$form  = $('#' + formID);
-      field.name   = field.$field.attr('name');
+      field.$form = $('#' + formID);
+      field.name = field.$field.attr('name');
     }
-    var form_fields       = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
-    form_fields[fieldID]  = field;
-    var field_ids         = dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
+    var form_fields = dynamicforms.form_helpers.getOrCreate(formID, 'fields', {});
+    form_fields[fieldID] = field;
+    var field_ids = dynamicforms.form_helpers.getOrCreate(formID, 'field_ids', {});
     field_ids[field.name] = fieldID;
   },
 
@@ -760,9 +787,9 @@ dynamicforms = {
    */
   fieldSetVisible: function fieldSetVisible(field, visible) {
     //TODO: we need to check parent container if everything inside it is hidden. If there is, the parent container needs to hide too
-    var $field      = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
-    var fieldID     = $field.attr('id');
-    var $hide       = $field.parents('#container-' + fieldID);
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var fieldID = $field.attr('id');
+    var $hide = $field.parents('#container-' + fieldID);
     var $hideParent = $hide.parents('[data-hide-with-field]');
     if ($hideParent.length > 0)
       $hide = $hideParent;
@@ -777,7 +804,7 @@ dynamicforms = {
    * @return: boolean true for visible, false for hidden
    */
   fieldIsVisible: function fieldIsVisible(field) {
-    var $field  = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
+    var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     var fieldID = $field.attr('id');
     return $field.parents('#container-' + fieldID).is(":visible");
   },
@@ -846,7 +873,7 @@ dynamicforms = {
    */
   paginatorGetNextPage: function paginatorGetNextPage(formID, filter) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-    var link_next      = '';
+    var link_next = '';
     if (filter.length) {
       link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
       if (link_next == undefined)
@@ -871,12 +898,12 @@ dynamicforms = {
       $("#loading-" + formID).show();
       //TODO: Remember sequence number... if data that comes back has other than last sequence number than just ignore it #114
       $.ajax({
-               type:    'GET',
-               headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next,
-             }).done(function (data) {
+        type: 'GET',
+        headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
+        url: link_next,
+      }).done(function (data) {
 
-        data                     = $(data).filter("tr");
+        data = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
 
         if (data[0].getAttribute("data-title") != "NoData") {
@@ -953,11 +980,10 @@ dynamicforms = {
       } else if (element.val() != null && element.val().length) {
         if (element.is('select') && element.is("[multiple]")) {
           var delimiter = element.attr('value_delimiter');
-          if(delimiter == undefined)
+          if (delimiter == undefined)
             delimiter = ',';
           filter[element.attr("name")] = element.val().join(delimiter);
-        }
-        else
+        } else
           filter[element.attr("name")] = element.val();
       }
     });

@@ -160,6 +160,20 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         """
         return True
 
+    def confirm_create_text(self):
+        """
+        Returns dialog for create confirmation
+        :return:
+        """
+        return False
+
+    def confirm_create_title(self):
+        """
+        Returns title for create confirmation
+        :return:
+        """
+        return __('Create action confirmation')
+
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     """

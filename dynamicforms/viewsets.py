@@ -83,6 +83,30 @@ class DeleteMixin(object):
             DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
 
 
+class CreateMixin(object):
+    @action(detail=False, methods=['post'])
+    def confirm_create(self: viewsets.ModelViewSet, request):
+        serializer = self.get_serializer(data=request.data)
+        confirm_create = serializer.confirm_create_text()
+        serializer.is_valid(raise_exception=True)
+        if confirm_create:
+            render_data = dict(
+                serializer=serializer,
+                confirmation_text=serializer.confirm_create_text(),
+                title=serializer.confirm_create_title(),
+                url_reverse=self.template_context.get('url_reverse')
+            )
+            serializer.actions.actions.clear()
+            serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+            serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
+            return render_to_response(
+                template_name=DYNAMICFORMS.template + 'confirm_create_dialog.html',
+                context=render_data, status=status.HTTP_200_OK)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 class ReadOnlyMixin(object):
     @action(detail=True, methods=['get'])
     def view_readonly_detail(self: viewsets.ModelViewSet, request, pk=None, format=None):
@@ -241,7 +265,7 @@ class TemplateRendererMixin():
         return response
 
 
-class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRendererMixin, viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
 
