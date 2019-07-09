@@ -1,8 +1,11 @@
+import time
+
 from django.http.response import HttpResponse
 from rest_framework.renderers import JSONRenderer
 
 from dynamicforms import fields, serializers, viewsets
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
+from dynamicforms.utils import get_progress_key, set_progress_value
 
 
 class SingleDialogSerializer(serializers.Serializer):
@@ -38,6 +41,11 @@ class SingleDialogViewSet(viewsets.SingleRecordViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        time.sleep(3)
+        progress_key = get_progress_key(request)
+        for i in range(10):
+            set_progress_value(progress_key, (i + 1) / 10)
+            time.sleep(0.5)
 
         if request.data.get('download', '') == '1':
             res = HttpResponse(serializer.data['test'].encode('utf-8'), content_type='text/plain; charset=UTF-8')

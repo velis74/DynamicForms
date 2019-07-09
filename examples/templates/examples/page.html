@@ -16,6 +16,7 @@
         {% include data_template with serializer=serializer data=data %}
       </div>
     </div>
+    {% include "dynamicforms/bootstrap/progress_dialog.html" %}
   {% elif DYNAMICFORMS.jquery_ui %}
     <div class="accordion df-card">
       <div>{{ serializer.page_title }}
@@ -25,6 +26,7 @@
         {% include data_template with serializer=serializer data=data %}
       </div>
     </div>
+    {% include "dynamicforms/jquery_ui/progress_dialog.html" %}
 
     <script type="text/javascript">
       $(".accordion").accordion({

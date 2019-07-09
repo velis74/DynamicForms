@@ -78,6 +78,12 @@
     }
     {% endif %}
   </style>
+  {% if DYNAMICFORMS.bootstrap_version %}
+    {%  include "dynamicforms/bootstrap/progress_dialog_style.html" %}
+  {% elif DYNAMICFORMS.jquery_ui %}
+    {%  include "dynamicforms/jquery_ui/progress_dialog_style.html" %}
+  {% endif %}
+
 </head>
 <body>
 <div id="titlebar">

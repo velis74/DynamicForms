@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="modal fade" id="df-progress-bar-container" tabindex="-1" role="dialog"
+     aria-labelledby="df-progress-bar-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="df-progress-bar-label">{% trans 'Performing operation...' %}</h5>
+      </div>
+      <div class="modal-body">
+        <div id="df-progress-bar-div" class="progress" style="position: relative;">
+          <div id="df-progress-bar-indeterminate" class="progress-bar progress-bar-striped indeterminate" style="display: none"></div>
+          <div id="df-progress-bar-determinate" class="progress-bar progress-bar-striped" style="display: none" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

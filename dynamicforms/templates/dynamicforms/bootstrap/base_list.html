@@ -9,7 +9,7 @@
     {% render_table_commands serializer "thead_rowstart" %}
     {% for column in serializer.fields.values %}
       {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-        <th class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %} d-none{% endif %}">{{ column.label }}</th>{% endif %}{% endfor %}
+        <th class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}">{{ column.label }}</th>{% endif %}{% endfor %}
     {% render_table_commands serializer "thead_rowend" %}
   </tr>
   {% if serializer.show_filter %}
