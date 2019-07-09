@@ -78,6 +78,10 @@ dynamicforms = {
       traditional: true
     }).always(function (data, status, response) {
       dynamicforms.closeDialog($dlg);
+      if (data && response.status && response.status === 201) {
+        window.location.reload(true);
+        return;
+      }
       var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
       dynamicforms.showDialog(newDialog, 'page')
     });
