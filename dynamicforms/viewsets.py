@@ -6,8 +6,7 @@ from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render_to_response, render
 from rest_framework import status, viewsets, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -67,8 +66,10 @@ class DeleteMixin(object):
         record_id = request.GET.get('record_id')
         list_id = request.GET.get('list_id')
         confirm_delete_button = FormButtonAction(
-            btn_type=FormButtonTypes.CUSTOM, label=_('Confirm'), name='confirm', positions=['dialog'],
-            button_is_primary=False, btn_classes=DYNAMICFORMS.form_button_classes + ' btn-danger {}'.format(
+            btn_type=FormButtonTypes.CUSTOM, label=_('Confirm'), name='confirm',
+            positions=['dialog'],
+            button_is_primary=False,
+            btn_classes=DYNAMICFORMS.form_button_classes + ' btn-danger {}'.format(
                 "{}_{}".format(record_id, list_id)
             ))
         for action in serializer.actions:
@@ -96,14 +97,14 @@ class CreateMixin(object):
                 confirmation_text=confirm_create,
                 title=serializer.confirm_create_title(),
                 url_reverse=self.template_context.get('url_reverse'),
-                context_instance=RequestContext(request),
             )
             serializer.actions.actions.clear()
-            serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
-            serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
-            return render_to_response(
-                DYNAMICFORMS.template + 'confirm_create_dialog.html',
-                render_data)
+            serializer.actions.actions.append(
+                FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+            serializer.actions.actions.append(
+                FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
+            return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
+                          context=render_data, content_type=None, status=None, using=None)
         return self.create(request, *args, **kwargs)
 
 
@@ -147,7 +148,8 @@ class TemplateRendererMixin():
         #  There's no "request.data", etc. Just saying. So you don't debug for two hours next time. By "you" I mean me
 
         # Force render using a given render path (full page, table, table rows, form, dialog with form)
-        self.render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
+        self.render_type = request.META.get('HTTP_X_DF_RENDER_TYPE',
+                                            request.GET.get('df_render_type', 'page'))
 
         if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
@@ -164,13 +166,15 @@ class TemplateRendererMixin():
 
         def get_query_params():
             if request.query_params:
-                return '?' + '&'.join(['%s=%s' % (key, value) for key, value in request.query_params.items()])
+                return '?' + '&'.join(
+                    ['%s=%s' % (key, value) for key, value in request.query_params.items()])
             return ''
 
         if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
             if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
                 if request.method.lower() != 'delete':
-                    if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
+                    if isinstance(res.data,
+                                  dict) and 'next' in res.data and 'results' in res.data and \
                             isinstance(res.data['results'], (ReturnList, ReturnDict)):
                         serializer = res.data['results'].serializer
                     else:
@@ -265,7 +269,8 @@ class TemplateRendererMixin():
         return response
 
 
-class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRendererMixin,
+                   viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
 
@@ -325,7 +330,8 @@ class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRe
             return queryset.filter(**{field + '__icontains': value})
         if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
             date_time = None
-            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S', settings.DATE_FORMAT, '%Y-%m-%d']:
+            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S',
+                                  settings.DATE_FORMAT, '%Y-%m-%d']:
                 try:
                     date_time = datetime.strptime(value, date_time_fmt)
                     break
@@ -335,8 +341,10 @@ class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRe
                 return queryset
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
             if len(value) <= 10:
-                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(seconds=1)})
+                return queryset.filter(
+                    **{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
+            return queryset.filter(
+                **{field + '__gte': date_time, field + '__lt': date_time + timedelta(seconds=1)})
         else:
             if isinstance(model_meta.get_field(field), models.BooleanField):
                 value = (value == 'true')
