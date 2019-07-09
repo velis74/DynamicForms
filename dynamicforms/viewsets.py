@@ -7,6 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 from rest_framework import status, viewsets, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -85,26 +86,25 @@ class DeleteMixin(object):
 
 class CreateMixin(object):
     @action(detail=False, methods=['post'])
-    def confirm_create(self: viewsets.ModelViewSet, request):
+    def confirm_create(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        confirm_create = serializer.confirm_create_text()
         serializer.is_valid(raise_exception=True)
+        confirm_create = serializer.confirm_create_text()
         if confirm_create:
             render_data = dict(
                 serializer=serializer,
-                confirmation_text=serializer.confirm_create_text(),
+                confirmation_text=confirm_create,
                 title=serializer.confirm_create_title(),
-                url_reverse=self.template_context.get('url_reverse')
+                url_reverse=self.template_context.get('url_reverse'),
+                context_instance=RequestContext(request),
             )
             serializer.actions.actions.clear()
             serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
             serializer.actions.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
             return render_to_response(
-                template_name=DYNAMICFORMS.template + 'confirm_create_dialog.html',
-                context=render_data, status=status.HTTP_200_OK)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+                DYNAMICFORMS.template + 'confirm_create_dialog.html',
+                render_data)
+        return self.create(request, *args, **kwargs)
 
 
 class ReadOnlyMixin(object):
