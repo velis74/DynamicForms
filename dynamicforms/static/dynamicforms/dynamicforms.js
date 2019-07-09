@@ -354,8 +354,7 @@ dynamicforms = {
           dynamicforms.showDialog($(dialogHTML), refreshType, listId);
         })
         .fail(function (xhr, status, error) {
-          // TODO: this doesn't handle errors correctly
-          dynamicforms.showAjaxError(xhr, status, error);
+          dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
         });
     } else
       window.location = recordURL;
@@ -371,8 +370,7 @@ dynamicforms = {
           dynamicforms.showDialog($(dialogHTML), 'no refresh', listId);
         })
         .fail(function (xhr, status, error) {
-          // TODO: this doesn't handle errors correctly
-          dynamicforms.showAjaxError(xhr, status, error);
+          dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
         });
     } else
       window.location = recordURL;
