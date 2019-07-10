@@ -114,7 +114,7 @@ dynamicforms = {
       clearInterval(dynamicforms.progressCheckInterval);
       dynamicforms.progressCheckInterval = null;
     } else {
-      $.ajax({url: '/dynamicforms/progress/', headers: {'X-DF-TIMESTAMP': timestamp}})
+      $.ajax({url: '/dynamicforms/progress/', headers: {'X_DF_TIMESTAMP': timestamp}})
         .done(function (data, textStatus, jqXHR) {
           var pb_indet   = $('#df-progress-bar-indeterminate');
           var pb_det     = $('#df-progress-bar-determinate');
@@ -193,7 +193,7 @@ dynamicforms = {
    * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
    * If operation lasts for more than 0.5 seconds progress dialog is shown.
    * @param options: Dict with options for ajax call ('ajax_setts'), and custom progress dialog ('progress_id', 'progress_sets')
-   * @returns ajax promise with everything set for progress dialog: X-DF-TIMESTAMP header for progress checking and
+   * @returns ajax promise with everything set for progress dialog: X_DF_TIMESTAMP header for progress checking and
    *  callbacks for closing progress dialog after operation completes
    */
   ajaxWithProgress:      function ajaxWithProgress(options) {
@@ -207,7 +207,7 @@ dynamicforms = {
 
     var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
     var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
-    headers['X-DF-TIMESTAMP'] = timestamp;
+    headers['X_DF_TIMESTAMP'] = timestamp;
     ajaxSettings['headers'] = headers;
 
     return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);

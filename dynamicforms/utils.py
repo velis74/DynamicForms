@@ -5,9 +5,9 @@ def get_progress_key(request):
     """
     Gets progress/operation key under which operation progress will be stored in servers cache.
     :param request:
-    :return: Progress key or None if there is no x-df-timestamp in request header
+    :return: Progress key or None if there is no x_df_timestamp in request header
     """
-    timestamp = request.headers.get('x-df-timestamp', None)
+    timestamp = request.META.get('HTTP_X_DF_TIMESTAMP', request.GET.get('x_df_timestamp', None))
     if timestamp is not None:
         return '%s|%s' % (timestamp, request.session.session_key)
     return None
