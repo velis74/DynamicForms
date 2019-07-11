@@ -8,6 +8,7 @@ from .views import index
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^', include(router.urls)),
+    url(r'^dynamicforms/', include('dynamicforms.urls')),
 ]
 
 # noinspection PyUnresolvedReferences

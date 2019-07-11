@@ -30,3 +30,4 @@ Why DynamicForms
 * Bootstrap 3 & 4 templates, jQuery UI coming soon, easy to make your own or enhance existing
 * Support for form validation, will show errors even if they are not tied to a field
 * Convenient JS functions for easier action scripting
+* Progress dialog for long lasting ajax operations

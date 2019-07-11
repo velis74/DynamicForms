@@ -7,7 +7,7 @@ with open('requirements.txt', 'r') as fh:
 
 setuptools.setup(
     name="DynamicForms",
-    version="0.7.0",
+    version="0.7.2",
     author="Jure Erznožnik",
     author_email="jure@velis.si",
     description="DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds "
@@ -22,6 +22,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     python_requires='>=3.4',
+    license='BSD-3-Clause',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
