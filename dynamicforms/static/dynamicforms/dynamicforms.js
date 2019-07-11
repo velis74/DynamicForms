@@ -283,14 +283,16 @@ dynamicforms = {
     } else
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
 
-    $.ajax({
-      type: method,
-      url: $form.attr("action"),
-      data: data,
-      dataType: dataType,
-      headers: headers,
-      traditional: true,
-    })
+    dynamicforms.ajaxWithProgress({
+                                    ajax_setts: {
+                                      type:        method,
+                                      url:         $form.attr("action"),
+                                      data:        data,
+                                      dataType:    dataType,
+                                      headers:     headers,
+                                      traditional: true,
+                                    }
+                                  })
       .done(doneFunc)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
