@@ -108,6 +108,32 @@ class CreateMixin(object):
         return self.create(request, *args, **kwargs)
 
 
+class UpdateMixin(object):
+    @action(detail=True, methods=['put', 'patch'])
+    def confirm_update(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        confirm_update = serializer.confirm_update_text()
+        if confirm_update:
+            render_data = dict(
+                serializer=serializer,
+                confirmation_text=confirm_update,
+                title=serializer.confirm_update_title(),
+                url_reverse=self.template_context.get('url_reverse'),
+            )
+            serializer.actions.actions.clear()
+            serializer.actions.actions.append(
+                FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+            serializer.actions.actions.append(
+                FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
+            return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
+                          context=render_data, content_type=None, status=None, using=None)
+        return self.update(request, *args, **kwargs)
+
+
 class ReadOnlyMixin(object):
     @action(detail=True, methods=['get'])
     def view_readonly_detail(self: viewsets.ModelViewSet, request, pk=None, format=None):
@@ -269,7 +295,8 @@ class TemplateRendererMixin():
         return response
 
 
-class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, TemplateRendererMixin,
+class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, UpdateMixin,
+                   TemplateRendererMixin,
                    viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
