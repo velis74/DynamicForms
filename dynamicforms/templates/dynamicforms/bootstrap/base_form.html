@@ -1,7 +1,9 @@
 {% load dynamicforms %}
 
 {% set_var_conditional action_postfix='?df_render_type=dialog' condition_var=df_render_type compare='dialog' else_value='' %}
-{% if data.id %}
+{% if serializer.confirm_update_text %}
+{% url url_reverse|add:'-confirm-update' pk=data.id format='html' as form_action %}
+{% elif data.id %}
 {% url url_reverse|add:'-detail' pk=data.id format='html' as form_action %}
 {% else %}
 {% url url_reverse|add:'-list' format='html' as form_action %}

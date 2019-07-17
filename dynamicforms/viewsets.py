@@ -130,7 +130,7 @@ class UpdateMixin(object):
                 FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
             serializer.template_name = DYNAMICFORMS.template + 'base_form_confirm_update.html'
             return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
-                          context=render_data, content_type=None, status=None, using=None)
+                          context=render_data, content_type=None, status=status.HTTP_403_FORBIDDEN, using=None)
         return self.update(request, *args, **kwargs)
 
 
