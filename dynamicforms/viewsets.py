@@ -111,11 +111,9 @@ class CreateMixin(object):
 class UpdateMixin(object):
     @action(detail=True, methods=['put', 'patch'])
     def confirm_update(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
-        partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
         confirm_update = serializer.confirm_update_text()
         if confirm_update:
             render_data = dict(
@@ -123,12 +121,14 @@ class UpdateMixin(object):
                 confirmation_text=confirm_update,
                 title=serializer.confirm_update_title(),
                 url_reverse=self.template_context.get('url_reverse'),
+                instance_id=instance.pk
             )
             serializer.actions.actions.clear()
             serializer.actions.actions.append(
                 FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
             serializer.actions.actions.append(
                 FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
+            serializer.template_name = DYNAMICFORMS.template + 'base_form_confirm_update.html'
             return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
                           context=render_data, content_type=None, status=None, using=None)
         return self.update(request, *args, **kwargs)

@@ -1,0 +1,11 @@
+{% load dynamicforms %}
+
+{% set_var_conditional action_postfix='?df_render_type=dialog' condition_var=df_render_type compare='dialog' else_value='' %}
+
+{% url url_reverse|add:'-detail' pk=instance_id format='html' as form_action %}
+
+<form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
+    <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
+    {% csrf_token %}
+    {% render_form serializer %}
+</form>
