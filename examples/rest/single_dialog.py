@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 
 from dynamicforms import fields, serializers, viewsets
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
-from dynamicforms.utils import get_progress_key, set_progress_value
+from dynamicforms.progress import get_progress_key, set_progress_value, set_progress_comment
 
 
 class SingleDialogSerializer(serializers.Serializer):
@@ -41,15 +41,16 @@ class SingleDialogViewSet(viewsets.SingleRecordViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        time.sleep(3)
-        progress_key = get_progress_key(request)
-        for i in range(10):
-            set_progress_value(progress_key, (i + 1) / 10)
-            time.sleep(0.5)
 
         if request.data.get('download', '') == '1':
             res = HttpResponse(serializer.data['test'].encode('utf-8'), content_type='text/plain; charset=UTF-8')
             res['Content-Disposition'] = 'attachment; filename={}'.format('justsaying.txt')
             return res
+
+        progress_key = get_progress_key(request)
+        for i in range(10):
+            set_progress_comment(progress_key, 'Processing #%d' % (i + 1))
+            set_progress_value(progress_key, (i + 1) * 10)
+            time.sleep(0.5)
 
         return HttpResponse(JSONRenderer().render(serializer.data), content_type='application/json')
