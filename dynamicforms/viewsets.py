@@ -9,8 +9,9 @@ from django.http import Http404
 from django.shortcuts import render_to_response, render
 from rest_framework import status, viewsets, exceptions
 from rest_framework.decorators import action
+from rest_framework.fields import SerializerMethodField
 from rest_framework.response import Response
-from rest_framework.serializers import ListSerializer
+from rest_framework.serializers import ListSerializer, Serializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.action import FormButtonAction, FormButtonTypes
@@ -111,11 +112,20 @@ class CreateMixin(object):
 class UpdateMixin(object):
     @action(detail=True, methods=['put', 'patch'])
     def confirm_update(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
+
+        def __remove_methods_fields_from_serializer(serializerObject: Serializer):
+            fields_copy = serializerObject.fields.fields.copy()
+            for field in fields_copy:
+                f = fields_copy[field]
+                if isinstance(f, SerializerMethodField):
+                    serializerObject.fields.fields.pop(field, None)
+
         instance = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         confirm_update = serializer.confirm_update_text()
         if confirm_update:
+            __remove_methods_fields_from_serializer(serializer)
             render_data = dict(
                 serializer=serializer,
                 confirmation_text=confirm_update,

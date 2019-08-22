@@ -111,17 +111,19 @@ dynamicforms = {
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     var dataType = 'html';
+    url = method.toLowerCase() === 'put' ?  url + 'confirm_update.' + dataType : url + 'confirm_create.' + dataType;
 
     $.ajax({
       type: method,
-      url: url + 'confirm_create.html', //+ 'confirm_delete.html'
+      url: url,
       data: data,
       dataType: dataType,
       headers: headers,
       traditional: true
     }).always(function (data, status, response) {
       dynamicforms.closeDialog($dlg);
-      if (data && response.status && response.status === 201) {
+      if ((data && response.status && response.status === 201) || (
+          response.status && response.status === 200 && url.includes('confirm_update'))) {
         window.location.reload(true);
         return;
       }
