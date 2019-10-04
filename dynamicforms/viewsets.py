@@ -126,6 +126,7 @@ class TemplateRendererMixin():
                     res.template_name = DYNAMICFORMS.modal_dialog_template
                 elif self.render_type == 'form':
                     serializer.data_template = res.data.serializer.template_name
+                    res.template_name = res.data.serializer.template_name
                 else:
                     if isinstance(serializer, ListSerializer):
                         serializer.child.render_type = 'table'
@@ -173,8 +174,9 @@ class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
         :return: queryset with filters applied
         """
         res = queryset
-        for fld, val in self.request.query_params.items():
-            res = self.filter_queryset_field(res, fld, val)
+        if self.request:
+            for fld, val in self.request.query_params.items():
+                res = self.filter_queryset_field(res, fld, val)
         return res
 
     # noinspection PyMethodMayBeStatic

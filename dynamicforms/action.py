@@ -215,10 +215,10 @@ class FormButtonAction(ActionBase):
         self.button_is_primary = button_is_primary
 
         self.btn_classes = btn_classes or (
-            DYNAMICFORMS.form_button_classes + ' '
-            + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
-               else DYNAMICFORMS.form_button_classes_secondary) + ' '
-            + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
+                DYNAMICFORMS.form_button_classes + ' '
+                + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
+                   else DYNAMICFORMS.form_button_classes_secondary) + ' '
+                + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
         )
 
     def copy_and_resolve_reference(self, serializer):
@@ -229,6 +229,7 @@ class FormButtonAction(ActionBase):
         if self.btn_type == FormButtonTypes.CANCEL and position == 'form':
             return ''
         action_js = self.action_js
+        button_name = ('name="btn-%s"' % self.name) if self.name else ''
         if isinstance(action_js, str):
             action_js = action_js.format(**locals())
         button_type = 'button' if self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog' else 'submit'
@@ -246,7 +247,7 @@ class FormButtonAction(ActionBase):
         else:
             button_js = ''
 
-        return '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} id="{button_id}">' \
+        return '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} {button_name} id="{button_id}">' \
                '{self.label}</button>{button_js}'.format(**locals())
 
 

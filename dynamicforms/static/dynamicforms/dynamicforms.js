@@ -156,6 +156,7 @@ dynamicforms = {
   },
   shouldShowProgressDlg: false,
   progressDlgShown:      false,
+  progressDlgOverlay:    false,
   /**
    * Sets overlay so nothing can be clicked while operation last. If it last for more than 0.5 second it starts progress checker.
    * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
@@ -163,10 +164,11 @@ dynamicforms = {
    * @param progressSettings: Progress dialog settings - for custom progress dialogs.
    */
   setProgressDlg:        function setProgressDlg(progressDlgID, timestamp, progressSettings) {
+    dynamicforms.progressDlgOverlay = true;
     $('#df-overlay').css('z-index', 10000).show();
     dynamicforms.shouldShowProgressDlg = true;
     window.setTimeout(function () {
-      if (dynamicforms.shouldShowProgressDlg) {
+      if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
         dynamicforms.startProgressChecker(progressDlgID, timestamp, progressSettings);
       }
     }, 500);
@@ -191,6 +193,7 @@ dynamicforms = {
         $('#' + progressDlgID).modal('hide');
       }
     }
+    dynamicforms.progressDlgOverlay = false;
   },
   /**
    * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
@@ -203,15 +206,27 @@ dynamicforms = {
     var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
     var timestamp     = $.now()
 
-    dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
+    var showProgress  = undefined;
+    var progressSetts = options.progress_setts;
+
+    if (progressSetts != undefined)
+      showProgress = progressSetts.show;
+    if (showProgress == undefined)
+      showProgress = true;
+
+    if (showProgress && !dynamicforms.progressDlgOverlay) {
+      dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
+    }
+
     var closeProgressDialogFunc = function () {
-      dynamicforms.closeProgressDlg(progressDlgID);
+      if (showProgress)
+        dynamicforms.closeProgressDlg(progressDlgID);
     };
 
     var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
     var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
     headers['X-DF-TIMESTAMP'] = timestamp;
-    ajaxSettings['headers'] = headers;
+    ajaxSettings['headers']   = headers;
 
     return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);
   },
@@ -223,10 +238,11 @@ dynamicforms = {
    * @param $form: the edited form containing the data
    * @param refreshType: how to refresh the table
    * @param doneFunc: if specified, this function will be called on successful data send
+   * @param dType: Custom dataType
    */
-  submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
+  submitForm: function submitForm($dlg, $form, refreshType, doneFunc, dType) {
     var data    = dynamicforms.getSerializedForm($form, 'final');
-    var method  = data['data-dynamicforms-method'] || 'POST';
+    var method  = data['data-dynamicforms-method'] || ([0, "", "0", undefined, null].indexOf(data.id) > -1 ? 'POST' : 'PUT');
     var headers = {'X-DF-RENDER-TYPE': 'dialog'};
 
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
@@ -252,6 +268,8 @@ dynamicforms = {
       }
     } else
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
+    if (dType != undefined)
+      dataType = dType;
 
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
@@ -269,7 +287,8 @@ dynamicforms = {
         //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         //  also for any authorization errors, CSRF, etc, it will again fail
         //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
-        dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId);
+        if ($dlg != null)
+          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId);
       });
   },
 
@@ -301,9 +320,11 @@ dynamicforms = {
    * @param refreshType: how to refresh the table
    * @param formID: id of form
    * @param deletion: if present delete action happened
+   * @param params: dict variable for additional parameters
    */
-  refreshList: function refreshList(url, recordID, refreshType, formID, deletion) {
+  refreshList: function refreshList(url, recordID, refreshType, formID, deletion, params) {
     if (refreshType == undefined || refreshType == 'record') {
+      var $rowToRefresh;
       if (recordID) {
         var trSelector = "tr[data-id='" + recordID + "']";
         $rowToRefresh  = $(trSelector); // Row to refresh
@@ -315,7 +336,16 @@ dynamicforms = {
         var data = dynamicforms.filterData(formID, true);
         if (recordID)
           data.id = recordID
-        dynamicforms.ajaxWithProgress({ajax_setts: {type: 'GET', url: url, data: data, dataType: 'html'}})
+        if (params != undefined && params.additionalData != undefined) {
+          for (var key in params.additionalData) {
+            data[key] = params.additionalData[key];
+          }
+        }
+
+        dynamicforms.ajaxWithProgress({
+                                        ajax_setts:     {type: 'GET', url: url, data: data, dataType: 'html'},
+                                        progress_setts: params != undefined ? params.progressSetts : undefined
+                                      })
           .done(function (data) {
             dynamicforms.refreshRow(data, formID, recordID);
           })
@@ -381,7 +411,7 @@ dynamicforms = {
       if (recordID) {
         var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
         if ($editedRow.length) {
-          if ($rowToRefresh.length)
+          if ($rowToRefresh != null && $rowToRefresh.length)
             $rowToRefresh.replaceWith($editedRow);
           else
             dynamicforms.insertRow($editedRow);
@@ -411,8 +441,10 @@ dynamicforms = {
    * @param $dlg: dialog (parsed) html to show
    * @param refreshType: how to refresh the table after the dialog is finished with editing
    * @param listId: id of table element with records
+   * @param doneFunc: if specified, this function will be called on successful data send
+   * @param dType: Custom dataType
    */
-  showDialog: function showDialog($dlg, refreshType, listId) {
+  showDialog: function showDialog($dlg, refreshType, listId, doneFunc, dataType) {
     //TODO: adjust hashURL
     $(document.body).append($dlg);
     var $form = $dlg.find('.dynamicforms-form');
@@ -430,7 +462,7 @@ dynamicforms = {
 
     var saveId = '#save-' + $form.attr('id');
     $(saveId).on('click', function () {
-      dynamicforms.submitForm($dlg, $form, refreshType);
+      dynamicforms.submitForm($dlg, $form, refreshType, doneFunc, dataType);
     });
     // And show the dialog
     if (dynamicforms.DYNAMICFORMS.jquery_ui)
@@ -439,7 +471,7 @@ dynamicforms = {
       $dlg.on('hidden.bs.modal', function () {
         $dlg.remove();
         if ($dlg.showNewAfterHide)
-          dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId);
+          dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
       });
       $dlg.modal();
     }
@@ -491,14 +523,19 @@ dynamicforms = {
    * @param recordURL: url to call to get data / html for the record / dialog
    * @param refreshType: how to refresh the table
    * @param listId: id of table element with records
+   * @param params: additional parameters in dictionary format
    */
-  editRow: function editRow(recordURL, refreshType, listId) {
+  editRow: function editRow(recordURL, refreshType, listId, params) {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
+      var ajaxSetts = {
+        url:     recordURL,
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+      }
+      if (params != undefined && params.data != undefined)
+        ajaxSetts['data'] = params.data;
+
       dynamicforms.ajaxWithProgress({
-                                      ajax_setts: {
-                                        url:     recordURL,
-                                        headers: {'X-DF-RENDER-TYPE': 'dialog'},
-                                      }
+                                      ajax_setts: ajaxSetts
                                     })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), refreshType, listId);
