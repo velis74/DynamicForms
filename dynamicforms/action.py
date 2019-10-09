@@ -95,12 +95,15 @@ class TableAction(ActionBase, RenderableActionMixin):
         else:
             from uuid import uuid1
 
+            button_name = (' name="btn-%s"' % self.name) if self.name else ''
+
             btnid = uuid1()
-            ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info" ' \
+            ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info"{button_name}' \
                    'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
                 format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
                        label=self.label,
-                       icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else '')
+                       icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else '',
+                       button_name=button_name)
             if DYNAMICFORMS.jquery_ui:
                 ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>' \
                     .format(btnid=btnid)

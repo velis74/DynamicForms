@@ -161,10 +161,7 @@ class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
 
         :return: filtered records
         """
-        queryset = super().get_queryset()
-        queryset = self.filter_queryset(queryset)
-
-        return queryset.all()
+        return super().get_queryset()
 
     def filter_queryset(self, queryset):
         """
