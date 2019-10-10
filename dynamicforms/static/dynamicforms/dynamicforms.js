@@ -187,13 +187,25 @@ dynamicforms = {
     $('#df-overlay').hide();
     if (dynamicforms.progressDlgShown) {
       dynamicforms.progressDlgShown = false;
-      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
-        $('#' + progressDlgID).dialog('close');
-      } else {
-        $('#' + progressDlgID).modal('hide');
-      }
+      dynamicforms.hideProgressDlg(progressDlgID);
+      //Sometimes dialog doesn't close if it was just opened. So we try again after 0.2 seconds
+      window.setTimeout(function() {dynamicforms.hideProgressDlg(progressDlgID)}, 200);
     }
     dynamicforms.progressDlgOverlay = false;
+  },
+  /**
+   * Finally closes down dialog. Separete function, because we call it from multiple places
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   */
+  hideProgressDlg:       function hideProgressDlg(progressDlgID) {
+    var $dlg = $('#' + progressDlgID);
+    if ($dlg.is(':visible') && !dynamicforms.progressDlgShown) {
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        $dlg.dialog('close');
+      } else {
+        $dlg.modal('hide');
+      }
+    }
   },
   /**
    * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
