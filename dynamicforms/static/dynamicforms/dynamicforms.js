@@ -75,16 +75,34 @@ dynamicforms = {
       $("#df-progress-bar-determinate").progressbar(progressSettings);
 
       if (dynamicforms.shouldShowProgressDlg) {
+        dynamicforms.shouldCloseProgressDlg = false;
         dynamicforms.progressDlgShown = true;
-        progressDlg.dialog({dialogClass: 'progress-bar', closeOnEscape: false, resizable: false});
+        dynamicforms.progressDlgStartShowing = true;
+        progressDlg.dialog({dialogClass: 'progress-bar', closeOnEscape: false, resizable: false,
+                            open: function() {
+                              dynamicforms.progressDlgShown = true;
+                              if (dynamicforms.shouldCloseProgressDlg) {
+                                dynamicforms.closeProgressDlg(progressDlgID);
+                              }
+                            }
+                           });
       }
       zIndexElement = progressDlg.parents().first();
     } else {
       if (progressSettings === undefined)
         progressSettings = {keyboard: false, backdrop: 'static'};
       if (dynamicforms.shouldShowProgressDlg) {
-        dynamicforms.progressDlgShown = true;
+        dynamicforms.shouldCloseProgressDlg = false;
+        dynamicforms.progressDlgStartShowing = true;
         progressDlg.modal(progressSettings);
+        progressDlg.on('shown.bs.modal', function () {
+          progressDlg.off('shown.bs.modal');
+          dynamicforms.progressDlgShown = true;
+          if(dynamicforms.shouldCloseProgressDlg){
+            dynamicforms.closeProgressDlg(progressDlgID);
+          }
+        })
+
       }
       zIndexElement = progressDlg;
     }
@@ -110,7 +128,7 @@ dynamicforms = {
    * @param progressSettings: Progress dialog settings - for custom progress dialogs.
    */
   progressCheck:         function progressCheck(progressDlgID, timestamp, progressSettings) {
-    if (!dynamicforms.progressDlgShown && dynamicforms.progressCheckInterval != null) {
+    if (!dynamicforms.progressDlgStartShowing && dynamicforms.progressCheckInterval != null) {
       clearInterval(dynamicforms.progressCheckInterval);
       dynamicforms.progressCheckInterval = null;
     } else {
@@ -120,6 +138,15 @@ dynamicforms = {
           var pb_det     = $('#df-progress-bar-determinate');
           var percent    = data.value;
           var show_indet = percent == null;
+          pb_indet.toggle(show_indet);
+          pb_det.toggle(!show_indet);
+
+          if (data.comment != null)
+            $('#df-progress-comment').html(data.comment);
+
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgStartShowing) {
+            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
+          }
           if (!show_indet) {
             if (dynamicforms.DYNAMICFORMS.jquery_ui) {
               pb_det.progressbar("value", parseInt(percent));
@@ -127,18 +154,9 @@ dynamicforms = {
               pb_det.css('width', percent + '%').attr('aria-valuenow', percent)
             }
           }
-          pb_indet.toggle(show_indet);
-          pb_det.toggle(!show_indet);
-
-          if (data.comment != null)
-            $('#df-progress-comment').html(data.comment);
-
-          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
-            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
-          }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
-          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgStartShowing) {
             dynamicforms.showProgressDlg(progressDlgID, progressSettings);
           }
         });
@@ -155,6 +173,7 @@ dynamicforms = {
     dynamicforms.progressCheckInterval = setInterval(dynamicforms.progressCheck, 500, progressDlgID, timestamp, progressSettings);
   },
   shouldShowProgressDlg: false,
+  shouldCloseProgressDlg: true,
   progressDlgShown:      false,
   progressDlgOverlay:    false,
   /**
@@ -178,34 +197,25 @@ dynamicforms = {
    * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
    */
   closeProgressDlg:      function closeProgressDlg(progressDlgID) {
-    dynamicforms.shouldShowProgressDlg = false
+    dynamicforms.shouldShowProgressDlg = false;
+    dynamicforms.shouldCloseProgressDlg = true;
     if (dynamicforms.progressCheckInterval != null) {
       clearInterval(dynamicforms.progressCheckInterval);
       dynamicforms.progressCheckInterval = null;
     }
-
     $('#df-overlay').hide();
     if (dynamicforms.progressDlgShown) {
       dynamicforms.progressDlgShown = false;
-      dynamicforms.hideProgressDlg(progressDlgID);
-      //Sometimes dialog doesn't close if it was just opened. So we try again after 0.2 seconds
-      window.setTimeout(function() {dynamicforms.hideProgressDlg(progressDlgID)}, 200);
-    }
-    dynamicforms.progressDlgOverlay = false;
-  },
-  /**
-   * Finally closes down dialog. Separete function, because we call it from multiple places
-   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
-   */
-  hideProgressDlg:       function hideProgressDlg(progressDlgID) {
-    var $dlg = $('#' + progressDlgID);
-    if ($dlg.is(':visible') && !dynamicforms.progressDlgShown) {
+      dynamicforms.progressDlgStartShowing = false;
+
+      var $dlg = $('#' + progressDlgID);
       if (dynamicforms.DYNAMICFORMS.jquery_ui) {
         $dlg.dialog('close');
       } else {
         $dlg.modal('hide');
       }
     }
+    dynamicforms.progressDlgOverlay = false;
   },
   /**
    * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes

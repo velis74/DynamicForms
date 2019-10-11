@@ -95,7 +95,7 @@ class TableAction(ActionBase, RenderableActionMixin):
         else:
             from uuid import uuid1
 
-            button_name = (' name="btn-%s"' % self.name) if self.name else ''
+            button_name = (' name="btn-%s" ' % self.name) if self.name else ''
 
             btnid = uuid1()
             ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info"{button_name}' \
