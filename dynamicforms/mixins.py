@@ -202,28 +202,38 @@ class NaturalDateTimeMixin(object):
 
         if isinstance(self.parent.parent, ListSerializer):
             output_format = getattr(self, 'table_format', None)
-            if output_format is not None and re.match(r'%N:\d+', output_format):
-                imported = False
-                try:
-                    # This library (will-natural) is used because is the only one we could find that adds text saying
-                    # when is this datetime ("ago" or "from now") and have the possibility to set max precision
-                    from natural.date import duration
-                    imported = True
-                except:
-                    print('Install library for natural presentation of date (pip install will-natural)')
+            if output_format is not None:
+                if re.match(r'%N:\d+', output_format):
+                    imported = False
+                    try:
+                        # This library (will-natural) is used because is the only one we could find that adds text
+                        # saying when is this datetime ("ago" or "from now") and have the possibility to set max
+                        # precision
 
-                if imported:
-                    if isinstance(self, DateField):
-                        now = timezone.now().date()
-                    elif isinstance(self, TimeField):
-                        now = datetime.now()
-                        value = datetime.now().replace(hour=value.hour, minute=value.minute, second=value.second,
-                                                       microsecond=value.microsecond)
-                    else:
-                        now = timezone.now()
+                        # noinspection PyPackageRequirements
+                        from natural.date import duration
+                        imported = True
+                    except:
+                        print('Install library for natural presentation of date (pip install will-natural)')
 
-                    # noinspection PyUnboundLocalVariable
-                    return duration(value, now=now, precision=int(output_format.split(':')[1]))
+                    if imported:
+                        if isinstance(self, DateField):
+                            now = timezone.now().date()
+                        elif isinstance(self, TimeField):
+                            now = datetime.now()
+                            value = datetime.now().replace(hour=value.hour, minute=value.minute, second=value.second,
+                                                           microsecond=value.microsecond)
+                        else:
+                            now = timezone.now()
+
+                        # noinspection PyUnboundLocalVariable
+                        return duration(value, now=now, precision=int(output_format.split(':')[1]))
+                else:
+                    global_format = getattr(self, 'format', None)
+                    setattr(self, 'format', output_format)
+                    value = super().to_representation(value)
+                    setattr(self, 'format', global_format)
+                    return value
         return super().to_representation(value)
 
 

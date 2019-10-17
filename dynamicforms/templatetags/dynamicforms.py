@@ -279,3 +279,8 @@ def dict_item_default(context, var, d, k, default):
     context[var] = d.get(k, default)
 
     return ''
+
+
+@register.filter
+def class_name(value):
+    return value.__class__.__name__
