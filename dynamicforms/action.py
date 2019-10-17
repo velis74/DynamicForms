@@ -38,15 +38,19 @@ class RenderableActionMixin(object):
     Action that is rendered on screen
     """
 
-    def __init__(self, label: str, title: str, icon: str = None):
+    def __init__(self, label: str, title: str, icon: str = None, btn_classes: Union[str, dict, None] = None):
         """
         :param label: Label for rendering to on screen control
         :param title: Hint text for on-screen control
         :param icon: optional icon to add to render
+        :param btn_classes: optional class(es) of button. if variable is dict and key 'replace' have value True,
+         then default class will be replaced with class(es) that are under key 'classes'. In other case class(es) will
+         be just added to default class
         """
         self.label = label
         self.title = title
         self.icon = icon
+        self.btn_classes = btn_classes
 
 
 class TablePosition(IntEnum):
@@ -65,15 +69,16 @@ class TableAction(ActionBase, RenderableActionMixin):
 
     def __init__(self, position: TablePosition, label: str, action_js: str,
                  title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
-                 name: Union[str, None] = None, serializer: Serializer = None):
+                 name: Union[str, None] = None, serializer: Serializer = None,
+                 btn_classes: Union[str, dict, None] = None):
         ActionBase.__init__(self, action_js, name, serializer)
-        RenderableActionMixin.__init__(self, label, title, icon)
+        RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
         self.position = position
         self.field_name = field_name
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
-                           serializer)
+                           serializer, self.btn_classes)
 
     def render(self, serializer: Serializer, **kwds):
         ret = rowclick = rowrclick = ''
@@ -95,13 +100,26 @@ class TableAction(ActionBase, RenderableActionMixin):
         else:
             from uuid import uuid1
 
+            def get_btn_class(default_class, additional_class):
+                classes = default_class.split(' ')
+                if additional_class:
+                    if isinstance(additional_class, dict):
+                        if additional_class.get('replace', False):
+                            classes = []
+                        additional_class = additional_class.get('classes', '').split(' ')
+                    else:
+                        additional_class = additional_class.split(' ')
+                    classes.extend(additional_class)
+                return ' '.join(classes)
+
             button_name = (' name="btn-%s" ' % self.name) if self.name else ''
+            btn_class = get_btn_class("btn btn-info", self.btn_classes)
 
             btnid = uuid1()
-            ret += '<button id="df-action-btn-{btnid}" type="button" class="btn btn-info"{button_name}' \
+            ret += '<button id="df-action-btn-{btnid}" type="button" class="{btn_class}" title="{title}"{button_name}' \
                    'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
                 format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
-                       label=self.label,
+                       btn_class=btn_class, label=self.label, title=self.title,
                        icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else '',
                        button_name=button_name)
             if DYNAMICFORMS.jquery_ui:
