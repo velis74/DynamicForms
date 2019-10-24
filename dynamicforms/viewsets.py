@@ -245,3 +245,8 @@ class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewS
 
     def create(self, request, *args, **kwargs):
         raise NotImplementedError()
+
+
+class GenericViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

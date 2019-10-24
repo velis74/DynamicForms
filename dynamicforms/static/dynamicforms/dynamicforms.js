@@ -310,7 +310,7 @@ dynamicforms = {
         //  also for any authorization errors, CSRF, etc, it will again fail
         //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         if ($dlg != null)
-          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId);
+          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId, doneFunc, dType);
       });
   },
 
@@ -490,11 +490,6 @@ dynamicforms = {
     if (dynamicforms.DYNAMICFORMS.jquery_ui)
       $dlg.dialog('open')
     else {
-      $dlg.on('hidden.bs.modal', function () {
-        $dlg.remove();
-        if ($dlg.showNewAfterHide)
-          dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
-      });
       $dlg.modal();
     }
   },
@@ -505,10 +500,12 @@ dynamicforms = {
    * @param $newDlg: new dialog with errors in form
    * @param refreshType: how to refresh the table after the dialog is finished with editing
    * @param listId: id of table element with records
+   * @param doneFunc: if specified, this function will be called on successful data send
+   * @param dType: Custom dataType
    */
-  updateDialog: function updateDialog($dlg, $newDlg, refreshType, listId) {
+  updateDialog: function updateDialog($dlg, $newDlg, refreshType, listId, doneFunc, dType) {
     $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
-    dynamicforms.closeDialog($dlg, refreshType, listId);
+    dynamicforms.closeDialog($dlg, refreshType, listId, doneFunc, dType);
     /*
     // Replace current form with new form containing errors
     var newForm     = $newDlg.find("form");
@@ -528,14 +525,22 @@ dynamicforms = {
    * @param $dlg: dialog to close
    * @param refreshType: how to refresh the table after the dialog is finished with editing
    * @param listId: id of table element with records
+   * @param doneFunc: if specified, this function will be called on successful data send
+   * @param dataType: Custom dataType
    */
-  closeDialog: function closeDialog($dlg, refreshType, listId) {
+  closeDialog: function closeDialog($dlg, refreshType, listId, doneFunc, dataType) {
     if (!dynamicforms.DYNAMICFORMS.jquery_ui) {
+      $dlg.on('hidden.bs.modal', function () {
+        $dlg.remove();
+        if ($dlg.showNewAfterHide)
+          dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
+      });
+
       $dlg.modal('hide');
     } else {
       $dlg.remove();
       if ($dlg.showNewAfterHide) {
-        dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId);
+        dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
       }
     }
   },
