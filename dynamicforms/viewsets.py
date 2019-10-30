@@ -7,8 +7,11 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from django.shortcuts import render_to_response, render
-from rest_framework import status, viewsets, exceptions
+from django.utils.translation import ugettext_lazy as _
+from rest_framework import exceptions
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer, Serializer
@@ -17,7 +20,6 @@ from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 from dynamicforms.action import FormButtonAction, FormButtonTypes
 from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
-from django.utils.translation import ugettext_lazy as _
 
 
 class NewMixin(object):
@@ -150,6 +152,30 @@ class ReadOnlyMixin(object):
         record = self.get_object()
         serializer = self.get_serializer(record, read_only_detail=True)
         return Response(serializer.data)
+
+
+class PutPostMixin(object):
+    """
+    Provides support for when there is no record id in URL when calling PUT
+    (First empty form is loaded. Than user loads existing data to this form and updates it... - Perform PUT action)
+
+    or
+
+    Provides support for when there is record id in URL when calling POST
+    (First form for some existing record is loaded. Than user wants to create new record for it.
+    - deletes redord ID and perform POST action)
+    """
+
+    # When there is no record id in URL when calling PUT, this function will be called
+    # noinspection PyUnresolvedReferences
+    def put(self: viewsets.ModelViewSet, request, *args, **kwargs):
+        self.kwargs['pk'] = request.data['id']
+        return self.update(request, *args, **kwargs)
+
+    # When there is record id in URL when calling POST, this function will be called
+    # noinspection PyUnresolvedReferences
+    def post(self: viewsets.ModelViewSet, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class TemplateRendererMixin():
@@ -305,7 +331,7 @@ class TemplateRendererMixin():
         return response
 
 
-class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, UpdateMixin,
+class ModelViewSet(NewMixin, PutPostMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, UpdateMixin,
                    TemplateRendererMixin,
                    viewsets.ModelViewSet):
     """
@@ -408,6 +434,16 @@ class ModelViewSet(NewMixin, DeleteMixin, ReadOnlyMixin, CreateMixin, UpdateMixi
 
         return MyCursorPagination
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except ValidationError as e:
+            instance = self.new_object()
+            ser = self.get_serializer(instance, data=request.data, partial=False)
+            ser.is_valid(raise_exception=False)
+            e.detail.serializer = ser
+            raise e
+
 
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
 
@@ -416,3 +452,9 @@ class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewS
 
     def create(self, request, *args, **kwargs):
         raise NotImplementedError()
+
+
+# noinspection PyUnresolvedReferences
+class GenericViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.GenericViewSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
