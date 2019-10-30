@@ -7,6 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from rest_framework import status, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
@@ -52,6 +53,30 @@ class NewMixin(object):
                 return Response(serializer.data)
             else:
                 raise
+
+
+class PutPostMixin(object):
+    """
+    Provides support for when there is no record id in URL when calling PUT
+    (First empty form is loaded. Than user loads existing data to this form and updates it... - Perform PUT action)
+
+    or
+
+    Provides support for when there is record id in URL when calling POST
+    (First form for some existing record is loaded. Than user wants to create new record for it.
+    - deletes redord ID and perform POST action)
+    """
+
+    # When there is no record id in URL when calling PUT, this function will be called
+    # noinspection PyUnresolvedReferences
+    def put(self: viewsets.ModelViewSet, request, *args, **kwargs):
+        self.kwargs['pk'] = request.data['id']
+        return self.update(request, *args, **kwargs)
+
+    # When there is record id in URL when calling POST, this function will be called
+    # noinspection PyUnresolvedReferences
+    def post(self: viewsets.ModelViewSet, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class TemplateRendererMixin():
@@ -141,7 +166,7 @@ class TemplateRendererMixin():
         return res
 
 
-class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
+class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.ModelViewSet):
     """
     In addition to all the functionality, provided by DRF, DynamicForms ViewSet has some extra features:
 
@@ -237,6 +262,16 @@ class ModelViewSet(NewMixin, TemplateRendererMixin, viewsets.ModelViewSet):
 
         return MyCursorPagination
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except ValidationError as e:
+            instance = self.new_object()
+            ser = self.get_serializer(instance, data=request.data, partial=False)
+            ser.is_valid(raise_exception=False)
+            e.detail.serializer = ser
+            raise e
+
 
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
 
@@ -247,6 +282,7 @@ class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewS
         raise NotImplementedError()
 
 
-class GenericViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
+# noinspection PyUnresolvedReferences
+class GenericViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.GenericViewSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
