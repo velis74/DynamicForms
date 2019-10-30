@@ -1,5 +1,6 @@
 from rest_framework import routers
 
+from examples.rest.confirm_action import ConfirmActionViewSet
 from examples.rest.filter import FilterViewSet
 from .advanced_fields import AdvancedFieldsViewset
 from .basic_fields import BasicFieldsViewset
@@ -22,3 +23,4 @@ router.register(r'filter', FilterViewSet, base_name='filter')
 router.register(r'refresh-types', RefreshTypesViewSet, base_name='refresh-types')
 router.register(r'single-dialog', SingleDialogViewSet, base_name='single-dialog')
 router.register(r'write-only-fields', WriteOnlyFieldsViewSet, base_name='write-only-fields')
+router.register(r'confirm-action', ConfirmActionViewSet, base_name='confirm-action')

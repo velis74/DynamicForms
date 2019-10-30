@@ -1,155 +1,158 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  {% include DYNAMICFORMS.page_includes %}
-  <title>{% block title %}{% endblock %}</title>
-  <script src="{% static 'examples/examples.js' %}"></script>
-  {% block head_extra %}{% endblock %}
-  <style>
-    /* side navigation bar */
-    .sidenav {
-      height:           100%;
-      width:            0;
-      position:         fixed;
-      z-index:          2;
-      top:              0;
-      left:             0;
-      background-color: #111;
-      overflow-x:       hidden;
-      transition:       0.5s;
-      padding-top:      4.5em;
-    }
+    <meta charset="UTF-8">
+    {% include DYNAMICFORMS.page_includes %}
+    <title>{% block title %}{% endblock %}</title>
+    <script src="{% static 'examples/examples.js' %}"></script>
+    {% block head_extra %}{% endblock %}
+    <style>
+        /* side navigation bar */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 4.5em;
+        }
 
-    .sidenav a {
-      padding:         .5rem;
-      text-decoration: none;
-      font-size:       2rem;
-      white-space:     nowrap;
-      color:           #818181;
-      display:         block;
-      transition:      0.3s;
-    }
+        .sidenav a {
+            padding: .5rem;
+            text-decoration: none;
+            font-size: 2rem;
+            white-space: nowrap;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
 
-    #sidenav-overlay {
-      z-index:    1;
-      background: black;
-      position:   fixed;
-      left:       0;
-      top:        0;
-      width:      100%;
-      height:     100%;
-      display:    none;
-      opacity:    0;
-    }
+        #sidenav-overlay {
+            z-index: 1;
+            background: black;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+        }
 
-    .sidenav a:hover {
-      color: #f1f1f1;
-    }
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
 
-    #main {
-      transition: margin-left .5s;
-      padding:    1rem;
-      margin-top: 3.5rem;
-    }
+        #main {
+            transition: margin-left .5s;
+            padding: 1rem;
+            margin-top: 3.5rem;
+        }
 
-    #hamburger {
-      font-size: 200%;
-      cursor:    pointer;
-    }
+        #hamburger {
+            font-size: 200%;
+            cursor: pointer;
+        }
 
-    #titlebar {
-      position:     absolute;
-      z-index:      3;
-      top:          0;
-      left:         0;
-      right:        0;
-      background:   darkslategrey;
-      height:       3.5em;
-      padding-left: 1em;
-      color:        white;
-    }
-    {% if DYNAMICFORMS.testing %}
-    * {
-      -webkit-transition: none !important;
-      -moz-transition: none !important;
-      -o-transition: none !important;
-      transition: none !important;
-    }
+        #titlebar {
+            position: absolute;
+            z-index: 3;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: darkslategrey;
+            height: 3.5em;
+            padding-left: 1em;
+            color: white;
+        }
+
+        {% if DYNAMICFORMS.testing %}
+            * {
+                -webkit-transition: none !important;
+                -moz-transition: none !important;
+                -o-transition: none !important;
+                transition: none !important;
+            }
+        {% endif %}
+    </style>
+    {% if DYNAMICFORMS.bootstrap_version %}
+        {% include "dynamicforms/bootstrap/progress_dialog_style.html" %}
+    {% elif DYNAMICFORMS.jquery_ui %}
+        {% include "dynamicforms/jquery_ui/progress_dialog_style.html" %}
     {% endif %}
-  </style>
-  {% if DYNAMICFORMS.bootstrap_version %}
-    {%  include "dynamicforms/bootstrap/progress_dialog_style.html" %}
-  {% elif DYNAMICFORMS.jquery_ui %}
-    {%  include "dynamicforms/jquery_ui/progress_dialog_style.html" %}
-  {% endif %}
 
 </head>
 <body>
 <div id="titlebar">
-  <div id="hamburger" onclick="togglemenu()">
-    &#9776; <span id="page-title"></span>
-  </div>
+    <div id="hamburger" onclick="togglemenu()">
+        &#9776; <span id="page-title"></span>
+    </div>
 </div>
 <div id="side-nav" class="sidenav">
-  <a href="{% url 'validated-list' format='html' %}">Validated</a>
-  <a href="{% url 'hidden-fields-list' format='html' %}">Hidden fields</a>
-  <a href="{% url 'basic-fields-list' format='html' %}">Basic fields</a>
-  <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
-  <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
-  <a href="{% url 'filter-list' format='html' %}">Filter</a>
-  <a href="#" onclick="singleDialog()">Pop-up dialog</a>
-  <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
+    <a href="{% url 'validated-list' format='html' %}">Validated</a>
+    <a href="{% url 'hidden-fields-list' format='html' %}">Hidden fields</a>
+    <a href="{% url 'basic-fields-list' format='html' %}">Basic fields</a>
+    <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
+    <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
+    <a href="{% url 'filter-list' format='html' %}">Filter</a>
+    <a href="#" onclick="singleDialog()">Pop-up dialog</a>
+    <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
+    <a href="{% url 'multiple-serializers-on-page' %}">Multiple tables</a>
+    <a href="{% url 'confirm-action-list' format='html' %}">Confirm actions</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
-  {% block body %}{% endblock %}
+    {% block body %}{% endblock %}
 </div>
 <script type="application/javascript">
-  $('#page-title').html($('title').text());
+    $('#page-title').html($('title').text());
 
-  function togglemenu() {
-    var $side_nav = $('#side-nav');
-    var $overlay  = $('#sidenav-overlay');
+    function togglemenu() {
+        var $side_nav = $('#side-nav');
+        var $overlay = $('#sidenav-overlay');
 
-    if ($side_nav.width() == 0) {
-      $side_nav.width('15em');
-      $overlay.show().animate({opacity: .33}, 500);
+        if ($side_nav.width() == 0) {
+            $side_nav.width('15em');
+            $overlay.show().animate({opacity: .33}, 500);
+        } else {
+            $side_nav.width(0);
+            $overlay.animate({opacity: .0}, 500, null, function () {
+                $overlay.hide();
+            });
+        }
     }
-    else {
-      $side_nav.width(0);
-      $overlay.animate({opacity: .0}, 500, null, function () {
-        $overlay.hide();
-      });
+
+    function singleDialog() {
+        togglemenu();
+        dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
     }
-  }
 
-  function singleDialog() {
-    togglemenu();
-    dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
-  }
+    function customSingleDialogBtn() {
+        var $dlg = $(".dynamicforms-dialog");
+        var $form = $(".dynamicforms-form");
+        dynamicforms.submitForm($dlg, $form, null, function (data) {
+            dynamicforms.closeDialog($dlg);
+            alert(data.test);
+        });
+    }
 
-  function customSingleDialogBtn() {
-    var $dlg = $(".dynamicforms-dialog");
-    var $form = $(".dynamicforms-form");
-    dynamicforms.submitForm($dlg, $form, null, function(data) {
-      dynamicforms.closeDialog($dlg);
-      alert(data.test);
-    });
-  }
+    function customSingleDialogBtnPost() {
+        var $dlg = $(".dynamicforms-dialog");
+        dynamicforms.closeDialog($dlg);
 
-  function customSingleDialogBtnPost() {
-    var $dlg = $(".dynamicforms-dialog");
-    dynamicforms.closeDialog($dlg);
+        var $form = $(".dynamicforms-form");
+        $form.append($('<input type="hidden" name="download" value="1"/>'));
+        $form.submit();
+    }
 
-    var $form = $(".dynamicforms-form");
-    $form.append($('<input type="hidden" name="download" value="1"/>'));
-    $form.submit();
-  }
-
-  var testRefreshType = function () {
-    alert("Custom function refresh type.");
-  }
+    var testRefreshType = function () {
+        alert("Custom function refresh type.");
+    }
 
 </script>
 </body>
