@@ -59,6 +59,7 @@ dynamicforms = {
     //TODO: make proper error display message. You will probably also need some text about what you were trying to do
     console.log([xhr, status, error]);
   },
+
   /**
    * Shows progress dialog if operation takes longer than 0.5 seconds. Also sets z-index of progress bar and overlay
    * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
@@ -75,16 +76,34 @@ dynamicforms = {
       $("#df-progress-bar-determinate").progressbar(progressSettings);
 
       if (dynamicforms.shouldShowProgressDlg) {
+        dynamicforms.shouldCloseProgressDlg = false;
         dynamicforms.progressDlgShown = true;
-        progressDlg.dialog({dialogClass: 'progress-bar', closeOnEscape: false, resizable: false});
+        dynamicforms.progressDlgStartShowing = true;
+        progressDlg.dialog({dialogClass: 'progress-bar', closeOnEscape: false, resizable: false,
+                            open: function() {
+                              dynamicforms.progressDlgShown = true;
+                              if (dynamicforms.shouldCloseProgressDlg) {
+                                dynamicforms.closeProgressDlg(progressDlgID);
+                              }
+                            }
+                           });
       }
       zIndexElement = progressDlg.parents().first();
     } else {
       if (progressSettings === undefined)
         progressSettings = {keyboard: false, backdrop: 'static'};
       if (dynamicforms.shouldShowProgressDlg) {
-        dynamicforms.progressDlgShown = true;
+        dynamicforms.shouldCloseProgressDlg = false;
+        dynamicforms.progressDlgStartShowing = true;
         progressDlg.modal(progressSettings);
+        progressDlg.on('shown.bs.modal', function () {
+          progressDlg.off('shown.bs.modal');
+          dynamicforms.progressDlgShown = true;
+          if(dynamicforms.shouldCloseProgressDlg){
+            dynamicforms.closeProgressDlg(progressDlgID);
+          }
+        })
+
       }
       zIndexElement = progressDlg;
     }
@@ -102,6 +121,138 @@ dynamicforms = {
     $('#df-overlay').css('z-index', zIndex);
   },
 
+  progressCheckInterval: null,
+  /**
+   * Sets continuous checking on server about operation progress. After first check shows progress dialog if necessary.
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  progressCheck:         function progressCheck(progressDlgID, timestamp, progressSettings) {
+    if (!dynamicforms.progressDlgStartShowing && dynamicforms.progressCheckInterval != null) {
+      clearInterval(dynamicforms.progressCheckInterval);
+      dynamicforms.progressCheckInterval = null;
+    } else {
+      $.ajax({url: '/dynamicforms/progress/', headers: {'X-DF-TIMESTAMP': timestamp}})
+        .done(function (data, textStatus, jqXHR) {
+          var pb_indet   = $('#df-progress-bar-indeterminate');
+          var pb_det     = $('#df-progress-bar-determinate');
+          var percent    = data.value;
+          var show_indet = percent == null;
+          pb_indet.toggle(show_indet);
+          pb_det.toggle(!show_indet);
+
+          if (data.comment != null)
+            $('#df-progress-comment').html(data.comment);
+
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgStartShowing) {
+            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
+          }
+          if (!show_indet) {
+            if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+              pb_det.progressbar("value", parseInt(percent));
+            } else {
+              pb_det.css('width', percent + '%').attr('aria-valuenow', percent)
+            }
+          }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgStartShowing) {
+            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
+          }
+        });
+    }
+  },
+  /**
+   * Starts continuous checking on operations progress. After first check progress dialog is opened if necessary
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  startProgressChecker:  function startProgressChecker(progressDlgID, timestamp, progressSettings) {
+    dynamicforms.progressCheck(progressDlgID, timestamp, progressSettings);
+    dynamicforms.progressCheckInterval = setInterval(dynamicforms.progressCheck, 500, progressDlgID, timestamp, progressSettings);
+  },
+  shouldShowProgressDlg: false,
+  shouldCloseProgressDlg: true,
+  progressDlgShown:      false,
+  progressDlgOverlay:    false,
+  /**
+   * Sets overlay so nothing can be clicked while operation last. If it last for more than 0.5 second it starts progress checker.
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   * @param timestamp: used for generating operation progress key under which progress is stored on server.
+   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
+   */
+  setProgressDlg:        function setProgressDlg(progressDlgID, timestamp, progressSettings) {
+    dynamicforms.progressDlgOverlay = true;
+    $('#df-overlay').css('z-index', 10000).show();
+    dynamicforms.shouldShowProgressDlg = true;
+    window.setTimeout(function () {
+      if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
+        dynamicforms.startProgressChecker(progressDlgID, timestamp, progressSettings);
+      }
+    }, 500);
+  },
+  /**
+   * Closes progress dialog (if it is opened) and hides overlay that prevents clicks on other elements
+   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
+   */
+  closeProgressDlg:      function closeProgressDlg(progressDlgID) {
+    dynamicforms.shouldShowProgressDlg = false;
+    dynamicforms.shouldCloseProgressDlg = true;
+    if (dynamicforms.progressCheckInterval != null) {
+      clearInterval(dynamicforms.progressCheckInterval);
+      dynamicforms.progressCheckInterval = null;
+    }
+    $('#df-overlay').hide();
+    if (dynamicforms.progressDlgShown) {
+      dynamicforms.progressDlgShown = false;
+      dynamicforms.progressDlgStartShowing = false;
+
+      var $dlg = $('#' + progressDlgID);
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        $dlg.dialog('close');
+      } else {
+        $dlg.modal('hide');
+      }
+    }
+    dynamicforms.progressDlgOverlay = false;
+  },
+  /**
+   * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
+   * If operation lasts for more than 0.5 seconds progress dialog is shown.
+   * @param options: Dict with options for ajax call ('ajax_setts'), and custom progress dialog ('progress_id', 'progress_sets')
+   * @returns ajax promise with everything set for progress dialog: X-DF-TIMESTAMP header for progress checking and
+   *  callbacks for closing progress dialog after operation completes
+   */
+  ajaxWithProgress:      function ajaxWithProgress(options) {
+    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
+    var timestamp     = $.now()
+
+    var showProgress  = undefined;
+    var progressSetts = options.progress_setts;
+
+    if (progressSetts != undefined)
+      showProgress = progressSetts.show;
+    if (showProgress == undefined)
+      showProgress = true;
+
+    if (showProgress && !dynamicforms.progressDlgOverlay) {
+      dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
+    }
+
+    var closeProgressDialogFunc = function () {
+      if (showProgress)
+        dynamicforms.closeProgressDlg(progressDlgID);
+    };
+
+    var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
+    var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
+    headers['X-DF-TIMESTAMP'] = timestamp;
+    ajaxSettings['headers']   = headers;
+
+    return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);
+  },
 
   submitFormWithConfirmation: function submitFormWithConfirmation(url, $dlg, $form) {
     var data = dynamicforms.getSerializedForm($form, 'final');
@@ -134,117 +285,6 @@ dynamicforms = {
 
   submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
     return dynamicforms.makeSubmitForm($dlg, $form, refreshType, doneFunc);
-  },
-
-  progressCheckInterval: null,
-  /**
-   * Sets continuous checking on server about operation progress. After first check shows progress dialog if necessary.
-   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
-   * @param timestamp: used for generating operation progress key under which progress is stored on server.
-   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
-   */
-  progressCheck:         function progressCheck(progressDlgID, timestamp, progressSettings) {
-    if (!dynamicforms.progressDlgShown && dynamicforms.progressCheckInterval != null) {
-      clearInterval(dynamicforms.progressCheckInterval);
-      dynamicforms.progressCheckInterval = null;
-    } else {
-      $.ajax({url: '/dynamicforms/progress/', headers: {'X_DF_TIMESTAMP': timestamp}})
-        .done(function (data, textStatus, jqXHR) {
-          var pb_indet   = $('#df-progress-bar-indeterminate');
-          var pb_det     = $('#df-progress-bar-determinate');
-          var percent    = data['value'];
-          var show_indet = percent == null;
-          if (!show_indet) {
-            if (dynamicforms.DYNAMICFORMS.jquery_ui) {
-              pb_det.progressbar("value", parseInt(percent));
-            } else {
-              pb_det.css('width', percent + '%').attr('aria-valuenow', percent)
-            }
-          }
-          pb_indet.toggle(show_indet);
-          pb_det.toggle(!show_indet);
-
-          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
-            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
-          }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-          if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgShown) {
-            dynamicforms.showProgressDlg(progressDlgID, progressSettings);
-          }
-        });
-    }
-  },
-  /**
-   * Starts continuous checking on operations progress. After first check progress dialog is opened if necessary
-   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
-   * @param timestamp: used for generating operation progress key under which progress is stored on server.
-   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
-   */
-  startProgressChecker:  function startProgressChecker(progressDlgID, timestamp, progressSettings) {
-    dynamicforms.progressCheck(progressDlgID, timestamp, progressSettings);
-    dynamicforms.progressCheckInterval = setInterval(dynamicforms.progressCheck, 500, progressDlgID, timestamp, progressSettings);
-  },
-  shouldShowProgressDlg: false,
-  progressDlgShown:      false,
-  /**
-   * Sets overlay so nothing can be clicked while operation last. If it last for more than 0.5 second it starts progress checker.
-   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
-   * @param timestamp: used for generating operation progress key under which progress is stored on server.
-   * @param progressSettings: Progress dialog settings - for custom progress dialogs.
-   */
-  setProgressDlg:        function setProgressDlg(progressDlgID, timestamp, progressSettings) {
-    $('#df-overlay').css('z-index', 10000).show();
-    dynamicforms.shouldShowProgressDlg = true;
-    window.setTimeout(function () {
-      if (dynamicforms.shouldShowProgressDlg) {
-        dynamicforms.startProgressChecker(progressDlgID, timestamp, progressSettings);
-      }
-    }, 500);
-  },
-  /**
-   * Closes progress dialog (if it is opened) and hides overlay that prevents clicks on other elements
-   * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
-   */
-  closeProgressDlg:      function closeProgressDlg(progressDlgID) {
-    dynamicforms.shouldShowProgressDlg = false
-    if (dynamicforms.progressCheckInterval != null) {
-      clearInterval(dynamicforms.progressCheckInterval);
-      dynamicforms.progressCheckInterval = null;
-    }
-
-    $('#df-overlay').hide();
-    if (dynamicforms.progressDlgShown) {
-      dynamicforms.progressDlgShown = false;
-      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
-        $('#' + progressDlgID).dialog('close');
-      } else {
-        $('#' + progressDlgID).modal('hide');
-      }
-    }
-  },
-  /**
-   * Calls standard jQuery.ajax. Additionally it sets overlay that prevents clicks on other elements until operation completes
-   * If operation lasts for more than 0.5 seconds progress dialog is shown.
-   * @param options: Dict with options for ajax call ('ajax_setts'), and custom progress dialog ('progress_id', 'progress_sets')
-   * @returns ajax promise with everything set for progress dialog: X_DF_TIMESTAMP header for progress checking and
-   *  callbacks for closing progress dialog after operation completes
-   */
-  ajaxWithProgress:      function ajaxWithProgress(options) {
-    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
-    var timestamp     = $.now()
-
-    dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
-    var closeProgressDialogFunc = function () {
-      dynamicforms.closeProgressDlg(progressDlgID);
-    };
-
-    var ajaxSettings          = options['ajax_setts'] !== undefined ? options['ajax_setts'] : {};
-    var headers               = ajaxSettings['headers'] !== undefined ? ajaxSettings['headers'] : {};
-    headers['X_DF_TIMESTAMP'] = timestamp;
-    ajaxSettings['headers'] = headers;
-
-    return $.ajax(ajaxSettings).done(closeProgressDialogFunc).fail(closeProgressDialogFunc);
   },
 
   /**

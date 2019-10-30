@@ -114,6 +114,10 @@ class HTMLFormRenderer(HTMLFormRenderer):
             'style': style,
             'DYNAMICFORMS': DYNAMICFORMS,
         }
+        try:
+            context.update(style['serializer'].context['view'].template_context)
+        except:
+            pass
         return template.render(context)
 
     # Jure: had to copy this one over to support custom template as parameter + DF context variable
@@ -144,4 +148,8 @@ class HTMLFormRenderer(HTMLFormRenderer):
             'style': style,
             'DYNAMICFORMS': DYNAMICFORMS,
         }
+        try:
+            context.update(form.context['view'].template_context)
+        except:
+            pass
         return template.render(context)

@@ -3,7 +3,7 @@
   <select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}"
           class="form-control {{ DYNAMICFORMS.select2_form_field_class }}
         {% if field.errors %}is-invalid{% endif %}" {% if field.read_only %}disabled{% endif %} style="width: 100%"
-          name="{{ field.name }}">
+          name="{{ field.name }}" {% if field.placeholder %}data-placeholder="{{ field.placeholder }}" {% endif %}>
     {% for select in field.iter_options %}
       {% if select.start_option_group %}
         <optgroup label="{{ select.label }}">

@@ -2052,7 +2052,7 @@ S2.define('select2/selection/search',[
     var width = '';
 
     if (this.$search.attr('placeholder') !== '') {
-      width = this.$selection.find('.select2-selection__rendered').innerWidth();
+      width = this.$selection.find('.select2-selection__rendered').innerWidth() || "100%";
     } else {
       var minimumWidth = this.$search.val().length + 1;
 
@@ -5181,7 +5181,7 @@ S2.define('select2/core',[
       var elementWidth = $element.outerWidth(false);
 
       if (elementWidth <= 0) {
-        return 'auto';
+        return '100%';
       }
 
       return elementWidth + 'px';
