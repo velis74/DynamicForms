@@ -1,4 +1,5 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -69,9 +70,6 @@
       padding-left: 1em;
       color:        white;
     }
-    .actions-header {
-      text-align: right;
-    }
     {% if DYNAMICFORMS.testing %}
     * {
       -webkit-transition: none !important;
@@ -103,6 +101,8 @@
   <a href="{% url 'filter-list' format='html' %}">Filter</a>
   <a href="#" onclick="singleDialog()">Pop-up dialog</a>
   <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
+  <a href="{% url 'multiple-serializers-on-page' %}">Multiple tables</a>
+  <a href="{% url 'confirm-action-list' format='html' %}">Confirm actions</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">

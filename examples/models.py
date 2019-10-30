@@ -175,3 +175,14 @@ class RefreshType(models.Model):
     Shows how DynamicForms handles different refresh types
     """
     description = models.CharField(max_length=20, help_text='Item description')
+
+
+class ConfirmAction(models.Model):
+    action_name = models.CharField(max_length=256, help_text='Action name', verbose_name='Action name')
+    action_type = models.IntegerField(choices=(
+        (0, 'Choice 1'),
+        (1, 'Choice 2'),
+        (2, 'Choice 3'),
+        (3, 'Choice 4'),
+    ))
+    enabled = models.BooleanField()

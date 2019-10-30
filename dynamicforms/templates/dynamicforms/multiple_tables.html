@@ -1,0 +1,15 @@
+{% load dynamicforms i18n %}
+{% if tables %}
+    {% for key,table in tables.items %}
+        <div>
+            <h1>{{ table.title|default:key }}</h1>
+            {% with serializer=table.serializer data=table.data url_reverse=table.url_reverse %}
+                {% render_table_commands table.serializer 'header' %}
+            {% endwith %}
+            {% get_data_template context_data=table as table_template %}
+            <div>
+                {% include table_template with serializer=table.serializer data=table.data url_reverse=table.url_reverse %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
