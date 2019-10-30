@@ -59,7 +59,6 @@ dynamicforms = {
     //TODO: make proper error display message. You will probably also need some text about what you were trying to do
     console.log([xhr, status, error]);
   },
-
   /**
    * Shows progress dialog if operation takes longer than 0.5 seconds. Also sets z-index of progress bar and overlay
    * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
