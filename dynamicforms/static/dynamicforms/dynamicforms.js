@@ -253,23 +253,26 @@ dynamicforms = {
     var dataType = 'html';
     url = method.toLowerCase() === 'put' ?  url + 'confirm_update.' + dataType : url + 'confirm_create.' + dataType;
 
-    $.ajax({
-      type: method,
-      url: url,
-      data: data,
-      dataType: dataType,
-      headers: headers,
-      traditional: true
-    }).always(function (data, status, response) {
-      dynamicforms.closeDialog($dlg);
-      if ((data && response.status && response.status === 201) || (
-          response.status && response.status === 200 && url.includes('confirm_update'))) {
-        window.location.reload(true);
-        return;
-      }
-      var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
-      dynamicforms.showDialog(newDialog, 'page')
-    });
+    var ajaxSetts = {
+        url: url,
+        headers: headers,
+        method: method,
+        data: data,
+        dataType: 'html',
+        traditional: true
+      };
+      dynamicforms.ajaxWithProgress({ajax_setts: ajaxSetts}).always(
+          function (data, status, response) {
+            dynamicforms.closeDialog($dlg);
+            if ((data && response.status && response.status === 201) || (
+                response.status && response.status === 200 && url.includes('confirm_update'))) {
+                //todo: make only record update or insert, do not reload page
+                window.location.reload(true);
+            return;
+            }
+            var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
+            dynamicforms.showDialog(newDialog, 'page')
+      });
   },
 
   submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
@@ -300,7 +303,6 @@ dynamicforms = {
     var dataType = 'html';
     if (doneFunc == undefined) {
       doneFunc = function (data) {
-        //var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
         if (!recordID) {
           try {
