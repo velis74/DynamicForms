@@ -37,7 +37,7 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  },
+  }
 };
 
 dynamicforms = {
@@ -430,6 +430,7 @@ dynamicforms = {
   },
   /**
    * Insert new row after the last row or insert first row
+   * @param formId
    * @param $newRow
    */
   insertRow:   function insertRow(formId, $newRow) {
@@ -452,7 +453,6 @@ dynamicforms = {
    */
   refreshRow:  function refreshRow(data, formID, recordID) {
     var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-
     var $rowToRefresh = null; // Row to refresh
     var tableSelector = '#list-' + formID;
 
@@ -465,7 +465,6 @@ dynamicforms = {
     if (!dynamicforms.isLinkNext(tbl_pagination.link_next) || ($rowToRefresh != null && $rowToRefresh.length)) {
       var tableIndex = $('table[id^="list-"]').index($(tableSelector));
       var $htmlObject = $(data);
-
       if (recordID) {
         var $editedRow = $($htmlObject.find('table')[tableIndex]).find(trSelector); // Edited record from ajax returned html
         if ($editedRow.length) {
@@ -488,7 +487,6 @@ dynamicforms = {
    * @param recordID: id of edited data
    */
   refreshTable: function refreshTable(formID, recordID) {
-
     //If it is set to refresh table, we also want to see all the changes, that was made by other users.
     //We can only get them by reread data.
     dynamicforms.filterData(formID);
@@ -500,7 +498,7 @@ dynamicforms = {
    * @param refreshType: how to refresh the table after the dialog is finished with editing
    * @param listId: id of table element with records
    * @param doneFunc: if specified, this function will be called on successful data send
-   * @param dType: Custom dataType
+   * @param dataType: Custom dataType
    */
   showDialog: function showDialog($dlg, refreshType, listId, doneFunc, dataType) {
     //TODO: adjust hashURL
@@ -513,7 +511,6 @@ dynamicforms = {
     $($dlg).on('hidden.bs.modal', function () {
       // dialog removes itself from DOM hierarchy
       $dlg.remove();
-
       dynamicforms.removeFormDeclarations($form);
     });
 
@@ -580,7 +577,6 @@ dynamicforms = {
         if ($dlg.showNewAfterHide)
           dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
       });
-
       $dlg.modal('hide');
     } else {
       $dlg.remove();
@@ -605,14 +601,12 @@ dynamicforms = {
       };
       if (params != undefined && params.data != undefined)
         ajaxSetts['data'] = params.data;
-
       dynamicforms.ajaxWithProgress({
                                       ajax_setts: ajaxSetts
                                     })
         .done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), refreshType, listId);
-        })
-        .fail(function (xhr, status, error) {
+        }).fail(function (xhr, status, error) {
           dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
         });
     } else
@@ -623,12 +617,10 @@ dynamicforms = {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       $.ajax({
         url: recordURL,
-        headers: {'X-DF-RENDER-TYPE': 'dialog'},
-      })
-        .done(function (dialogHTML) {
+        headers: {'X-DF-RENDER-TYPE': 'dialog'}
+      }).done(function (dialogHTML) {
           dynamicforms.showDialog($(dialogHTML), 'no refresh', listId);
-        })
-        .fail(function (xhr, status, error) {
+      }).fail(function (xhr, status, error) {
           dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
         });
     } else
@@ -697,7 +689,6 @@ dynamicforms = {
    * @param dialog
    */
   makeDeleteRow: function makeDeleteRow(recordURL, recordID, refreshType, listId, dialog) {
-    //TODO: Ask user for confirmation
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       url:     recordURL,
@@ -722,8 +713,7 @@ dynamicforms = {
         } else if (typeof (refreshType) == 'function') {
           refreshType();
         } else if (refreshType.indexOf('redirect') !== -1) {
-          var redirectUrl      = refreshType.split(':').pop();
-          window.location.href = redirectUrl;
+          window.location.href = refreshType.split(':').pop();
         } else if (refreshType == 'no refresh') {
           // pass
         } else if (dynamicforms.isFunction(refreshType)) {
@@ -1119,10 +1109,6 @@ dynamicforms = {
     } else
       link_next = tbl_pagination.link_next;
 
-    /*console.log(link_next);
-    console.log(tbl_pagination.last_link_next);
-    console.log(filter.length);*/
-
     if (dynamicforms.isLinkNext(link_next) && (link_next != tbl_pagination.last_link_next || filter.length)) {
       tbl_pagination.last_link_next = link_next;
 
@@ -1136,7 +1122,7 @@ dynamicforms = {
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next,
+               url:     link_next
              }).done(function (data) {
 
         data                     = $(data).filter("tr");
@@ -1275,4 +1261,4 @@ $(document).ready(function () {
   var $overlay = $("<div id='df-overlay' style='position: fixed; display: none; width: 100%; height: 100%; top: 0; " +
                      "left: 0; right: 0; bottom: 0; cursor: pointer; z-index: auto'></div>");
   $("body").append($overlay);
-})
+});
