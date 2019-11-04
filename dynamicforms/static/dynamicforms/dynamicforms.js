@@ -50,16 +50,6 @@ dynamicforms = {
   },
 
   /**
-   * Presents the error in data exchange with the server in a user understandable way
-   * @param xhr
-   * @param status
-   * @param error
-   */
-  showAjaxError:   function showAjaxError(xhr, status, error) {
-    //TODO: make proper error display message. You will probably also need some text about what you were trying to do
-    console.log([xhr, status, error]);
-  },
-  /**
    * Shows progress dialog if operation takes longer than 0.5 seconds. Also sets z-index of progress bar and overlay
    * @param progressDlgID: ID of progress dialog element - for custom progress dialogs.
    * @param progressSettings: Progress dialog settings - for custom progress dialogs.
@@ -634,6 +624,9 @@ dynamicforms = {
    * @param listId
    */
   removeRow: function removeRow(recordID, listId) {
+    if (!listId) {
+      return
+    }
     var $trToRemove = $('[id*=' + listId + ']').find("tr[data-id='" + recordID + "']");
     $trToRemove.remove();
     dynamicforms.wasLastRowDeleted(listId);
@@ -654,16 +647,18 @@ dynamicforms = {
   },
 
   deleteRowWithConfirmation: function deleteRowWithConfirmation(recordURL, recordID, refreshType, listId) {
-    $.ajax({
-      url: recordURL + 'confirm_delete.html',
-      method: 'GET',
-      data: {
-        record_id: recordID,
-        list_id: listId
-      },
-      dataType: 'html',
-      headers: {'X-CSRFToken': dynamicforms.csrf_token}
-    }).always(function (dialog) {
+    var ajaxSetts = {
+        url: recordURL + 'confirm_delete.html',
+        headers: {'X-CSRFToken': dynamicforms.csrf_token},
+        method: 'GET',
+        data: {
+          record_id: recordID,
+          list_id: listId
+        },
+        dataType: 'html'
+      };
+      dynamicforms.ajaxWithProgress({ajax_setts: ajaxSetts})
+      .always(function (dialog) {
       //show dialog
       var confirmDialog = $(dialog.responseText ? dialog.responseText : dialog);
       dynamicforms.showDialog(confirmDialog);
@@ -691,8 +686,8 @@ dynamicforms = {
   makeDeleteRow: function makeDeleteRow(recordURL, recordID, refreshType, listId, dialog) {
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
-                                      url:     recordURL,
-                                      method:  'DELETE',
+                                      url: recordURL + '?format=html',
+                                      method:'DELETE',
                                       headers: {'X-CSRFToken': dynamicforms.csrf_token}
                                     }
                                   })
@@ -704,7 +699,7 @@ dynamicforms = {
         //  TODO: make a proper notification
         // Remove row after deletion
         if (refreshType == undefined || refreshType == 'record') {
-          dynamicforms.removeRow(recordID);
+          dynamicforms.removeRow(recordID, listId);
         } else if (refreshType == 'table') {
           var recordURL = dynamicforms.getRecordURL(listId);
           dynamicforms.refreshList(recordURL, true, refreshType, listId, true);

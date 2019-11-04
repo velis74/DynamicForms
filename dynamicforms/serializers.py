@@ -2,6 +2,7 @@ from typing import Any
 
 from django.db import models
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
@@ -104,7 +105,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         """
         return False
 
-    def confirm_delete_text(self, request, model_instance):
+    def confirm_delete_text(self, request: Request, model_instance: models.Model):
         """
         Returns general confirmation text. This method is used in DeleteMixin in viewsets.py
         :param request: Request object
@@ -112,11 +113,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         :return: None or string
         """
 
-        return "{} {}: {}.".format(
-            __('Do you really want to delete selected record?'),
-            __('Record'),
-            str(model_instance)
-        )
+        return False
 
     def confirm_delete_title(self):
         """

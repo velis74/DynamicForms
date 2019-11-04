@@ -13,12 +13,12 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
 
     actions = Actions(
         TableAction(TablePosition.ROW_END,
-                    label='Delete item',
+                    label='Delete item with confirmation',
                     title='Delete item',
                     name='delete-confirm',
                     action_js="dynamicforms.deleteRowWithConfirmation("
                               "'{% url url_reverse|add:'-detail' pk=row.id %}', "
-                              "{{row.id}}, 'page', __TABLEID__);"),
+                              "{{row.id}}, 'record', __TABLEID__);"),
         add_default_crud=False,
         add_default_filter=False,
     )

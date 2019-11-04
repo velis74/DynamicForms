@@ -107,7 +107,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -120,4 +119,5 @@ DYNAMICFORMS = {
     # 'template': 'dynamicforms/jquery_ui/',
     'page_template': 'examples/page.html',
     'testing': sys.argv[1:2] == ['test'],
+    'api_debug': False,
 }

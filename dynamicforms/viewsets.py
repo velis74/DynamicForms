@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import exceptions
 from rest_framework import status, viewsets
@@ -18,6 +18,7 @@ from rest_framework.serializers import ListSerializer, Serializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.action import FormButtonAction, FormButtonTypes
+from dynamicforms.exceptions import ServiceNotImplementedApiException, DynamicFormsApiException
 from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
 
@@ -63,9 +64,12 @@ class NewMixin(object):
 
 class DeleteMixin(object):
     @action(detail=True, methods=['get'])
-    def confirm_delete(self: viewsets.ModelViewSet, request, pk=None, format=None):
+    def confirm_delete(self: viewsets.ModelViewSet, request, *args, pk=None, format=None, **kwargs):
         record = self.get_object()
         serializer = self.get_serializer(record)
+        confirm_delete_text = serializer.confirm_delete_text(request, self.get_object())
+        if not confirm_delete_text:
+            raise ServiceNotImplementedApiException()
         record_id = request.GET.get('record_id')
         list_id = request.GET.get('list_id')
         confirm_delete_button = FormButtonAction(
@@ -81,11 +85,11 @@ class DeleteMixin(object):
         serializer.actions.actions.append(confirm_delete_button)
         render_data = dict(
             serializer=serializer,
-            confirmation_text=serializer.confirm_delete_text(request, self.get_object()),
+            confirmation_text=confirm_delete_text,
             title=serializer.confirm_delete_title(),
         )
-        return render_to_response(
-            DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
+        return render(request,
+                      DYNAMICFORMS.template + 'confirm_delete_dialog.html', render_data)
 
 
 class CreateMixin(object):
@@ -276,20 +280,23 @@ class TemplateRendererMixin():
             elif res.status_code == status.HTTP_401_UNAUTHORIZED and self.render_type != 'dialog':
                 res = redirect_to_login(request.path_info + get_query_params())
             elif res.status_code == status.HTTP_403_FORBIDDEN:
-                response_html = render_to_response(
-                    DYNAMICFORMS.template + 'exceptions/exception.html', dict(
+                response_html = render(request,
+                                       DYNAMICFORMS.template + 'exceptions/exception.html', dict(
                         detail=str(res.data.get('detail')),
                         title=_('Action denied')
                     ))
                 response_html.status_code = status.HTTP_403_FORBIDDEN
                 return response_html
-            elif res.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR:
-                response_html = render_to_response(
-                    DYNAMICFORMS.template + 'exceptions/exception.html', dict(
+            elif res.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR or isinstance(
+                    response.exception, DynamicFormsApiException
+            ):
+                response_html = render(request,
+                                       DYNAMICFORMS.template + 'exceptions/exception.html', dict(
                         detail=_('Please contact system administrator'),
-                        title=_('Unexpected error occured')
+                        title=getattr(res.exception, 'detail') if hasattr(
+                            res, 'exception') and hasattr(res.exception, 'detail') else _('Unexpected error occured')
                     ))
-                response_html.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+                response_html.status_code = res.status_code
                 return response_html
         return res
 
@@ -313,21 +320,23 @@ class TemplateRendererMixin():
         context = super().get_exception_handler_context()
         response = exception_handler(exc, context)
 
-        if response is None and isinstance(exc, Exception):
+        if (response is None and isinstance(exc, Exception)) or (
+                isinstance(exc, DynamicFormsApiException)
+        ):
             # raise exception only for debug=True
-            if settings.DEBUG:
+            if settings.DEBUG or DYNAMICFORMS.api_debug:
                 super().raise_uncaught_exception(exc)
             # if debug=False render html with error notification
             import logging
             logger = logging.getLogger('django.request')
             logger.exception(exc)
-
-            response = Response(data={}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            response = Response(data={}, status=getattr(
+                exc, 'status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))
 
         if response.status_code == status.HTTP_403_FORBIDDEN and hasattr(exc, 'args') and exc.args:
             response.data['detail'] = exc.args[0]
 
-        response.exception = True
+        response.exception = exc
         return response
 
 

@@ -186,3 +186,8 @@ class ConfirmAction(models.Model):
         (3, 'Choice 4'),
     ))
     enabled = models.BooleanField()
+
+    def __str__(self):
+        return self.action_name
+
+

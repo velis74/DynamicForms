@@ -10,7 +10,7 @@ from examples.models import ConfirmAction
 def populate_confirm_action_table(apps, schema_editor):
     for i in range(0, 20):
         ConfirmAction.objects.create(
-            action_type=randint(0, 4),
+            action_type=randint(0, 3),
             action_name='action name %d' % i,
             enabled=random.choice([True, False])
         )
