@@ -266,7 +266,6 @@ dynamicforms = {
             dynamicforms.closeDialog($dlg);
             if ((data && response.status && response.status === 201) || (
                 response.status && response.status === 200 && url.includes('confirm_update'))) {
-                //todo: make only record update or insert, do not reload page
                 window.location.reload(true);
             return;
             }
@@ -433,7 +432,7 @@ dynamicforms = {
       if ($lastRow.length) {
         $newRow.insertAfter($lastRow);
       } else {
-        $tableSelector.find("table").find("tr[data-title]").replaceWith($newRow);
+        $tableSelector.find("tbody").find("tr[data-title]").replaceWith($newRow);
       }
     }
   },
@@ -606,17 +605,22 @@ dynamicforms = {
   },
 
   showReadOnlyRow: function showReadOnlyRow(recordURL, listId) {
-    if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
-      $.ajax({
-        url: recordURL,
-        headers: {'X-DF-RENDER-TYPE': 'dialog'}
-      }).done(function (dialogHTML) {
-          dynamicforms.showDialog($(dialogHTML), 'no refresh', listId);
-      }).fail(function (xhr, status, error) {
-          dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
-        });
-    } else
-      window.location = recordURL;
+	if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
+		dynamicforms.ajaxWithProgress({
+			ajax_setts: {
+				type: 'GET',
+				url: recordURL,
+				headers: {
+					'X-DF-RENDER-TYPE': 'dialog'
+				}
+			}
+		}).done(function (dialogHTML) {
+			dynamicforms.showDialog($(dialogHTML), 'no refresh', listId);
+		}).fail(function (xhr, status, error) {
+			dynamicforms.showDialog($(xhr.responseText), 'no-refresh', listId);
+		});
+	} else
+		window.location = recordURL;
   },
 
   /**

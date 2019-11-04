@@ -67,6 +67,12 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
                       "dynamicforms.submitFormWithConfirmation("
                       "(('{{% url 'confirm-action-detail' pk='__ROWID__' %}}').replace("
                       "'__ROWID__', $form.find('input[name=\"id\"]').val())), $dlg, $form);"),
+        TableAction(TablePosition.ROW_END, 'View readonly details', title='View readonly details',
+                    name='view-readonly-details',
+                    action_js="dynamicforms.showReadOnlyRow("
+                              "'{% url 'confirm-action-view-readonly-detail' pk='__ROWID__' "
+                              "format='html' %}'.replace('__ROWID__', $(event.target).parents('tr')."
+                              "attr('data-id')), __TABLEID__);"),
         add_default_crud=False,
         add_default_filter=False,
     )

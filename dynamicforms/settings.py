@@ -7,7 +7,6 @@ DYNAMICFORMS_JQUERY_UI = 'dynamicforms/jquery_ui/'
 
 
 class Settings(Struct):
-
     # Support for jQueryUI (this will be queried in dynamicforms.js)
     jquery_ui = False
 
