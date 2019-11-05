@@ -1,6 +1,6 @@
 import uuid as uuid_module
 from enum import IntEnum
-from typing import Iterable, List, Union
+from typing import Iterable, List, Union, Any
 
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.serializers import Serializer
@@ -127,14 +127,22 @@ class TableAction(ActionBase, RenderableActionMixin):
                     .format(btnid=btnid)
 
         if self.position in (TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK):
-            if rowclick != '':
-                ret += "$('#list-{uuid}').find('tbody').click(" \
-                       "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
-                    format(stop_propagation=stop_propagation, action=rowclick, uuid=serializer.uuid)
-            if rowrclick != '':
-                ret += "$('#list-{uuid}').find('tbody').contextmenu(" \
-                       "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
-                    format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
+            if hasattr(
+                    serializer, '__dynamic_forms_row_data'
+            ) and getattr(serializer, '__dynamic_forms_row_data') and getattr(
+                serializer, '__dynamic_forms_row_data').get(DYNAMICFORMS.model_pk_attribute_name):
+                if rowclick != '':
+                    record_id: Any = getattr(
+                        serializer, '__dynamic_forms_row_data').get(
+                        DYNAMICFORMS.model_pk_attribute_name)
+                    ret += "$('#list-{uuid}').find('tbody').find('tr[data-id={record_id}]').click(" \
+                           "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
+                        format(stop_propagation=stop_propagation,
+                               action=rowclick, uuid=serializer.uuid, record_id=record_id)
+                if rowrclick != '':
+                    ret += "$('#list-{uuid}').find('tbody').contextmenu(" \
+                           "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
+                        format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
             if ret != '':
                 ret = '<script type="application/javascript">%s</script>' % ret
 
@@ -387,8 +395,14 @@ class Actions(object):
                         actions.append(action)
                 else:
                     actions.append(action)
-
         return tuple(actions)
+
+    def __handle_renderable_actions_postions_for_given_action(self, action: object, allowed_positions: tuple) -> tuple:
+        if action.name == 'edit':
+            updated_allowed_positions: list = list(allowed_positions)
+            updated_allowed_positions.append(TablePosition.ROW_CLICK)
+            return tuple(updated_allowed_positions)
+        return allowed_positions
 
     def render_renderable_actions(self, allowed_positions: Iterable[TablePosition], field_name: str,
                                   serializer: Serializer):
@@ -397,8 +411,8 @@ class Actions(object):
         :return: List[Action]
         """
         res = ''
-
         for action in self.renderable_actions(serializer):
+            allowed_positions = self.__handle_renderable_actions_postions_for_given_action(action, allowed_positions)
             if action.position in allowed_positions and (field_name is None or field_name == action.field_name):
                 res += action.render(serializer)
         return res

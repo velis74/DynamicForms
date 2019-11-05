@@ -1,3 +1,5 @@
+import random
+
 from rest_framework.permissions import SAFE_METHODS
 
 from dynamicforms import serializers
@@ -68,7 +70,7 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
                       "(('{{% url 'confirm-action-detail' pk='__ROWID__' %}}').replace("
                       "'__ROWID__', $form.find('input[name=\"id\"]').val())), $dlg, $form);"),
         TableAction(TablePosition.ROW_END, 'View readonly details', title='View readonly details',
-                    name='view-readonly-details',
+                    name='view-details',
                     action_js="dynamicforms.showReadOnlyRow("
                               "'{% url 'confirm-action-view-readonly-detail' pk='__ROWID__' "
                               "format='html' %}'.replace('__ROWID__', $(event.target).parents('tr')."
@@ -98,6 +100,11 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
 
     def confirm_update_title(self):
         return 'Update item'
+
+    def is_row_editable(self, row_data: object) -> bool:
+        if row_data and row_data.get('enabled'):
+            return True
+        return False
 
     class Meta:
         model = ConfirmAction

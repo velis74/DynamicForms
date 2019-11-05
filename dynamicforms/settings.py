@@ -24,6 +24,9 @@ class Settings(Struct):
     # if true error with stacktrace is returned for response, if false modal windoe with error notice is shown
     api_debug = True
 
+    # model pk attribute name
+    model_pk_attribute_name = 'id'
+
     def __init__(self, data=None, **kwds):
         kwds.setdefault('page_template', DYNAMICFORMS_BOOTSTRAP + 'page.html')
         super().__init__(data, **kwds)
