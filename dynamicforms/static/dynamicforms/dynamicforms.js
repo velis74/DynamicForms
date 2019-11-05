@@ -275,10 +275,8 @@ dynamicforms = {
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
     var dataType = 'html';
-    var doneFunction = null;
     if (doneFunc == undefined) {
-      doneFunction = function (data) {
-        //var formContent = $dlg.find("form").html();
+      var doneFunction = function (data) {
         dynamicforms.closeDialog($dlg);
         if (!recordID) {
           try {
@@ -291,7 +289,7 @@ dynamicforms = {
       }
     } else {
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
-      doneFunction = doneFunc
+      var doneFunction = doneFunc
     }
     if (dType != undefined)
       dataType = dType;
@@ -313,8 +311,7 @@ dynamicforms = {
         //  also for any authorization errors, CSRF, etc, it will again fail
         //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         if ($dlg != null)
-          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId,
-              doneFunc == undefined ? doneFunc : doneFunction, dType);
+          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId, doneFunc, dType);
       });
   },
 
