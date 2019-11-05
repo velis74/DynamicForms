@@ -96,6 +96,11 @@ class CreateMixin(object):
     @action(detail=False, methods=['post'])
     def confirm_create(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        serializer.actions.actions.clear()
+        serializer.actions.actions.append(
+            FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+        serializer.actions.actions.append(
+            FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
         serializer.is_valid(raise_exception=True)
         confirm_create = serializer.confirm_create_text()
         if not confirm_create:
@@ -106,11 +111,6 @@ class CreateMixin(object):
             title=serializer.confirm_create_title(),
             url_reverse=self.template_context.get('url_reverse'),
         )
-        serializer.actions.actions.clear()
-        serializer.actions.actions.append(
-            FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
-        serializer.actions.actions.append(
-            FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
         return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
                       context=render_data, content_type=None, status=None, using=None)
 
@@ -128,6 +128,11 @@ class UpdateMixin(object):
 
         instance = self.get_object()
         serializer = self.get_serializer(data=request.data)
+        serializer.actions.actions.clear()
+        serializer.actions.actions.append(
+            FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+        serializer.actions.actions.append(
+            FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
         serializer.is_valid(raise_exception=True)
         confirm_update = serializer.confirm_update_text()
         if not confirm_update:
@@ -140,11 +145,6 @@ class UpdateMixin(object):
             url_reverse=self.template_context.get('url_reverse'),
             instance_id=instance.pk
         )
-        serializer.actions.actions.clear()
-        serializer.actions.actions.append(
-            FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
-        serializer.actions.actions.append(
-            FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
         serializer.template_name = DYNAMICFORMS.template + 'base_form_confirm_update.html'
         return render(request, DYNAMICFORMS.template + 'confirm_create_dialog.html',
                       context=render_data, content_type=None, status=status.HTTP_403_FORBIDDEN, using=None)
