@@ -397,7 +397,8 @@ class Actions(object):
                     actions.append(action)
         return tuple(actions)
 
-    def __handle_renderable_actions_postions_for_given_action(self, action: object, allowed_positions: tuple) -> tuple:
+    def __handle_extra_renderable_action_postions_for_given_action(self, action: object,
+                                                                   allowed_positions: tuple) -> tuple:
         if action.name == 'edit':
             updated_allowed_positions: list = list(allowed_positions)
             updated_allowed_positions.append(TablePosition.ROW_CLICK)
@@ -412,7 +413,8 @@ class Actions(object):
         """
         res = ''
         for action in self.renderable_actions(serializer):
-            allowed_positions = self.__handle_renderable_actions_postions_for_given_action(action, allowed_positions)
+            allowed_positions = self.__handle_extra_renderable_action_postions_for_given_action(action,
+                                                                                                allowed_positions)
             if action.position in allowed_positions and (field_name is None or field_name == action.field_name):
                 res += action.render(serializer)
         return res

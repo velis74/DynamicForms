@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
@@ -185,9 +186,8 @@ class ConfirmAction(models.Model):
         (2, 'Choice 3'),
         (3, 'Choice 4'),
     ))
-    enabled = models.BooleanField()
+    enabled = models.BooleanField(verbose_name='Action enabled. If true row can be edited.')
+    uuid_field = models.UUIDField(default=uuid.uuid1(), verbose_name='Uuid field', help_text='Uuid v1')
 
     def __str__(self):
         return self.action_name
-
-
