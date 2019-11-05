@@ -13,23 +13,17 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
     def __init__(self, *args, is_filter: bool = False, **kwds):
         super().__init__(*args, is_filter=is_filter, **kwds)
         if self.context['request'].method in SAFE_METHODS and self.context['view'].kwargs.get('pk') == 'new':
-            submit_action = list(filter(lambda a: a.name == 'submit', self.actions.actions))
-            submit_confirm_action = list(filter(lambda a: a.name == 'submit-confirm', self.actions.actions))
-            if submit_action:
-                self.actions.actions.remove(
-                    submit_action[0])
-            if submit_confirm_action:
-                self.actions.actions.remove(
-                    submit_confirm_action[0])
+            self.__remove_action('submit')
+            self.__remove_action('submit-confirm')
         elif self.context['request'].method in SAFE_METHODS and self.context['view'].kwargs.get('pk'):
-            save_action = list(filter(lambda a: a.name == 'save', self.actions.actions))
-            if save_action:
-                self.actions.actions.remove(
-                    save_action[0])
-            submit_action = list(filter(lambda a: a.name == 'submit', self.actions.actions))
-            if submit_action:
-                self.actions.actions.remove(
-                    submit_action[0])
+            self.__remove_action('save')
+            self.__remove_action('submit')
+
+    def __remove_action(self, name: str) -> None:
+        actions: list = list(filter(lambda a: a.name == name, self.actions.actions))
+        action = actions[0] if len(actions) else None
+        if action:
+            self.actions.actions.remove(action)
 
     form_titles = {
         'table': 'Actions list',

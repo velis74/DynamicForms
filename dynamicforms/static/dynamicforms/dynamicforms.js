@@ -37,7 +37,7 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  }
+  },
 };
 
 dynamicforms = {
@@ -46,7 +46,7 @@ dynamicforms = {
     'template':          'dynamicforms/bootstrap/',
     'jquery_ui':         false,
     'edit_in_dialog':    true,
-    'bootstrap_version': 'v4'
+    'bootstrap_version': 'v4',
   },
 
   /**
@@ -324,7 +324,7 @@ dynamicforms = {
                                       data:        data,
                                       dataType:    dataType,
                                       headers:     headers,
-                                      traditional: true
+                                      traditional: true,
                                     }
                                   })
       .done(doneFunc)
@@ -381,7 +381,7 @@ dynamicforms = {
         ($rowToRefresh != null && $rowToRefresh.length)) {
         var data = dynamicforms.filterData(formID, true);
         if (recordID)
-          data.id = recordID;
+          data.id = recordID
         if (params != undefined && params.additionalData != undefined) {
           for (var key in params.additionalData) {
             data[key] = params.additionalData[key];
@@ -514,7 +514,7 @@ dynamicforms = {
     });
     // And show the dialog
     if (dynamicforms.DYNAMICFORMS.jquery_ui)
-      $dlg.dialog('open');
+      $dlg.dialog('open')
     else {
       $dlg.on('hidden.bs.modal', function () {
         $dlg.remove();
@@ -588,7 +588,7 @@ dynamicforms = {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       var ajaxSetts = {
         url:     recordURL,
-        headers: {'X-DF-RENDER-TYPE': 'dialog'}
+        headers: {'X-DF-RENDER-TYPE': 'dialog'},
       };
       if (params != undefined && params.data != undefined)
         ajaxSetts['data'] = params.data;
@@ -1123,7 +1123,7 @@ dynamicforms = {
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next
+               url:     link_next,
              }).done(function (data) {
 
         data                     = $(data).filter("tr");
@@ -1262,4 +1262,4 @@ $(document).ready(function () {
   var $overlay = $("<div id='df-overlay' style='position: fixed; display: none; width: 100%; height: 100%; top: 0; " +
                      "left: 0; right: 0; bottom: 0; cursor: pointer; z-index: auto'></div>");
   $("body").append($overlay);
-});
+})

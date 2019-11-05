@@ -127,9 +127,8 @@ class TableAction(ActionBase, RenderableActionMixin):
                     .format(btnid=btnid)
 
         if self.position in (TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK):
-            if hasattr(
-                    serializer, '__dynamic_forms_row_data'
-            ) and getattr(serializer, '__dynamic_forms_row_data') and getattr(
+            if hasattr(serializer, '__dynamic_forms_row_data'
+                       ) and getattr(serializer, '__dynamic_forms_row_data') and getattr(
                 serializer, '__dynamic_forms_row_data').get(DYNAMICFORMS.model_pk_attribute_name):
                 if rowclick != '':
                     record_id: Any = getattr(
@@ -377,28 +376,27 @@ class Actions(object):
         return res
 
     def renderable_actions(self, serializer: Serializer):
+        def is_serializer_row_editable(serializer_object: Serializer) -> bool:
+            return serializer_object.is_row_editable(
+                getattr(serializer_object, '__dynamic_forms_row_data') if hasattr(
+                    serializer_object, '__dynamic_forms_row_data') else None)
+
         request = serializer.context.get('request', None)
         viewset = serializer.context.get('view', None)
         actions = []
         for action in self.actions:
             supress = serializer.suppress_action(action, request, viewset)
             if isinstance(action, TableAction) and not supress:
-                if action.name == 'edit':
-                    if serializer.is_row_editable(
-                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
-                                serializer, '__dynamic_forms_row_data') else None):
-                        actions.append(action)
-                elif action.name == 'view-details':
-                    if not serializer.is_row_editable(
-                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
-                                serializer, '__dynamic_forms_row_data') else None):
-                        actions.append(action)
+                if action.name == 'edit' and is_serializer_row_editable(serializer):
+                    actions.append(action)
+                elif action.name == 'view-details' and not is_serializer_row_editable(serializer):
+                    actions.append(action)
                 else:
                     actions.append(action)
         return tuple(actions)
 
-    def __handle_extra_renderable_action_postions_for_given_action(self, action: object,
-                                                                   allowed_positions: tuple) -> tuple:
+    def __handle_extra_renderable_action_positions_for_given_action(self, action: object,
+                                                                    allowed_positions: tuple) -> tuple:
         if action.name == 'edit':
             updated_allowed_positions: list = list(allowed_positions)
             updated_allowed_positions.append(TablePosition.ROW_CLICK)
@@ -413,8 +411,8 @@ class Actions(object):
         """
         res = ''
         for action in self.renderable_actions(serializer):
-            allowed_positions = self.__handle_extra_renderable_action_postions_for_given_action(action,
-                                                                                                allowed_positions)
+            allowed_positions: tuple = self.__handle_extra_renderable_action_positions_for_given_action(
+                action, allowed_positions)
             if action.position in allowed_positions and (field_name is None or field_name == action.field_name):
                 res += action.render(serializer)
         return res
