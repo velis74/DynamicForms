@@ -275,8 +275,9 @@ dynamicforms = {
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
     var dataType = 'html';
+    var doneFunction = null;
     if (doneFunc == undefined) {
-      doneFunc = function (data) {
+      doneFunction = function (data) {
         //var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
         if (!recordID) {
@@ -288,8 +289,10 @@ dynamicforms = {
         }
         dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
       }
-    } else
+    } else {
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
+      doneFunction = doneFunc
+    }
     if (dType != undefined)
       dataType = dType;
 
@@ -303,14 +306,15 @@ dynamicforms = {
                                       traditional: true,
                                     }
                                   })
-      .done(doneFunc)
+      .done(doneFunction)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         //  also for any authorization errors, CSRF, etc, it will again fail
         //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         if ($dlg != null)
-          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId, undefined, dType);
+          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId,
+              doneFunc == undefined ? doneFunc : doneFunction, dType);
       });
   },
 
