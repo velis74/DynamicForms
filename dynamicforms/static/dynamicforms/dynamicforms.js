@@ -589,9 +589,10 @@ dynamicforms = {
       var ajaxSetts = {
         url:     recordURL,
         headers: {'X-DF-RENDER-TYPE': 'dialog'},
-      };
+      }
       if (params != undefined && params.data != undefined)
         ajaxSetts['data'] = params.data;
+
       dynamicforms.ajaxWithProgress({
                                       ajax_setts: ajaxSetts
                                     })
