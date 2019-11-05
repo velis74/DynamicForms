@@ -137,7 +137,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.1)
-                element = self.browser.find_element_by_class_name('modal')
+                element = self.browser.find_element_by_xpath("//div[contains(@class, 'modal') and contains(@class, 'dynamicforms-dialog')]")
                 self.assertIsNotNone(element)
                 element_id = element.get_attribute('id')
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):

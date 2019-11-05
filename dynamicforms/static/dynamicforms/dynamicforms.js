@@ -310,7 +310,7 @@ dynamicforms = {
         //  also for any authorization errors, CSRF, etc, it will again fail
         //  Try finding a <div class="dynamicforms-dialog"/> in there to see if you actually got a dialog
         if ($dlg != null)
-          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId, doneFunc, dType);
+          dynamicforms.updateDialog($dlg, $(xhr.responseText), refreshType, listId, undefined, dType);
       });
   },
 
@@ -488,7 +488,7 @@ dynamicforms = {
     });
     // And show the dialog
     if (dynamicforms.DYNAMICFORMS.jquery_ui)
-      $dlg.dialog('open')
+      $dlg.dialog('open');
     else {
       $dlg.modal();
     }
