@@ -38,7 +38,7 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
                               "'{% url url_reverse|add:'-detail' pk=row.id %}', "
                               "{{row.id}}, 'record', __TABLEID__);"),
         FormButtonAction(
-            btn_type=FormButtonTypes.CUSTOM, label='Save', name='save', positions=['dialog'],
+            btn_type=FormButtonTypes.CUSTOM, label='Save changes', name='save', positions=['dialog'],
             button_is_primary=True,
             action_js="var $dlg = $('#dialog-{self.serializer.uuid}');"
                       "var $form = $('#{self.serializer.uuid}');"
