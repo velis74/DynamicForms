@@ -382,14 +382,16 @@ class Actions(object):
         for action in self.actions:
             supress = serializer.suppress_action(action, request, viewset)
             if isinstance(action, TableAction) and not supress:
-                if action.name == 'edit' and serializer.is_row_editable(
-                        getattr(serializer, '__dynamic_forms_row_data') if hasattr(
-                            serializer, '__dynamic_forms_row_data') else None):
-                    actions.append(action)
-                elif action.name == 'view-details' and not serializer.is_row_editable(
-                        getattr(serializer, '__dynamic_forms_row_data') if hasattr(
-                            serializer, '__dynamic_forms_row_data') else None):
-                    actions.append(action)
+                if action.name == 'edit':
+                    if serializer.is_row_editable(
+                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                                serializer, '__dynamic_forms_row_data') else None):
+                        actions.append(action)
+                elif action.name == 'view-details':
+                    if not serializer.is_row_editable(
+                            getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                                serializer, '__dynamic_forms_row_data') else None):
+                        actions.append(action)
                 else:
                     actions.append(action)
         return tuple(actions)
