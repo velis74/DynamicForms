@@ -376,20 +376,19 @@ class Actions(object):
         return res
 
     def renderable_actions(self, serializer: Serializer):
-        def is_serializer_row_editable(serializer_object: Serializer) -> bool:
-            return serializer_object.is_row_editable(
-                getattr(serializer_object, '__dynamic_forms_row_data') if hasattr(
-                    serializer_object, '__dynamic_forms_row_data') else None)
-
         request = serializer.context.get('request', None)
         viewset = serializer.context.get('view', None)
         actions = []
         for action in self.actions:
             supress = serializer.suppress_action(action, request, viewset)
             if isinstance(action, TableAction) and not supress:
-                if action.name == 'edit' and is_serializer_row_editable(serializer):
+                if action.name == 'edit' and serializer.is_row_editable(
+                        getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                            serializer, '__dynamic_forms_row_data') else None):
                     actions.append(action)
-                elif action.name == 'view-details' and not is_serializer_row_editable(serializer):
+                elif action.name == 'view-details' and not serializer.is_row_editable(
+                        getattr(serializer, '__dynamic_forms_row_data') if hasattr(
+                            serializer, '__dynamic_forms_row_data') else None):
                     actions.append(action)
                 else:
                     actions.append(action)

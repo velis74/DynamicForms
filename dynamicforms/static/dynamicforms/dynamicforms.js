@@ -251,27 +251,32 @@ dynamicforms = {
     headers['X-CSRFToken'] = dynamicforms.csrf_token;
 
     var dataType = 'html';
-    url = method.toLowerCase() === 'put' ?  url + 'confirm_update.' + dataType : url + 'confirm_create.' + dataType;
-
+    var request_url = method.toLowerCase() === 'put' ?  url + 'confirm_update.' + dataType : url + 'confirm_create.' + dataType;
     var ajaxSetts = {
-        url: url,
+        url: request_url,
         headers: headers,
         method: method,
         data: data,
         dataType: 'html',
-        traditional: true
+        traditional: true,
+        beforeSend: function(jqXHR) {
+          jqXHR.url = url;
+          jqXHR.method = method;
+        }
       };
-      dynamicforms.ajaxWithProgress({ajax_setts: ajaxSetts}).always(
-          function (data, status, response) {
-            dynamicforms.closeDialog($dlg);
-            if ((data && response.status && response.status === 201) || (
-                response.status && response.status === 200 && url.includes('confirm_update'))) {
-                window.location.reload(true);
-            return;
-            }
-            var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
-            dynamicforms.showDialog(newDialog, 'page')
-      });
+
+    dynamicforms.ajaxWithProgress({ajax_setts: ajaxSetts}).always(
+        function (data, status, response) {
+          dynamicforms.closeDialog($dlg);
+          if ((data && response.status && response.status === 201) || (
+              response.status && response.status === 200 && url.includes('confirm_update'))) {
+              window.location.reload(true);
+          return;
+          }
+          var newDialog = data && response.status && response.status === 200 ? $(data) : $(data.responseText);
+          dynamicforms.showDialog(newDialog, 'page', null,
+              null, null, data.status == 403 ? false : data)
+    });
   },
 
   submitForm: function submitForm($dlg, $form, refreshType, doneFunc) {
@@ -490,13 +495,19 @@ dynamicforms = {
    * @param listId: id of table element with records
    * @param doneFunc: if specified, this function will be called on successful data send
    * @param dataType: Custom dataType
+   * @param submitWithConfirmation: submitWithConfirmation
    */
-  showDialog: function showDialog($dlg, refreshType, listId, doneFunc, dataType) {
+  showDialog: function showDialog($dlg, refreshType, listId, doneFunc, dataType, submitWithConfirmation) {
     //TODO: adjust hashURL
     $dlg = $dlg.find('.dynamicforms-dialog').length ?
       $dlg.find('.dynamicforms-dialog') : $dlg;
     $(document.body).append($dlg);
     var $form = $dlg.find('.dynamicforms-form');
+    if (submitWithConfirmation && submitWithConfirmation.method && submitWithConfirmation.method != 'POST') {
+         $form.append(
+                '<input type="hidden" name="data-dynamicforms-method" value="' + submitWithConfirmation.method +'" />'
+            );
+    }
     dynamicforms.form_helpers.set($form.attr('id'), 'listID', listId);
 
     $($dlg).on('hidden.bs.modal', function () {
@@ -510,17 +521,16 @@ dynamicforms = {
 
     var saveId = '#save-' + $form.attr('id');
     $(saveId).on('click', function () {
-      dynamicforms.submitForm($dlg, $form, refreshType, doneFunc, dataType);
+        if (submitWithConfirmation && submitWithConfirmation.method) {
+            dynamicforms.submitFormWithConfirmation(submitWithConfirmation.url, $dlg, $form)
+        } else {
+            dynamicforms.submitForm($dlg, $form, refreshType, doneFunc, dataType);
+        }
     });
     // And show the dialog
     if (dynamicforms.DYNAMICFORMS.jquery_ui)
       $dlg.dialog('open')
     else {
-      $dlg.on('hidden.bs.modal', function () {
-        $dlg.remove();
-        if ($dlg.showNewAfterHide)
-          dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId);
-      });
       $dlg.modal()
     }
   },
