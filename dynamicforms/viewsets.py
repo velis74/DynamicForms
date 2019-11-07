@@ -18,7 +18,6 @@ from rest_framework.serializers import ListSerializer, Serializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.action import FormButtonAction, FormButtonTypes
-from dynamicforms.exceptions import ServiceNotImplementedApiException, DynamicFormsApiException
 from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
 
@@ -63,15 +62,15 @@ class NewMixin(object):
 
 
 class DeleteMixin(object):
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['delete'])
     def confirm_delete(self: viewsets.ModelViewSet, request, *args, pk=None, format=None, **kwargs):
         record = self.get_object()
         serializer = self.get_serializer(record)
         confirm_delete_text = serializer.confirm_delete_text(request, self.get_object())
         if not confirm_delete_text:
-            raise ServiceNotImplementedApiException()
-        record_id = request.GET.get('record_id')
-        list_id = request.GET.get('list_id')
+            return self.destroy(request, *args, **kwargs)
+        record_id = request.data.get('record_id')
+        list_id = request.data.get('list_id')
         confirm_delete_button = FormButtonAction(
             btn_type=FormButtonTypes.CUSTOM, label=_('Confirm'), name='confirm',
             positions=['dialog'],
@@ -104,7 +103,7 @@ class CreateMixin(object):
         serializer.is_valid(raise_exception=True)
         confirm_create = serializer.confirm_create_text()
         if not confirm_create:
-            raise ServiceNotImplementedApiException()
+            return self.create(request, *args, **kwargs)
         render_data = dict(
             serializer=serializer,
             confirmation_text=confirm_create,
@@ -116,16 +115,16 @@ class CreateMixin(object):
 
 
 class UpdateMixin(object):
+
+    def remove_methods_fields_from_serializer(self, serializer_object: Serializer):
+        fields_copy = serializer_object.fields.fields.copy()
+        for field in fields_copy:
+            f = fields_copy[field]
+            if isinstance(f, SerializerMethodField):
+                serializer_object.fields.fields.pop(field, None)
+
     @action(detail=True, methods=['put', 'patch'])
     def confirm_update(self: viewsets.ModelViewSet, request, *args, format=None, **kwargs):
-
-        def __remove_methods_fields_from_serializer(serializerObject: Serializer):
-            fields_copy = serializerObject.fields.fields.copy()
-            for field in fields_copy:
-                f = fields_copy[field]
-                if isinstance(f, SerializerMethodField):
-                    serializerObject.fields.fields.pop(field, None)
-
         instance = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.actions.actions.clear()
@@ -136,8 +135,8 @@ class UpdateMixin(object):
         serializer.is_valid(raise_exception=True)
         confirm_update = serializer.confirm_update_text()
         if not confirm_update:
-            raise ServiceNotImplementedApiException()
-        __remove_methods_fields_from_serializer(serializer)
+            return self.update(request, *args, **kwargs)
+        self.remove_methods_fields_from_serializer(serializer)
         render_data = dict(
             serializer=serializer,
             confirmation_text=confirm_update,
@@ -287,9 +286,7 @@ class TemplateRendererMixin():
                     ))
                 response_html.status_code = status.HTTP_403_FORBIDDEN
                 return response_html
-            elif res.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR or isinstance(
-                    response.exception, DynamicFormsApiException
-            ):
+            elif res.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR:
                 response_html = render(request,
                                        DYNAMICFORMS.template + 'exceptions/exception.html', dict(
                         detail=_('Please contact system administrator'),
@@ -320,9 +317,7 @@ class TemplateRendererMixin():
         context = super().get_exception_handler_context()
         response = exception_handler(exc, context)
 
-        if (response is None and isinstance(exc, Exception)) or (
-                isinstance(exc, DynamicFormsApiException)
-        ):
+        if response is None and isinstance(exc, Exception):
             # raise exception only for debug=True
             if settings.DEBUG or DYNAMICFORMS.api_debug:
                 super().raise_uncaught_exception(exc)

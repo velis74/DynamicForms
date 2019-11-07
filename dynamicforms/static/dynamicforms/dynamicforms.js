@@ -269,7 +269,7 @@ dynamicforms = {
         function (data, status, response) {
           dynamicforms.closeDialog($dlg);
           if ((data && response.status && response.status === 201) || (
-              response.status && response.status === 200 && url.includes('confirm_update'))) {
+              response.status && response.status === 200 && request_url.includes('confirm_update'))) {
               window.location.reload(true);
           return;
           }
@@ -667,7 +667,7 @@ dynamicforms = {
     var ajaxSetts = {
         url: recordURL + 'confirm_delete.html',
         headers: {'X-CSRFToken': dynamicforms.csrf_token},
-        method: 'GET',
+        method: 'DELETE',
         data: {
           record_id: recordID,
           list_id: listId
@@ -675,15 +675,19 @@ dynamicforms = {
         dataType: 'html'
       };
       dynamicforms.ajaxWithProgress({ajax_setts: ajaxSetts})
-      .always(function (dialog) {
-      //show dialog
-      var confirmDialog = $(dialog.responseText ? dialog.responseText : dialog);
-      dynamicforms.showDialog(confirmDialog);
-      var confirmButton = $("button[class*='" + recordID + '_' + listId + "']");
-      if (confirmButton.length) {
-        confirmButton.on('click', function (e) {
-          dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId, confirmDialog);
-        });
+      .always(function (data, status, response) {
+        if (response.status == 204) {
+          dynamicforms.removeRow(recordID, listId);
+        } else {
+          //show dialog
+          var confirmDialog = $(data.responseText ? data.responseText : data);
+          dynamicforms.showDialog(confirmDialog);
+          var confirmButton = $("button[class*='" + recordID + '_' + listId + "']");
+          if (confirmButton.length) {
+          confirmButton.on('click', function (e) {
+            dynamicforms.makeDeleteRow(recordURL, recordID, refreshType, listId, confirmDialog);
+          });
+        }
       }
     });
   },
