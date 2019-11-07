@@ -25,9 +25,7 @@
       var $sel2 = $("#{{ field.uuid }}").select2({
                                                    // Attaches select2 to its form parent and enables input field (in dialog)
                                                    dropdownParent: $('#{{ style.serializer.uuid }}'),
-                                                   {% if field.placeholder %}
-                                                     placeholder:  "{{ field.placeholder }}",
-                                                   {% endif %}
+                                                   {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
                                                    theme: '{{ DYNAMICFORMS.select2_theme }}'
                                                  });
       $sel2.on("change", function (evt) {

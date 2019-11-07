@@ -47,10 +47,8 @@
       // Disables ajax request on dropdown opening
       minimumInputLength: 1,
       {% endif %}
-      {% if field.placeholder or field.url_reverse %}
-      placeholder: "{{ field.placeholder|default_if_none:_("Search for a value") }}",
-      {% endif %}
-      // Attaches select2 to its form parent and enables input field (in dialog)
+      {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
+     // Attaches select2 to its form parent and enables input field (in dialog)
       dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent(),
       width: '100%'
     });

@@ -32,6 +32,23 @@ class ActionBase(object):
     def render(self, serializer: Serializer, **kwds):
         raise NotImplementedError()
 
+    @staticmethod
+    def prepare_string(string, encode=True):
+        """
+        Replaces curly brackets with some special string so there is no problem when string.format() is called
+
+        :param string: String in which program searches for curly brackets
+        :param encode: True: replaces brackets with special string, False: the other way around
+        :return:
+        """
+        replaces = {'{': '´|curl_brack_start|`', '}': '´|curl_brack_end|`'}
+        if not encode:
+            replaces = dict([(value, key) for key, value in replaces.items()])
+
+        for key, val in replaces.items():
+            string = string.replace(key, val)
+        return string
+
 
 class RenderableActionMixin(object):
     """
@@ -84,7 +101,7 @@ class TableAction(ActionBase, RenderableActionMixin):
         ret = rowclick = rowrclick = ''
         stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
 
-        action_action = self.action_js
+        action_action = self.prepare_string(self.action_js)
         if self.position != TablePosition.HEADER:
             # We need to do this differently because of dynamic page loading for tables: each time the serializer
             # has a different UUID
@@ -119,7 +136,8 @@ class TableAction(ActionBase, RenderableActionMixin):
             ret += '<button id="df-action-btn-{btnid}" type="button" class="{btn_class}" title="{title}"{button_name}' \
                    'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
                 format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
-                       btn_class=btn_class, label=self.label, title=self.title,
+                       btn_class=btn_class, label=self.prepare_string(self.label),
+                       title=self.prepare_string(self.title),
                        icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else '',
                        button_name=button_name)
             if DYNAMICFORMS.jquery_ui:
@@ -143,7 +161,7 @@ class TableAction(ActionBase, RenderableActionMixin):
                 ret=ret, direction='left' if self.position == TablePosition.FIELD_START else 'right'
             )
 
-        return ret
+        return self.prepare_string(ret, False)
 
 
 class FieldChangeAction(ActionBase):
@@ -252,6 +270,7 @@ class FormButtonAction(ActionBase):
         action_js = self.action_js
         button_name = ('name="btn-%s"' % self.name) if self.name else ''
         if isinstance(action_js, str):
+            action_js = self.prepare_string(action_js)
             action_js = action_js.format(**locals())
         button_type = 'button' if self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog' else 'submit'
         data_dismiss = 'data-dismiss="modal"' if self.btn_type == FormButtonTypes.CANCEL else ''
@@ -268,8 +287,9 @@ class FormButtonAction(ActionBase):
         else:
             button_js = ''
 
-        return '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} {button_name} id="{button_id}">' \
-               '{self.label}</button>{button_js}'.format(**locals())
+        return self.prepare_string(
+            '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} {button_name} id="{button_id}">'
+            '{self.label}</button>{button_js}'.format(**locals()), False)
 
 
 class Actions(object):

@@ -23,9 +23,7 @@
       window.setTimeout(function () {
         var $sel2 = $("#{{ field.uuid }}").select2({
                                                      // Attaches select2 to its form parent and enables input field (in dialog)
-                                                     {% if field.placeholder %}
-                                                       placeholder: "{{ field.placeholder }}",
-                                                     {% endif %}
+                                                     {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
                                                      dropdownParent: $('#{{ style.serializer.uuid }}')
                                                    });
 

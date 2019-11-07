@@ -46,9 +46,7 @@
       // Disables ajax request on dropdown opening
       minimumInputLength: 1,
       {% endif %}
-      {% if field.placeholder %}
-      placeholder: "{{ field.placeholder }}",
-      {% endif %}
+      {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
       dropdownParent: $('#{{ style.serializer.uuid }}'),
       theme: '{{ DYNAMICFORMS.select2_theme }}'
