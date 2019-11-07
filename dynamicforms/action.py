@@ -127,24 +127,21 @@ class TableAction(ActionBase, RenderableActionMixin):
                     .format(btnid=btnid)
 
         if self.position in (TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK):
-            if hasattr(serializer, '__dynamic_forms_row_data'
-                       ) and getattr(serializer, '__dynamic_forms_row_data') and getattr(
-                serializer, '__dynamic_forms_row_data').get(DYNAMICFORMS.model_pk_attribute_name):
+            record_pk = getattr(serializer, '__dynamic_forms_row_data').get(
+                DYNAMICFORMS.model_pk_attribute_name) if hasattr(
+                serializer, '__dynamic_forms_row_data') and getattr(serializer, '__dynamic_forms_row_data') else None
+            if record_pk:
                 if rowclick != '':
-                    record_id: Any = getattr(
-                        serializer, '__dynamic_forms_row_data').get(
-                        DYNAMICFORMS.model_pk_attribute_name)
                     ret += "$('#list-{uuid}').find('tbody').find('tr[data-id={record_id}]').click(" \
                            "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
                         format(stop_propagation=stop_propagation,
-                               action=rowclick, uuid=serializer.uuid, record_id=record_id)
+                               action=rowclick, uuid=serializer.uuid, record_id=record_pk)
                 if rowrclick != '':
                     ret += "$('#list-{uuid}').find('tbody').contextmenu(" \
                            "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n". \
                         format(stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid)
             if ret != '':
                 ret = '<script type="application/javascript">%s</script>' % ret
-
         elif ret != '':
             ret = '<div class="dynamicforms-actioncontrol float-{direction} pull-{direction}">{ret}</div>'.format(
                 ret=ret, direction='left' if self.position == TablePosition.FIELD_START else 'right'
