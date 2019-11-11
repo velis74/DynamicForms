@@ -70,15 +70,31 @@ class TableAction(ActionBase, RenderableActionMixin):
     def __init__(self, position: TablePosition, label: str, action_js: str,
                  title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
                  name: Union[str, None] = None, serializer: Serializer = None,
-                 btn_classes: Union[str, dict, None] = None):
+                 btn_classes: Union[str, dict, None] = None, add_to_allowed_positions: bool = False):
+        """
+        Table action initialization
+
+        :param position:
+        :param label:
+        :param action_js:
+        :param title:
+        :param icon:
+        :param field_name:
+        :param name:
+        :param serializer:
+        :param btn_classes:
+        :param add_to_allowed_positions: If true action is added to allowed position although row click position is
+        only defined for row_start, row_end
+        """
         ActionBase.__init__(self, action_js, name, serializer)
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
         self.position = position
         self.field_name = field_name
+        self.add_to_allowed_positions = add_to_allowed_positions
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
-                           serializer, self.btn_classes)
+                           serializer, self.btn_classes, self.add_to_allowed_positions)
 
     def render(self, serializer: Serializer, **kwds):
         ret = rowclick = rowrclick = ''
@@ -395,19 +411,20 @@ class Actions(object):
 
     def __handle_extra_renderable_action_positions_for_given_action(self, action: object,
                                                                     allowed_positions: tuple) -> tuple:
-        if action.name == 'edit' or action.name is None:
+        updated_allowed_positions: list = list(allowed_positions)
+        if action.position == 'edit' or action.name is None:
             """
             edit action on frontend is not only connected with click on "Edit button" but it can also be
             associated with click on row - table position ROW_CLICK must be added for edit action name
             in order to correctly render on click event if row is editable or not (serializer.is_row_editable)
-            
+
             if action.name is none ROW_CLICK is also added to allowed positions; in many cases action does not have
-            a name, but we want to check if row is editable and render it accordingly  
+            a name, but we want to check if row is editable and render it accordingly
             """
-            updated_allowed_positions: list = list(allowed_positions)
             updated_allowed_positions.append(TablePosition.ROW_CLICK)
-            return tuple(updated_allowed_positions)
-        return allowed_positions
+        elif action.add_to_allowed_positions:
+            updated_allowed_positions.append(action.position)
+        return tuple(set(updated_allowed_positions))
 
     def render_renderable_actions(self, allowed_positions: Iterable[TablePosition], field_name: str,
                                   serializer: Serializer):
