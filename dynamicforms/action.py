@@ -412,7 +412,7 @@ class Actions(object):
     def __handle_extra_renderable_action_positions_for_given_action(self, action: object,
                                                                     allowed_positions: tuple) -> tuple:
         updated_allowed_positions: list = list(allowed_positions)
-        if action.position == 'edit' or action.name is None:
+        if action.name == 'edit' or action.name is None:
             """
             edit action on frontend is not only connected with click on "Edit button" but it can also be
             associated with click on row - table position ROW_CLICK must be added for edit action name
