@@ -275,24 +275,28 @@ dynamicforms = {
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
     var dataType = 'html';
+    function performRefresh(params){
+      if (!recordID) {
+        try {
+          recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
+          if (recordID == '')
+            recordID = false;
+        } catch (e) {}
+      }
+      dynamicforms.refreshList(recordURL, recordID, refreshType, listId, false, params);
+    }
     if (doneFunc == undefined) {
       doneFunc = function (data) {
-        //var formContent = $dlg.find("form").html();
         dynamicforms.closeDialog($dlg);
-        if (!recordID) {
-          try {
-            recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
-            if (recordID == '')
-              recordID = false;
-          } catch (e) {}
-        }
-        dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
+        performRefresh();
       }
-    } else
+    } else{
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
+    }
     if (dType != undefined)
       dataType = dType;
-
+    // We need this so ve can call refresh from custom function (argument.calle.performRefresh())
+    doneFunc.performRefresh = performRefresh;
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       type:        method,
