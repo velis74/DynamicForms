@@ -906,18 +906,75 @@ dynamicforms = {
   fieldSetValue: function fieldSetValue(field, value, select2_ajax_option_text) {
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     if ($field.attr('type') == 'checkbox')
-      return $field.prop('checked', value);
+      $field.prop('checked', value);
     if ($field.data('select2')) {
       if ($field.data('select2').options.options.ajax) {
         var opt = $('<option value="' + value + '"></option>').text(select2_ajax_option_text);
         $field.append(opt);
       }
       $field.val(value);
-      $field.trigger('change');
-      return;
+      dynamicforms.setSelect2Order($field, value);
     }
     $field.val(value);
+    $field.trigger('change');
   },
+  setSelect2Order: function setSelect2Order($field, value, forceSet){
+    if(!forceSet)
+      forceSet = false;
+
+    var vals
+    if(forceSet || $field.data('preserved-order') != undefined){
+      if(value.constructor === Array)
+        vals = value;
+      else
+        vals = value.split(',');
+
+      vals     = vals.length == 1 && vals[0] == "" ? [] : vals;
+      $field.data('preserved-order', vals);
+      dynamicforms.select2_renderSelections($field);
+    }
+  },
+  select2_renderSelections: function select2_renderSelections($select2){
+    var order      = $select2.data('preserved-order') || [];
+    var $container = $select2.next('.select2-container');
+    var $tags      = $container.find('li.select2-selection__choice');
+    var $input     = $tags.last().next();
+
+    // apply tag order
+    var i;
+    var val;
+    var $el;
+    for(i = 0; i<order.length; i++){
+      val = order[i];
+      $el = $tags.filter(function(i,tag){
+        return $(tag).data('data').id === val;
+      });
+      $input.before( $el );
+    }
+  },
+
+  selectionHandler: function selectionHandler(e){
+    var $select2  = $(this);
+    var val       = e.params.data.id;
+    var order     = $select2.data('preserved-order') || [];
+    var found_index;
+
+    switch (e.type){
+      case 'select2:select':
+        found_index = order.indexOf(val);
+        if (found_index < 0 )
+          order[ order.length ] = val;
+        break;
+      case 'select2:unselect':
+        found_index = order.indexOf(val);
+        if (found_index >= 0 )
+          order.splice(found_index,1);
+        break;
+    }
+    $select2.data('preserved-order', order); // store it for later
+    dynamicforms.select2_renderSelections($select2);
+  },
+
 
   /**
    * "Standard" function for setting an input's visibility. Any special cases will be handled in custom functions
