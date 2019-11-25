@@ -374,6 +374,9 @@ dynamicforms = {
                                       })
           .done(function (data) {
             dynamicforms.refreshRow(data, formID, recordID);
+            // noinspection JSUnresolvedVariable
+            if(params && params.afterRefreshFunc)
+              params.afterRefreshFunc(data, formID, recordID);
           })
           .fail(function (xhr, status, error) {
             // TODO: this doesn't handle errors correctly
