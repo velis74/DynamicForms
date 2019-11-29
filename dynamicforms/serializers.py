@@ -6,7 +6,7 @@ from rest_framework import serializers
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
-from .mixins import ActionMixin, RenderMixin
+from .mixins import ActionMixin, DisplayMode, RenderMixin
 from .struct import StructDefault
 
 
@@ -151,6 +151,9 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     """
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
+        if hasattr(self.Meta, 'fields'):
+            if self.Meta.fields != '__all__' and 'df_prev_id' not in self.Meta.fields:
+                self.Meta.fields += 'df_prev_id',
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
 
@@ -205,6 +208,42 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 if field_def:
                     for key, val in params.items():
                         setattr(field_def, key, val)
+
+    # Dynamic forms default field that is used to contain data for positioning (id of previous record)
+    df_prev_id = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
+
+    def fetch_prev_id(self, obj, view):
+        ordering = 'id'
+        try:
+            ordering = view.pagination_class.ordering
+        except:
+            pass
+        if ordering != 'id':
+            query_params = self.context['request'].query_params
+            query_params._mutable = True
+            query_params.pop('id', '')
+            queryset = view.filter_queryset(queryset=view.get_queryset(), query_params=query_params)
+            records = list(queryset.order_by(ordering))
+            curr_index = records.index(obj)
+            prev_id = None
+            if curr_index > 0:
+                prev_id = records[curr_index - 1].id
+
+            return prev_id
+
+        return ''
+
+    # noinspection PyMethodMayBeStatic
+    def get_df_prev_id(self, obj):
+        try:
+            if self.context['request'].META.get('HTTP_X_DF_CALLTYPE', '') == 'refresh_record':
+                view = self.context.get('view', None)
+                if view:
+                    return self.fetch_prev_id(obj, view)
+        except:
+            pass
+
+        return ''
 
 
 class Serializer(DynamicFormsSerializer, serializers.Serializer):

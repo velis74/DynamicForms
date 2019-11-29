@@ -188,16 +188,19 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         """
         return super().get_queryset()
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, query_params=None):
         """
         Applies filters for all fields
 
         :param queryset: Queryset
+        :param query_params: Custom query_params if needed
         :return: queryset with filters applied
         """
         res = queryset
         if self.request:
-            for fld, val in self.request.query_params.items():
+            if query_params is None:
+                query_params = self.request.query_params
+            for fld, val in query_params.items():
                 res = self.filter_queryset_field(res, fld, val)
         return res
 
