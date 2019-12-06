@@ -285,12 +285,14 @@ dynamicforms = {
       }
       dynamicforms.refreshList(recordURL, recordID, refreshType, listId, false, params);
     }
+    var doneFuncExec;
     if (doneFunc == undefined) {
-      doneFunc = function (data) {
+      doneFuncExec = function (data) {
         dynamicforms.closeDialog($dlg);
         performRefresh(data);
       }
     } else{
+      doneFuncExec = doneFunc;
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
     }
     if (dType != undefined)
@@ -300,8 +302,8 @@ dynamicforms = {
       return $dlg;
     }
     // We need this so ve can call refresh from custom function (arguments.callee.performRefresh())
-    doneFunc.performRefresh = performRefresh;
-    doneFunc.getDlg = getDlg;
+    doneFuncExec.performRefresh = performRefresh;
+    doneFuncExec.getDlg = getDlg;
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       type:        method,
@@ -312,7 +314,7 @@ dynamicforms = {
                                       traditional: true,
                                     }
                                   })
-      .done(doneFunc)
+      .done(doneFuncExec)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail

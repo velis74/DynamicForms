@@ -137,7 +137,11 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.1)
-                element = self.browser.find_element_by_class_name('modal')
+                element = None
+                for el in self.browser.find_elements_by_class_name('modal'):
+                    if el.is_displayed():
+                        element = el
+                        break
                 self.assertIsNotNone(element)
                 element_id = element.get_attribute('id')
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
