@@ -22,6 +22,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
     show_filter = False  # When true, filter row is shown for list view
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
+        self.master = None
         self.is_filter = is_filter
         if self.is_filter:
             try:
@@ -84,6 +85,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         if getattr(self, '_filter_ser', None) is None:
             # noinspection PyAttributeOutsideInit
             self._filter_ser = type(self)(is_filter=True)
+            self._filter_ser.master = self
         return self._filter_ser  # Just create the same serializer in filter mode (None values, allow_nulls)
 
     # noinspection PyUnusedLocal

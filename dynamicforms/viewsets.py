@@ -265,15 +265,18 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
 
         return MyCursorPagination
 
+    def handle_create_validation_exception(self, e, request, *args, **kwargs):
+        instance = self.new_object()
+        ser = self.get_serializer(instance, data=request.data, partial=False)
+        ser.is_valid(raise_exception=False)
+        e.detail.serializer = ser
+        raise e
+
     def create(self, request, *args, **kwargs):
         try:
             return super().create(request, *args, **kwargs)
         except ValidationError as e:
-            instance = self.new_object()
-            ser = self.get_serializer(instance, data=request.data, partial=False)
-            ser.is_valid(raise_exception=False)
-            e.detail.serializer = ser
-            raise e
+            self.handle_create_validation_exception(e, request, *args, **kwargs)
 
 
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):

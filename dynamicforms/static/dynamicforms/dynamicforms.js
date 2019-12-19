@@ -1252,6 +1252,15 @@ dynamicforms = {
 
   select2Unselecting: function select2Unselecting($select2) {
     $select2.data('unselecting', true);
+  },
+
+  select2UpdateConfiguration: function select2UpdateConfiguration($select2, conf) {
+    var sel2Conf = $select2.data('sel2Conf');
+    Object.keys(conf).forEach(function(key) {
+      sel2Conf[key] = conf[key];
+    });
+    $select2.select2("destroy").select2(sel2Conf);
+    $select2.data('sel2Conf', sel2Conf);
   }
 
 };

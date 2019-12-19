@@ -24,7 +24,7 @@
 <script type="application/javascript">
 {% if DYNAMICFORMS.use_select2 %}
   window.setTimeout(function() {
-    var $sel2 = $("#{{ field.uuid }}").select2({
+    var sel2Conf = {
       {% if field.url_reverse %}
       ajax: {
         url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
@@ -51,7 +51,11 @@
      // Attaches select2 to its form parent and enables input field (in dialog)
       dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent(),
       width: '100%'
-    });
+    };
+
+    var $sel2 = $("#{{ field.uuid }}");
+    $sel2.data("sel2Conf", sel2Conf);
+    $sel2.select2(sel2Conf);
 
     $sel2.on("change", function (evt) {
       if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {

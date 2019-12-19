@@ -21,11 +21,15 @@
     <script type="text/javascript">
       // Check bootstrap version to set select2 theme
       window.setTimeout(function () {
-        var $sel2 = $("#{{ field.uuid }}").select2({
-                                                     // Attaches select2 to its form parent and enables input field (in dialog)
-                                                     {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
-                                                     dropdownParent: $('#{{ style.serializer.uuid }}')
-                                                   });
+        var sel2Conf = {
+          // Attaches select2 to its form parent and enables input field (in dialog)
+          {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
+          dropdownParent: $('#{{ style.serializer.uuid }}')
+        };
+
+        var $sel2 = $("#{{ field.uuid }}");
+        $sel2.data("sel2Conf", sel2Conf);
+        $sel2.select2(sel2Conf);
 
         $sel2.on("change", function (evt) {
           if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
