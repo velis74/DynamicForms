@@ -1242,12 +1242,18 @@ dynamicforms = {
     return link_next != null && link_next != undefined && link_next != '' && link_next != "None";
   },
 
-  select2Opening: function select2Opening(evt, $select2, fnc) {
+  select2Opening: function select2Opening(evt, $select2, fnc, params) {
     if ($select2.data('unselecting')) {
       $select2.removeData('unselecting');
       evt.preventDefault();
-    } else if (fnc != null)
-      fnc(evt, $select2);
+    } else if (fnc != null){
+      if(params != undefined)
+        fnc(evt, $select2, params);
+      else
+        fnc(evt, $select2);
+    }
+
+
   },
 
   select2Unselecting: function select2Unselecting($select2) {
