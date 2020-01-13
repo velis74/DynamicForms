@@ -41,13 +41,14 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def get_browser(self):
         if self.selected_browser == Browsers.FIREFOX:
             opts = FirefoxOptions()
-            opts.binary_location = self.binary_location
+            opts.binary_location = '/usr/bin/firefox/firefox-bin'
+            opts.headless = True
             return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
             return webdriver.Chrome()
         elif self.selected_browser == Browsers.OPERA:
             opts = OperaOptions()
-            opts.headless = True
+            opts.binary_location = self.binary_location
             return webdriver.Opera(options=opts)
         elif self.selected_browser == Browsers.EDGE:
             return webdriver.Edge()
