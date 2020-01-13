@@ -23,6 +23,8 @@ jobs:
         run: chmod +x geckodriver
       - name: Move geckodriver
         run: sudo mv geckodriver /usr/local/bin/        
+      - name: Install Firefox
+        run: sudo apt-get install firefox
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
