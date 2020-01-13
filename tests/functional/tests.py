@@ -2,7 +2,7 @@ from selenium.common.exceptions import NoAlertPresentException, NoSuchElementExc
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
-from examples.models import RefreshType, Validated, AdvancedFields
+from examples.models import AdvancedFields, RefreshType, Validated
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
