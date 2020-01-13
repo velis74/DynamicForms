@@ -12,6 +12,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.opera.options import Options as OperaOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -39,12 +40,14 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     def get_browser(self):
         if self.selected_browser == Browsers.FIREFOX:
-            return webdriver.Firefox()
+            opts = FirefoxOptions()
+            opts.binary_location = self.binary_location
+            return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
             return webdriver.Chrome()
         elif self.selected_browser == Browsers.OPERA:
             opts = OperaOptions()
-            opts.binary_location = self.binary_location
+            opts.headless = True
             return webdriver.Opera(options=opts)
         elif self.selected_browser == Browsers.EDGE:
             return webdriver.Edge()
@@ -114,7 +117,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
             self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
-            self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.170\\opera.exe'
+            # self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.170\\opera.exe'
             self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()
 
