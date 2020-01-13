@@ -1,6 +1,6 @@
-from collections.abc import Hashable
 import re
 import uuid as uuid_module
+from collections.abc import Hashable
 from datetime import datetime
 from enum import IntEnum
 from typing import Any, Optional, Union
@@ -55,7 +55,7 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = display_table or display or \
-                             (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
 
