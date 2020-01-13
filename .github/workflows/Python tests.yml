@@ -1,0 +1,31 @@
+name: Python tests
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Download geckodriver
+        run: wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+      - name: Extract geckodriver
+        run: tar -xvzf geckodriver*
+      - name: Make geckodriver execuable
+        run: chmod +x geckodriver
+      - name: Move geckodriver
+        run: sudo mv geckodriver /usr/local/bin/        
+      - name: Install Firefox
+        run: sudo apt-get install firefox
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Run Tox
+        run: tox -e py-django{22}-drf{39}
