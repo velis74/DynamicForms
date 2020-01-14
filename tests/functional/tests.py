@@ -637,7 +637,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[6].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
-    def est_advanced_fields(self):
+    def test_advanced_fields(self):
         self.browser.get(self.live_server_url + '/advanced-fields.html')
         # Go to advanced-fields html and check if there's a "+ Add" button
 
