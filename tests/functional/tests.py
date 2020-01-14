@@ -453,7 +453,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
     def test_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
         # Go to basic-fields html and check if there's a "+ Add" button
-        print("basic_fields1")
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
@@ -472,7 +471,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name("td")), "No data")
 
-        print("basic_fields2")
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
@@ -480,7 +478,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
-        print("basic_fields3")
 
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0
@@ -569,15 +566,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 else:
                     field_count -= 1
 
-        print("basic_fields4")
-
         self.assertEqual(field_count, 15)
-        if True:
-            return
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-        print("basic_fields5")
 
+        if True:
+            return
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
