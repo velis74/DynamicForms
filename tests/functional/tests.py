@@ -576,6 +576,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(cells), 17)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
+        print("pred ciklanjem")
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
