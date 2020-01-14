@@ -21,7 +21,7 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
             nonlocal new_num_elements, num_elements
             num_elements = new_num_elements
             tim = time.time()
-            while time.time() < tim + 1 and new_num_elements == num_elements:
+            while time.time() < tim + 5 and new_num_elements == num_elements:
                 # we wait for 5 seconds for number of elements to update on page
                 time.sleep(.1)
                 new_num_elements = len(tbody.find_elements_by_tag_name('tr'))
