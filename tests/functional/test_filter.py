@@ -23,7 +23,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         except:
             return False
 
-    def ok_test_filter_list(self):
+    def test_filter_list(self):
         self.browser.get(self.live_server_url + reverse('filter-list', args=['html']))
 
         filter_btn = None

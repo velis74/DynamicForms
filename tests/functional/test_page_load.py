@@ -9,7 +9,7 @@ MAX_WAIT = 10
 
 class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
-    def ok_test_validated_list(self):
+    def test_validated_list(self):
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
         tbody = self.browser.find_element_by_tag_name('tbody')
         new_num_elements = num_elements = len(tbody.find_elements_by_tag_name('tr'))

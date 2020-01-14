@@ -141,46 +141,36 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     def wait_for_modal_dialog(self, old_id=None):
         start_time = time.time()
-        print("wait for modal", time.time())
         while True:
             try:
-                print("wait for modal1", time.time())
                 time.sleep(0.1)
                 element = None
                 for el in self.browser.find_elements_by_class_name('modal'):
                     if el.is_displayed():
                         element = el
                         break
-                print("wait for modal2")
                 self.assertIsNotNone(element)
                 element_id = element.get_attribute('id')
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
                     # The new dialog must not have same id as the old one
                     # if it does, this means that we're still looking at the old dialog - let's wait for it to go away
                     continue
-                print("wait for modal3")
                 self.assertTrue(element_id.startswith('dialog-'))
                 element_id = element_id.split('-', 1)[1]
 
                 # this is a dialog - let's wait for its animations to stop
-                print("wait for modal4")
                 try:
-                    print("wait for modal5")
                     WebDriverWait(driver=self.browser, timeout=1, poll_frequency=0.2).until(EC.element_to_be_clickable(
                         (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
                     )
-                    print("wait for modal6")
                 except TimeoutException as e:
                     # dialog not ready yet or we found a bad dialog with no buttons
-                    print("wait for modal7")
                     if time.time() - start_time > MAX_WAIT:
                         raise e
                     continue
 
-                print("wait for modal8")
                 return element, element_id
             except (AssertionError, WebDriverException) as e:
-                print("wait for modal9", time.time() - start_time, MAX_WAIT)
                 if time.time() - start_time > MAX_WAIT:
                     raise e
 
