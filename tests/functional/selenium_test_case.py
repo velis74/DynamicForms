@@ -86,7 +86,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
         remote_selenium = os.environ.get('REMOTE_SELENIUM', ',')
-        browser_selenium = os.environ.get('BROWSER_SELENIUM', '|')
+        browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
         # browser_selenium = 'FIREFOX|{"headless": true, ' \
         #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
         # first parameter: remote server
@@ -98,7 +98,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
         #      Firefox\\\\firefox.exe"{comma} "headless": true}'
 
-        browser_options = browser_selenium.split('|', 1)
+        browser_options = browser_selenium.split(';', 1)
         browser = browser_options[0]
         if browser:
             self.selected_browser = Browsers(browser)
