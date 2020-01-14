@@ -451,7 +451,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
-    def est_basic_fields(self):
+    def test_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
         # Go to basic-fields html and check if there's a "+ Add" button
 
