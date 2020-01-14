@@ -104,6 +104,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.selected_browser = Browsers.FIREFOX
 
+        print("***VARIABLE:", browser_selenium, browser_options)
+
         opts = None
         try:
             opts = self.get_browser_options(browser_options[1])
