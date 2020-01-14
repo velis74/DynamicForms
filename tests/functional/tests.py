@@ -87,6 +87,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
     def ok_test_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
+
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
@@ -453,6 +454,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
     def test_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
         # Go to basic-fields html and check if there's a "+ Add" button
+
         try:
             header = self.browser.find_element_by_class_name("card-header")
         except NoSuchElementException:
@@ -576,12 +578,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(cells), 17)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
-        print("pred ciklanjem")
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
-
-        if True:
-            return
 
         # Change email, url, uuid, number, datetime, date and time fields to throw errors
         dialog.find_element_by_name("email_field").send_keys("Test error")
