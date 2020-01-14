@@ -1056,7 +1056,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
-    def est_single_dialog(self):
+    def test_single_dialog(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         hamburger = self.browser.find_element_by_id('hamburger')
