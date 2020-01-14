@@ -2,8 +2,7 @@ name: Python tests
 on: [push]
 
 jobs:
-  build:
-
+  ubuntu-firefox:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,6 +26,8 @@ jobs:
           sudo mv geckodriver /usr/local/bin/
           #Install Firefox
           sudo apt-get install firefox
+          #Set enviroment variable to determine browser
+          export BROWSER_SELENIUM=FIREFOX|{"headless": true, "binary_location": "/usr/bin/firefox"}
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
