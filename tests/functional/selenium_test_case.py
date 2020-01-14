@@ -41,7 +41,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def get_browser(self):
         if self.selected_browser == Browsers.FIREFOX:
             opts = FirefoxOptions()
-            opts.binary_location = '/usr/bin/firefox'
+            opts.binary_location = '/usr/bin/firefox/temp'
             opts.headless = True
             return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
