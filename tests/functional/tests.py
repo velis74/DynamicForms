@@ -1119,7 +1119,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         except NoAlertPresentException:
             pass
 
-    def est_write_only_fields(self):
+    def test_write_only_fields(self):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
         self.browser.get(self.live_server_url + '/write-only-fields.html')
         table = self.get_table_body(whole_table=True)
