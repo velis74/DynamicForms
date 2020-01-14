@@ -42,6 +42,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         if self.selected_browser == Browsers.FIREFOX:
             opts = FirefoxOptions()
             opts.binary_location = '/usr/bin/firefox'
+            # opts.binary_location = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
             opts.headless = True
             return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
@@ -165,7 +166,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 print("wait for modal4")
                 try:
                     print("wait for modal5")
-                    WebDriverWait(element, 2).until(EC.element_to_be_clickable(
+                    WebDriverWait(driver=self.browser, timeout=1, poll_frequency=0.2).until(EC.element_to_be_clickable(
                         (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
                     )
                     print("wait for modal6")
