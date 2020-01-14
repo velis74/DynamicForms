@@ -570,8 +570,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        if True:
-            return
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
@@ -580,6 +578,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+
+        if True:
+            return
 
         # Change email, url, uuid, number, datetime, date and time fields to throw errors
         dialog.find_element_by_name("email_field").send_keys("Test error")
