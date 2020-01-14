@@ -7,10 +7,6 @@ from ..models import PageLoad
 
 class PageLoadSerializer(serializers.ModelSerializer):
 
-    def __init__(self, *args, is_filter: bool = False, **kwds):
-        super().__init__(*args, is_filter=is_filter, **kwds)
-        print('page load init', time.time(), self.is_filter)
-
     form_titles = {
         'table': 'Dynamic page loader list',
         'new': 'New object',
