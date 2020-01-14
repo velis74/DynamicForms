@@ -12,8 +12,6 @@ from selenium.common.exceptions import (
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.opera.options import Options as OperaOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -79,6 +77,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             return None
 
         options = Options()
+        print("Options", opts, self.selected_browser)
         opts = json.loads(opts)
         for key, val in opts.items():
             setattr(options, key, val)
