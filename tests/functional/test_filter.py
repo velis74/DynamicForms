@@ -34,8 +34,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertIsNotNone(filter_btn, 'Page should contain filter button')
 
         filter_row = self.browser.find_elements_by_class_name('dynamicforms-filterrow')
-        self.assertTrue(len(filter_row) > 0,
-                        'Page should contain filter')
+        self.assertTrue(len(filter_row) > 0, 'Page should contain filter')
         filter_row = filter_row[0]
         loading_row = self.browser.find_element_by_css_selector('tfoot tr[id*="loading-"')
 

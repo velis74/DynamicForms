@@ -239,19 +239,19 @@ class NaturalDateTimeMixin(object):
 
 class TimeFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateTimeFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
