@@ -926,7 +926,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def est_refresh_types_list(self):
+    def test_refresh_types_list(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         try:
