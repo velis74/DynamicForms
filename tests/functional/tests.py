@@ -84,10 +84,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def est_validated_list(self):
+    def test_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
-
+        print("validated_list1")
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:
@@ -103,6 +103,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(self.get_element_text(add_btns[1]), '+ Add (refresh table)')
         self.assertEqual(self.get_element_text(add_btns[2]), '+ Add (no refresh)')
 
+        print("validated_list2")
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
@@ -118,6 +119,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         add_btns[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
+        print("validated_list3")
         # Check if all fields are in the dialog and no excessive fields too
         field_count = 0
         self.assertIsNone(self.check_error_text(dialog))
@@ -206,12 +208,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     self.assertTrue(
                         False, "Wrong field container - label: '{label_text}' {check} {fname}".format(**locals())
                     )
+        print("validated_list4")
         self.assertEqual(field_count, 6)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
         # There should be an error because of validator set in Model
 
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+        print("validated_list5")
 
         errors = dialog.find_elements_by_class_name("invalid-feedback")
         # Bootstrap v3
@@ -451,7 +455,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
-    def test_basic_fields(self):
+    def err_est_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
         # Go to basic-fields html and check if there's a "+ Add" button
 
@@ -637,7 +641,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[6].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
-    def test_advanced_fields(self):
+    def ok_test_advanced_fields(self):
         self.browser.get(self.live_server_url + '/advanced-fields.html')
         # Go to advanced-fields html and check if there's a "+ Add" button
 
@@ -926,7 +930,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def test_refresh_types_list(self):
+    def ok_test_refresh_types_list(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         try:
@@ -1056,7 +1060,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
-    def test_single_dialog(self):
+    def ok_test_single_dialog(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         hamburger = self.browser.find_element_by_id('hamburger')
@@ -1119,7 +1123,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         except NoAlertPresentException:
             pass
 
-    def test_write_only_fields(self):
+    def ok_test_write_only_fields(self):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
         self.browser.get(self.live_server_url + '/write-only-fields.html')
         table = self.get_table_body(whole_table=True)
