@@ -2,6 +2,7 @@ import time
 
 from django.urls import reverse
 
+from examples.models import PageLoad
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 MAX_WAIT = 10
@@ -15,7 +16,7 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
         rows = tbody.find_elements_by_tag_name('tr')
         new_num_elements = num_elements = len(rows)
         self.assertTrue(num_elements > 0, 'Initial page load should contain data rows')
-        print('first row visible: ', rows[0].is_displayed())
+        print('first row visible: ', PageLoad.objects.count(), rows[0].is_displayed())
 
         def load_next():
             nonlocal new_num_elements, num_elements
