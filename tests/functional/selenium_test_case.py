@@ -117,7 +117,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                                                                         port=self.live_server_url.split(':')[2])
             print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
-            self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
+            # self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
             # self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.170\\opera.exe'
             self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()

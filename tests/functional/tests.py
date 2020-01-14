@@ -84,7 +84,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def test_validated_list(self):
+    def est_validated_list(self):
         self.browser.get(self.live_server_url + '/validated.html')
         # Go to validated html and check if there's a "+ Add" button
 
@@ -451,7 +451,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
-    def test_basic_fields(self):
+    def est_basic_fields(self):
         self.browser.get(self.live_server_url + '/basic-fields.html')
         # Go to basic-fields html and check if there's a "+ Add" button
 
@@ -637,7 +637,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[6].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
-    def test_advanced_fields(self):
+    def est_advanced_fields(self):
         self.browser.get(self.live_server_url + '/advanced-fields.html')
         # Go to advanced-fields html and check if there's a "+ Add" button
 
@@ -926,7 +926,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def test_refresh_types_list(self):
+    def est_refresh_types_list(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         try:
@@ -1056,7 +1056,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
-    def test_single_dialog(self):
+    def est_single_dialog(self):
         self.browser.get(self.live_server_url + '/refresh-types.html')
 
         hamburger = self.browser.find_element_by_id('hamburger')
@@ -1119,7 +1119,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         except NoAlertPresentException:
             pass
 
-    def test_write_only_fields(self):
+    def est_write_only_fields(self):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
         self.browser.get(self.live_server_url + '/write-only-fields.html')
         table = self.get_table_body(whole_table=True)
