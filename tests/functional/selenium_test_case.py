@@ -34,7 +34,7 @@ class Browsers(Enum):
 
 # noinspection PyMethodMayBeStatic
 class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
-    host = '0.0.0.0'
+    # host = '0.0.0.0'
 
     binary_location = ''
 
