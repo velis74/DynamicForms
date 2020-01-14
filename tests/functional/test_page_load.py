@@ -12,8 +12,10 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
     def test_validated_list(self):
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
         tbody = self.browser.find_element_by_tag_name('tbody')
-        new_num_elements = num_elements = len(tbody.find_elements_by_tag_name('tr'))
+        rows = tbody.find_elements_by_tag_name('tr')
+        new_num_elements = num_elements = len(rows)
         self.assertTrue(num_elements > 0, 'Initial page load should contain data rows')
+        print('first row visible: ', rows[0].is_displayed())
 
         def load_next():
             nonlocal new_num_elements, num_elements

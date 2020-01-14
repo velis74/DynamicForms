@@ -122,6 +122,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             # self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.170\\opera.exe'
             self.selected_browser = Browsers.FIREFOX
             self.browser = self.get_browser()
+        self.browser.maximize_window()
 
     def tearDown(self):
         self.browser.refresh()
