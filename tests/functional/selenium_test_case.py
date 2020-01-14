@@ -165,13 +165,15 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 print("wait for modal4")
                 try:
                     print("wait for modal5")
-                    WebDriverWait(element, .5).until(EC.element_to_be_clickable(
+                    WebDriverWait(element, 2).until(EC.element_to_be_clickable(
                         (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
                     )
                     print("wait for modal6")
-                except TimeoutException:
+                except TimeoutException as e:
                     # dialog not ready yet or we found a bad dialog with no buttons
                     print("wait for modal7")
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
                     continue
 
                 print("wait for modal8")
