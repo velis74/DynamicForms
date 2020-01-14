@@ -3,6 +3,7 @@ import time
 from django.urls import reverse
 
 from examples.models import PageLoad
+from examples.migrations import add_page_load
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 MAX_WAIT = 10
@@ -11,6 +12,8 @@ MAX_WAIT = 10
 class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
     def test_validated_list(self):
+        if PageLoad.objects.count() == 0:
+            add_page_load(None, None)
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
         tbody = self.browser.find_element_by_tag_name('tbody')
         rows = tbody.find_elements_by_tag_name('tr')
