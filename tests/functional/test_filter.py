@@ -12,6 +12,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
     # noinspection PyMethodMayBeStatic
     def wait_data_loading(self, loading_row):
+        time.sleep(0.5)
         # noinspection PyTypeChecker
         while dict([tuple(y.strip() for y in x.split(':'))
                     for x in loading_row.get_attribute('style').split(';') if len(x)]).get('display', '') != 'none':
