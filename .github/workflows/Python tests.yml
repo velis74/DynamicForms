@@ -7,6 +7,8 @@ jobs:
     strategy:
       matrix:
         python: [3.5]
+    env:
+      BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
 
     steps:
       - uses: actions/checkout@v1
@@ -26,10 +28,6 @@ jobs:
           sudo mv geckodriver /usr/local/bin/
           #Install Firefox
           sudo apt-get install firefox
-          #Set enviroment variable to determine browser
-          export BROWSER_SELENIUM='FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
-          echo '$BROWSER_SELENIUM'
-          printenv
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
