@@ -1,3 +1,5 @@
+import time
+
 from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -571,7 +573,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(field_count, 15)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-
+        time.sleep(1)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")

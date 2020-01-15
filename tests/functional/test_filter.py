@@ -3,8 +3,9 @@ from datetime import timedelta
 
 from django.urls import reverse
 from django.utils import timezone
+from selenium.webdriver.common.keys import Keys
 
-from .selenium_test_case import WaitingStaticLiveServerTestCase
+from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
 class FilterFormTest(WaitingStaticLiveServerTestCase):
@@ -54,8 +55,15 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("1"), "Row 1 shouldn\'t be shown")
         char_field.clear()
 
-        tomorrow = (timezone.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-        datetime_field.send_keys(tomorrow)
+        from examples.models import Filter
+        date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
+        tomorrow = date_field.datetime_field.strftime("%Y-%m-%d")
+        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+            datetime_field.send_keys(date_field.datetime_field.strftime("%d%m%Y"))
+            datetime_field.send_keys(Keys.TAB)
+            datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
+        else:
+            datetime_field.send_keys(tomorrow)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
