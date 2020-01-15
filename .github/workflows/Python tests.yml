@@ -28,6 +28,8 @@ jobs:
           sudo apt-get install firefox
           #Set enviroment variable to determine browser
           export BROWSER_SELENIUM='FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
+          echo '$BROWSER_SELENIUM'
+          printenv
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
