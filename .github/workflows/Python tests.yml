@@ -49,5 +49,5 @@ jobs:
         run: pip install tox
       - name: Run Tox
         env:
-          BROWSER_SELENIUM: 'CHROME'
+          BROWSER_SELENIUM: 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, "disable-gpu": true}'
         run: tox -e py-django{22}-drf{39}
