@@ -1,12 +1,9 @@
-import time
-
 from dynamicforms import serializers, viewsets
 from dynamicforms.action import Actions
 from ..models import PageLoad
 
 
 class PageLoadSerializer(serializers.ModelSerializer):
-
     form_titles = {
         'table': 'Dynamic page loader list',
         'new': 'New object',

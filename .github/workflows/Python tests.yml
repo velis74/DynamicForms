@@ -2,13 +2,11 @@ name: Python tests
 on: [push]
 
 jobs:
-  ubuntu-firefox:
+  ubuntu_startup:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.5]
-    env:
-      BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
+        python: [3.5, 3.6, 3.7, 3.8]
 
     steps:
       - uses: actions/checkout@v1
@@ -16,6 +14,15 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+
+  ubuntu_firefox:
+    needs: ubuntu_startup
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+    steps:
       - name: Prepare Selenium enviroment
         run: |
           #Download geckodriver
@@ -28,7 +35,7 @@ jobs:
           sudo mv geckodriver /usr/local/bin/
           #Install Firefox
           sudo apt-get install firefox
-      - name: Install Tox and any other packages
-        run: pip install tox
       - name: Run Tox
+        env:
+          BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
         run: tox -e py-django{22}-drf{39}

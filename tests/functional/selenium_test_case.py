@@ -38,16 +38,10 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     def get_browser(self, opts=None):
         if self.selected_browser == Browsers.FIREFOX:
-            # opts = FirefoxOptions()
-            # opts.binary_location = '/usr/bin/firefox'
-            # opts.binary_location = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
-            # opts.headless = True
             return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
             return webdriver.Chrome(options=opts)
         elif self.selected_browser == Browsers.OPERA:
-            # opts = OperaOptions()
-            # opts.binary_location = self.binary_location
             return webdriver.Opera(options=opts)
         elif self.selected_browser == Browsers.EDGE:
             return webdriver.Edge()
@@ -77,25 +71,25 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             return None
 
         options = Options()
-        print("Options", opts, self.selected_browser)
         opts = json.loads(opts)
         for key, val in opts.items():
             setattr(options, key, val)
         return options
 
     def setUp(self):
-        remote_selenium = os.environ.get('REMOTE_SELENIUM', ',')
-        browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
-        # browser_selenium = 'FIREFOX|{"headless": true, ' \
-        #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
         # first parameter: remote server
         # second parameter: "my" server
-        # third parameter: browser with optional additional options (behind vertical bar)
-        #  Options are in JSON format. All commas must be replaced with '{comma}' string (see example below)
-        #
+
         # remote_selenium = 'MAC-SERVER:4444,myserver,SAFARI'
         # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
         #      Firefox\\\\firefox.exe"{comma} "headless": true}'
+        remote_selenium = os.environ.get('REMOTE_SELENIUM', ',')
+
+        # first parameter: selected browser
+        # second parameter (optional): browser options in JSON format.
+        browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
+        # browser_selenium = 'FIREFOX|{"headless": true, ' \
+        #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
         browser_options = browser_selenium.split(';', 1)
         browser = browser_options[0]
@@ -103,8 +97,6 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             self.selected_browser = Browsers(browser)
         else:
             self.selected_browser = Browsers.FIREFOX
-
-        print("***VARIABLE:", browser_selenium, browser_options)
 
         opts = None
         try:
