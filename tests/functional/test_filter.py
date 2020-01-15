@@ -59,18 +59,16 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
         tomorrow = date_field.datetime_field.strftime("%Y-%m-%d")
         if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-            datetime_field.send_keys(date_field.datetime_field.strftime("%d%m%Y"))
+            datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y"))
             datetime_field.send_keys(Keys.TAB)
             datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
+            datetime_field.send_keys("AM")
         else:
             datetime_field.send_keys(tomorrow)
 
-        data_rows = self.browser.find_elements_by_css_selector('tbody tr')
-        print("predfiltrom", data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
-        print("pofiltru", data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text)
 
         self.assertTrue(data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').
                         text.startswith(tomorrow), 'First row doesn\'t have date %s' % tomorrow)

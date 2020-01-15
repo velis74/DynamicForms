@@ -83,6 +83,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 item_flags='A'
             )
 
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support import expected_conditions as EC
+        from selenium.webdriver.support.wait import WebDriverWait
+
+        WebDriverWait(driver=self.browser, timeout=1, poll_frequency=0.2).until(EC.element_to_be_clickable(
+            (By.ID, "save-" + modal_serializer_id))
+        )
+
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -536,7 +544,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
                         field.send_keys('08122018')
                         field.send_keys(Keys.TAB)
-                        field.send_keys('0815')
+                        field.send_keys('081500AM')
                     elif self.selected_browser == Browsers.EDGE:
                         # There is a bug when sending keys to EDGE.
                         # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
@@ -559,7 +567,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                                        ('time', 'text') if self.selected_browser in (
                                            Browsers.IE, Browsers.SAFARI) else 'time')
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('0815')
+                        field.send_keys('081500AM')
                     elif self.selected_browser == Browsers.EDGE:
                         field.send_keys(Keys.ENTER)
                     else:
