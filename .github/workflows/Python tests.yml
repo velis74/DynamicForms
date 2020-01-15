@@ -19,6 +19,7 @@ jobs:
 
   ubuntu_firefox:
     needs: ubuntu_startup
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python: [3.5, 3.6, 3.7, 3.8]
