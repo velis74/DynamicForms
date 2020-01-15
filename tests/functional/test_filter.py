@@ -64,9 +64,14 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
             datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
         else:
             datetime_field.send_keys(tomorrow)
+
+        data_rows = self.browser.find_elements_by_css_selector('tbody tr')
+        print("predfiltrom", data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
+        print("pofiltru", data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text)
+
         self.assertTrue(data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').
                         text.startswith(tomorrow), 'First row doesn\'t have date %s' % tomorrow)
         self.assertTrue(data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').
