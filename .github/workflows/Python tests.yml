@@ -47,18 +47,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
-      - name: Prepare Selenium enviroment
-        run: |
-          #Download chromedriver
-          wget https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip
-          #Extract geckodriver
-          tar -xvzf chromedriver_linux64*
-          #Make geckodriver execuable
-          chmod +x chromedriver
-          #Move geckodriver
-          sudo mv chromedriver /usr/local/bin/
-#          #Install Firefox
-#          sudo apt-get install firefox
       - name: Run Tox
         env:
           BROWSER_SELENIUM: 'CHROME'
