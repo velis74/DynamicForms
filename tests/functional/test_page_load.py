@@ -2,8 +2,6 @@ import time
 
 from django.urls import reverse
 
-from examples.migrations import add_page_load
-from examples.models import PageLoad
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 MAX_WAIT = 10
@@ -11,12 +9,18 @@ MAX_WAIT = 10
 
 class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
-    def test_validated_list(self):
+    # noinspection PyPep8Naming
+    def __init__(self, methodName: str = ...) -> None:
+        from examples.models import PageLoad
         # When running tests through github actions table PageLoad is empty, even though it gets filled up in
         # migrations initialisation
         if PageLoad.objects.count() == 0:
+            from examples.migrations import add_page_load
             add_page_load(None, None)
 
+        super().__init__(methodName)
+
+    def test_validated_list(self):
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
         tbody = self.browser.find_element_by_tag_name('tbody')
         rows = tbody.find_elements_by_tag_name('tr')

@@ -9,6 +9,17 @@ from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 class FilterFormTest(WaitingStaticLiveServerTestCase):
 
+    # noinspection PyPep8Naming
+    def __init__(self, methodName: str = ...) -> None:
+        # When running tests through github actions table Filter is empty, even though it gets filled up in
+        # migrations initialisation
+        from examples.models import Filter
+        if Filter.objects.count() == 0:
+            from examples.migrations import add_filter
+            add_filter(None, None)
+
+        super().__init__(methodName)
+
     # noinspection PyMethodMayBeStatic
     def wait_data_loading(self, loading_row):
         # noinspection PyTypeChecker
