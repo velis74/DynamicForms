@@ -2,21 +2,11 @@ from selenium.common.exceptions import NoAlertPresentException, NoSuchElementExc
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
-from examples.models import AdvancedFields, RefreshType, Relation, Validated
+from examples.models import AdvancedFields, RefreshType, Validated
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
-
-    # noinspection PyPep8Naming
-    def __init__(self, methodName: str = ...) -> None:
-        # When running tests through github actions table Relation is empty, even though it gets filled up in
-        # migrations initialisation
-        if Relation.objects.count() == 0:
-            from examples.migrations import add_relation
-            add_relation(None, None)
-
-        super().__init__(methodName)
 
     def add_validated_record(self, btn_position, amount, add_second_record=None):
         try:
@@ -648,7 +638,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
     def test_advanced_fields(self):
-
         self.browser.get(self.live_server_url + '/advanced-fields.html')
         # Go to advanced-fields html and check if there's a "+ Add" button
 

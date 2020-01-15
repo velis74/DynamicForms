@@ -77,6 +77,21 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         return options
 
     def setUp(self):
+        # When running tests through github actions sometimes tables are empty, even though they are filled up in
+        # migrations initialisation
+        from examples.models import Filter, PageLoad, Relation
+        if Filter.objects.count() == 0:
+            from examples.migrations import add_filter
+            add_filter(None, None)
+
+        if PageLoad.objects.count() == 0:
+            from examples.migrations import add_page_load
+            add_page_load(None, None)
+
+        if Relation.objects.count() == 0:
+            from examples.migrations import add_relation
+            add_relation(None, None)
+
         # first parameter: remote server
         # second parameter: "my" server
 

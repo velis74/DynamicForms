@@ -9,17 +9,6 @@ MAX_WAIT = 10
 
 class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
-    # noinspection PyPep8Naming
-    def __init__(self, methodName: str = ...) -> None:
-        from examples.models import PageLoad
-        # When running tests through github actions table PageLoad is empty, even though it gets filled up in
-        # migrations initialisation
-        if PageLoad.objects.count() == 0:
-            from examples.migrations import add_page_load
-            add_page_load(None, None)
-
-        super().__init__(methodName)
-
     def test_validated_list(self):
         self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
         tbody = self.browser.find_element_by_tag_name('tbody')
