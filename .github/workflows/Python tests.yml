@@ -31,7 +31,7 @@ jobs:
       - name: Run Tox
         env:
           BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
-        run: tox -e py
+        run: tox -e py-django{20,21,22}-drf{39}
 
   ubuntu_chrome:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
       - name: Run Tox
         env:
           BROWSER_SELENIUM: 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, "disable-gpu": true}'
-        run: tox -e py
+        run: tox -e py-django{20,21,22}-drf{39}
 
   macos_safari:
     runs-on: macos-latest
@@ -70,7 +70,7 @@ jobs:
         # Da bodo delali fukcionalni testi v Safariju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/91
         env:
           BROWSER_SELENIUM: 'SAFARI'
-        run: tox -e py
+        run: tox -e py-django{20,21,22}-drf{39}
 
   win_edge:
     runs-on: windows-latest
@@ -90,4 +90,4 @@ jobs:
         # Da bodo delali fukcionalni testi v Edge-ju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/99
         env:
           BROWSER_SELENIUM: 'EDGE'
-        run: tox -e py*
+        run: tox -e "py-django{20,21,22}-drf{39}"
