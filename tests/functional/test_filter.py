@@ -101,6 +101,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.select_option_for_select2(filter_row, int_choices_field.get_attribute('id'), text="--------")
 
         bool_field.click()
+        time.sleep(0.2)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         self.assertTrue(self.check_data("1"), "No row 1")
@@ -113,6 +114,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("20"), "Row 20 shouldn\'t be shown")
 
         bool_field.click()
+        time.sleep(0.2)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         self.assertTrue(self.check_data("6"), "No row 6")
