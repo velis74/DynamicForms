@@ -116,11 +116,15 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.selected_browser = Browsers.FIREFOX
 
+        print('***Setup 1')
         if github_actions and self.selected_browser == Browsers.EDGE:
+            print('***Setup 2')
             import sys
             driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
+            print('***Setup 3', driver_file)
             if not os.path.isfile(driver_file):
                 win_temp = os.environ.get('TEMP', '') + '\\'
+                print('***Setup 4', win_temp)
                 import urllib.request
                 urllib.request.urlretrieve("https://msedgedriver.azureedge.net/81.0.394.0/edgedriver_win64.zip",
                                            win_temp + "edgedriver_win64.zip")
@@ -128,6 +132,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
                     zip_ref.extractall(win_temp)
                 os.rename(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
+                print('***Setup 5')
 
         opts = None
         try:
