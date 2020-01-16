@@ -2,6 +2,8 @@ name: Python tests
 on: [push]
 
 jobs:
+  env:
+    GITHUB_ACTIONS: 1
   win_edge:
     runs-on: windows-latest
     strategy:

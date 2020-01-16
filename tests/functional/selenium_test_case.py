@@ -92,6 +92,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             from examples.migrations import add_relation
             add_relation(None, None)
 
+        github_actions = os.environ.get('GITHUB_ACTIONS', '0') == '1'
+
         # first parameter: remote server
         # second parameter: "my" server
 
@@ -103,6 +105,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # first parameter: selected browser
         # second parameter (optional): browser options in JSON format.
         browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
+        # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, "disable-gpu": true}'
         # browser_selenium = 'FIREFOX|{"headless": true, ' \
         #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
@@ -112,6 +115,19 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             self.selected_browser = Browsers(browser)
         else:
             self.selected_browser = Browsers.FIREFOX
+
+        if github_actions and self.selected_browser == Browsers.EDGE:
+            import sys
+            driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
+            if not os.path.isfile(driver_file):
+                win_temp = os.environ.get('TEMP', '') + '\\'
+                import urllib.request
+                urllib.request.urlretrieve("https://msedgedriver.azureedge.net/81.0.394.0/edgedriver_win64.zip",
+                                           win_temp + "edgedriver_win64.zip")
+                import zipfile
+                with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
+                    zip_ref.extractall(win_temp)
+                os.rename(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
 
         opts = None
         try:
