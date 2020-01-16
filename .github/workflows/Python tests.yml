@@ -20,4 +20,4 @@ jobs:
         # Da bodo delali fukcionalni testi v Edge-ju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/99
         env:
           BROWSER_SELENIUM: 'EDGE'
-        run: tox -e py-django{22}-drf{39}
+        run: tox -e "py-django{22}-drf{39}"
