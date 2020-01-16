@@ -118,7 +118,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
         print('***Setup 1', github_actions, self.selected_browser == Browsers.EDGE, os.environ.get('GITHUB_ACTIONS', '0'))
         if github_actions and self.selected_browser == Browsers.EDGE:
-            print('***Setup 2')
+            print('***Setup 2', os.environ.get('PATH', ''))
             import sys
             driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
             print('***Setup 3', driver_file)
@@ -131,7 +131,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 import zipfile
                 with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
                     zip_ref.extractall(win_temp)
-                os.rename(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
+                from shutil import copyfile
+                copyfile(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
                 print('***Setup 5')
 
         opts = None
