@@ -1,4 +1,4 @@
-name: Python check code
+name: Python check documentation
 
 on: [push]
 
