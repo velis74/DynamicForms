@@ -92,7 +92,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             from examples.migrations import add_relation
             add_relation(None, None)
 
-        github_actions = os.environ.get('GITHUB_ACTIONS', '0') == '1'
+        github_actions = os.environ.get('GITHUB_ACTIONS', False)
 
         # first parameter: remote server
         # second parameter: "my" server
