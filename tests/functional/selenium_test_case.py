@@ -35,6 +35,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     # host = '0.0.0.0'
 
     binary_location = ''
+    github_actions = False
 
     def get_browser(self, opts=None):
         if self.selected_browser == Browsers.FIREFOX:
@@ -92,7 +93,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             from examples.migrations import add_relation
             add_relation(None, None)
 
-        github_actions = os.environ.get('GITHUB_ACTIONS', False)
+        self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
 
         # first parameter: remote server
         # second parameter: "my" server
@@ -105,7 +106,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # first parameter: selected browser
         # second parameter (optional): browser options in JSON format.
         browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
-        # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, "disable-gpu": true}'
+        # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, ' \
+        #                    '"disable-gpu": true}'
         # browser_selenium = 'FIREFOX|{"headless": true, ' \
         #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
@@ -116,30 +118,29 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.selected_browser = Browsers.FIREFOX
 
-        print('***Setup 1', github_actions, self.selected_browser == Browsers.EDGE, os.environ.get('GITHUB_ACTIONS', '0'))
-        if github_actions and self.selected_browser == Browsers.EDGE:
-            print('***Setup 2', os.environ.get('PATH', ''))
-            import sys
-            driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
-            print('***Setup 3', driver_file)
-            if not os.path.isfile(driver_file):
-                win_temp = os.environ.get('TEMP', '') + '\\'
-                print('***Setup 4', win_temp)
-                import urllib.request
-                urllib.request.urlretrieve("https://msedgedriver.azureedge.net/81.0.394.0/edgedriver_win64.zip",
-                                           win_temp + "edgedriver_win64.zip")
-                import zipfile
-                with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
-                    zip_ref.extractall(win_temp)
-                from shutil import copyfile
-                copyfile(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
-                print('***Setup 5')
-
-                urllib.request.urlretrieve("https://download.microsoft.com/download/F/8/A/"
-                                           "F8AF50AB-3C3A-4BC4-8773-DC27B32988DD/MicrosoftWebDriver.exe",
-                                           win_temp + "MicrosoftWebDriver.exe")
-                copyfile(win_temp + "MicrosoftWebDriver.exe", sys.exec_prefix + "\\Scripts\\MicrosoftWebDriver.exe")
-                print('***Setup 6')
+        # Spodaj je poizkus, da bi naložil driverje za EDGE... Inštalacija je bila sicer uspešna, ampak še vedno dobim
+        # selenium.common.exceptions.WebDriverException: Message: Unknown error
+        #
+        # Bom počakal, da najprej zaključijo issue https://github.com/actions/virtual-environments/issues/99
+        #
+        # if self.github_actions and self.selected_browser == Browsers.EDGE:
+        #     import sys
+        #     driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
+        #     if not os.path.isfile(driver_file):
+        #         win_temp = os.environ.get('TEMP', '') + '\\'
+        #         import urllib.request
+        #         urllib.request.urlretrieve("https://msedgedriver.azureedge.net/81.0.394.0/edgedriver_win64.zip",
+        #                                    win_temp + "edgedriver_win64.zip")
+        #         import zipfile
+        #         with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
+        #             zip_ref.extractall(win_temp)
+        #         from shutil import copyfile
+        #         copyfile(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
+        #
+        #         urllib.request.urlretrieve("https://download.microsoft.com/download/F/8/A/"
+        #                                    "F8AF50AB-3C3A-4BC4-8773-DC27B32988DD/MicrosoftWebDriver.exe",
+        #                                    win_temp + "MicrosoftWebDriver.exe")
+        #         copyfile(win_temp + "MicrosoftWebDriver.exe", sys.exec_prefix + "\\Scripts\\MicrosoftWebDriver.exe")
 
         opts = None
         try:
@@ -161,7 +162,6 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
             self.browser = self.get_browser(opts)
-        self.browser.maximize_window()
 
     def tearDown(self):
         self.browser.refresh()

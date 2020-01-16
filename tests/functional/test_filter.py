@@ -60,10 +60,11 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
         tomorrow = date_field.datetime_field.strftime("%Y-%m-%d")
         if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-            datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y"))
+            datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y" if self.github_actions else "%d%m%Y"))
             datetime_field.send_keys(Keys.TAB)
             datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
-            datetime_field.send_keys("AM")
+            if self.github_actions:
+                datetime_field.send_keys("AM")
         else:
             datetime_field.send_keys(tomorrow)
 

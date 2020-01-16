@@ -4,11 +4,79 @@ env:
   GITHUB_ACTIONS: 1
 
 jobs:
+  ubuntu_firefox:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Prepare Selenium enviroment
+        run: |
+          #Download geckodriver
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+          #Extract geckodriver
+          tar -xvzf geckodriver*
+          #Make geckodriver execuable
+          chmod +x geckodriver
+          #Move geckodriver
+          sudo mv geckodriver /usr/local/bin/
+      - name: Run Tox
+        env:
+          BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
+        run: tox -e py-django{22}-drf{39}
+
+  ubuntu_chrome:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Run Tox
+        env:
+          BROWSER_SELENIUM: 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, "disable-gpu": true}'
+        run: tox -e py-django{22}-drf{39}
+
+  macos_safari:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Run Tox
+        # Da bodo delali fukcionalni testi v Safariju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/91
+        env:
+          BROWSER_SELENIUM: 'SAFARI'
+        run: tox -e py-django{22}-drf{39}
+
   win_edge:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: [3.5]
+        python: [3.5, 3.6, 3.7, 3.8]
 
     steps:
       - uses: actions/checkout@v1

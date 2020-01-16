@@ -544,7 +544,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
                         field.send_keys('08122018')
                         field.send_keys(Keys.TAB)
-                        field.send_keys('081500AM')
+                        field.send_keys('081500')
+                        if self.github_actions:
+                            field.send_keys('AM')
                     elif self.selected_browser == Browsers.EDGE:
                         # There is a bug when sending keys to EDGE.
                         # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
@@ -567,7 +569,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                                        ('time', 'text') if self.selected_browser in (
                                            Browsers.IE, Browsers.SAFARI) else 'time')
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('081500AM')
+                        field.send_keys('081500')
+                        if self.github_actions:
+                            field.send_keys('AM')
                     elif self.selected_browser == Browsers.EDGE:
                         field.send_keys(Keys.ENTER)
                     else:
