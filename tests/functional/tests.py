@@ -87,7 +87,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         from selenium.webdriver.support import expected_conditions as EC
         from selenium.webdriver.support.wait import WebDriverWait
 
-        WebDriverWait(driver=self.browser, timeout=1, poll_frequency=0.2).until(EC.element_to_be_clickable(
+        WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
             (By.ID, "save-" + modal_serializer_id))
         )
 
