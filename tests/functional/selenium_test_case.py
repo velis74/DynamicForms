@@ -116,7 +116,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.selected_browser = Browsers.FIREFOX
 
-        print('***Setup 1')
+        print('***Setup 1', github_actions, self.selected_browser == Browsers.EDGE, os.environ.get('GITHUB_ACTIONS', '0'))
         if github_actions and self.selected_browser == Browsers.EDGE:
             print('***Setup 2')
             import sys
