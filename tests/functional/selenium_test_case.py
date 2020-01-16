@@ -135,6 +135,12 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 copyfile(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
                 print('***Setup 5')
 
+                urllib.request.urlretrieve("https://download.microsoft.com/download/F/8/A/"
+                                           "F8AF50AB-3C3A-4BC4-8773-DC27B32988DD/MicrosoftWebDriver.exe",
+                                           win_temp + "MicrosoftWebDriver.exe")
+                copyfile(win_temp + "MicrosoftWebDriver.exe", sys.exec_prefix + "\\Scripts\\MicrosoftWebDriver.exe")
+                print('***Setup 6')
+
         opts = None
         try:
             opts = self.get_browser_options(browser_options[1])
