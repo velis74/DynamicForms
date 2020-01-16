@@ -17,7 +17,7 @@ jobs:
       - name: Install Tox and any other packages
         run: pip install tox
       - name: enable safari driver
-        run: sudo safaridriver --enable
+        run: osascript -e 'tell application "Safari" to activate' -e 'delay 2' -e 'tell application "System Events"' -e 'tell application process "Safari"' -e 'keystroke "," using command down' -e 'set frontmost to true' -e 'tell window 1' -e 'click button "Advanced" of toolbar 1' -e 'delay 2' -e 'set theCheckbox to checkbox 4 of group 1 of group 1 of it' -e 'tell theCheckbox' -e 'if not (its value as boolean) then click theCheckbox' -e 'end tell' -e 'delay 2' -e 'keystroke "w" using command down' -e 'delay 2' -e 'end tell' -e 'tell menu bar item "Develop" of menu bar 1' -e 'click' -e 'delay 2' -e 'click menu item "Allow Remote Automation" of menu 1' -e 'delay 2' -e 'end tell' -e 'end tell' -e 'end tell' -e 'tell application "Safari" to quit'
       - name: Run Tox
         env:
           BROWSER_SELENIUM: 'SAFARI'
