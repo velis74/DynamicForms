@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         python: [3.5, 3.6, 3.7, 3.8]
+      fail-fast: false
 
     env:
       BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
@@ -52,6 +53,7 @@ jobs:
 
       - name: Run Tox py-django1tip-drftip
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drftip
 
       - name: Run Tox py-django20-drf39
@@ -72,10 +74,12 @@ jobs:
 
       - name: Run Tox py-django22-drftip
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-djangotip-drftip
 
   ubuntu_chrome:
