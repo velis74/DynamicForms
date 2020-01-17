@@ -18,7 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
-MAX_WAIT_ALERT = 3
+MAX_WAIT_ALERT = 5
 
 
 class Browsers(Enum):
