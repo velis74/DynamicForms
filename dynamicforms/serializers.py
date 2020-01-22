@@ -84,7 +84,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         """
         if getattr(self, '_filter_ser', None) is None:
             # noinspection PyAttributeOutsideInit
-            self._filter_ser = type(self)(is_filter=True, context=self.context if hasattr(self, 'context') else {})
+            self._filter_ser = type(self)(is_filter=True, context=getattr(self, 'context', {}))
             self._filter_ser.master = self
         return self._filter_ser  # Just create the same serializer in filter mode (None values, allow_nulls)
 
