@@ -5,19 +5,20 @@ from enum import Enum
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import (ElementNotInteractableException, NoAlertPresentException,
-                                        NoSuchElementException, TimeoutException, WebDriverException)
+from selenium.common.exceptions import (
+    ElementNotInteractableException, NoAlertPresentException, NoSuchElementException, TimeoutException,
+    WebDriverException
+)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.opera.options import Options as OperaOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
-MAX_WAIT_ALERT = 0.3
+MAX_WAIT_ALERT = 5
 
 
 class Browsers(Enum):
@@ -31,28 +32,27 @@ class Browsers(Enum):
 
 # noinspection PyMethodMayBeStatic
 class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
-    host = '0.0.0.0'
+    # host = '0.0.0.0'
 
     binary_location = ''
+    github_actions = False
 
-    def get_browser(self):
+    def get_browser(self, opts=None):
         if self.selected_browser == Browsers.FIREFOX:
-            return webdriver.Firefox()
+            return webdriver.Firefox(options=opts)
         elif self.selected_browser == Browsers.CHROME:
-            return webdriver.Chrome()
+            return webdriver.Chrome(options=opts)
         elif self.selected_browser == Browsers.OPERA:
-            opts = OperaOptions()
-            opts.binary_location = self.binary_location
             return webdriver.Opera(options=opts)
         elif self.selected_browser == Browsers.EDGE:
             return webdriver.Edge()
         elif self.selected_browser == Browsers.SAFARI:
             return webdriver.Safari()
         elif self.selected_browser == Browsers.IE:
-            return webdriver.Ie()
+            return webdriver.Ie(options=opts)
 
         self.selected_browser = Browsers.FIREFOX
-        return webdriver.Firefox
+        return webdriver.Firefox(options=opts)
 
     def get_browser_options(self, opts):
         if not opts:
@@ -72,34 +72,84 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             return None
 
         options = Options()
-        opts = json.loads(opts.replace('{comma}', ','))
+        opts = json.loads(opts)
         for key, val in opts.items():
             setattr(options, key, val)
         return options
 
     def setUp(self):
-        remote_selenium = os.environ.get('REMOTE_SELENIUM', ',,')
+        # When running tests through github actions sometimes tables are empty, even though they are filled up in
+        # migrations initialisation
+        from examples.models import Filter, PageLoad, Relation
+        if Filter.objects.count() == 0:
+            from examples.migrations import add_filter
+            add_filter(None, None)
+
+        if PageLoad.objects.count() == 0:
+            from examples.migrations import add_page_load
+            add_page_load(None, None)
+
+        if Relation.objects.count() == 0:
+            from examples.migrations import add_relation
+            add_relation(None, None)
+
+        self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
+
         # first parameter: remote server
         # second parameter: "my" server
-        # third parameter: browser with optional additional options (behind vertical bar)
-        #  Options are in JSON format. All commas must be replaced with '{comma}' string (see example below)
-        #
+
         # remote_selenium = 'MAC-SERVER:4444,myserver,SAFARI'
         # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
         #      Firefox\\\\firefox.exe"{comma} "headless": true}'
+        remote_selenium = os.environ.get('REMOTE_SELENIUM', ',')
 
-        remote, this_server, browser_options = remote_selenium.split(',')
-        if remote:
+        # first parameter: selected browser
+        # second parameter (optional): browser options in JSON format.
+        browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
+        # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, ' \
+        #                    '"disable-gpu": true}'
+        # browser_selenium = 'FIREFOX|{"headless": true, ' \
+        #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
-            browser_options = browser_options.split('|', 1)
-            browser = browser_options[0]
+        browser_options = browser_selenium.split(';', 1)
+        browser = browser_options[0]
+        if browser:
             self.selected_browser = Browsers(browser)
-            opts = None
-            try:
-                opts = self.get_browser_options(browser_options[1])
-            except:
-                pass
+        else:
+            self.selected_browser = Browsers.FIREFOX
 
+        # Spodaj je poizkus, da bi naložil driverje za EDGE... Inštalacija je bila sicer uspešna, ampak še vedno dobim
+        # selenium.common.exceptions.WebDriverException: Message: Unknown error
+        #
+        # Bom počakal, da najprej zaključijo issue https://github.com/actions/virtual-environments/issues/99
+        #
+        # if self.github_actions and self.selected_browser == Browsers.EDGE:
+        #     import sys
+        #     driver_file = sys.exec_prefix + "\\Scripts\\msedgedriver.exe"
+        #     if not os.path.isfile(driver_file):
+        #         win_temp = os.environ.get('TEMP', '') + '\\'
+        #         import urllib.request
+        #         urllib.request.urlretrieve("https://msedgedriver.azureedge.net/81.0.394.0/edgedriver_win64.zip",
+        #                                    win_temp + "edgedriver_win64.zip")
+        #         import zipfile
+        #         with zipfile.ZipFile(win_temp + "edgedriver_win64.zip", 'r') as zip_ref:
+        #             zip_ref.extractall(win_temp)
+        #         from shutil import copyfile
+        #         copyfile(win_temp + "msedgedriver.exe", sys.exec_prefix + "\\Scripts\\msedgedriver.exe")
+        #
+        #         urllib.request.urlretrieve("https://download.microsoft.com/download/F/8/A/"
+        #                                    "F8AF50AB-3C3A-4BC4-8773-DC27B32988DD/MicrosoftWebDriver.exe",
+        #                                    win_temp + "MicrosoftWebDriver.exe")
+        #         copyfile(win_temp + "MicrosoftWebDriver.exe", sys.exec_prefix + "\\Scripts\\MicrosoftWebDriver.exe")
+
+        opts = None
+        try:
+            opts = self.get_browser_options(browser_options[1])
+        except:
+            pass
+
+        remote, this_server = remote_selenium.split(',')
+        if remote:
             self.browser = webdriver.Remote(
                 command_executor='http://{remote}/wd/hub'.format(remote=remote),
                 desired_capabilities=dict(javascriptEnabled=True, **getattr(webdriver.DesiredCapabilities, browser)),
@@ -111,10 +161,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                                                                         port=self.live_server_url.split(':')[2])
             print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
         else:
-            self.live_server_url = self.live_server_url.replace('0.0.0.0', 'localhost')
-            self.binary_location = 'C:\\Users\\kleme\\AppData\\Local\\Programs\\Opera\\60.0.3255.170\\opera.exe'
-            self.selected_browser = Browsers.FIREFOX
-            self.browser = self.get_browser()
+            self.browser = self.get_browser(opts)
 
     def tearDown(self):
         self.browser.refresh()
@@ -137,7 +184,11 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.1)
-                element = self.browser.find_element_by_xpath("//div[contains(@class, 'modal') and contains(@class, 'dynamicforms-dialog')]")
+                element = None
+                for el in self.browser.find_elements_by_class_name('modal'):
+                    if el.is_displayed():
+                        element = el
+                        break
                 self.assertIsNotNone(element)
                 element_id = element.get_attribute('id')
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
@@ -149,11 +200,13 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
                 # this is a dialog - let's wait for its animations to stop
                 try:
-                    WebDriverWait(element, .5).until(EC.element_to_be_clickable(
+                    WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
                         (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
                     )
-                except TimeoutException:
+                except TimeoutException as e:
                     # dialog not ready yet or we found a bad dialog with no buttons
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
                     continue
 
                 return element, element_id

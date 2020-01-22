@@ -22,7 +22,7 @@ Why DynamicForms
 * Turn your rest-framework ViewSets into HTML forms
 * Powerful HTML based CRUD
 
-   * Support for fetching “new” records, both in JSON or in HTML
+   * Support for fetching "new" records, both in JSON or in HTML
    * Render to HTML, dialog html or from your own template
    * Render form (embedded or dialog) or table, depending on situation
    * Easily add actions and place the buttons to execute them anywhere you like

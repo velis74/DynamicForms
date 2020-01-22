@@ -1,6 +1,6 @@
-from collections.abc import Hashable
 import re
 import uuid as uuid_module
+from collections.abc import Hashable
 from datetime import datetime
 from enum import IntEnum
 from typing import Any, Optional, Union
@@ -55,7 +55,7 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = display_table or display or \
-                             (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
 
@@ -239,19 +239,19 @@ class NaturalDateTimeMixin(object):
 
 class TimeFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateTimeFieldMixin(NaturalDateTimeMixin):
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 

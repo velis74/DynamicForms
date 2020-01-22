@@ -25,6 +25,8 @@
 </form>
 {% block formend_includes %}{% endblock %}
 <script type="application/javascript">
+  dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
+
   {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}
   {% block field_actions %}
     {% render_table_commands serializer 'onfieldchange' %}

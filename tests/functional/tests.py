@@ -1,8 +1,10 @@
+import time
+
 from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
-from examples.models import RefreshType, Validated, AdvancedFields
+from examples.models import AdvancedFields, RefreshType, Validated
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
@@ -80,6 +82,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 item_type=0,
                 item_flags='A'
             )
+
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support import expected_conditions as EC
+        from selenium.webdriver.support.wait import WebDriverWait
+
+        WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
+            (By.ID, "save-" + modal_serializer_id))
+        )
 
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
@@ -534,7 +544,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
                         field.send_keys('08122018')
                         field.send_keys(Keys.TAB)
-                        field.send_keys('0815')
+                        field.send_keys('081500')
+                        if self.github_actions:
+                            field.send_keys('AM')
                     elif self.selected_browser == Browsers.EDGE:
                         # There is a bug when sending keys to EDGE.
                         # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
@@ -557,7 +569,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                                        ('time', 'text') if self.selected_browser in (
                                            Browsers.IE, Browsers.SAFARI) else 'time')
                     if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('0815')
+                        field.send_keys('081500')
+                        if self.github_actions:
+                            field.send_keys('AM')
                     elif self.selected_browser == Browsers.EDGE:
                         field.send_keys(Keys.ENTER)
                     else:
@@ -571,7 +585,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(field_count, 15)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-
+        time.sleep(1)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")

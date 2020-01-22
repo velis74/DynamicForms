@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 
 from dynamicforms import fields, serializers, viewsets
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
-from dynamicforms.progress import get_progress_key, set_progress_value, set_progress_comment
+from dynamicforms.progress import get_progress_key, set_progress_comment, set_progress_value
 
 
 class SingleDialogSerializer(serializers.Serializer):

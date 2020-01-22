@@ -275,25 +275,35 @@ dynamicforms = {
     var listId = dynamicforms.form_helpers.get($form.attr('id'), 'listID');
 
     var dataType = 'html';
-    if (doneFunc == undefined) {
-      var doneFunction = function (data) {
-        dynamicforms.closeDialog($dlg);
-        if (!recordID) {
-          try {
-            recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
-            if (recordID == '')
-              recordID = false;
-          } catch (e) {}
-        }
-        dynamicforms.refreshList(recordURL, recordID, refreshType, listId);
+    function performRefresh(data, params){
+      if (!recordID) {
+        try {
+          recordID = $(data).find('form.dynamicforms-form').find('input[name=\'id\']').val().trim();
+          if (recordID == '')
+            recordID = false;
+        } catch (e) {}
       }
-    } else {
+      dynamicforms.refreshList(recordURL, recordID, refreshType, listId, false, params);
+    }
+    var doneFuncExec;
+    if (doneFunc == undefined) {
+      doneFuncExec = function (data) {
+        dynamicforms.closeDialog($dlg);
+        performRefresh(data);
+      }
+    } else{
+      doneFuncExec = doneFunc;
       dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
-      var doneFunction = doneFunc
     }
     if (dType != undefined)
       dataType = dType;
 
+    function getDlg(){
+      return $dlg;
+    }
+    // We need this so ve can call refresh from custom function (arguments.callee.performRefresh())
+    doneFuncExec.performRefresh = performRefresh;
+    doneFuncExec.getDlg = getDlg;
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       type:        method,
@@ -304,7 +314,7 @@ dynamicforms = {
                                       traditional: true,
                                     }
                                   })
-      .done(doneFunction)
+      .done(doneFuncExec)
       .fail(function (xhr, status, error) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
@@ -347,35 +357,30 @@ dynamicforms = {
    */
   refreshList: function refreshList(url, recordID, refreshType, formID, deletion, params) {
     if (refreshType == undefined || refreshType == 'record') {
-      var $rowToRefresh;
-      if (recordID) {
-        var trSelector = "tr[data-id='" + recordID + "']";
-        $rowToRefresh  = $(trSelector); // Row to refresh
-      }
 
-      // If table will not change we wont even fetch new record
-      if (!dynamicforms.isLinkNext(dynamicforms.df_tbl_pagination.get(formID, undefined).link_next) ||
-        ($rowToRefresh != null && $rowToRefresh.length)) {
-        var data = dynamicforms.filterData(formID, true);
-        if (recordID)
-          data.id = recordID
-        if (params != undefined && params.additionalData != undefined) {
-          for (var key in params.additionalData) {
-            data[key] = params.additionalData[key];
-          }
+      var data = dynamicforms.filterData(formID, true);
+      if (recordID)
+        data.id = recordID
+      if (params != undefined && params.additionalData != undefined) {
+        for (var key in params.additionalData) {
+          data[key] = params.additionalData[key];
         }
-
-        dynamicforms.ajaxWithProgress({
-                                        ajax_setts:     {type: 'GET', url: url, data: data, dataType: 'html'},
-                                        progress_setts: params != undefined ? params.progressSetts : undefined
-                                      })
-          .done(function (data) {
-            dynamicforms.refreshRow(data, formID, recordID);
-          })
-          .fail(function (xhr, status, error) {
-            // TODO: this doesn't handle errors correctly
-          });
       }
+
+      dynamicforms.ajaxWithProgress({
+                                      ajax_setts:     {type: 'GET', url: url, data: data, dataType: 'html',
+                                        headers: {'X-DF-CALLTYPE': 'refresh_record'}},
+                                      progress_setts: params != undefined ? params.progressSetts : undefined
+                                    })
+        .done(function (data) {
+          dynamicforms.refreshRow(data, formID, recordID);
+          // noinspection JSUnresolvedVariable
+          if(params && params.afterRefreshFunc)
+            params.afterRefreshFunc(data, formID, recordID);
+        })
+        .fail(function (xhr, status, error) {
+          // TODO: this doesn't handle errors correctly
+        });
     } else if (refreshType == 'table') {
       dynamicforms.refreshTable(formID, recordID);
       if (deletion == true) {
@@ -400,14 +405,30 @@ dynamicforms = {
    * Insert new row after the last row or insert first row
    * @param $newRow
    */
-  insertRow:   function insertRow($newRow) {
+  insertRow:   function insertRow($newRow, formID, prevId) {
     // Insert new row after the last row or insert first row
     if ($newRow.length) {
-      var $lastRow = $("tr[data-id]").last(); // Last row before adding new record
-      if ($lastRow.length) {
-        $newRow.insertAfter($lastRow);
+      var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
+
+      var $lastRow;
+      var hasPrevId = (typeof prevId !== typeof undefined && prevId !== false && prevId != '');
+
+      if(hasPrevId){
+        if(prevId == 'None')
+          $lastRow = $('#list-' + formID + ' > tbody > tr[data-id]').first();
+        else{
+          $lastRow = $('#list-' + formID + ' > tbody > tr[data-id="' + prevId + '"]').first(); // First row of table
+        }
+      }
+      else if(!dynamicforms.isLinkNext(tbl_pagination.link_next))
+        $lastRow = $('#list-' + formID + ' > tbody > tr[data-id]').last(); // Last row before adding new record
+      if ($lastRow != undefined && $lastRow.length) {
+        if(prevId == 'None')
+          $newRow.insertBefore($lastRow);
+        else
+          $newRow.insertAfter($lastRow);
       } else {
-        $("table").find("tr[data-title]").replaceWith($newRow);
+        $('#list-' + formID + ' > tbody > tr[data-title]').replaceWith($newRow);
       }
     }
   },
@@ -418,33 +439,35 @@ dynamicforms = {
    * @param formID: id of form
    */
   refreshRow:  function refreshRow(data, formID, recordID) {
-    var tbl_pagination = dynamicforms.df_tbl_pagination.get(formID, undefined);
-
     var $rowToRefresh = null; // Row to refresh
+    var $htmlObject = (data instanceof jQuery) ? data : $(data);
 
     if (recordID) {
       var trSelector = "tr[data-id='" + recordID + "']";
-      $rowToRefresh  = $(trSelector); // Row to refresh
+      $rowToRefresh  = $('#list-' + formID + ' > tbody > ' + trSelector); // Row to refresh
+      var $editedRow = $htmlObject.find("table[id^='list-'] > tbody > " + trSelector); // Edited record from ajax returned html
     }
 
-    // Case when all records are loaded or edited record is loaded
-    if (!dynamicforms.isLinkNext(tbl_pagination.link_next) || ($rowToRefresh != null && $rowToRefresh.length)) {
-      var $htmlObject = $(data);
+    if (recordID) {
+      if ($editedRow.length) {
+        var prevId = $editedRow.attr('data-df_prev_id');
+        var hasPrevId = (typeof prevId !== typeof undefined && prevId !== false && prevId != '');
 
-      if (recordID) {
-        var $editedRow = $htmlObject.find(trSelector); // Edited record from ajax returned html
-        if ($editedRow.length) {
-          if ($rowToRefresh != null && $rowToRefresh.length)
-            $rowToRefresh.replaceWith($editedRow);
+        if ($rowToRefresh != null && $rowToRefresh.length){
+          if(hasPrevId){
+            $rowToRefresh.remove();
+            dynamicforms.insertRow($editedRow, formID, prevId);
+          }
           else
-            dynamicforms.insertRow($editedRow);
+            $rowToRefresh.replaceWith($editedRow);
         }
-      } else {
-        var $newRow = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
-        dynamicforms.insertRow($newRow);
+        else
+          dynamicforms.insertRow($editedRow, formID, prevId);
       }
+    } else {
+      var $newRow = $htmlObject.find("table").find("tr[data-id]").last(); // Added record from ajax returned html
+      dynamicforms.insertRow($newRow, formID, $newRow.attr('data-df_prev_id'));
     }
-    // else do nothing. Paginator will take care of new record when necessary
   },
 
   /**
@@ -465,7 +488,7 @@ dynamicforms = {
    * @param refreshType: how to refresh the table after the dialog is finished with editing
    * @param listId: id of table element with records
    * @param doneFunc: if specified, this function will be called on successful data send
-   * @param dType: Custom dataType
+   * @param dataType: Custom dataType
    */
   showDialog: function showDialog($dlg, refreshType, listId, doneFunc, dataType) {
     //TODO: adjust hashURL
@@ -566,7 +589,15 @@ dynamicforms = {
                                       ajax_setts: ajaxSetts
                                     })
         .done(function (dialogHTML) {
-          dynamicforms.showDialog($(dialogHTML), refreshType, listId);
+          var submitDataType = undefined;
+          var submitDoneFunc = undefined;
+          try {
+            submitDataType = params.submitParams.dataType;
+          } catch (e) {}
+          try {
+            submitDoneFunc = params.submitParams.doneFunc;
+          } catch (e) {}
+          dynamicforms.showDialog($(dialogHTML), refreshType, listId, submitDoneFunc, submitDataType);
         })
         .fail(function (xhr, status, error) {
           // TODO: this doesn't handle errors correctly
@@ -907,18 +938,75 @@ dynamicforms = {
   fieldSetValue: function fieldSetValue(field, value, select2_ajax_option_text) {
     var $field = field instanceof jQuery ? field : dynamicforms.field_helpers.get(field, '$field');
     if ($field.attr('type') == 'checkbox')
-      return $field.prop('checked', value);
+      $field.prop('checked', value);
     if ($field.data('select2')) {
       if ($field.data('select2').options.options.ajax) {
         var opt = $('<option value="' + value + '"></option>').text(select2_ajax_option_text);
         $field.append(opt);
       }
       $field.val(value);
-      $field.trigger('change');
-      return;
+      dynamicforms.setSelect2Order($field, value);
     }
     $field.val(value);
+    $field.trigger('change');
   },
+  setSelect2Order: function setSelect2Order($field, value, forceSet){
+    if(!forceSet)
+      forceSet = false;
+
+    var vals
+    if(forceSet || $field.data('preserved-order') != undefined){
+      if(value.constructor === Array)
+        vals = value;
+      else
+        vals = value.split(',');
+
+      vals     = vals.length == 1 && vals[0] == "" ? [] : vals;
+      $field.data('preserved-order', vals);
+      dynamicforms.select2_renderSelections($field);
+    }
+  },
+  select2_renderSelections: function select2_renderSelections($select2){
+    var order      = $select2.data('preserved-order') || [];
+    var $container = $select2.next('.select2-container');
+    var $tags      = $container.find('li.select2-selection__choice');
+    var $input     = $tags.last().next();
+
+    // apply tag order
+    var i;
+    var val;
+    var $el;
+    for(i = 0; i<order.length; i++){
+      val = order[i];
+      $el = $tags.filter(function(i,tag){
+        return $(tag).data('data').id === val;
+      });
+      $input.before( $el );
+    }
+  },
+
+  selectionHandler: function selectionHandler(e){
+    var $select2  = $(this);
+    var val       = e.params.data.id;
+    var order     = $select2.data('preserved-order') || [];
+    var found_index;
+
+    switch (e.type){
+      case 'select2:select':
+        found_index = order.indexOf(val);
+        if (found_index < 0 )
+          order[ order.length ] = val;
+        break;
+      case 'select2:unselect':
+        found_index = order.indexOf(val);
+        if (found_index >= 0 )
+          order.splice(found_index,1);
+        break;
+    }
+    $select2.data('preserved-order', order); // store it for later
+    dynamicforms.select2_renderSelections($select2);
+  },
+
 
   /**
    * "Standard" function for setting an input's visibility. Any special cases will be handled in custom functions
@@ -1063,7 +1151,7 @@ dynamicforms = {
         if (data.length > 0) {
           table.append(data);
           tbl_pagination.trigger_element = data[0];
-          if (table.find("tr[data-title=NoData]").length > 0) {
+          if (table.find("tr").length > 1 && table.find("tr[data-title=NoData]").length > 0) {
             table.find("tr[data-title=NoData]").remove()
           }
         }
@@ -1154,16 +1242,31 @@ dynamicforms = {
     return link_next != null && link_next != undefined && link_next != '' && link_next != "None";
   },
 
-  select2Opening: function select2Opening(evt, $select2, fnc) {
+  select2Opening: function select2Opening(evt, $select2, fnc, params) {
     if ($select2.data('unselecting')) {
       $select2.removeData('unselecting');
       evt.preventDefault();
-    } else if (fnc != null)
-      fnc(evt, $select2);
+    } else if (fnc != null){
+      if(params != undefined)
+        fnc(evt, $select2, params);
+      else
+        fnc(evt, $select2);
+    }
+
+
   },
 
   select2Unselecting: function select2Unselecting($select2) {
     $select2.data('unselecting', true);
+  },
+
+  select2UpdateConfiguration: function select2UpdateConfiguration($select2, conf) {
+    var sel2Conf = $select2.data('sel2Conf');
+    Object.keys(conf).forEach(function(key) {
+      sel2Conf[key] = conf[key];
+    });
+    $select2.select2("destroy").select2(sel2Conf);
+    $select2.data('sel2Conf', sel2Conf);
   }
 
 };
