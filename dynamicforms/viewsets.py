@@ -362,16 +362,20 @@ class ModelViewSet(NewMixin, PutPostMixin, DeleteMixin, ReadOnlyMixin, CreateMix
 
         return queryset.all()
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, query_params=None):
         """
         Applies filters for all fields
 
         :param queryset: Queryset
+        :param query_params: Custom query_params if needed
         :return: queryset with filters applied
         """
         res = queryset
-        for fld, val in self.request.query_params.items():
-            res = self.filter_queryset_field(res, fld, val)
+        if self.request:
+            if query_params is None:
+                query_params = self.request.query_params
+            for fld, val in query_params.items():
+                res = self.filter_queryset_field(res, fld, val)
         return res
 
     # noinspection PyMethodMayBeStatic
@@ -438,15 +442,18 @@ class ModelViewSet(NewMixin, PutPostMixin, DeleteMixin, ReadOnlyMixin, CreateMix
 
         return MyCursorPagination
 
+    def handle_create_validation_exception(self, e, request, *args, **kwargs):
+        instance = self.new_object()
+        ser = self.get_serializer(instance, data=request.data, partial=False)
+        ser.is_valid(raise_exception=False)
+        e.detail.serializer = ser
+        raise e
+
     def create(self, request, *args, **kwargs):
         try:
             return super().create(request, *args, **kwargs)
         except ValidationError as e:
-            instance = self.new_object()
-            ser = self.get_serializer(instance, data=request.data, partial=False)
-            ser.is_valid(raise_exception=False)
-            e.detail.serializer = ser
-            raise e
+            self.handle_create_validation_exception(e, request, *args, **kwargs)
 
 
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):

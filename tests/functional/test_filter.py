@@ -3,14 +3,16 @@ from datetime import timedelta
 
 from django.urls import reverse
 from django.utils import timezone
+from selenium.webdriver.common.keys import Keys
 
-from .selenium_test_case import WaitingStaticLiveServerTestCase
+from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
 class FilterFormTest(WaitingStaticLiveServerTestCase):
 
     # noinspection PyMethodMayBeStatic
     def wait_data_loading(self, loading_row):
+        time.sleep(0.5)
         # noinspection PyTypeChecker
         while dict([tuple(y.strip() for y in x.split(':'))
                     for x in loading_row.get_attribute('style').split(';') if len(x)]).get('display', '') != 'none':
@@ -34,8 +36,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertIsNotNone(filter_btn, 'Page should contain filter button')
 
         filter_row = self.browser.find_elements_by_class_name('dynamicforms-filterrow')
-        self.assertTrue(len(filter_row) > 0,
-                        'Page should contain filter')
+        self.assertTrue(len(filter_row) > 0, 'Page should contain filter')
         filter_row = filter_row[0]
         loading_row = self.browser.find_element_by_css_selector('tfoot tr[id*="loading-"')
 
@@ -55,11 +56,22 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("1"), "Row 1 shouldn\'t be shown")
         char_field.clear()
 
-        tomorrow = (timezone.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-        datetime_field.send_keys(tomorrow)
+        from examples.models import Filter
+        date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
+        tomorrow = date_field.datetime_field.strftime("%Y-%m-%d")
+        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+            datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y" if self.github_actions else "%d%m%Y"))
+            datetime_field.send_keys(Keys.TAB)
+            datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
+            if self.github_actions:
+                datetime_field.send_keys("AM")
+        else:
+            datetime_field.send_keys(tomorrow)
+
         filter_btn.click()
         self.wait_data_loading(loading_row)
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
+
         self.assertTrue(data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').
                         text.startswith(tomorrow), 'First row doesn\'t have date %s' % tomorrow)
         self.assertTrue(data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').
@@ -89,6 +101,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.select_option_for_select2(filter_row, int_choices_field.get_attribute('id'), text="--------")
 
         bool_field.click()
+        time.sleep(0.2)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         self.assertTrue(self.check_data("1"), "No row 1")
@@ -101,6 +114,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("20"), "Row 20 shouldn\'t be shown")
 
         bool_field.click()
+        time.sleep(0.2)
         filter_btn.click()
         self.wait_data_loading(loading_row)
         self.assertTrue(self.check_data("6"), "No row 6")

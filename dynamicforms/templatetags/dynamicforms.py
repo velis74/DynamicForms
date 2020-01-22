@@ -285,3 +285,9 @@ def dict_item_default(context, var, d, k, default):
 @register.filter
 def class_name(value):
     return value.__class__.__name__
+
+
+@register.filter
+def in_list(value, the_list):
+    value = str(value)
+    return value in the_list.split(',')

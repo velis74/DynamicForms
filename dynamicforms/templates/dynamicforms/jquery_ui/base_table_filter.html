@@ -3,7 +3,7 @@
 <tr class="dynamicforms-filterrow" id="{{ form.uuid }}">
   {% for column in form %}
     {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-      <th {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}style="visibility: hidden" {% endif %}data-name="{{ column.field_name }}">
+      <th {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}style="display: none" {% elif column.style.no_filter%}style="visibility: hidden" {% endif %}data-name="{{ column.field_name }}">
       {% render_field column style=style %}
     {% endif %}{% endfor %}
 </tr>
