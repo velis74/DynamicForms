@@ -40,13 +40,11 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
         FormButtonAction(
             btn_type=FormButtonTypes.CUSTOM, label='Save changes', name='save', positions=['dialog'],
             button_is_primary=True,
-            action_js="var $dlg = $('#dialog-{self.serializer.uuid}');"
-                      "var $form = $('#{self.serializer.uuid}');"
-                      "dynamicforms.submitFormWithConfirmation("
-                      "'{{% url url_reverse|add:'-list' %}}', "
-                      "$dlg, $form);"),
+            action_js="var $dlg = $('#dialog-{{serializer.uuid}}');"
+                      "var $form = $('#{{serializer.uuid}}');"
+                      "dynamicforms.submitFormWithConfirmation('{% url url_reverse|add:'-list' %}', $dlg, $form);"),
         TableAction(TablePosition.HEADER, '+ Add new action', title='Add new action', name='add',
-                    action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}',"
+                    action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}', "
                               "'record', __TABLEID__);"),
         TableAction(TablePosition.ROW_CLICK, 'Edit', title='Edit action', name='edit',
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' "
@@ -56,10 +54,10 @@ class ConfirmActionSerializer(serializers.ModelSerializer):
             btn_type=FormButtonTypes.CUSTOM, label='Save changes', name='submit-confirm',
             positions=['dialog'],
             button_is_primary=True,
-            action_js="var $dlg = $('#dialog-{self.serializer.uuid}');"
-                      "var $form = $('#{self.serializer.uuid}');"
+            action_js="var $dlg = $('#dialog-{{serializer.uuid}}');"
+                      "var $form = $('#{{serializer.uuid}}');"
                       "dynamicforms.submitFormWithConfirmation("
-                      "(('{{% url 'confirm-action-detail' pk='__ROWID__' %}}').replace("
+                      "(('{% url 'confirm-action-detail' pk='__ROWID__' %}').replace("
                       "'__ROWID__', $form.find('input[name=\"id\"]').val())), $dlg, $form);"),
         TableAction(TablePosition.ROW_END, 'View readonly details', title='View readonly details',
                     name='view-details',
