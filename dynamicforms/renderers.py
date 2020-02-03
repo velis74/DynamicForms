@@ -1,9 +1,12 @@
+import copy
+
 import six
 from django.template import loader
 from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 from rest_framework.serializers import HiddenField, ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
+from dynamicforms.fields import BooleanField
 from .settings import DYNAMICFORMS
 
 
@@ -89,6 +92,13 @@ class HTMLFormRenderer(HTMLFormRenderer):
         # noinspection PyProtectedMember
         if isinstance(field._field, HiddenField):
             return ''
+
+        if isinstance(field._field, BooleanField):
+            # allow also null to have max values available for determening the right value to render
+            allow_null = copy.copy(field._field.allow_null)
+            field._field.allow_null = True
+            field.value = field._field.to_internal_value(field.value)
+            field._field.allow_null = allow_null
 
         style = dict(self.default_style[field])
         style.update(field.style)
