@@ -439,6 +439,26 @@ class ModelViewSet(NewMixin, PutPostMixin, DeleteMixin, ReadOnlyMixin, CreateMix
         class MyCursorPagination(CursorPagination):
             ordering = ordr
             page_size = ps
+            df_request = None
+
+            def paginate_queryset(self, queryset, request, view=None):
+                self.df_request = request
+                return super().paginate_queryset(queryset, request, view=None)
+
+            def encode_cursor(self, cursor):
+                # Following code is needed when we have https proxy server that redirects requests to http servers.
+                # In that case original code generates cursor links that have http scheme.
+                # So here I check REFERER header to find out which scheme is originally declared.
+                # And use that one in cursor link.
+
+                cursor_url = super().encode_cursor(cursor).split(':', 1)
+                req_url = self.df_request.META.get('HTTP_REFERER', None)
+                if req_url:
+                    req_url = req_url.split(':', 1)
+                    if cursor_url[0] != req_url[0] and req_url[0].lower() in ('http', 'https'):
+                        cursor_url[0] = req_url[0]
+                cursor_url = ':'.join(cursor_url)
+                return cursor_url
 
         return MyCursorPagination
 
