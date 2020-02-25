@@ -2,8 +2,10 @@
 
 from django.db import migrations, models
 
+from dynamicforms.dynamicforms_migration import DynamicformsMigration
 
-class Migration(migrations.Migration):
+
+class Migration(DynamicformsMigration):
 
     dependencies = [
         ('examples', '0001_initial'),

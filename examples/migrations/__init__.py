@@ -19,7 +19,7 @@ def add_filter(apps, schema_editor):
                               datetime_field=date_now,
                               int_field=((i - 1) % 10) + 1,
                               int_choice_field=((i - 1) % 4),
-                              bool_field=((i - 1) % 10) > 4
+                              bool_field=((i - 1) % 10) > 4,
                               )
 
 

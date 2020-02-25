@@ -5,10 +5,10 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.db import migrations, models
 
-from examples.migrations import add_filter, add_page_load, add_relation
+from dynamicforms.dynamicforms_migration import DynamicformsMigration
 
 
-class Migration(migrations.Migration):
+class Migration(DynamicformsMigration):
 
     initial = True
 
@@ -127,8 +127,4 @@ class Migration(migrations.Migration):
             name='slug_related_field',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='slug', to='examples.Relation'),
         ),
-        migrations.RunPython(add_relation),
-        migrations.RunPython(add_filter),
-        migrations.RunPython(add_page_load),
-
     ]
