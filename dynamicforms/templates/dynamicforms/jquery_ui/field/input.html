@@ -2,7 +2,7 @@
 {% block field_input %}
   <input id="{{ field.uuid }}"
          name="{{ field.name }}"
-         class="{% if style.input_type != "file" %}text ui-widget-content ui-corner-all dynamicforms-inputs{% else %} form-control-file{% endif %}{% if field.errors %} ui-state-error{% endif %}"
+         class="{% if style.input_type != "file" %}text ui-widget ui-corner-all dynamicforms-inputs{% else %} form-control-file{% endif %}{% if field.errors %} ui-state-error{% endif %}"
          type="{{ style.input_type }}"
          {% if style.input_type in "datetime-local,time" %}step="{% if field.time_step %}{{ field.time_step }}{% else %}1{% endif %}"{% endif %}
          {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
