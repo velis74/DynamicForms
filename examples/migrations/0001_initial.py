@@ -5,10 +5,8 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.db import migrations, models
 
-from dynamicforms.dynamicforms_migration import DynamicformsMigration
 
-
-class Migration(DynamicformsMigration):
+class Migration(migrations.Migration):
 
     initial = True
 
