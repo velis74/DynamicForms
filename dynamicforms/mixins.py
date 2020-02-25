@@ -94,6 +94,14 @@ class RenderMixin(object):
             return drftt.format_value(choices[value])
         return drftt.format_value(value)
 
+    def validate_empty_values(self, data):
+        res = super().validate_empty_values(data)
+        # This is to fix a problem with calculated fields which was only solved in DRF 3.10.
+        # Forces validation and inclusion of the field into validated data. See comment in original function.
+        if res == (True, None) and data is None and self.source == '*':
+            return (False, None)
+        return res
+
 
 class ActionMixin(object):
     """
