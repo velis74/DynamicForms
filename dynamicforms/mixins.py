@@ -12,6 +12,7 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
 from .action import Actions
+from .settings import DYNAMICFORMS
 
 
 class DisplayMode(IntEnum):
@@ -92,6 +93,9 @@ class RenderMixin(object):
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
+        if value is None:
+            return DYNAMICFORMS.null_text_table
+
         return drftt.format_value(value)
 
 
