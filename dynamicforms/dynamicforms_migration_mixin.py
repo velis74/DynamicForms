@@ -1,8 +1,7 @@
 import random
-
 import django.utils.timezone
 
-from examples.models import Filter, PageLoad, Relation
+from examples.models import Relation, Filter, PageLoad
 
 
 def add_relation(apps, schema_editor):
