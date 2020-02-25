@@ -15,6 +15,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from dynamicforms.dynamicforms_migration_mixin import add_filter, add_page_load, add_relation
 from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
@@ -82,15 +83,12 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # migrations initialisation
         from examples.models import Filter, PageLoad, Relation
         if Filter.objects.count() == 0:
-            from examples.migrations import add_filter
             add_filter(None, None)
 
         if PageLoad.objects.count() == 0:
-            from examples.migrations import add_page_load
             add_page_load(None, None)
 
         if Relation.objects.count() == 0:
-            from examples.migrations import add_relation
             add_relation(None, None)
 
         self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
