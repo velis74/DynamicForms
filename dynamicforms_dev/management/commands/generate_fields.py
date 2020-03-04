@@ -16,8 +16,7 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import RenderMixin, ActionMixin, NullChoiceMixin, \
-            RelatedFieldAJAXMixin
+        from dynamicforms.mixins import RenderMixin, ActionMixin, NullChoiceMixin, RelatedFieldAJAXMixin
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -79,7 +78,7 @@ class Command(BaseCommand):
                         for parm in inspect.signature(cls.__init__).parameters.values():
 
                             if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
-                                # BooleanField and NullBooleanFiel don't like this one
+                                # BooleanField and NullBooleanField don't like this one
                                 continue
 
                             parm_str = parm.name
@@ -201,6 +200,8 @@ class Command(BaseCommand):
                                     "attributes instead.',", file=output)
                     print(indt(22) + "DeprecationWarning, stacklevel=2)", file=output)
                     print(indt(8) + "display = DisplayMode.HIDDEN  # NOQA", file=output)
+                elif issubclass(field, (fields.DateField, fields.TimeField)):
+                    print(indt(8) + "self.time_step = kw.pop('time_step', None)", file=output)
 
                 print(indt(8) + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', "
                 f"'kw'))}}", file=output)
