@@ -38,9 +38,9 @@ jobs:
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
 
-      - name: 'Run Tox py-django{{ matrix.django }}-drf{{ matrix.drf }}'
-        run: 'tox -e py-django{{ matrix.django }}-drf{{ matrix.drf }}'
-        continue-on-error: {{ matrix.drf }} == 'drftip'
+      - name: Run Tox py-django${{ matrix.django }}-drf${{ matrix.drf }}
+        run: tox -e py-django${{ matrix.django }}-drf${{ matrix.drf }}
+        continue-on-error: ${{ matrix.drf }} == 'drftip'
 
 
   ubuntu_chrome:
