@@ -2,9 +2,9 @@ import uuid as uuid_module
 from enum import IntEnum
 from typing import Hashable
 
+from rest_framework.fields import Field as DrfField
 from rest_framework.relations import ManyRelatedField, RelatedField
 from rest_framework.templatetags import rest_framework as drftt
-from rest_framework.fields import Field as DrfField
 
 from dynamicforms.settings import DYNAMICFORMS
 
