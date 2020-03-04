@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.5, 3.6, 3.7, 3.8]
+        python: 3.7
       fail-fast: false
 
     env:
@@ -100,24 +100,30 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
+
       - name: Run Tox py-django110-drf36
         run: tox -e py-django110-drf36
+        continue-on-error: true
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
         run: tox -e py-django110-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf37
         if: success() || failure()
         run: tox -e py-django1tip-drf37
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf38
         if: success() || failure()
         run: tox -e py-django1tip-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf39
         if: success() || failure()
         run: tox -e py-django1tip-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drftip
         if: success() || failure()
@@ -127,18 +133,22 @@ jobs:
       - name: Run Tox py-django20-drf39
         if: success() || failure()
         run: tox -e py-django20-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django21-drf39
         if: success() || failure()
         run: tox -e py-django21-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf39
         if: success() || failure()
         run: tox -e py-django22-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf38
         if: success() || failure()
         run: tox -e py-django22-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django22-drftip
         if: success() || failure()
@@ -154,7 +164,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python: [3.5, 3.6, 3.7, 3.8]
+        python: 3.7
       fail-fast: false
 
     # Da bodo delali fukcionalni testi v Safariju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/91
@@ -171,22 +181,27 @@ jobs:
         run: pip install tox
       - name: Run Tox py-django110-drf36
         run: tox -e py-django110-drf36
+        continue-on-error: true
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
         run: tox -e py-django110-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf37
         if: success() || failure()
         run: tox -e py-django1tip-drf37
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf38
         if: success() || failure()
         run: tox -e py-django1tip-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf39
         if: success() || failure()
         run: tox -e py-django1tip-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drftip
         if: success() || failure()
@@ -196,18 +211,22 @@ jobs:
       - name: Run Tox py-django20-drf39
         if: success() || failure()
         run: tox -e py-django20-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django21-drf39
         if: success() || failure()
         run: tox -e py-django21-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf39
         if: success() || failure()
         run: tox -e py-django22-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf38
         if: success() || failure()
         run: tox -e py-django22-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django22-drftip
         if: success() || failure()
@@ -223,7 +242,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: [3.5, 3.6, 3.7, 3.8]
+        python: 3.7
       fail-fast: false
 
     # Da bodo delali fukcionalni testi v Edge-ju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/99
@@ -240,22 +259,27 @@ jobs:
         run: pip install tox
       - name: Run Tox py-django110-drf36
         run: tox -e py-django110-drf36
+        continue-on-error: true
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
         run: tox -e py-django110-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf37
         if: success() || failure()
         run: tox -e py-django1tip-drf37
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf38
         if: success() || failure()
         run: tox -e py-django1tip-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drf39
         if: success() || failure()
         run: tox -e py-django1tip-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django1tip-drftip
         if: success() || failure()
@@ -265,18 +289,22 @@ jobs:
       - name: Run Tox py-django20-drf39
         if: success() || failure()
         run: tox -e py-django20-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django21-drf39
         if: success() || failure()
         run: tox -e py-django21-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf39
         if: success() || failure()
         run: tox -e py-django22-drf39
+        continue-on-error: true
 
       - name: Run Tox py-django22-drf38
         if: success() || failure()
         run: tox -e py-django22-drf38
+        continue-on-error: true
 
       - name: Run Tox py-django22-drftip
         if: success() || failure()
