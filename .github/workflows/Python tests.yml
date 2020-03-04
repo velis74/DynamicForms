@@ -40,7 +40,6 @@ jobs:
 
       - name: Run Tox py-django{{ matrix.django }}-drf{{ matrix.drf }}
         run: tox -e py-django{{ matrix.django }}-drf{{ matrix.drf }}
-        if: success() || failure()
         continue-on-error: {{ matrix.drf }} == 'drftip'
 
 
