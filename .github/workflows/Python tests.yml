@@ -12,8 +12,11 @@ jobs:
         django: [110, 1tip, 20, 21, 22, 30, tip]
         drf: [38, 39, 310, tip]
         include:
-          - { django: 110, drf: 3.6 }
-          - { django: 1tip, drf: 3.7 }
+          - django: 110
+            drf: 36
+          - django: 1tip
+            drf: 37
+
       fail-fast: false
 
     env:
