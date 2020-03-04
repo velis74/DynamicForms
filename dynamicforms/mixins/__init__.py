@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .action import ActionMixin
 from .implicit_natural_date import DateFieldMixin, DateTimeFieldMixin, TimeFieldMixin
 from .render import DisplayMode, RenderMixin
