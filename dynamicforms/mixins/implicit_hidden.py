@@ -1,4 +1,4 @@
-from .render import RenderMixin, DisplayMode
+from .render import DisplayMode, RenderMixin
 
 
 class HiddenFieldMixin(RenderMixin):
