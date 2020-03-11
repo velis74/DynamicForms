@@ -32,9 +32,6 @@ jobs:
           chmod +x geckodriver
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
-      - name: Run Tox py-django110-drf36
-        run: tox -e py-django110-drf36
-
       - name: Run Tox py-django110-drf39
         if: success() || failure()
         run: tox -e py-django110-drf39
@@ -100,9 +97,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
-      - name: Run Tox py-django110-drf36
-        run: tox -e py-django110-drf36
-
       - name: Run Tox py-django110-drf39
         if: success() || failure()
         run: tox -e py-django110-drf39
@@ -169,8 +163,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
-      - name: Run Tox py-django110-drf36
-        run: tox -e py-django110-drf36
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
@@ -238,8 +230,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
-      - name: Run Tox py-django110-drf36
-        run: tox -e py-django110-drf36
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
