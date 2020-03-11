@@ -1,7 +1,7 @@
 six
 pytz
 coreapi>=1.32
-django>=1.10
-djangorestframework>=3.4
+django>=1.10,<=2.2
+djangorestframework>=3.6
 pillow
 typing; python_version < '3.5'
