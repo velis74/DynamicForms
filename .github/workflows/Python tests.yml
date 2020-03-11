@@ -74,6 +74,21 @@ jobs:
         continue-on-error: true
         run: tox -e py-django22-drftip
 
+      - name: Run Tox py-django30-drf310
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf310
+
+      - name: Run Tox py-django30-drf311
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf311
+
+      - name: Run Tox py-django30-drftip
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drftip
+
       - name: Run Tox py-djangotip-drftip
         if: success() || failure()
         continue-on-error: true
@@ -138,6 +153,21 @@ jobs:
         if: success() || failure()
         continue-on-error: true
         run: tox -e py-django22-drftip
+
+      - name: Run Tox py-django30-drf310
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf310
+
+      - name: Run Tox py-django30-drf311
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf311
+
+      - name: Run Tox py-django30-drftip
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: success() || failure()
@@ -206,6 +236,21 @@ jobs:
         continue-on-error: true
         run: tox -e py-django22-drftip
 
+      - name: Run Tox py-django30-drf310
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf310
+
+      - name: Run Tox py-django30-drf311
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf311
+
+      - name: Run Tox py-django30-drftip
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drftip
+
       - name: Run Tox py-djangotip-drftip
         if: success() || failure()
         continue-on-error: true
@@ -272,6 +317,21 @@ jobs:
         if: success() || failure()
         continue-on-error: true
         run: tox -e py-django22-drftip
+
+      - name: Run Tox py-django30-drf310
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf310
+
+      - name: Run Tox py-django30-drf311
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drf311
+
+      - name: Run Tox py-django30-drftip
+        if: success() || failure()
+        continue-on-error: true
+        run: tox -e py-django30-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: success() || failure()
