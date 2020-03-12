@@ -187,18 +187,22 @@ jobs:
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django110-drf39
 
       - name: Run Tox py-django1tip-drf37
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf37
 
       - name: Run Tox py-django1tip-drf38
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf38
 
       - name: Run Tox py-django1tip-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf39
 
       - name: Run Tox py-django1tip-drftip
@@ -208,18 +212,22 @@ jobs:
 
       - name: Run Tox py-django20-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django20-drf39
 
       - name: Run Tox py-django21-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django21-drf39
 
       - name: Run Tox py-django22-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf39
 
       - name: Run Tox py-django22-drf38
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf38
 
       - name: Run Tox py-django22-drftip
@@ -229,18 +237,22 @@ jobs:
 
       - name: Run Tox py-django30-drf310
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drf310
 
       - name: Run Tox py-django30-drf311
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drf311
 
       - name: Run Tox py-django30-drftip
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-djangotip-drftip
 
   win_edge:
@@ -265,18 +277,22 @@ jobs:
 
       - name: Run Tox py-django110-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django110-drf39
 
       - name: Run Tox py-django1tip-drf37
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf37
 
       - name: Run Tox py-django1tip-drf38
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf38
 
       - name: Run Tox py-django1tip-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django1tip-drf39
 
       - name: Run Tox py-django1tip-drftip
@@ -286,18 +302,22 @@ jobs:
 
       - name: Run Tox py-django20-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django20-drf39
 
       - name: Run Tox py-django21-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django21-drf39
 
       - name: Run Tox py-django22-drf39
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf39
 
       - name: Run Tox py-django22-drf38
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf38
 
       - name: Run Tox py-django22-drftip
@@ -307,16 +327,20 @@ jobs:
 
       - name: Run Tox py-django30-drf310
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drf310
 
       - name: Run Tox py-django30-drf311
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drf311
 
       - name: Run Tox py-django30-drftip
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-django30-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: matrix.python != 3.5 && (success() || failure())
+        continue-on-error: true
         run: tox -e py-djangotip-drftip
