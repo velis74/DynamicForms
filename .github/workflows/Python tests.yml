@@ -82,7 +82,7 @@ jobs:
 
       - name: Run Tox py-django30-drf311
         if: ${{ matrix.python }} != 3.5 && (success() || failure())
-        run: tox -e py-django30-drf311
+        run: echo "${{ matrix.python }}"  # tox -e py-django30-drf311
 
 #      - name: Run Tox py-django30-drftip
 #        if: success() || failure()
