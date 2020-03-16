@@ -371,3 +371,4 @@ jobs:
         if: matrix.python != 3.5 && (success() || failure())
         continue-on-error: true
         run: tox -e py-djangotip-drftip
+
