@@ -372,4 +372,3 @@ jobs:
         continue-on-error: true
         run: tox -e py-djangotip-drftip
 
-
