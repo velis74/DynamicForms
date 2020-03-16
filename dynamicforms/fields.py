@@ -4,6 +4,7 @@ from uuid import UUID
 
 import rest_framework
 from rest_framework import fields, relations
+from rest_framework.exceptions import ValidationError
 
 from .action import Actions
 from .mixins import (
@@ -14,6 +15,7 @@ from .settings import version_check
 
 
 class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
+    NULL_VALUES = {'null', 'Null', 'NULL', '', None}
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -22,6 +24,23 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        try:
+            parent_value = super().to_internal_value(data)
+            return parent_value
+        except TypeError:  # Input is an unhashable type
+            pass
+        except ValidationError:
+            if data in self.NULL_VALUES and self.allow_null:
+                return None
+        self.fail('invalid', input=data)
+
+    def to_representation(self, value):
+        parent_value = super().to_representation(value)
+        if value in self.NULL_VALUES and self.allow_null:
+            return None
+        return parent_value
 
 
 class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
