@@ -290,3 +290,11 @@ def class_name(value):
 def in_list(value, the_list):
     value = str(value)
     return value in the_list.split(',')
+
+
+@register.filter
+def startswith(text, starts):
+    try:
+        return text.startswith(starts)
+    except:
+        return False
