@@ -12,6 +12,7 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
 from .action import Actions
+from .settings import DYNAMICFORMS
 
 
 class DisplayMode(IntEnum):
@@ -92,7 +93,18 @@ class RenderMixin(object):
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
             return drftt.format_value(choices[value])
+        if value is None:
+            return DYNAMICFORMS.null_text_table
+
         return drftt.format_value(value)
+
+    def validate_empty_values(self, data):
+        res = super().validate_empty_values(data)
+        # This is to fix a problem with calculated fields which was only solved in DRF 3.10.
+        # Forces validation and inclusion of the field into validated data. See comment in original function.
+        if res == (True, None) and data is None and self.source == '*':
+            return (False, None)
+        return res
 
 
 class ActionMixin(object):

@@ -8,6 +8,7 @@ from django.db import models
 from django.http import Http404
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
@@ -188,10 +189,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         if self.paginator is None:
             return None
         # determine request format and handle pagination for json format
-        request_format: str = self.kwargs.get(
-            'format', '') or getattr(self, 'format_kwarg', '') or self.request.parser_context.get(
-            'kwargs', {}).get('format', '')
-        if request_format == 'json' and not BooleanField().to_internal_value(
+        if isinstance(self.request.accepted_renderer, JSONRenderer) and not BooleanField().to_internal_value(
                 self.request.META.get('HTTP_X_PAGINATION', self.request.GET.get('x_df_pagination', False))):
             return None
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
@@ -289,9 +287,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 # In that case original code generates cursor links that have http scheme.
                 # So here I check REFERER header to find out which scheme is originally declared.
                 # And use that one in cursor link.
-                request_format: str = self.df_request.parser_context.get(
-                    'kwargs', {}).get('format', '') if getattr(self, 'df_request', None) and getattr(
-                    self.df_request, 'parser_context', None) else ''
+                request = getattr(self, 'df_request', None)
                 cursor_url = super().encode_cursor(cursor).split(':', 1)
                 req_url = self.df_request.META.get('HTTP_REFERER', None)
                 if req_url:
@@ -299,7 +295,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                     if cursor_url[0] != req_url[0] and req_url[0].lower() in ('http', 'https'):
                         cursor_url[0] = req_url[0]
                 cursor_url = ':'.join(cursor_url)
-                if request_format == 'json':
+                if request and isinstance(request.accepted_renderer, JSONRenderer):
                     cursor_url += '&x_df_pagination=1'
                 return cursor_url
 

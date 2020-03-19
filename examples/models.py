@@ -79,6 +79,7 @@ class Filter(models.Model):
         (2, 'Choice 3'),
         (3, 'Choice 4'),), help_text='Integer field with choices', verbose_name='Integer field with choices')
     bool_field = models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')
+    name = models.CharField(max_length=20, help_text='Name field', verbose_name='Name field', null=True, blank=True)
 
 
 class BasicFields(models.Model):

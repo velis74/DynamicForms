@@ -41,6 +41,8 @@ class ActionBase(object):
         :param encode: True: replaces brackets with special string, False: the other way around
         :return:
         """
+        if not string:
+            return ''
         replaces = {'{': '´|curl_brack_start|`', '}': '´|curl_brack_end|`'}
         if not encode:
             replaces = dict([(value, key) for key, value in replaces.items()])
