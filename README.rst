@@ -1,9 +1,7 @@
 What is DynamicForms?
 =====================
 
-DynamicForms is a library that eliminates HTML form boilerplate by providing all the relevant functionality. Instead
-of having to program tables, dialog, data forms, DynamicForms already provides you with the functionality - all you have
-to do is declare a few extra properties to your DRF Serializers and ViewSets.
+DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders (and anything else DRF supports) giving you free choice of how to implement your project. 
 
 It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
@@ -25,6 +23,7 @@ Why DynamicForms
    * Support for fetching "new" records, both in JSON or in HTML
    * Render to HTML, dialog html or from your own template
    * Render form (embedded or dialog) or table, depending on situation
+   * Dynamically display & hide fields based on other fields' values
    * Easily add actions and place the buttons to execute them anywhere you like
 
 * Clear separation of list & dialog templates
@@ -34,7 +33,7 @@ Why DynamicForms
 * Custom templates whenever & wherever you want them
 * Render to full html or work with dialogs within same page or both at the same time
 * Each form and field have a unique HTML id for easy finding & manipulation
-* Bootstrap 3 & 4 templates, jQuery UI coming soon, easy to make your own or enhance existing
+* Bootstrap 3 & 4 and jQuery UI templates, easy to make your own or enhance existing
 * Support for form validation, will show errors even if they are not tied to a field
 * Convenient JS functions for easier action scripting
 * Progress dialog for long lasting ajax operations
