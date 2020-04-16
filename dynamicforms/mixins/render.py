@@ -54,6 +54,42 @@ class RenderMixin(object):
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
 
+
+    @property
+    def is_rendering_to_list(self):
+        """
+        reports whether we are currently rendering to table or to single record
+        :return:
+        """
+        try:
+            # noinspection PyUnresolvedReferences
+            if self.parent.parent:
+                return True
+        except:
+            pass
+        return False
+
+    @property
+    def is_rendering_to_html(self):
+        try:
+            # noinspection PyUnresolvedReferences
+            return self.context['format'] == 'html'
+        except:
+            pass
+        return False
+
+    # noinspection PyUnresolvedReferences
+    def to_representation(self, value):
+        """
+        Overrides DRF Field's to_representation.
+        Note that this is also called for the entire record as well as the serializer also is a Field descendant
+        :param value: value to serialize
+        :return: serialized value
+        """
+        if self.is_rendering_to_list and self.is_rendering_to_html:
+            return self.render_to_table(value, self.parent.instance)
+        return super().to_representation(value)
+
     def set_display(self, value):
         self.display_form = self.display_table = value
 
@@ -70,13 +106,7 @@ class RenderMixin(object):
         """
         get_queryset = getattr(self, 'get_queryset', None)
         if isinstance(self, RelatedField) or get_queryset:
-            # shortcut for getting display value for table without actually getting the entire table into choices
-            qs = get_queryset()
-            try:
-                qs = qs.filter(pk=value)
-                choices = {self.to_representation(item): self.display_value(item) for item in qs}
-            except:
-                choices = getattr(self, 'choices', {})
+            return self.display_value(value)
         elif isinstance(self, ManyRelatedField):
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
             cr = self.child_relation

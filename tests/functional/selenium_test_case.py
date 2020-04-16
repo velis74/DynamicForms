@@ -169,7 +169,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 element = self.browser.find_element_by_id(element_id)
                 self.assertIsNotNone(element)
                 return
@@ -181,7 +181,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 element = None
                 for el in self.browser.find_elements_by_class_name('modal'):
                     if el.is_displayed():
@@ -216,7 +216,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
@@ -227,7 +227,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                time.sleep(0.05)
+                time.sleep(0.01)
                 alert = self.browser.switch_to.alert
                 break
             except NoAlertPresentException:
@@ -256,7 +256,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             self.assertEqual(field.get_attribute('type'), fld_type)
 
     def get_table_body(self, whole_table=False):
-        time.sleep(0.1)
+        time.sleep(0.01)
         try:
             body = self.browser.find_element_by_class_name('card-body')
         except NoSuchElementException:
