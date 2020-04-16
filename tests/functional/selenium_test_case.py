@@ -256,16 +256,19 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             self.assertEqual(field.get_attribute('type'), fld_type)
 
     def get_table_body(self, whole_table=False):
-        time.sleep(0.01)
-        try:
-            body = self.browser.find_element_by_class_name('card-body')
-        except NoSuchElementException:
-            try:
-                # Bootstrap 3
-                body = self.browser.find_element_by_class_name('panel-body')
-            except NoSuchElementException:
-                # jQueryUI
-                body = self.browser.find_element_by_class_name('ui-accordion-content')
+        start_time = time.time()
+        body = None
+        while True:
+            for cls in ['card-body', 'panel-body', 'ui-accordion-content']:
+                try:
+                    body = self.browser.find_element_by_class_name('card-body')
+                    if body:
+                        break
+                except NoSuchElementException:
+                    self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table to appear')
+                    time.sleep(0.01)
+            if body:
+                break
 
         table = body.find_element_by_tag_name('table')
         if whole_table:
