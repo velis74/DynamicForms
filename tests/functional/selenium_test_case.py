@@ -255,13 +255,13 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         else:
             self.assertEqual(field.get_attribute('type'), fld_type)
 
-    def get_table_body(self, whole_table=False):
+    def get_table_body(self, whole_table=False, expected_rows: int = None):
         start_time = time.time()
         body = None
         while True:
             for cls in ['card-body', 'panel-body', 'ui-accordion-content']:
                 try:
-                    body = self.browser.find_element_by_class_name('card-body')
+                    body = self.browser.find_element_by_class_name(cls)
                     if body:
                         break
                 except NoSuchElementException:
@@ -274,8 +274,16 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         if whole_table:
             return table
 
-        tbody = table.find_element_by_tag_name('tbody')
-        return tbody.find_elements_by_tag_name('tr')
+        while True:
+            tbody = table.find_element_by_tag_name('tbody')
+            rows = tbody.find_elements_by_tag_name('tr')
+            if expected_rows is not None and len(rows) != expected_rows:
+                self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')
+                time.sleep(0.01)
+                continue
+            else:
+                break
+        return rows
 
     def select_option_for_select2(self, driver, element_id, text=None):
         element = driver.find_element_by_xpath("//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
