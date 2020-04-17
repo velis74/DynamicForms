@@ -121,6 +121,7 @@ class RenderMixin(object):
             return self.display_value(value)
         elif isinstance(self, ManyRelatedField):
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
+            print('WARNING/TODO: ManyRelatedField lookup wasn\'t fixed with the rest of the code for lack of examples')
             cr = self.child_relation
             return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         else:
