@@ -8,6 +8,8 @@ from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import ActionMixin, DisplayMode, RenderMixin
 from .struct import StructDefault
+from collections import OrderedDict
+from rest_framework.fields import SkipField
 
 
 class DynamicFormsSerializer(RenderMixin, ActionMixin):
@@ -106,6 +108,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         Returns those actions that are not suppressed
         :return: List[Action]
         """
+        # TODO: Ta funkcija po mojem mora odletet (self.*controls*.actions). Sam zakaj ne? Ali se sploh ne uporablja?
         request = self.context.get('request', None)
         viewset = self.context.get('view', None)
         return [action for action in self.controls.actions if not self.suppress_action(action, request, viewset)]
@@ -125,6 +128,47 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
             return res
 
         return super().get_initial()
+
+    # noinspection PyUnresolvedReferences
+    @property
+    def _writable_fields(self):
+        """
+        Overrides DRF.serializers.Serializer._writable_fields
+        This one in particular should return exactly the same list as DRF's version (as of 17.4.2020, DRF version 3.11
+        """
+        return (
+            field for field in self.fields.values()
+            if not field.read_only
+        )
+
+    # noinspection PyUnresolvedReferences
+    @property
+    def _readable_fields(self):
+        """
+        Overrides DRF.serializers.Serializer._readable_fields
+        This one adds additional checks on top of DRF's ones - checking if the field is renderable to table or form
+        """
+        return (
+            field for field in self.fields.values()
+            if not (field.write_only
+                    or (self.is_rendering_to_list and self.display_table == DisplayMode.SUPPRESS)
+                    or (not self.is_rendering_to_list and self.display_form == DisplayMode.SUPPRESS)
+                    )
+        )
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        ret = OrderedDict()
+        for field in self._readable_fields:
+            try:
+                attribute = field.get_attribute(instance)
+                ret[field.field_name] = field.to_representation(attribute)
+            except SkipField:
+                pass
+
+        return ret
 
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):

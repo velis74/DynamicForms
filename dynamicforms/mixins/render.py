@@ -3,7 +3,7 @@ from enum import IntEnum
 from typing import Hashable
 
 from rest_framework.fields import Field as DrfField
-from rest_framework.relations import ManyRelatedField, RelatedField
+from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
 from rest_framework.templatetags import rest_framework as drftt
 
 from dynamicforms.settings import DYNAMICFORMS
@@ -100,6 +100,11 @@ class RenderMixin(object):
         """
         if self.is_rendering_to_list and self.is_rendering_to_html:
             return self.render_to_table(value, self.parent.instance)
+
+        check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
+        if check_for_none is None:
+            return None
+
         return super().to_representation(value)
 
     def set_display(self, value):
@@ -128,7 +133,11 @@ class RenderMixin(object):
             choices = getattr(self, 'choices', {})
 
         # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
-        value = super().to_representation(value)
+        check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
+        if check_for_none is None:
+            value = None
+        else:
+            value = super().to_representation(value)
 
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
