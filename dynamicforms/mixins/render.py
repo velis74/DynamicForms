@@ -106,7 +106,7 @@ class RenderMixin(object):
 
     display = property(lambda self: self.display_form, set_display)
 
-    # noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal, PyUnresolvedReferences
     def render_to_table(self, value, row_data):
         """
         Renders field value for table view
@@ -125,9 +125,12 @@ class RenderMixin(object):
         else:
             choices = getattr(self, 'choices', {})
 
+        # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
+        value = super().to_representation(value)
+
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
-            return drftt.format_value(choices[value])
+            value = choices[value]
         if value is None:
             return DYNAMICFORMS.null_text_table
 
