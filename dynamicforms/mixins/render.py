@@ -32,9 +32,9 @@ class RenderMixin(object):
     """
 
     def __init__(self, *args, uuid: uuid_module.UUID = None,
-                 display: DisplayMode = None,  # Leave at default
-                 display_table: DisplayMode = None,  # Leave at default
-                 display_form: DisplayMode = None,  # Leave at default
+                 display: DisplayMode = None,  # None == Leave at default
+                 display_table: DisplayMode = None,  # None == Leave at default
+                 display_form: DisplayMode = None,  # None == Leave at default
                  table_classes: str = '',
                  **kwargs):
         """
@@ -49,8 +49,10 @@ class RenderMixin(object):
         super().__init__(*args, **kwargs)
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
-        self.display_table = display_table or display or \
-                             (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+        self.display_table = (
+            display_table or display
+            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+        )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
 
