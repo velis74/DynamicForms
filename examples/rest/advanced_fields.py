@@ -18,10 +18,10 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         error_messages={'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
 
     choice_field = fields.ChoiceField(choices=(
-        (0, 'Choice 1'),
-        (1, 'Choice 2'),
-        (2, 'Choice 3'),
-        (3, 'Choice 4'),
+        ('0', 'Choice 1'),
+        ('1', 'Choice 2'),
+        ('2', 'Choice 3'),
+        ('3', 'Choice 4'),
     ))
 
     hidden_field = fields.DateTimeField(default=timezone.now, display=fields.DisplayMode.HIDDEN)

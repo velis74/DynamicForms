@@ -32,9 +32,9 @@ class RenderMixin(object):
     """
 
     def __init__(self, *args, uuid: uuid_module.UUID = None,
-                 display: DisplayMode = None,  # Leave at default
-                 display_table: DisplayMode = None,  # Leave at default
-                 display_form: DisplayMode = None,  # Leave at default
+                 display: DisplayMode = None,  # None == Leave at default
+                 display_table: DisplayMode = None,  # None == Leave at default
+                 display_form: DisplayMode = None,  # None == Leave at default
                  table_classes: str = '',
                  **kwargs):
         """
@@ -49,17 +49,65 @@ class RenderMixin(object):
         super().__init__(*args, **kwargs)
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
-        self.display_table = display_table or display or \
-            (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+        self.display_table = (
+            display_table or display
+            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+        )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
+
+    @property
+    def is_rendering_to_list(self):
+        """
+        reports whether we are currently rendering to table or to single record
+        :return:
+        """
+        try:
+            # noinspection PyUnresolvedReferences
+            if self.parent.parent:
+                return True
+        except:
+            pass
+        return False
+
+    @property
+    def is_rendering_to_html(self):
+        try:
+            # noinspection PyUnresolvedReferences
+            return self.context['format'] == 'html'
+        except:
+            pass
+        return False
+
+    # noinspection PyUnresolvedReferences
+    def use_pk_only_optimization(self):
+        """
+        Overrides DRF RelatedField's method. It True is returned then value passed for serailization will be PK value
+        only, not entire relation object
+        :return:
+        """
+        if self.is_rendering_to_list and self.is_rendering_to_html:
+            return False
+        return super().use_pk_only_optimization()
+
+    # noinspection PyUnresolvedReferences
+    def to_representation(self, value):
+        """
+        Overrides DRF Field's to_representation.
+        Note that this is also called for the entire record as well as the serializer also is a Field descendant
+        :param value: value to serialize
+        :return: serialized value
+        """
+        if self.is_rendering_to_list and self.is_rendering_to_html:
+            return self.render_to_table(value, self.parent.instance)
+        return super().to_representation(value)
 
     def set_display(self, value):
         self.display_form = self.display_table = value
 
     display = property(lambda self: self.display_form, set_display)
 
-    # noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal, PyUnresolvedReferences
     def render_to_table(self, value, row_data):
         """
         Renders field value for table view
@@ -70,23 +118,21 @@ class RenderMixin(object):
         """
         get_queryset = getattr(self, 'get_queryset', None)
         if isinstance(self, RelatedField) or get_queryset:
-            # shortcut for getting display value for table without actually getting the entire table into choices
-            qs = get_queryset()
-            try:
-                qs = qs.filter(pk=value)
-                choices = {self.to_representation(item): self.display_value(item) for item in qs}
-            except:
-                choices = getattr(self, 'choices', {})
+            return self.display_value(value)
         elif isinstance(self, ManyRelatedField):
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
+            print('WARNING/TODO: ManyRelatedField lookup wasn\'t fixed with the rest of the code for lack of examples')
             cr = self.child_relation
             return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         else:
             choices = getattr(self, 'choices', {})
 
+        # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
+        value = super().to_representation(value)
+
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
-            return drftt.format_value(choices[value])
+            value = choices[value]
         if value is None:
             return DYNAMICFORMS.null_text_table
 

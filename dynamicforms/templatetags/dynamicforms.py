@@ -110,20 +110,6 @@ def render_field(field, style):
 
 
 @register.simple_tag
-def render_field_to_table(serializer, field_name, value, row_data):
-    """
-    Renders separate field to table view.
-
-    :param serializer: Serializer
-    :param field_name: Field name
-    :param value: Field value
-    :param row_data: data for entire row
-    :return: rendered field for table view
-    """
-    return serializer.fields[field_name].render_to_table(value, row_data)
-
-
-@register.simple_tag
 def table_columns_count(serializer):
     """
     Returns number of columns including control columns

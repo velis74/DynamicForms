@@ -284,7 +284,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Check if record was stored
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 8)
@@ -296,7 +296,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['1', '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None])
 

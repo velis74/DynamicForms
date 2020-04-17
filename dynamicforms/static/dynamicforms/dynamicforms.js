@@ -418,6 +418,8 @@ dynamicforms = {
           $lastRow = $('#list-' + formID + ' > tbody > tr[data-id]').first();
         else{
           $lastRow = $('#list-' + formID + ' > tbody > tr[data-id="' + prevId + '"]').first(); // First row of table
+          if ($lastRow.length == 0)
+            console.log('Row with prevId = "' + prevId + '" not found!');
         }
       }
       else if(!dynamicforms.isLinkNext(tbl_pagination.link_next))
@@ -446,9 +448,7 @@ dynamicforms = {
       var trSelector = "tr[data-id='" + recordID + "']";
       $rowToRefresh  = $('#list-' + formID + ' > tbody > ' + trSelector); // Row to refresh
       var $editedRow = $htmlObject.find("table[id^='list-'] > tbody > " + trSelector); // Edited record from ajax returned html
-    }
 
-    if (recordID) {
       if ($editedRow.length) {
         var prevId = $editedRow.attr('data-df_prev_id');
         var hasPrevId = (typeof prevId !== typeof undefined && prevId !== false && prevId != '');
