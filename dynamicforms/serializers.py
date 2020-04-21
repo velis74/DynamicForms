@@ -1,15 +1,15 @@
+from collections import OrderedDict
 from typing import Any
 
 from django.db import models
 from rest_framework import serializers
+from rest_framework.fields import SkipField
 
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from . import fields
 from .mixins import ActionMixin, DisplayMode, RenderMixin
 from .struct import StructDefault
-from collections import OrderedDict
-from rest_framework.fields import SkipField
 
 
 class DynamicFormsSerializer(RenderMixin, ActionMixin):
