@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.formats import localize
 from selenium.webdriver.common.keys import Keys
 
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
@@ -59,6 +60,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         from examples.models import Filter
         date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
         tomorrow = date_field.datetime_field.strftime("%Y-%m-%d")
+        tomorrow_check = localize(date_field.datetime_field.date())
         if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
             datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y" if self.github_actions else "%d%m%Y"))
             datetime_field.send_keys(Keys.TAB)
@@ -73,9 +75,9 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
 
         self.assertTrue(data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').
-                        text.startswith(tomorrow), 'First row doesn\'t have date %s' % tomorrow)
+                        text.startswith(tomorrow_check), 'First row doesn\'t have date %s' % tomorrow_check)
         self.assertTrue(data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').
-                        text.startswith(tomorrow), 'Last row doesn\'t have date %s' % tomorrow)
+                        text.startswith(tomorrow_check), 'Last row doesn\'t have date %s' % tomorrow_check)
         datetime_field.clear()
 
         int_field.send_keys("2")

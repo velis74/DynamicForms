@@ -5,6 +5,7 @@ from typing import Any
 from django.utils import timezone
 from rest_framework.fields import DateField, TimeField
 from rest_framework.serializers import ListSerializer
+from django.utils.formats import localize
 
 
 class NaturalDateTimeMixin(object):
@@ -66,6 +67,12 @@ class NaturalDateTimeMixin(object):
                     setattr(self, 'format', global_format)
                     return value
         return super().to_representation(value)
+
+    def render_to_table(self, value, row_data):
+        if value is None:
+            # noinspection PyUnresolvedReferences
+            return super().render_to_table(value, row_data)
+        return localize(value)
 
 
 class TimeFieldMixin(NaturalDateTimeMixin):
