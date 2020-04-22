@@ -88,6 +88,7 @@ class TemplateRendererMixin():
 
     Note that when adding data from database, it is advised to make this definition a callable so that it is evaluated
     on each render of the ViewSet: that way you can ensure data is always loaded fresh from database.
+    This member can also be defined in the serializer class. If that is the case, it will be copied to ViewSet.
 
     e.g.
 
@@ -104,6 +105,11 @@ class TemplateRendererMixin():
     """
 
     template_name = DYNAMICFORMS.table_base_template  #: template filename for listing multiple records (html renderer)
+
+    def __init__(self, *args, **kwds):
+        if not self.template_context and getattr(self, 'serializer_class', None) is not None:
+            self.template_context = getattr(self.serializer_class, 'template_context', {})
+        super().__init__(*args, **kwds)
 
     # noinspection PyAttributeOutsideInit
     def initialize_request(self, request, *args, **kwargs):

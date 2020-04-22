@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class FilterSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='filter')
     form_titles = {
         'table': 'Dynamic filter list',
         'new': 'New object',
@@ -41,7 +42,6 @@ class FilterSerializer(serializers.ModelSerializer):
 
 
 class FilterViewSet(viewsets.ModelViewSet):
-    template_context = dict(url_reverse='filter')
     pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
 
     queryset = Filter.objects.all()
