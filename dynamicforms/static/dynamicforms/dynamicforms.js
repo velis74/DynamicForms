@@ -1107,6 +1107,22 @@ dynamicforms = {
       link_next = dynamicforms.form_helpers.get(formID, 'reverseRowURL');
       if (link_next == undefined)
         link_next = window.location.origin + window.location.pathname
+
+      // here we will determine if the query has any additional parameters other than cursor and add them to filter
+      var link_params = tbl_pagination.link_next.split('?')[1];
+      if (link_params != undefined) {
+        link_params = link_params.split('&');
+        var addfilter = '';
+        for (var i = 0; i < link_params.length; i++) {
+          if (link_params[i].substr(0, 6) == 'cursor')
+            continue;
+          addfilter += '&' + link_params[i];
+        }
+        if (filter != 'nofilter')
+          filter += addfilter;
+        else
+          filter = addfilter.substr(1);
+      }
       if (filter != 'nofilter')
         link_next += '?' + filter;
     } else
