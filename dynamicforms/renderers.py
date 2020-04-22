@@ -158,6 +158,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
             'style': style,
             'DYNAMICFORMS': DYNAMICFORMS,
         }
+        context.update(getattr(form, 'template_context', {}))
         try:
             context.update(form.context['view'].template_context)
         except:
