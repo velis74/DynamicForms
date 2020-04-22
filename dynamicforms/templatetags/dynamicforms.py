@@ -155,6 +155,8 @@ def render_table_commands(context, serializer, position, field_name=None, button
         positions = dict(
             onrowclick=(TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK),
             header=(TablePosition.HEADER,),
+            filterrowstart=(TablePosition.FILTER_ROW_START,),
+            filterrowend=(TablePosition.FILTER_ROW_END,),
             rowstart=(TablePosition.ROW_START,),
             rowend=(TablePosition.ROW_END,),
             fieldleft=(TablePosition.FIELD_START,),
@@ -162,7 +164,8 @@ def render_table_commands(context, serializer, position, field_name=None, button
         )
         ret_tmp = serializer.actions.render_renderable_actions(positions[position], field_name, serializer)
 
-        if ret_tmp and positions[position][0] in (TablePosition.ROW_START, TablePosition.ROW_END):
+        if ret_tmp and positions[position][0] in (TablePosition.ROW_START, TablePosition.ROW_END,
+                                                  TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
             ret += ('<th>%s</th>' % table_header) if table_header else ('<td>%s</td>' % ret_tmp)
         elif ret_tmp:
             ret += ret_tmp

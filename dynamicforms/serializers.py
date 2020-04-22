@@ -197,7 +197,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     """
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
-        if hasattr(self.Meta, 'fields'):
+        if hasattr(self, 'Meta') and hasattr(self.Meta, 'fields'):
             if self.Meta.fields != '__all__' and 'df_prev_id' not in self.Meta.fields:
                 self.Meta.fields += 'df_prev_id',
         super().__init__(*args, is_filter=is_filter, **kwds)

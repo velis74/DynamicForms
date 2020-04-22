@@ -15,7 +15,8 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     regex_pattern = '(?<=abc)def'
     regex_field = fields.RegexField(
         regex_pattern,
-        error_messages={'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
+        error_messages={
+            'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
 
     choice_field = fields.ChoiceField(choices=(
         ('0', 'Choice 1'),
@@ -77,6 +78,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     string_related_field = fields.StringRelatedField(source='primary_key_related_field')
     primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
     slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+
     # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
@@ -86,7 +88,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
                    'hyperlinked_identity_field')
 
     def create(self, validated_data):
-            return AdvancedFields.objects.create(**validated_data)
+        return AdvancedFields.objects.create(**validated_data)
 
 
 class AdvancedFieldsViewset(ModelViewSet):

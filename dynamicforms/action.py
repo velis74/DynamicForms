@@ -74,6 +74,8 @@ class RenderableActionMixin(object):
 
 class TablePosition(IntEnum):
     HEADER = 0  # Table header of list view
+    FILTER_ROW_START = 7  # Alternative to HEADER: command is placed in filter row, actions column at start of line
+    FILTER_ROW_END = 8  # Alternative to HEADER: command is placed in filter row, actions column at end of line
     # On left click on table row (currently this renders only once per table.
     # We might need to add one that renders for each row
     ROW_CLICK = 1
