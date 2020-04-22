@@ -1,11 +1,13 @@
 {% load dynamicforms %}
 
 <tr class="dynamicforms-filterrow" id="{{ form.uuid }}">
+  {% render_table_commands form "filterrowstart" %}
   {% for column in form %}
     {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
       <th {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}style="display: none" {% elif column.style.no_filter%}style="visibility: hidden" {% endif %}data-name="{{ column.field_name }}">
       {% render_field column style=style %}
     {% endif %}{% endfor %}
+  {% render_table_commands form "filterrowend" %}
 </tr>
 <script type="application/javascript">
   var $checkbox = $('.dynamicforms-filterrow input[type="checkbox"]')
