@@ -108,7 +108,10 @@ class RenderMixin(object):
         return super().to_representation(value)
 
     def set_display(self, value):
-        self.display_form = self.display_table = value
+        if isinstance(value, tuple):
+            self.display_form, self.display_table = value
+        else:
+            self.display_form = self.display_table = value
 
     display = property(lambda self: self.display_form, set_display)
 
