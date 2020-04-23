@@ -1109,7 +1109,10 @@ dynamicforms = {
         link_next = window.location.origin + window.location.pathname
 
       // here we will determine if the query has any additional parameters other than cursor and add them to filter
-      var link_params = tbl_pagination.link_next.split('?')[1];
+      var link_params = '';
+      if (tbl_pagination != undefined && tbl_pagination.link_next != null)
+        link_params = tbl_pagination.link_next.split('?')[1];
+
       if (link_params != undefined) {
         link_params = link_params.split('&');
         var addfilter = '';

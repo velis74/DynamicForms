@@ -38,7 +38,10 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        return self.get_queryset().model()
+        field_names = [(f.name + '_id') if isinstance(f, models.ForeignKey) else f.name
+                       for f in self.get_queryset().model._meta.fields]
+        instantiation_params = {k: v for k, v in self.request.GET.items() if k in field_names}
+        return self.get_queryset().model(**instantiation_params)
 
     # noinspection PyUnresolvedReferences
     def retrieve(self: viewsets.ModelViewSet, request, *args, **kwargs):
