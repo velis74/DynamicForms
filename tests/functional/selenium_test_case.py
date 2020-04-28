@@ -6,8 +6,7 @@ from enum import Enum
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import (
-    ElementNotInteractableException, NoAlertPresentException, NoSuchElementException, TimeoutException,
-    WebDriverException
+    ElementNotInteractableException, NoSuchElementException, TimeoutException, WebDriverException
 )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -106,7 +105,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
         # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, ' \
         #                    '"disable-gpu": true}'
-        # browser_selenium = 'FIREFOX|{"headless": true, ' \
+        # browser_selenium = 'FIREFOX;{"headless": true, ' \
         #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
         browser_options = browser_selenium.split(';', 1)
@@ -223,17 +222,11 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             except WebDriverException:
                 break
 
-    def get_alert(self):
-        start_time = time.time()
-        while True:
-            try:
-                time.sleep(0.01)
-                alert = self.browser.switch_to.alert
-                break
-            except NoAlertPresentException:
-                pass
-            if time.time() - start_time > MAX_WAIT_ALERT:
-                raise NoAlertPresentException
+    def get_alert(self, wait_time=None):
+        if not wait_time:
+            wait_time = MAX_WAIT_ALERT
+        WebDriverWait(self.browser, wait_time).until(EC.alert_is_present(), 'No alert dialog.')
+        alert = self.browser.switch_to.alert
         return alert
 
     # noinspection PyMethodMayBeStatic

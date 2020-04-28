@@ -1,6 +1,6 @@
 import time
 
-from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
@@ -931,12 +931,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
 
-        try:
+        if btn_position == 5:  # Custom function only
             alert = self.get_alert()
             self.assertEqual(self.get_element_text(alert), 'Custom function refresh type.')
             alert.accept()
-        except NoAlertPresentException:
-            pass
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -1122,16 +1120,13 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                         select.select_by_index(1)
 
         try:
-            dialog.find_element_by_class_name("btn").click()
+            dialog.find_element_by_class_name("btn-primary").click()
         except NoSuchElementException:
             dialog.find_element_by_class_name("ui-button").click()
 
-        try:
-            alert = self.get_alert()
-            self.assertEqual(self.get_element_text(alert), 'Never-ending rain')
-            alert.accept()
-        except NoAlertPresentException:
-            pass
+        alert = self.get_alert(wait_time=15)
+        self.assertEqual(self.get_element_text(alert), 'Never-ending rain')
+        alert.accept()
 
     def test_write_only_fields(self):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
