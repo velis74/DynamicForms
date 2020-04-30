@@ -29,6 +29,8 @@ class RelatedFieldAJAXMixin(object):
     # noinspection PyUnresolvedReferences
     def iter_options_bound(self, value):
         if self.url_reverse:
+            if value is None:
+                return [dict(value="", display_text=self.placeholder)]
             qry = self.get_queryset()
             try:
                 qry = qry.filter(pk=value)
