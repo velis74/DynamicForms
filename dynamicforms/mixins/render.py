@@ -98,7 +98,10 @@ class RenderMixin(object):
         :param value: value to serialize
         :return: serialized value
         """
-        if self.is_rendering_to_list and self.is_rendering_to_html:
+        if self.is_rendering_to_list and self.is_rendering_to_html and self.display_table != DisplayMode.HIDDEN:
+            # if rentering to html table, let's try to resolve any lookups
+            # hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there
+            #   we have discussed alternatives but decided that right now a more complete solution is not needed
             return self.render_to_table(value, self.parent.instance)
 
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
