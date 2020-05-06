@@ -199,10 +199,14 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'fields'):
-            if self.Meta.fields != '__all__' and 'df_prev_id' not in self.Meta.fields:
-                self.Meta.fields += 'df_prev_id',
+            self._make_df_special_fields_present_in_fields(['df_prev_id', 'row_css_style'])
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
+
+    def _make_df_special_fields_present_in_fields(self, fields):
+        for f in fields:
+            if self.Meta.fields != '__all__' and f not in self.Meta.fields:
+                self.Meta.fields += f,
 
     serializer_field_mapping = {
         models.AutoField: fields.IntegerField,
@@ -259,6 +263,9 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     # Dynamic forms default field that is used to contain data for positioning (id of previous record)
     df_prev_id = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
 
+    # this is a calculated field that returns css style for table row
+    row_css_style = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
+
     def fetch_prev_id(self, obj, view):
         ordering = 'id'
         try:
@@ -290,6 +297,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         except:
             pass
 
+        return ''
+
+    # noinspection PyMethodMayBeStatic
+    def get_row_css_style(self, obj):
         return ''
 
 
