@@ -259,6 +259,9 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     # Dynamic forms default field that is used to contain data for positioning (id of previous record)
     df_prev_id = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
 
+    # this is a calculated field that returns css style for table row
+    row_css_style = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
+
     def fetch_prev_id(self, obj, view):
         ordering = 'id'
         try:
@@ -290,6 +293,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         except:
             pass
 
+        return ''
+
+    # noinspection PyMethodMayBeStatic
+    def get_row_css_style(self, obj):
         return ''
 
 

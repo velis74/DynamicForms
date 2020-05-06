@@ -1,7 +1,9 @@
 {% load dynamicforms %}
 
 {% for row in data %}
-  <tr data-id="{{ row.id }}" {% if forloop.first %}data-next="{{ link_next }}"
+  <tr data-id="{{ row.id }}"
+      {% if row.row_css_style %}style="{{ row.row_css_style }}"{% endif %}
+      {% if forloop.first %}data-next="{{ link_next }}"
       data-previous="{{ link_prev }}" {% endif %}
       {% for key, value in row|items %}
         {% set_var column=serializer.fields|dict_item:key %}
