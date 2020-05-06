@@ -199,10 +199,14 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'fields'):
-            if self.Meta.fields != '__all__' and 'df_prev_id' not in self.Meta.fields:
-                self.Meta.fields += 'df_prev_id',
+            self._make_df_special_fields_present_in_fields(['df_prev_id', 'row_css_style'])
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
+
+    def _make_df_special_fields_present_in_fields(self, fields):
+        for f in fields:
+            if self.Meta.fields != '__all__' and f not in self.Meta.fields:
+                self.Meta.fields += f,
 
     serializer_field_mapping = {
         models.AutoField: fields.IntegerField,
