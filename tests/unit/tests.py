@@ -27,7 +27,9 @@ class ValidatedPageTest(TestCase):
                                                                        'item_type': our_record.item_type,
                                                                        'item_flags': our_record.item_flags,
                                                                        'comment': our_record.comment,
-                                                                       'df_prev_id': ''})
+                                                                       'df_prev_id': '',
+                                                                       'row_css_style': '',
+                                                                       })
 
     def testPOSTing_a_new_record(self):
         response = self.client.post(
