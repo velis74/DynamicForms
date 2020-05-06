@@ -3,6 +3,7 @@ from rest_framework import routers
 from examples.rest.filter import FilterViewSet
 from .advanced_fields import AdvancedFieldsViewset
 from .basic_fields import BasicFieldsViewset
+from .calculated_css_class_for_table_row import CalculatedCssClassForTableRowViewSet
 from .hidden_fields import HiddenFieldsViewSet
 from .page_load import PageLoadViewSet
 from .refresh_types import RefreshTypesViewSet
@@ -10,7 +11,6 @@ from .relation import RelationViewset
 from .single_dialog import SingleDialogViewSet
 from .validated import ValidatedViewSet
 from .write_only_fields import WriteOnlyFieldsViewSet
-from .calculated_css_class_for_table_row import CalculatedCssClassForTableRowViewSet
 
 router = routers.DefaultRouter()
 router.register(r'hidden-fields', HiddenFieldsViewSet, 'hidden-fields')
