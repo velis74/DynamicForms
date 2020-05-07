@@ -164,9 +164,12 @@ def render_table_commands(context, serializer, position, field_name=None, button
         )
         ret_tmp = serializer.actions.render_renderable_actions(positions[position], field_name, serializer)
 
-        if ret_tmp and positions[position][0] in (TablePosition.ROW_START, TablePosition.ROW_END,
-                                                  TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
-            ret += ('<th>%s</th>' % table_header) if table_header else ('<td>%s</td>' % ret_tmp)
+        _position = positions[position][0]
+        if ret_tmp and _position in (TablePosition.ROW_START, TablePosition.ROW_END,
+                                     TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
+            ret += ('<th>%s</th>' % table_header) if table_header else (
+                '<td>%s</td>' % ret_tmp if _position not in (
+                    TablePosition.FILTER_ROW_END, TablePosition.FILTER_ROW_START) else '<th>%s</th>' % ret_tmp)
         elif ret_tmp:
             ret += ret_tmp
 
