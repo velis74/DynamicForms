@@ -1121,10 +1121,12 @@ dynamicforms = {
             continue;
           addfilter += '&' + link_params[i];
         }
-        if (filter != 'nofilter')
+        if (filter != 'nofilter') {
           filter += addfilter;
-        else
-          filter = addfilter.substr(1);
+        } else {
+          var _filter = addfilter.substr(1);
+          filter = _filter ? _filter : filter;
+        }
       }
       if (filter != 'nofilter')
         link_next += '?' + filter;
