@@ -247,11 +247,17 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         When there is a need to only change few parameters of a field put those fields and changed parameters in
         serializers Meta class in parameter changed_flds.
 
-        Exsample:
-        changed_flds = {'id': dict(display=DisplayMode.HIDDEN),
-                        'comment': dict(label='Comm', help_text='Help text for comment field')
-                        }
+        Example:
+
+        .. code-block:: python
+
+           changed_flds = {
+               'id': dict(display=DisplayMode.HIDDEN),
+               'comment': dict(label='Comm', help_text='Help text for comment field')
+           }
+
         :return:
+
         """
         if hasattr(self.Meta, 'changed_flds'):
             for field, params in self.Meta.changed_flds.items():
