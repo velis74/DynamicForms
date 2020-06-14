@@ -21,20 +21,20 @@
 import os
 import sys
 
-from django.conf import settings
+import django
 
 sys.path.insert(0, os.path.abspath('..'))
-settings.configure()
-
+os.environ['DJANGO_SETTINGS_MODULE'] = 'setup.settings'
+django.setup()
 
 project = 'DynamicForms'
-copyright = '2018, Velis Ltd'
+copyright = '2018-present, Velis Ltd'
 author = 'Velis Ltd'
 
 # The short X.Y version
-version = '0.2'
+version = '0.9'
 # The full version, including alpha/beta/rc tags
-release = '0.2 dev'
+release = '0.9 dev'
 
 # -- General configuration ---------------------------------------------------
 
