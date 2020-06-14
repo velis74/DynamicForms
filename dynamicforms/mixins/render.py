@@ -102,7 +102,10 @@ class RenderMixin(object):
             # if rentering to html table, let's try to resolve any lookups
             # hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there
             #   we have discussed alternatives but decided that right now a more complete solution is not needed
-            return self.render_to_table(value, self.parent.instance)
+            if isinstance(self.parent, ManyRelatedField):
+                return self.render_to_table(value, None)
+            else:
+                return self.render_to_table(value, self.parent.instance)
 
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
         if check_for_none is None:
@@ -133,8 +136,11 @@ class RenderMixin(object):
         elif isinstance(self, ManyRelatedField):
             # if value is a list, we're dealing with ManyRelatedField, so let's not do that
             print('WARNING/TODO: ManyRelatedField lookup wasn\'t fixed with the rest of the code for lack of examples')
+            # Hm, not sure if this is the final thing to do: an example of this field is in
+            # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
             cr = self.child_relation
-            return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
+            return ', '.join((cr.display_value(item) for item in value))
+            # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         else:
             choices = getattr(self, 'choices', {})
 
