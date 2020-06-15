@@ -243,10 +243,13 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def initial_check(self, field, fld_text, fld_name, fld_type):
         self.assertEqual(self.get_element_text(field), fld_text)
         self.assertEqual(field.get_attribute('name'), fld_name)
+
+        field_type = field.get_attribute('type')
         if isinstance(fld_type, tuple):
-            self.assertIn(field.get_attribute('type'), fld_type)
+            self.assertIn(field_type, fld_type)
         else:
-            self.assertEqual(field.get_attribute('type'), fld_type)
+            self.assertEqual(field_type, fld_type)
+        return field_type
 
     def get_table_body(self, whole_table=False, expected_rows: int = None):
         start_time = time.time()

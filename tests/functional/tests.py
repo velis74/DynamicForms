@@ -510,8 +510,11 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                     self.initial_check(field, '', 'boolean_field', 'checkbox')
                     field.click()
                 elif label_text == 'Nullboolean field':
-                    self.initial_check(field, '', 'nullboolean_field', 'text')
-                    field.send_keys('True')
+                    field_type = self.initial_check(field, '', 'nullboolean_field', ('text', 'checkbox'))
+                    if field_type == 'checkbox':
+                        field.click()
+                    else:
+                        field.send_keys('True')
                 elif label_text == 'Char field':
                     self.initial_check(field, '', 'char_field', 'text')
                     field.send_keys('Test')
