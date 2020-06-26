@@ -5,7 +5,7 @@
         {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}"
         {% if field.read_only %}disabled{% endif %}
   style="min-width: 6em">
-  {% if field.allow_null or field.allow_blank %}
+  {% if field.allow_null or field.allow_blank or field.allow_tags %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
   {% iter_options_bound field as iter_options %}

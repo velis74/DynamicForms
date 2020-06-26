@@ -16,7 +16,7 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import RenderMixin, ActionMixin, NullChoiceMixin, RelatedFieldAJAXMixin
+        from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
                 [''] +
-                textwrap.wrap('ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
+                textwrap.wrap('ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin,  RelatedFieldAJAXMixin, ' +
                               'FieldHelpTextMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
@@ -61,6 +61,7 @@ class Command(BaseCommand):
                     if cls[1] == fields.Field:
                         break
                 if issubclass(field, fields.ChoiceField):
+                    param_classes.append((0, AllowTagsMixin))
                     param_classes.append((0, NullChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
@@ -163,7 +164,7 @@ class Command(BaseCommand):
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'NullChoiceMixin, '
+                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, '
                 if issubclass(field, relations.RelatedField):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
 
