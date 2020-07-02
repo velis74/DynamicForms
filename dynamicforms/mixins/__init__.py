@@ -7,3 +7,4 @@ from .implicit_natural_date import DateFieldMixin, DateTimeFieldMixin, TimeField
 from .null_choice import NullChoiceMixin
 from .related_field_ajax import RelatedFieldAJAXMixin
 from .render import DisplayMode, RenderMixin
+from .allow_tags import AllowTagsMixin

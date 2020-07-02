@@ -7,10 +7,8 @@ from rest_framework import fields, relations
 from rest_framework.exceptions import ValidationError
 
 from .action import Actions
-from .mixins import (
-    ActionMixin, RenderMixin, DisplayMode, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin, HiddenFieldMixin
-)
+from .mixins import (ActionMixin, AllowTagsMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode, FieldHelpTextMixin,
+                     HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderMixin, TimeFieldMixin)
 from .settings import version_check
 
 
@@ -230,11 +228,11 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         super().__init__(**kwargs)
 
 
-class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ChoiceField):
+class ChoiceField(AllowTagsMixin, NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ChoiceField):
 
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
@@ -242,11 +240,11 @@ class ChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         super().__init__(**kwargs)
 
 
-class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.MultipleChoiceField):
-
+class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                          fields.MultipleChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
@@ -254,12 +252,12 @@ class MultipleChoiceField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTe
         super().__init__(**kwargs)
 
 
-class FilePathField(NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FilePathField):
-
+class FilePathField(AllowTagsMixin, NullChoiceMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                    fields.FilePathField):
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
                  label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 allow_tags=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
                  display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)

@@ -286,7 +286,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         element.click()
 
         if text:
-            element = driver.find_element_by_xpath("//input[@type='search']")
+            element = element.parent.switch_to.active_element
             element.send_keys(text)
 
         try:

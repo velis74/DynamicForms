@@ -4,7 +4,8 @@
           class="form-control {{ DYNAMICFORMS.select2_form_field_class }}
         {% if field.errors %}is-invalid{% endif %}" {% if field.read_only %}disabled{% endif %} style="width: 100%"
           name="{{ field.name }}" {% if field.placeholder %}data-placeholder="{{ field.placeholder }}" {% endif %}>
-    {% for select in field.iter_options %}
+   {% iter_options_bound field as iter_options %}
+    {% for select in iter_options %}
       {% if select.start_option_group %}
         <optgroup label="{{ select.label }}">
           {% elif select.end_option_group %}
@@ -26,7 +27,8 @@
       // Attaches select2 to its form parent and enables input field (in dialog)
         dropdownParent: $('#{{ style.serializer.uuid }}'),
         {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
-        theme: '{{ DYNAMICFORMS.select2_theme }}'
+        theme: '{{ DYNAMICFORMS.select2_theme }}',
+        tags: {% if field.allow_tags %}true{% else %}false{% endif %},
       }
 
       var $sel2 = $("#{{ field.uuid }}");

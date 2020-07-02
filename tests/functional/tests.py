@@ -1147,3 +1147,73 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertNotEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="choice_field"]')), 0)
         self.assertEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="regex_field"]')), 0)
         af.delete()
+
+    def test_choice_allow_tags_fields(self):
+        self.browser.get(self.live_server_url + '/choice-allow-tags-fields.html')
+        try:
+            header = self.browser.find_element_by_class_name('card-header')
+        except NoSuchElementException:
+            try:
+                # Bootstrap v3
+                header = self.browser.find_element_by_class_name("panel-heading")
+            except NoSuchElementException:
+                # jQueryUI
+                header = self.browser.find_element_by_class_name("ui-accordion-header")
+        add_btn = header.find_elements_by_class_name('btn')
+        add_btn[0].click()
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+
+        form = dialog.find_element_by_id(modal_serializer_id)
+        containers = form.find_elements_by_tag_name("div")
+        for container in containers:
+            container_id = container.get_attribute("id")
+            if container_id.startswith("container-"):
+                field_id = container_id.split('-', 1)[1]
+                label = container.find_element_by_id("label-" + field_id)
+                field = container.find_element_by_id(field_id)
+
+                label_text = self.get_element_text(label)
+
+                if label_text == "Choice":
+                    # Check if item_type field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        self.select_option_for_select2(container, field_id, text="Custom text")
+                    else:
+                        select = Select(field)
+                        select.select_by_index(0)
+
+                if label_text == "Multiple choice":
+                    # Check if item_type field is select2 element
+                    try:
+                        select2 = container.find_element_by_class_name("select2-field")
+                    except NoSuchElementException:
+                        select2 = None
+
+                    if select2:
+                        self.select_option_for_select2(container, field_id, text="Multiple choice 1")
+                        self.select_option_for_select2(container, field_id, text="Custom text")
+                    else:
+                        select = Select(field)
+                        select.select_by_index(0)
+
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support import expected_conditions as EC
+        from selenium.webdriver.support.wait import WebDriverWait
+
+        WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
+            (By.ID, "save-" + modal_serializer_id))
+        )
+
+        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+
+        rows = self.get_table_body(expected_rows=1)
+        self.assertEqual(len(rows), 1)
+        cells = self.check_row(
+            rows[0], 4, ['2', 'Custom text', 'Multiple choice 1, Custom text', 'Delete', None]
+        )
