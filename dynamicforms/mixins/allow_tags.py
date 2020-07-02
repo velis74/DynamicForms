@@ -1,23 +1,29 @@
-from rest_framework.fields import ChoiceField, MultipleChoiceField
-
 import ast
-from .render import DisplayMode
+
+from rest_framework.fields import ChoiceField, MultipleChoiceField
 
 
 class DenormalisedArray(list):
 
     def __init__(self, lst, field):
         self.field = field
-        if lst is not None and isinstance(lst, str):
+        if lst is not None and isinstance(lst, str) and isinstance(field, MultipleChoiceField):
             for itm in ast.literal_eval(lst):
                 self.append(itm)
+
+        elif lst is not None and isinstance(lst, list):
+            for itm in lst:
+                self.append(itm)
+
+        elif lst is not None:
+            self.append(lst)
 
     def __str__(self):
         choices = self.field.choices
         ret = ""
         count = 0
         for item in self:
-            ret += ", " if count else " "
+            ret += ", " if count else ""
             if item in choices:
                 ret += choices[item]
             else:
@@ -58,7 +64,7 @@ class AllowTagsMixin(object):
                 self.fail('invalid_choice', input=data)
 
     def to_representation(self, value):
-        if isinstance(self, MultipleChoiceField):
+        if isinstance(self, ChoiceField) and self.allow_tags:
             return DenormalisedArray(value, self)
 
         return super().to_representation(value)
