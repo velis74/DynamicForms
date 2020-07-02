@@ -242,7 +242,7 @@ def set_var_conditional(context, condition=None, condition_var=None, compare=Non
 
 @register.simple_tag(takes_context=False)
 def iter_options_bound(field):
-    return field.iter_options_bound(field.value)
+    return field.iter_options_bound(field.value) if hasattr(field, 'iter_options_bound') else []
 
 
 @register.filter
