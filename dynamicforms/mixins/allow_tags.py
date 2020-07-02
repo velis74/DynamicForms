@@ -71,8 +71,9 @@ class AllowTagsMixin(object):
 
     def iter_options_bound(self, value):
         # noinspection PyUnresolvedReferences
-        for item in value:
-            if item not in self.choices.keys():
-                self.grouped_choices[item] = item
+        if isinstance(value, list):
+            for item in value:
+                if item not in self.choices.keys():
+                    self.grouped_choices[item] = item
 
         return super().iter_options_bound(value)
