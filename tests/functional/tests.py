@@ -1214,6 +1214,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
-        cells = self.check_row(
+        self.check_row(
             rows[0], 4, ['2', 'Custom text', 'Multiple choice 1, Custom text', 'Delete', None]
         )
