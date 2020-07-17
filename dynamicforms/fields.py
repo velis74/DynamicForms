@@ -6,12 +6,13 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import (ActionMixin, AllowTagsMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode, FieldHelpTextMixin,
-                     HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderMixin, TimeFieldMixin)
+from .mixins import (ActionMixin, AllowTagsMixin, BooleanFieldMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode,
+                     FieldHelpTextMixin, HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderMixin,
+                     TimeFieldMixin)
 from .settings import version_check
 
 
-class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
+class BooleanField(BooleanFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
