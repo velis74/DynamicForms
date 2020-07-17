@@ -165,7 +165,7 @@ class Command(BaseCommand):
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
                     additional_mixin += 'AllowTagsMixin, NullChoiceMixin, '
-                if issubclass(field, relations.RelatedField):
+                if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation

@@ -4,6 +4,7 @@ from typing import Hashable
 
 from rest_framework.fields import Field as DrfField
 from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
+from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
 from dynamicforms.settings import DYNAMICFORMS
@@ -64,8 +65,12 @@ class RenderMixin(object):
         """
         try:
             # noinspection PyUnresolvedReferences
-            if self.parent.parent:
-                return True
+            base = self.parent
+            while base:
+                if isinstance(base, ListSerializer):
+                    # If fields parent's parent is the ListSerializer, we're rendering to list
+                    return True
+                base = base.parent
         except:
             pass
         return False
@@ -134,10 +139,9 @@ class RenderMixin(object):
         if isinstance(self, RelatedField) or get_queryset:
             return self.display_value(value)
         elif isinstance(self, ManyRelatedField):
-            # if value is a list, we're dealing with ManyRelatedField, so let's not do that
-            print('WARNING/TODO: ManyRelatedField lookup wasn\'t fixed with the rest of the code for lack of examples')
             # Hm, not sure if this is the final thing to do: an example of this field is in
             # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
+            # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
             cr = self.child_relation
             return ', '.join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))

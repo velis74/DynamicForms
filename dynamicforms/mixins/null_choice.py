@@ -12,7 +12,7 @@ class NullChoiceMixin(object):
     def null_choice_text(self):
         res = '--------'
         if isinstance(self, ChoiceField) and not getattr(self, 'get_queryset', None):
-            # Only do this for true ChoiceFields. ReladedFields would run a query here
+            # Only do this for true ChoiceFields. RelatedFields would run a query here
             # Possibly we will at some point have to enable this for relatedfields too
             for opt in self.iter_options():
                 if opt.start_option_group or opt.end_option_group:
