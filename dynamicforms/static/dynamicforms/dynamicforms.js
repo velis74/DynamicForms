@@ -1022,6 +1022,18 @@ dynamicforms = {
     var $hideParent = $hide.parents('[data-hide-with-field]');
     if ($hideParent.length > 0)
       $hide = $hideParent;
+
+    // Toggle bootstrap hidden class
+    let hidden_class = "d-none";
+    if (this.DYNAMICFORMS.bootstrap_version == "v3")
+      hidden_class = 'hidden';
+
+    if (visible) {
+      $hide.toggleClass(hidden_class, false);
+    } else {
+      $hide.toggleClass(hidden_class, true);
+    }
+
     $hide.toggle(visible);
   },
 
