@@ -1024,7 +1024,7 @@ dynamicforms = {
       $hide = $hideParent;
 
     // Toggle bootstrap hidden class
-    let hidden_class = "d-none";
+    var hidden_class = "d-none";
     if (this.DYNAMICFORMS.bootstrap_version == "v3")
       hidden_class = 'hidden';
 
