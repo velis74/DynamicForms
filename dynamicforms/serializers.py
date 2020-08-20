@@ -158,7 +158,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
                     )
         )
 
-    def to_representation(self, instance):
+    def to_representation(self, instance, row_data=None):
         """
         Object instance -> Dict of primitive datatypes.
         """
@@ -166,7 +166,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         for field in self._readable_fields:
             try:
                 attribute = field.get_attribute(instance)
-                ret[field.field_name] = field.to_representation(attribute)
+                ret[field.field_name] = field.to_representation(attribute, row_data)
             except SkipField:
                 pass
 

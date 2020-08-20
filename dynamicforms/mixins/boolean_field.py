@@ -24,8 +24,8 @@ else:
                     return None
             self.fail('invalid', input=data)
 
-        def to_representation(self, value):
-            parent_value = super().to_representation(value)
+        def to_representation(self, value, row_data):
+            parent_value = super().to_representation(value, row_data)
             if value in self.NULL_VALUES and self.allow_null:
                 return None
             return parent_value

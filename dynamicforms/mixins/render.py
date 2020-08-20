@@ -96,21 +96,19 @@ class RenderMixin(object):
         return super().use_pk_only_optimization()
 
     # noinspection PyUnresolvedReferences
-    def to_representation(self, value):
+    def to_representation(self, value, row_data=None):
         """
         Overrides DRF Field's to_representation.
         Note that this is also called for the entire record as well as the serializer also is a Field descendant
         :param value: value to serialize
+        :param row_data: instance with row data
         :return: serialized value
         """
         if self.is_rendering_to_list and self.is_rendering_to_html and self.display_table != DisplayMode.HIDDEN:
             # if rentering to html table, let's try to resolve any lookups
             # hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there
             #   we have discussed alternatives but decided that right now a more complete solution is not needed
-            if isinstance(self.parent, ManyRelatedField):
-                return self.render_to_table(value, None)
-            else:
-                return self.render_to_table(value, self.parent.instance)
+            return self.render_to_table(value, row_data)
 
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
         if check_for_none is None:

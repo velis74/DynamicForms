@@ -25,14 +25,8 @@ class NaturalDateTimeMixin(object):
         self.table_format = table_format
 
     # noinspection PyUnresolvedReferences
-    def to_representation(self, value: Any) -> Any:
-        if not value:
-            return None
-
-        if isinstance(value, str):
-            return value
-
-        if isinstance(self.parent.parent, ListSerializer):
+    def render_to_table(self, value, row_data):
+        if value is not None:
             output_format = getattr(self, 'table_format', None)
             if output_format is not None:
                 if re.match(r'%N:\d+', output_format):
@@ -63,16 +57,13 @@ class NaturalDateTimeMixin(object):
                 else:
                     global_format = getattr(self, 'format', None)
                     setattr(self, 'format', output_format)
-                    value = super().to_representation(value)
+                    value = super().to_representation(value, row_data)
                     setattr(self, 'format', global_format)
                     return value
-        return super().to_representation(value)
 
-    def render_to_table(self, value, row_data):
-        if value is None:
-            # noinspection PyUnresolvedReferences
-            return super().render_to_table(value, row_data)
-        return localize(value)
+            return localize(value)
+
+        return super().render_to_table(value, row_data)
 
 
 class TimeFieldMixin(NaturalDateTimeMixin):

@@ -63,11 +63,11 @@ class AllowTagsMixin(object):
             except KeyError:
                 self.fail('invalid_choice', input=data)
 
-    def to_representation(self, value):
+    def to_representation(self, value, row_data):
         if isinstance(self, ChoiceField) and self.allow_tags:
             return DenormalisedArray(value, self)
 
-        return super().to_representation(value)
+        return super().to_representation(value, row_data)
 
     def iter_options_bound(self, value):
         # noinspection PyUnresolvedReferences

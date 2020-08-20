@@ -74,10 +74,12 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.wait_data_loading(loading_row)
         data_rows = self.browser.find_elements_by_css_selector('tbody tr')
 
-        self.assertTrue(data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').
-                        text.startswith(tomorrow_check), 'First row doesn\'t have date %s' % tomorrow_check)
-        self.assertTrue(data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').
-                        text.startswith(tomorrow_check), 'Last row doesn\'t have date %s' % tomorrow_check)
+        input_val = data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text
+        self.assertTrue(input_val.startswith(tomorrow_check),
+                        'First row date not matching [%s] != [%s]' % (input_val, tomorrow_check))
+        input_val = data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').text
+        self.assertTrue(input_val.startswith(tomorrow_check),
+                        'Last row date not matching [%s] != [%s]' % (input_val, tomorrow_check))
         datetime_field.clear()
 
         int_field.send_keys("2")

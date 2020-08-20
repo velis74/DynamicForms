@@ -3,7 +3,7 @@ from dynamicforms import fields
 
 class NameTestField(fields.CharField):
 
-    def to_representation(self, value):
+    def to_representation(self, value, row_data=None):
         if not value.pk:
             return None
         return value.name
