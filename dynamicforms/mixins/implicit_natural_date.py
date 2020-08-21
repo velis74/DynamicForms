@@ -1,11 +1,9 @@
 import re
 from datetime import datetime
-from typing import Any
 
 from django.utils import timezone
 from django.utils.formats import localize
 from rest_framework.fields import DateField, TimeField
-from rest_framework.serializers import ListSerializer
 
 
 class NaturalDateTimeMixin(object):
