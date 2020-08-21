@@ -718,6 +718,9 @@ dynamicforms = {
     var fld = $form.find('input[name="data-dynamicforms-method"]');
     if (fld.length == 1)
       form_data['data-dynamicforms-method'] = fld.val();
+    fld = $form.find('input[name="csrfmiddlewaretoken"]');
+    if (fld.length == 1)
+      form_data['csrfmiddlewaretoken'] = fld.val();
   },
 
   clearSerializedForm: function clearSerializedForm($form, final) {

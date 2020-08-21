@@ -166,7 +166,10 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         for field in self._readable_fields:
             try:
                 attribute = field.get_attribute(instance)
-                ret[field.field_name] = field.to_representation(attribute, row_data)
+                if isinstance(field, serializers.ListSerializer):
+                    ret[field.field_name] = field.to_representation(attribute)
+                else:
+                    ret[field.field_name] = field.to_representation(attribute, instance)
             except SkipField:
                 pass
 

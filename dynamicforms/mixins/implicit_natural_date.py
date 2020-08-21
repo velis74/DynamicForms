@@ -5,6 +5,8 @@ from django.utils import timezone
 from django.utils.formats import localize
 from rest_framework.fields import DateField, TimeField
 
+from .render import RenderMixin
+
 
 class NaturalDateTimeMixin(object):
     """
@@ -53,11 +55,13 @@ class NaturalDateTimeMixin(object):
                         # noinspection PyUnboundLocalVariable
                         return duration(value, now=now, precision=int(output_format.split(':')[1]))
                 else:
+                    # Invoke DRF field's to_representation
                     global_format = getattr(self, 'format', None)
                     setattr(self, 'format', output_format)
-                    value = super().to_representation(value, row_data)
+                    # noinspection PySuperArguments
+                    value = super(RenderMixin, self).to_representation(value)  # Skip RenderMixin
                     setattr(self, 'format', global_format)
-                    return value
+                    return value or ''
 
             return localize(value)
 

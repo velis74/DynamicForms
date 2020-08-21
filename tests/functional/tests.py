@@ -1,3 +1,8 @@
+# TODO: unit tests for table_format za datetime polja. Preveriš pa, da output ni tak, kot narekuje SETTINGS.xxx_FORMAT
+#   nastavitev. Pri tem pazi, ker je vse skupaj odvisno tudi od USE_L10N nastavitve: ta nastavitev pa še dodatno povozi
+#   tudi SETTINGS.TIME_FORMAT (no, in ostala dva tudi)
+# TODO: unit test za nested serializerje. Preveriti je tudi treba, če imajo field serializerji na voljo pravilne
+#   row_data zapise
 import time
 
 from selenium.common.exceptions import NoSuchElementException
