@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'dynamicforms',
     'dynamicforms_dev',
     'examples',
@@ -114,6 +115,9 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'dynamicforms.renderers.TemplateHTMLRenderer',
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'dynamicforms.filters.FilterBackend',
+    )
 }
 
 DYNAMICFORMS = {

@@ -148,7 +148,12 @@ class TemplateRendererMixin():
                         isinstance(res.data['results'], (ReturnList, ReturnDict)):
                     serializer = res.data['results'].serializer
                 else:
-                    serializer = res.data.serializer
+                    try:
+                        serializer = res.data.serializer
+                    except AttributeError:
+                        # This happens when there's a ValidationError on LIST command
+                        res.accepted_renderer = JSONRenderer()
+                        return res
 
                 if isinstance(serializer, ListSerializer):
                     serializer.child.render_type = self.render_type
@@ -219,7 +224,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         :param query_params: Custom query_params if needed
         :return: queryset with filters applied
         """
-        res = queryset
+        res = super().filter_queryset(queryset)
         if self.request:
             if query_params is None:
                 query_params = self.request.query_params
@@ -278,7 +283,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
            based pagination will be applied. For example: ordering = 'slug'
         :return: a Pagination class
         """
-        from rest_framework.pagination import CursorPagination
+        from dynamicforms.pagination import CursorPagination
         ps = page_size
         ordr = ordering
 
@@ -289,7 +294,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
 
             def paginate_queryset(self, queryset, request, view=None):
                 self.df_request = request
-                return super().paginate_queryset(queryset, request, view=None)
+                return super().paginate_queryset(queryset, request, view)
 
             def encode_cursor(self, cursor):
                 # Following code is needed when we have https proxy server that redirects requests to http servers.
@@ -304,7 +309,8 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                     if cursor_url[0] != req_url[0] and req_url[0].lower() in ('http', 'https'):
                         cursor_url[0] = req_url[0]
                 cursor_url = ':'.join(cursor_url)
-                if request and isinstance(request.accepted_renderer, JSONRenderer):
+                if request and isinstance(request.accepted_renderer, JSONRenderer) and \
+                        'x_df_pagination' not in cursor_url:
                     cursor_url += '&x_df_pagination=1'
                 return cursor_url
 
