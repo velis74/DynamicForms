@@ -7,10 +7,12 @@ function TLD() {
 
 TLD.prototype = {
   get: function get(key1, key2) {
-    if (this.storage[key1] == undefined)
+    if (this.storage[key1] == undefined) {
       return undefined;
-    if (key2 == undefined)
+    }
+    if (key2 == undefined) {
       return this.storage[key1];
+    }
     return this.storage[key1][key2];
   },
 
@@ -37,7 +39,7 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  },
+  }
 };
 
 dynamicforms = {
@@ -46,7 +48,7 @@ dynamicforms = {
     'template':          'dynamicforms/bootstrap/',
     'jquery_ui':         false,
     'edit_in_dialog':    true,
-    'bootstrap_version': 'v4',
+    'bootstrap_version': 'v4'
   },
 
   /**
@@ -65,7 +67,7 @@ dynamicforms = {
    * @param progressSettings: Progress dialog settings - for custom progress dialogs.
    */
   showProgressDlg: function showProgressDialog(progressDlgID, progressSettings) {
-    var zIndexElement = null;
+    var zIndexElement;
     var progressDlg   = $('#' + progressDlgID);
     if (dynamicforms.DYNAMICFORMS.jquery_ui) {
       if (progressSettings === undefined)
@@ -108,7 +110,7 @@ dynamicforms = {
     }
     var zIndexOrig = zIndexElement.css('z-index');
     var zIndex     = parseInt(zIndexOrig);
-    if (zIndex == NaN)
+    if (isNaN(zIndex))
       zIndex = zIndexOrig;
     else {
       // Because all bootstrap modules have same z-index. If we want that clickable progress bar will be on top of all
@@ -133,7 +135,7 @@ dynamicforms = {
       dynamicforms.progressCheckInterval = null;
     } else {
       $.ajax({url: '/dynamicforms/progress/', headers: {'X-DF-TIMESTAMP': timestamp}})
-        .done(function (data, textStatus, jqXHR) {
+        .done(function (data) {
           var pb_indet   = $('#df-progress-bar-indeterminate');
           var pb_det     = $('#df-progress-bar-determinate');
           var percent    = data.value;
@@ -155,7 +157,7 @@ dynamicforms = {
             }
           }
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
+        .fail(function () {
           if (dynamicforms.shouldShowProgressDlg && !dynamicforms.progressDlgStartShowing) {
             dynamicforms.showProgressDlg(progressDlgID, progressSettings);
           }
@@ -311,11 +313,11 @@ dynamicforms = {
                                       data:        data,
                                       dataType:    dataType,
                                       headers:     headers,
-                                      traditional: true,
+                                      traditional: true
                                     }
                                   })
       .done(doneFuncExec)
-      .fail(function (xhr, status, error) {
+      .fail(function (xhr) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
         //  but if it's 500 something, dialog will be replaced by non-dialog code and displaying it will fail
         //  also for any authorization errors, CSRF, etc, it will again fail
@@ -580,7 +582,7 @@ dynamicforms = {
     if (dynamicforms.DYNAMICFORMS.edit_in_dialog) {
       var ajaxSetts = {
         url:     recordURL,
-        headers: {'X-DF-RENDER-TYPE': 'dialog'},
+        headers: {'X-DF-RENDER-TYPE': 'dialog'}
       }
       if (params != undefined && params.data != undefined)
         ajaxSetts['data'] = params.data;
@@ -627,7 +629,7 @@ dynamicforms = {
       // Count how many lines should "No data" element span
       var colCount      = $("th").length;
       var noDataElement = "<tr data-title='NoData'><td colspan=" + colCount + " style='text-align: center'>No data</td></tr>";
-      var $tblBody      = $("tbody").append(noDataElement);
+      $("tbody").append(noDataElement);
     }
   },
 
@@ -644,7 +646,7 @@ dynamicforms = {
                                     ajax_setts: {
                                       url:     recordURL,
                                       method:  'DELETE',
-                                      headers: {'X-CSRFToken': dynamicforms.csrf_token},
+                                      headers: {'X-CSRFToken': dynamicforms.csrf_token}
                                     }
                                   })
       .done(function (dialogHTML) {
@@ -662,8 +664,7 @@ dynamicforms = {
         } else if (typeof (refreshType) == 'function') {
           refreshType();
         } else if (refreshType.indexOf('redirect') !== -1) {
-          var redirectUrl      = refreshType.split(':').pop();
-          window.location.href = redirectUrl;
+          window.location.href = refreshType.split(':').pop();
         } else if (refreshType == 'no refresh') {
           // pass
         } else if (dynamicforms.isFunction(refreshType)) {
@@ -1130,10 +1131,17 @@ dynamicforms = {
 
       if (link_params != undefined) {
         link_params = link_params.split('&');
-        var addfilter = '';
+        var addfilter = '',
+            filterFields = dynamicforms.filterFields(formID);
+        filterFields.push('cursor');
         for (var i = 0; i < link_params.length; i++) {
-          if (link_params[i].substr(0, 6) == 'cursor')
-            continue;
+          var skip_link = false;
+          for (var j = 0; j < filterFields.length; j++) {
+            var cmpVal = filterFields[j] + '='
+            if (link_params[i].substr(0, cmpVal.length) == cmpVal)
+              skip_link = true;
+          }
+          if (skip_link) continue;
           addfilter += '&' + link_params[i];
         }
         if (filter != 'nofilter') {
@@ -1165,7 +1173,7 @@ dynamicforms = {
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
-               url:     link_next,
+               url:     link_next
              }).done(function (data) {
 
         data                     = $(data).filter("tr");
@@ -1221,6 +1229,14 @@ dynamicforms = {
         dynamicforms.filterData(formID);
       }
     })
+  },
+
+  filterFields: function filterFields(formID) {
+    var res = [];
+    $("#list-" + formID).find(".dynamicforms-filterrow th").each(function () {
+      res.push($(this).attr("data-name"));
+    });
+    return res;
   },
 
   /**
