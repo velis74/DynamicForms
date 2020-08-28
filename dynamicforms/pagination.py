@@ -1,11 +1,11 @@
 import datetime
 import json
 
+import rest_framework.pagination as drf_p
 from django.db.models import DurationField, Q
-from rest_framework.pagination import _reverse_ordering, Cursor, CursorPagination as Cp
 
 
-class CursorPagination(Cp):
+class CursorPagination(drf_p.CursorPagination):
     ordering = 'pk'
 
     # noinspection PyAttributeOutsideInit
@@ -29,7 +29,7 @@ class CursorPagination(Cp):
 
         # Cursor pagination always enforces an ordering.
         if reverse:
-            queryset = queryset.order_by(*_reverse_ordering(self.ordering))
+            queryset = queryset.order_by(*drf_p._reverse_ordering(self.ordering))
         else:
             queryset = queryset.order_by(*self.ordering)
 
@@ -71,7 +71,7 @@ class CursorPagination(Cp):
         # new records before / after the ones we already read. Mechanism for detecting whether they actually appeared
         # is another matter altogether :)
         if current_position is None and results:
-            self.cursor = Cursor(offset=0, reverse=False, position=None)
+            self.cursor = drf_p.Cursor(offset=0, reverse=False, position=None)
             current_position = self._get_position_from_instance(results[0], self.ordering)
 
         # Determine the position of the final item following the page.
