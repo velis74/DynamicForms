@@ -23,7 +23,8 @@ class CursorPagination(drf_p.CursorPagination):
         else:
             (offset, reverse, current_position) = self.cursor
         try:
-            current_position = json.loads(current_position)
+            if current_position:
+                current_position = json.loads(current_position)
         except TypeError:
             current_position = None
 
@@ -56,8 +57,8 @@ class CursorPagination(drf_p.CursorPagination):
                 return Q(**kwargs)
 
             fltr = Q()
-            for segment_len in range(len(self.ordering)):
-                fltr = fltr | filter_segment(segment_len + 1)
+            for seg_len in range(len(self.ordering)):
+                fltr = fltr | filter_segment(seg_len + 1)
 
             queryset = queryset.filter(fltr)
 

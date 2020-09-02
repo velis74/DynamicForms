@@ -5,11 +5,10 @@
   <thead>
   <tr>
     {% table_columns_count serializer as columns_count %}
-    {# TODO: Remove "Actions" strings #}
     {% render_table_commands serializer "thead_rowstart" %}
     {% for column in serializer.fields.values %}
       {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-        <th class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}">{{ column.label }}</th>{% endif %}{% endfor %}
+        <th class="{{ column.table_classes }} {% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %} {{ column.ordering }}" data-field-name="{{ column.field_name }}">{{ column.label }}<span class="ordering"></span></th>{% endif %}{% endfor %}
     {% render_table_commands serializer "thead_rowend" %}
   </tr>
   {% if serializer.show_filter %}
@@ -36,6 +35,7 @@
     {% endif %}
     dynamicforms.paginatorInitTable("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
     dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
+    dynamicforms.getInitialOrdering("{{ serializer.uuid }}");
     {% block scriptend-includes %}{% endblock %}
   </script>
 {% endif %}

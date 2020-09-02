@@ -1319,8 +1319,42 @@ dynamicforms = {
     });
     $select2.select2("destroy").select2(sel2Conf);
     $select2.data('sel2Conf', sel2Conf);
-  }
+  },
 
+  orderingColumnClicked: function orderingColumnClicked(event, $col) {
+    var field_name = $col.attr('date-field-name')
+    console.log(event);
+    console.log(arguments);
+  },
+
+  renderOrderingIndicator: function renderOrderingIndicator($col) {
+    var dir = '\u2195',
+        index = '';
+    if ($col.hasClass('ordering')) {
+      if ($col.hasClass('asc')) dir = '\u2191';  // ascending
+      else if ($col.hasClass('desc')) dir = '\u2193';  // ascending
+      for (var i = 1; i <= 20; i++) {
+        if ($col.hasClass('seg-' + i)) {
+          index = String.fromCharCode(0x2460 + i - 1);
+        }
+      }
+      $col.find('span.ordering').text(dir + index);
+    }
+  },
+
+  getInitialOrdering: function getInitialOrdering(formID) {
+    var ordering = '';
+    $('#list-' + formID + '>thead>tr>th').each(function() {
+      var $col = $(this)
+      dynamicforms.renderOrderingIndicator($col);
+      if ($col.hasClass('ordering')) {
+        $col.on('click', function colclick(evt) {
+          dynamicforms.orderingColumnClicked(evt, $col);
+        });
+      }
+    });
+    dynamicforms.df_tbl_pagination.set(formID, 'ordering', ordering);
+  }
 };
 
 $(document).ready(function () {
