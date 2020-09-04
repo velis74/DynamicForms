@@ -1322,7 +1322,16 @@ dynamicforms = {
   },
 
   orderingColumnClicked: function orderingColumnClicked(event, $col) {
-    var field_name = $col.attr('date-field-name')
+    var field_name = $col.attr('date-field-name');
+    if (event.altKey) {
+      // Show dialog with sort order options
+    }
+    else if (event.ctrlKey) {
+      // Move the segment to top
+    }
+    else {
+      
+    }
     console.log(event);
     console.log(arguments);
   },
