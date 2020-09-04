@@ -1330,7 +1330,7 @@ dynamicforms = {
       // Move the segment to top
     }
     else {
-      
+
     }
     console.log(event);
     console.log(arguments);
