@@ -1134,6 +1134,7 @@ dynamicforms = {
         var addfilter = '',
             filterFields = dynamicforms.filterFields(formID);
         filterFields.push('cursor');
+        filterFields.push('ordering');
         for (var i = 0; i < link_params.length; i++) {
           var skip_link = false;
           for (var j = 0; j < filterFields.length; j++) {
@@ -1248,7 +1249,9 @@ dynamicforms = {
   filterData: function filterData(formID, returnDict) {
     if (returnDict == undefined)
       returnDict = false;
-    var filter = {};
+    var filter = {},
+        order = dynamicforms.df_tbl_pagination.get(formID, 'ordering');
+
     $("#list-" + formID).find(".dynamicforms-filterrow th").each(function (index) {
 
       var element = $(this).find("[name='" + $(this).attr("data-name") + "']");
@@ -1271,8 +1274,12 @@ dynamicforms = {
     if (returnDict)
       return filter;
     filter = jQuery.param(filter);
-    if (!filter.length)
-      filter = 'nofilter';
+    if (!filter.length) {
+      if (order != null && order != '') filter = 'ordering=' + order;
+      else filter = 'nofilter';
+    }
+    else if (order != null && order != '') filter += '&ordering=' + order;
+
     dynamicforms.paginatorGetNextPage(formID, filter);
   },
 
@@ -1321,48 +1328,153 @@ dynamicforms = {
     $select2.data('sel2Conf', sel2Conf);
   },
 
-  orderingColumnClicked: function orderingColumnClicked(event, $col) {
-    var field_name = $col.attr('date-field-name');
+  orderingColumnClicked: function orderingColumnClicked(event, $col, formID) {
+    var ordering_index = dynamicforms.getOrderingAndIndex($col),
+        index = ordering_index.index - 1,
+        ordering = dynamicforms.getCurrentOrder(formID).segments;
+
+    if (!$col.hasClass('ordering')) return;  // Only process columns that are sortable
+
+    event.stopPropagation();
+
+    function renumber() {
+      for (var i = 0; i < ordering.length; i++)
+        ordering[i].index = i + 1;
+    }
+
     if (event.altKey) {
       // Show dialog with sort order options
     }
+    else if (event.ctrlKey && event.shiftKey) {
+      // remove segment from ordering
+      if (index >= 0) {
+        ordering.splice(index, 1);
+        renumber();
+        dynamicforms.setCurrentOrder(formID, ordering);
+      }
+    }
     else if (event.ctrlKey) {
       // Move the segment to top
+      if (index >= 0) ordering.splice(index, 1);
+      if (ordering_index.direction === null) ordering_index.direction = true;
+      ordering.splice(0, 0, ordering_index);
+      renumber();
+      dynamicforms.setCurrentOrder(formID, ordering);
+    }
+    else if (event.shiftKey) {
+      // Change segment sort direction (and add it to sort segments list if not already there)
+      // if shift is pressed add segment to existing ones. if not, set this column as the only segment of sort
+      if (ordering_index.index < 1) {
+        ordering_index.direction = ordering_index.direction !== false;
+        ordering_index.index = ordering.length + 1;
+        ordering.push(ordering_index);
+      }
+      else {
+        ordering[index].direction = ordering[index].direction === false;
+      }
+      dynamicforms.setCurrentOrder(formID, ordering);
     }
     else {
-
+      ordering_index.index = 1;
+      if (ordering_index.direction === null) ordering_index.direction = true;
+      else if (ordering_index.direction === true) ordering_index.direction = false;
+      else {
+        ordering_index.direction = null;
+        ordering_index.index = 0;
+      }
+      dynamicforms.setCurrentOrder(formID, [ordering_index]);
     }
-    console.log(event);
-    console.log(arguments);
   },
 
-  renderOrderingIndicator: function renderOrderingIndicator($col) {
-    var dir = '\u2195',
-        index = '';
+  getOrderingAndIndex: function getOrderingAndIndex($col) {
+    var dir = null,
+        index = 0,
+        fieldName = null;
     if ($col.hasClass('ordering')) {
-      if ($col.hasClass('asc')) dir = '\u2191';  // ascending
-      else if ($col.hasClass('desc')) dir = '\u2193';  // ascending
+      fieldName = $col.attr('data-field-name');
+      if ($col.hasClass('asc')) dir = true;  // ascending
+      else if ($col.hasClass('desc')) dir = false;  // ascending
       for (var i = 1; i <= 20; i++) {
         if ($col.hasClass('seg-' + i)) {
-          index = String.fromCharCode(0x2460 + i - 1);
+          index = i;
+          break;
         }
       }
+    }
+    return {direction: dir, index: index, fieldName: fieldName};
+  },
+
+  renderOrderingIndicator: function renderOrderingIndicator($col, ordering_index) {
+    var dir = '\u2195',
+        index = '';
+
+    if ($col.hasClass('ordering')) {
+      if (ordering_index.direction === true) dir = '\u2191';  // ascending
+      else if (ordering_index.direction === false) dir = '\u2193';  // ascending
+      if (ordering_index.index) index = String.fromCharCode(0x2460 + ordering_index.index - 1);
       $col.find('span.ordering').text(dir + index);
     }
   },
 
-  getInitialOrdering: function getInitialOrdering(formID) {
-    var ordering = '';
+  setCurrentOrder: function setCurrentOrder(formID, ordering) {
+    var order = {};
+    for (var i = 0; i < ordering.length; i++)
+      order[ordering[i].fieldName] = ordering[i];
+
     $('#list-' + formID + '>thead>tr>th').each(function() {
-      var $col = $(this)
-      dynamicforms.renderOrderingIndicator($col);
+      var $col = $(this),
+          fieldName = $col.attr('data-field-name');
       if ($col.hasClass('ordering')) {
-        $col.on('click', function colclick(evt) {
-          dynamicforms.orderingColumnClicked(evt, $col);
-        });
+        var ordr = order[fieldName];
+        if (ordr == null || ordr.index < 1) $col.attr('class', 'ordering unsorted');
+        else $col.attr('class',
+          ('ordering ' + (ordr.direction === true ? 'asc' : 'desc') + (' seg-' + ordr.index))
+        );
       }
     });
-    dynamicforms.df_tbl_pagination.set(formID, 'ordering', ordering);
+    dynamicforms.getInitialOrdering(formID, false);
+    dynamicforms.filterData(formID);
+  },
+
+  getCurrentOrder: function getCurrentOrder(formID) {
+    var ordering = [],
+        order = [];
+    $('#list-' + formID + '>thead>tr>th').each(function() {
+      var $col = $(this);
+      if ($col.hasClass('ordering')) {
+        var ordering_index = dynamicforms.getOrderingAndIndex($col);
+        if (ordering_index.index > 0) ordering.push(ordering_index);
+      }
+    });
+    function cmp(a, b) {
+      if (a.index > b.index) return 1;
+      else if (a.index < b.index) return -1;
+      return 0;
+    }
+    ordering.sort(cmp);
+    for (var i = 0; i < ordering.length; i++) {
+      if (ordering[i].direction === true)
+        order.push(ordering[i].fieldName);
+      else
+        order.push('-' + ordering[i].fieldName);
+    }
+    return {order: order.join(','), segments: ordering};
+  },
+
+  getInitialOrdering: function getInitialOrdering(formID, assignOnClickListener) {
+    $('#list-' + formID + '>thead>tr>th').each(function() {
+      var $col = $(this);
+      if ($col.hasClass('ordering')) {
+        var ordering_index = dynamicforms.getOrderingAndIndex($col);
+        dynamicforms.renderOrderingIndicator($col, ordering_index);
+        if (assignOnClickListener !== false) {
+          $col.on('click', function colclick(evt) {
+            dynamicforms.orderingColumnClicked(evt, $col, formID);
+          });
+        }
+      }
+    });
+    dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
   }
 };
 

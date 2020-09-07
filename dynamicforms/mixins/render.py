@@ -8,7 +8,6 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
 from dynamicforms.settings import DYNAMICFORMS
-from django.utils.safestring import mark_safe
 
 
 class DisplayMode(IntEnum):
@@ -52,8 +51,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+                display_table or display
+                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -194,36 +193,3 @@ class RenderMixin(object):
         else:
             direction_class = 'unsorted'
         return 'ordering ' + direction_class
-
-    def sorting_indicators(self):
-        # for backend in self.context['view'].ordering_backends:
-        ordering = []
-        if hasattr(self, 'context') and 'view' in getattr(self, 'context'):
-            ordering = getattr(self.context['view'], 'ordering', None)
-
-        if getattr(self, 'field_name') not in getattr(ordering, 'fields', []):
-            return None
-
-        index = -1
-        direction_asc = True
-        for idx, o in enumerate(ordering):
-            if o.startswith('-'):
-                direction_asc = False
-                o = o[1:]
-            if o == getattr(self, 'field_name'):
-                index = idx
-
-        if index > -1:
-            sequence_char = chr(0x2460 + index)  # if len(ordering) > 1 else ''
-            direction_char =chr(0x2191) if direction_asc else chr(0x2193)
-            direction_class = 'asc' if direction_asc else 'desc'
-            direction_class += ' seg-%d' % (index + 1)
-        else:
-            sequence_char = ''
-            # tole seveda zamenjaj v class pa onhover daj opacity = 1
-            direction_char = chr(0x2195)
-            direction_class = 'unsorted'
-
-        direction_char = '<span class="direction">' + direction_char + '</span>'
-        sequence_char = '<span class="sequence">' + sequence_char + '</span>'
-        return mark_safe('<span class="ordering ' + direction_class + '">' + direction_char + sequence_char + '</span>')
