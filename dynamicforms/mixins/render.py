@@ -51,8 +51,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-                display_table or display
-                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            display_table or display
+            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
