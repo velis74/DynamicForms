@@ -170,3 +170,26 @@ class RenderMixin(object):
         if res == (True, None) and data is None and self.source == '*':
             return False, None
         return res
+
+    def ordering(self):
+        ordering = []
+        if hasattr(self, 'context') and 'view' in getattr(self, 'context'):
+            ordering = getattr(self.context['view'], 'ordering', None)
+
+        if getattr(self, 'field_name') not in getattr(ordering, 'fields', []):
+            return ''
+
+        index = -1
+        direction_asc = True
+        for idx, o in enumerate(ordering):
+            if o.startswith('-'):
+                direction_asc = False
+                o = o[1:]
+            if o == getattr(self, 'field_name'):
+                index = idx
+
+        if index > -1:
+            direction_class = ('asc' if direction_asc else 'desc') + ' seg-%d' % (index + 1)
+        else:
+            direction_class = 'unsorted'
+        return 'ordering ' + direction_class

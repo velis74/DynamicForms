@@ -1,6 +1,14 @@
 import django_filters.rest_framework as filters
 
 
+class ListWithFields(list):
+
+    def __init__(self, fields, lst) -> None:
+        super().__init__()
+        self.fields = fields
+        self.extend(lst)
+
+
 class FilterBackend(filters.DjangoFilterBackend):
 
     def get_filterset_class(self, view, queryset=None):
@@ -10,8 +18,8 @@ class FilterBackend(filters.DjangoFilterBackend):
         class MyOrderingFilter(filters.OrderingFilter):
             def get_ordering(self, value):
                 if not value:
-                    return ['id']
-                return [self.get_ordering_value(param) for param in value]
+                    return ListWithFields(list(self.param_map.keys()), ['id'])
+                return ListWithFields(list(self.param_map.keys()), [self.get_ordering_value(param) for param in value])
 
         class FilterSetApplied(filters.FilterSet):
             ordering = MyOrderingFilter(

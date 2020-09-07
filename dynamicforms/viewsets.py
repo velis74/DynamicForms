@@ -230,6 +230,12 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 query_params = self.request.query_params
             for fld, val in query_params.items():
                 res = self.filter_queryset_field(res, fld, val)
+            for backend in self.filter_backends:
+                if hasattr(backend, 'get_ordering'):
+                    ordering = backend().get_ordering(self.request, queryset, self)
+                    if ordering:
+                        self.ordering = ordering
+                        break
         return res
 
     # noinspection PyMethodMayBeStatic

@@ -1144,7 +1144,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(header), 3)
         for idx, th in enumerate(header):
             if idx == 1:
-                self.assertEqual(th.text.strip(), 'Shown')
+                self.assertEqual(th.text.strip(), 'Shown↕')
             else:
                 self.assertNotEqual(th.text.strip(), 'Hidden')
         body = table.find_elements_by_css_selector('tbody tr td')
