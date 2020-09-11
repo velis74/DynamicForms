@@ -1,0 +1,20 @@
+
+.password-field {
+  display:             inline-block;
+  content:             "";
+  background-image:    url("../bootstrap-icons/eye.svg");
+  background-repeat:   no-repeat;
+  background-size:     1rem 1rem;
+  background-color:    transparent;
+  background-position: center;
+}
+
+.password-field-slash {
+  display:             inline-block;
+  content:             "";
+  background-image:    url("../bootstrap-icons/eye-slash.svg");
+  background-repeat:   no-repeat;
+  background-size:     1rem 1rem;
+  background-color:    transparent;
+  background-position: center;
+}
