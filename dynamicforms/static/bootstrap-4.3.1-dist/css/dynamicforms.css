@@ -2,7 +2,7 @@
 .password-field {
   display:             inline-block;
   content:             "";
-  background-image:    url("../bootstrap-icons/eye.svg");
+  background-image:    url("../icons/eye-outline.svg");
   background-repeat:   no-repeat;
   background-size:     1rem 1rem;
   background-color:    transparent;
@@ -12,7 +12,7 @@
 .password-field-slash {
   display:             inline-block;
   content:             "";
-  background-image:    url("../bootstrap-icons/eye-slash.svg");
+  background-image:    url("../icons/eye-off-outline.svg");
   background-repeat:   no-repeat;
   background-size:     1rem 1rem;
   background-color:    transparent;
