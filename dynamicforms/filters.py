@@ -14,11 +14,12 @@ class FilterBackend(filters.DjangoFilterBackend):
     def get_filterset_class(self, view, queryset=None):
 
         ordering_excluded_fields = getattr(view, 'filterset_ordering_exclude', [])
+        ordering_default = getattr(view, 'filterset_ordering_default', ['id'])
 
         class MyOrderingFilter(filters.OrderingFilter):
             def get_ordering(self, value):
                 if not value:
-                    return ListWithFields(list(self.param_map.keys()), ['id'])
+                    return ListWithFields(list(self.param_map.keys()), ordering_default)
                 return ListWithFields(list(self.param_map.keys()), [self.get_ordering_value(param) for param in value])
 
         class FilterSetApplied(filters.FilterSet):
