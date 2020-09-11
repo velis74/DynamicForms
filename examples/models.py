@@ -101,6 +101,7 @@ class BasicFields(models.Model):
     date_field = models.DateField(null=True)
     time_field = models.TimeField(null=True)
     duration_field = models.DurationField(null=True)
+    password_field = models.CharField(null=True, max_length=32)
 
 
 class Relation(models.Model):
