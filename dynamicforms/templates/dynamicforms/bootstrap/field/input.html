@@ -11,10 +11,17 @@
        {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
        {% if field.read_only %}readonly{% endif %}/>
 {% if field.password_field %}
-  <div class="input-group-append">
-    <span id="pwf-{{ field.uuid }}" class="input-group-text password-field"
-          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')"></span>
-  </div>
-  </div>
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    <div class="input-group-append">
+        <span id="pwf-{{ field.uuid }}" class="input-group-text password-field"
+              onclick="dynamicforms.togglePasswordField('{{ field.uuid }}', '{{ DYNAMICFORMS.bootstrap_version }}')"></span>
+    </div>
+    </div>
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+    <span class="input-group-addon" style="background-color: transparent;"
+          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}', '{{ DYNAMICFORMS.bootstrap_version }}')">
+      <span id="pwf-{{ field.uuid }}" class="glyphicon glyphicon-eye-open"></span></span>
+    </div>
+  {% endif %}
 {% endif %}
 {% endblock %}
