@@ -9,7 +9,7 @@ with open('README.rst', 'r') as fh:
 with open('requirements.txt', 'r') as fh:
     requirements = fh.readlines()
 
-version = '0.9.25'
+version = '0.9.26'
 
 if sys.argv[-1] == 'publish':
     if os.system('python -m wheel version'):
