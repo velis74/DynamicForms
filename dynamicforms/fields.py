@@ -7,8 +7,8 @@ from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (ActionMixin, AllowTagsMixin, BooleanFieldMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode,
-                     FieldHelpTextMixin, HiddenFieldMixin, NullChoiceMixin, RelatedFieldAJAXMixin, RenderMixin,
-                     TimeFieldMixin)
+                     FieldHelpTextMixin, HiddenFieldMixin, NullChoiceMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
+                     RenderMixin, TimeFieldMixin)
 from .settings import version_check
 
 
@@ -34,33 +34,11 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
         super().__init__(**kwargs)
 
 
-class CharField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
+class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        super().__init__(**kwargs)
-
-
-class EmailField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField):
-
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
-                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        super().__init__(**kwargs)
-
-
-class RegexField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField):
-
-    def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
-                 initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
@@ -68,11 +46,35 @@ class RegexField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField
         super().__init__(**kwargs)
 
 
-class SlugField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
+class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField):
+
+    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
+                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
+                 allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        super().__init__(**kwargs)
+
+
+class RegexField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField):
+
+    def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
+                 initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
+                 validators=None, allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        super().__init__(**kwargs)
+
+
+class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
 
     def __init__(self, allow_unicode=False, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 validators=None, allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
@@ -83,12 +85,13 @@ class SlugField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
         super().__init__(**kwargs)
 
 
-class URLField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
+class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -105,11 +108,11 @@ class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
         super().__init__(**kwargs)
 
 
-class IPAddressField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddressField):
+class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddressField):
 
     def __init__(self, protocol='both', read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 validators=None, allow_null=False, password_field=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}

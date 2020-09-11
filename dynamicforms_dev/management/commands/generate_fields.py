@@ -16,7 +16,8 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin
+        from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, \
+            RelatedFieldAJAXMixin, PasswordFieldMixin
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -46,8 +47,9 @@ class Command(BaseCommand):
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
                 [''] +
-                textwrap.wrap('ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin,  RelatedFieldAJAXMixin, ' +
-                              'FieldHelpTextMixin, ' + ', '.join(field_mixins), 115)
+                textwrap.wrap(
+                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin,  RelatedFieldAJAXMixin, ' +
+                    'FieldHelpTextMixin, PasswordFieldMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
             print('from .settings import version_check', file=output)
@@ -65,6 +67,9 @@ class Command(BaseCommand):
                     param_classes.append((0, NullChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
+                if issubclass(field, fields.CharField):
+                    param_classes.append((0, PasswordFieldMixin))
+
                 param_classes.append((0, ActionMixin))
                 param_classes.append((0, RenderMixin))
 
@@ -167,6 +172,8 @@ class Command(BaseCommand):
                     additional_mixin += 'AllowTagsMixin, NullChoiceMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
+                if issubclass(field, fields.CharField):
+                    additional_mixin += 'PasswordFieldMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
                 hstore_field_wrapper, hstore_field_indent = '', ''

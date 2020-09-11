@@ -1,13 +1,20 @@
 {% extends DYNAMICFORMS.field_base_template %}
 {% block field_input %}
-  <input id="{{ field.uuid }}"
-         name="{{ field.name }}"
-         class="{% if style.input_type != "file" %}form-control{% else %} form-control-file{% endif %}{% if field.errors %} is-invalid{% endif %}"
-         type="{{ style.input_type }}"
-         {% if style.input_type in "datetime-local,time" %}step="{% if field.time_step %}{{ field.time_step }}{% else %}1{% endif %}"{% endif %}
-         {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
-         {% if field.value is not None %}value="{{ field.value }}"{% endif %}
-         {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
-         {% if field.read_only %}readonly{% endif %}
-  />
+  {% if field.password_field %}
+    <div class="input-group">{% endif %}
+<input id="{{ field.uuid }}" name="{{ field.name }}"
+       class="{% if style.input_type != "file" %}form-control{% else %} form-control-file{% endif %}{% if field.errors %} is-invalid{% endif %}"
+       type="{{ style.input_type }}" {% if style.input_type in "datetime-local,time" %}step="
+        {% if field.time_step %}{{ field.time_step }}{% else %}1{% endif %}"{% endif %}
+       {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
+       {% if field.value is not None %}value="{{ field.value }}"{% endif %}
+       {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
+       {% if field.read_only %}readonly{% endif %}/>
+{% if field.password_field %}
+  <div class="input-group-append">
+    <span id="pwf-{{ field.uuid }}" class="input-group-text password-field"
+          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')"></span>
+  </div>
+  </div>
+{% endif %}
 {% endblock %}

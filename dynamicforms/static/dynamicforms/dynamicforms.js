@@ -1475,7 +1475,19 @@ dynamicforms = {
       }
     });
     dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
-  }
+  },
+
+  togglePasswordField: function togglePasswordField(field) {
+    if ($("#" + field).attr('type') == 'password') {
+      $("#" + field).attr('type', 'text');
+      $("#pwf-" + field).toggleClass('password-field', false);
+      $("#pwf-" + field).toggleClass('password-field-slash', true);
+    } else {
+      $("#" + field).attr('type', 'password');
+      $("#pwf-" + field).toggleClass('password-field', true);
+      $("#pwf-" + field).toggleClass('password-field-slash', false);
+    }
+  },
 };
 
 $(document).ready(function () {

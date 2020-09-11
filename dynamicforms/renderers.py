@@ -102,6 +102,13 @@ class HTMLFormRenderer(HTMLFormRenderer):
 
         style = dict(self.default_style[field])
         style.update(field.style)
+
+        try:
+            if field._field.password_field:
+                style['input_type'] = 'password'
+        except:
+            pass
+
         if 'template_pack' not in style:
             style['template_pack'] = parent_style.get('template_pack', self.template_pack)
         style['serializer'] = parent_style.get('serializer', None)
