@@ -590,6 +590,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 elif label_text == 'Password field':
                     self.initial_check(field, '', 'password_field', 'password')
                     field.send_keys('password')
+                    id = field.get_attribute('id')
+                    container.find_element_by_id('pwf-' + id).click()
+                    self.assertEqual('text', field.get_attribute('type'))
                 else:
                     field_count -= 1
 
