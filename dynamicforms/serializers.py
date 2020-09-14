@@ -53,6 +53,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
                 field.read_only = False
                 field.display_form = field.display_table  # filter's form is same as non-filter's table
                 field.allow_tags = False
+                field.password_field = False
 
     @property
     def has_non_field_errors(self):

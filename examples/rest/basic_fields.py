@@ -26,6 +26,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     date_field = fields.DateField()
     time_field = fields.TimeField()
     duration_field = fields.DurationField()
+    password_field = fields.CharField(password_field=True)
 
     class Meta:
         model = BasicFields

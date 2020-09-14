@@ -1475,7 +1475,34 @@ dynamicforms = {
       }
     });
     dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
-  }
+  },
+
+  togglePasswordField: function togglePasswordField(field) {
+    version = dynamicforms.DYNAMICFORMS.bootstrap_version;
+
+    if (version == 'v4') {
+      var field_class       = 'password-field';
+      var field_class_slash = 'password-field-slash';
+    } else if (version == 'v3') {
+      var field_class       = 'glyphicon-eye-open';
+      var field_class_slash = 'glyphicon-eye-close';
+    } else {
+      var field_class       = 'ui-icon-circle-check';
+      var field_class_slash = 'ui-icon-circle-close';
+    }
+
+
+    if ($("#" + field).attr('type') == 'password') {
+      $("#" + field).attr('type', 'text');
+      $("#pwf-" + field).toggleClass(field_class, false);
+      $("#pwf-" + field).toggleClass(field_class_slash, true);
+    } else {
+      $("#" + field).attr('type', 'password');
+      $("#pwf-" + field).toggleClass(field_class, true);
+      $("#pwf-" + field).toggleClass(field_class_slash, false);
+    }
+  },
+
 };
 
 $(document).ready(function () {

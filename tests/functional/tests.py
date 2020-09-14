@@ -587,10 +587,16 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 elif label_text == 'Duration field':
                     self.initial_check(field, '', 'duration_field', 'text')
                     field.send_keys('180')
+                elif label_text == 'Password field':
+                    self.initial_check(field, '', 'password_field', 'password')
+                    field.send_keys('password')
+                    id = field.get_attribute('id')
+                    container.find_element_by_id('pwf-' + id).click()
+                    self.assertEqual('text', field.get_attribute('type'))
                 else:
                     field_count -= 1
 
-        self.assertEqual(field_count, 15)
+        self.assertEqual(field_count, 16)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
         time.sleep(1)  # Zato, da se lahko tabela osveži
