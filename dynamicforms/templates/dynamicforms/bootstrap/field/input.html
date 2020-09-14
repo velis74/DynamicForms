@@ -14,14 +14,14 @@
   {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
     <div class="input-group-append">
         <span id="pwf-{{ field.uuid }}" class="input-group-text password-field"
-              onclick="dynamicforms.togglePasswordField('{{ field.uuid }}', '{{ DYNAMICFORMS.bootstrap_version }}')"></span>
-    </div>
+              onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')"></span>
     </div>
   {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
     <span class="input-group-addon" style="background-color: transparent;"
-          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}', '{{ DYNAMICFORMS.bootstrap_version }}')">
+          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
       <span id="pwf-{{ field.uuid }}" class="glyphicon glyphicon-eye-open"></span></span>
-    </div>
+
   {% endif %}
+  </div>
 {% endif %}
 {% endblock %}
