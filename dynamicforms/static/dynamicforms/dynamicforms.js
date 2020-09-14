@@ -1477,7 +1477,9 @@ dynamicforms = {
     dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
   },
 
-  togglePasswordField: function togglePasswordField(field, version = null) {
+  togglePasswordField: function togglePasswordField(field) {
+    version = dynamicforms.DYNAMICFORMS.bootstrap_version;
+
     if (version == 'v4') {
       var field_class       = 'password-field';
       var field_class_slash = 'password-field-slash';
