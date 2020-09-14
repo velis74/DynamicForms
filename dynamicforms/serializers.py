@@ -166,7 +166,7 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
         for field in self._readable_fields:
             try:
                 attribute = field.get_attribute(instance)
-                if isinstance(field, serializers.ListSerializer):
+                if not isinstance(field, RenderMixin):
                     ret[field.field_name] = field.to_representation(attribute)
                 else:
                     ret[field.field_name] = field.to_representation(attribute, instance)
