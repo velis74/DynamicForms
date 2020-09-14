@@ -1,19 +1,19 @@
-{% extends 'dynamicforms/bootstrap/base.html' %}
-{% load dynamicforms %}
+{% extends 'dynamicforms/bootstrap/base.html' %}{% load dynamicforms %}
 {% block title %}
   {{ serializer.page_title }}
 {% endblock %}
 {% block body %}
   {% get_data_template as data_template %}
 
-<div class="{{ DYNAMICFORMS.bs_card_class }} df-card">
-  <div class="{{ DYNAMICFORMS.bs_card_header }}">
-    {{ serializer.page_title }}
-    {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+  <div class="{{ DYNAMICFORMS.bs_card_class }} df-card">
+    <div class="{{ DYNAMICFORMS.bs_card_header }}">
+      {{ serializer.page_title }}
+      {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+    </div>
+    <div class="{{ DYNAMICFORMS.bs_card_body }}">
+      {% include data_template with serializer=serializer data=data %}
+    </div>
   </div>
-  <div class="{{ DYNAMICFORMS.bs_card_body }}">
-    {% include data_template with serializer=serializer data=data %}
-  </div>
-</div>
   {% include "dynamicforms/bootstrap/progress_dialog.html" %}
+  {% include "dynamicforms/bootstrap/simple_dialog.html" %}
 {% endblock %}

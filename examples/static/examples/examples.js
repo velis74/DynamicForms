@@ -27,5 +27,22 @@ examples = {
       dynamicforms.fieldSetVisible(fields.qty_fld, unit_visible && newRec.unit == 'wt');
       dynamicforms.fieldSetVisible(fields.cst_fld, unit_visible && newRec.unit == 'cst');
     }
-  }
+  },
+
+  simpleDlgGenericCallback: function simpleDlgGenericCallback() {
+    alert(this.text);
+  },
+
+  testSimpleDialog: function testSimpleDialog() {
+    buttons = [
+      {title: 'Cancel', callback: 'examples.simpleDlgGenericCallback', parameters: {text: "Test"}},
+      {title:       'OK',
+        style:      'primary',
+        callback:   'examples.simpleDlgGenericCallback',
+        parameters: {text: "Clicked OK button"},
+      },
+    ];
+
+    dynamicforms.showSimpleDialog('Test dialog', '<p>Simple dialog content</p>', buttons);
+  },
 };

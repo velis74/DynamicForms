@@ -1544,6 +1544,96 @@ dynamicforms = {
     }
   }
 
+  slugify: function slugify(string) {
+    string = string.toLowerCase();
+    string = string.replace(/[^a-zA-Z0-9]+/g, '-');
+    return string;
+  },
+
+  simpleDialogCustomCommand: function simpleDialogCustomCommand(button) {
+    return function () {
+      if (button['callback']) {
+        var customFunction = eval(button['callback']);
+        if (typeof customFunction == 'function') {
+          customFunction.apply(button['parameters']);
+        }
+      }
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        $(this).dialog('close');
+      }
+    };
+  },
+
+  showSimpleDialog: function showSimpleDialog(title, body, buttons = []) {
+
+    var $dlg = $("#df-simple-dialog-container").clone();
+    $dlg.attr('id', 'dialog-' + dynamicforms.slugify(title));
+    var footer = '';
+
+    if (buttons.length == 0) {
+      buttons = [
+        {title: 'Cancel', callback: 'dynamicforms.simpleDlgGenericCallback'},
+        {title: 'OK', style: 'primary', callback: 'dynamicforms.simpleDlgGenericCallback'},
+      ];
+    }
+
+    $dlg.on('show.bs.modal', function (event) {
+      buttons.forEach(function (button) {
+        var btn_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
+        btn_id     = btn_id.toLowerCase();
+        btn_id     = btn_id.replace(/[^a-zA-Z0-9]+/g, '-');
+
+        var button_style = 'secondary';
+        if (button['style']) {
+          button_style = button['style'];
+        }
+
+        footer = footer.concat('<button id=' + btn_id + ' type="button" class="btn btn-' + button_style + '" data-dismiss="modal">' + button['title'] + '</button>');
+      });
+
+      $dlg.find('.modal-title').text(title);
+      $dlg.find('.modal-body').html(body);
+      $dlg.find('.modal-footer').html(footer);
+    });
+
+    $dlg.on('shown.bs.modal', function (event) {
+
+      buttons.forEach(function (button) {
+        var fn = dynamicforms.simpleDialogCustomCommand(button);
+
+        if (button) {
+          var button_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
+          $('#' + button_id).on('click', {callback: button['callback'], parameters: button['parameters']}, fn);
+        }
+      });
+    });
+
+    $dlg.on('hidden.bs.modal', function (event) {
+      $dlg.remove();
+    });
+
+    // Show the dialog
+    if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+      var btns = [];
+      buttons.forEach(function (button) {
+        var fn = dynamicforms.simpleDialogCustomCommand(button);
+        btns.push({text: button['title'], click: fn});
+      });
+
+      $dlg.html(body);
+      var dialog = $dlg.dialog({
+        resizable: false,
+        height:    "auto",
+        modal:     true,
+        buttons:   btns,
+      });
+
+      dialog.dialog("open");
+    } else {
+      $dlg.modal();
+    }
+
+  },
 };
 
 $(document).ready(function () {
