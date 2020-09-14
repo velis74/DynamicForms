@@ -65,7 +65,28 @@
 
   /* ordering indicators in table header */
   th.ordering {
-    cursor: pointer;
+    cursor:      pointer;
     user-select: none;
+  }
+
+
+  .password-field {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static '/dynamicforms/icons/eye-outline.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
+  }
+
+  .password-field-slash {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static '/dynamicforms/icons/eye-off-outline.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
   }
 </style>
