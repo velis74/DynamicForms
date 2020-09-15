@@ -339,6 +339,7 @@ dynamicforms = {
 
     var isFileUpload = $form.find('input[type=file]').length > 0;
     var requestData = data;
+    var contentType = 'application/json';
     if (isFileUpload) {
       if (typeof window.FormData === "undefined") {
         alert("Your browser does not support file upload.");
@@ -348,14 +349,19 @@ dynamicforms = {
       for (var key in data) {
         if (data.hasOwnProperty(key)) {
            var fileInput = $form.find('input[type=file][name=' + key + ']')
-           if (fileInput.length === 1 && fileInput.get(0).files.length === 1) {
-             formDataObject.append(key, fileInput.get(0).files[0]);
+           if (fileInput.length === 1) {
+             if (fileInput.get(0).files.length === 1 && !!fileInput.get(0).files[0]) {
+               formDataObject.append(key, fileInput.get(0).files[0]);
+             }
            } else {
              formDataObject.append(key, data[key]);
            }
         }
       }
       requestData = formDataObject;
+      contentType = false;
+    } else {
+      requestData = JSON.stringify(requestData);
     }
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
@@ -364,7 +370,7 @@ dynamicforms = {
                                       data:        requestData,
                                       dataType:    dataType,
                                       processData: false,
-                                      contentType: false,
+                                      contentType: contentType,
                                       headers:     headers,
                                       traditional: true
                                     }

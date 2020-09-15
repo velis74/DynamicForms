@@ -98,3 +98,14 @@ class AdvancedFieldsViewset(ModelViewSet):
 
     queryset = AdvancedFields.objects.all()
     serializer_class = AdvancedFieldsSerializer
+
+    def update(self, request, *args, **kwargs):
+        # DynamicForms js client uses only PUT which makes fields checking for all fields. If you dont want to update
+        # all fields e.g. upload new file, we should use PATCH method, but current js client does not support this.
+        # To enable update of record without re-uploading new file,
+        # we enable partial update with line below -> kwargs['partial'] = True
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
+
+
+
