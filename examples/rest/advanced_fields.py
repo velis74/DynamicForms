@@ -2,7 +2,6 @@ from django.utils import timezone
 
 from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
-from .fields.df_file_field import DfFileField
 from ..models import AdvancedFields, Relation
 from .fields.df_file_field import DfFileField
 
