@@ -14,15 +14,15 @@ from examples.models import AdvancedFields, RefreshType, Validated
 from setup.settings import BASE_DIR, MEDIA_ROOT
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
-upload_file_name: str = '0_3142.prj'
-file_for_upload: str = "%s/tests/static_files/%s" % (BASE_DIR, upload_file_name)
+upload_file_name = '0_3142.prj'
+file_for_upload = "%s/tests/static_files/%s" % (BASE_DIR, upload_file_name)
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
     def tearDown(self):
         super().tearDown()
-        uploaded_file: str = "%s/examples/%s" % (MEDIA_ROOT, upload_file_name)
+        uploaded_file = "%s/examples/%s" % (MEDIA_ROOT, upload_file_name)
         if os.path.exists(uploaded_file):
             os.remove(uploaded_file)
 

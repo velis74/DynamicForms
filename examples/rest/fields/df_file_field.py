@@ -6,10 +6,10 @@ from dynamicforms.fields import FileField
 
 
 class DfFileField(FileField):
-    def to_representation(self, value, row_data=None) -> str:
+    def to_representation(self, value, row_data=None):
         if not value:
             return ""
-        link: str = mark_safe(
+        link = mark_safe(
             '<a href="#" onclick=\'event.stopPropagation(); window.open("%s", "_blank")\'>%s</a>' % (
                 value.url, os.path.basename(value.url)))
         if self.is_rendering_to_list:
