@@ -14,3 +14,5 @@ db.sqlite3
 /doc/_build/
 /geckodriver.log
 venv/
+media
+

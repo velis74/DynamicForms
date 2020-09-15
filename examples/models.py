@@ -123,6 +123,7 @@ class AdvancedFields(models.Model):
     multiplechoice_field = models.CharField(null=True, max_length=8)
     filepath_field = models.FilePathField(null=True)
     file_field = models.FileField(upload_to='examples/', null=True, blank=True)
+    file_field_two = models.FileField(upload_to='examples2/', null=True, blank=True)
     image_field = models.ImageField(upload_to='examples/', null=True, blank=True)
 
     # Model attribute for ReadOnlyField

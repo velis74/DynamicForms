@@ -2,6 +2,7 @@ from django.utils import timezone
 
 from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
+from .fields.df_file_field import DfFileField
 from ..models import AdvancedFields, Relation
 
 
@@ -39,7 +40,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     # ))
 
     # TODO: FileField, ImageField
-    # file_field = serializers.FileField(required=False, use_url=True)
     # image_field = serializers.ImageField(required=False, use_url=True)
 
     # Error: The submitted data was not a file. Check the encoding type on the form.
@@ -78,13 +78,14 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     string_related_field = fields.StringRelatedField(source='primary_key_related_field')
     primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
     slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+    file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False)
 
     # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
     class Meta:
         model = AdvancedFields
-        exclude = ('multiplechoice_field', 'file_field', 'image_field', 'hyperlinked_related_field',
+        exclude = ('multiplechoice_field', 'image_field', 'hyperlinked_related_field',
                    'hyperlinked_identity_field')
 
     def create(self, validated_data):
