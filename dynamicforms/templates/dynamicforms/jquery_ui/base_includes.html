@@ -6,9 +6,10 @@
   <link href="{% static 'jquery_ui/css/jquery-ui.structure.min.css' %}" rel="stylesheet">
   <link href="{% static 'jquery_ui/css/jquery-ui.theme.min.css' %}" rel="stylesheet">
   <script src="{% static 'jquery_ui/js/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'tinymce/v5.4.2/jquery.tinymce.min.js' %}"></script>
+  <script src="{% static 'tinymce/v5.4.2/tinymce.min.js' %}"></script>
 {% endif %}
 <script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
-
 <script type="application/javascript">
   dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};
   dynamicforms.csrf_token   = '{{ csrf_token }}';

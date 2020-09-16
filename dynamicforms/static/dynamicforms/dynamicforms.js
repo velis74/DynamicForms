@@ -306,6 +306,14 @@ dynamicforms = {
     // We need this so ve can call refresh from custom function (arguments.callee.performRefresh())
     doneFuncExec.performRefresh = performRefresh;
     doneFuncExec.getDlg = getDlg;
+    for (var key in data) {
+       if (data.hasOwnProperty(key)) {
+          var textareaInput = $form.find('textarea[name=' + key + ']')
+          if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length=== 1) {
+            data[key] = tinyMCE.get(textareaInput.prop('id')).getContent()
+          }
+       }
+    }
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       type:        method,

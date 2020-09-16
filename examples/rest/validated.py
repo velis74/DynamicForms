@@ -25,7 +25,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
                               ", 'no refresh', __TABLEID__);"),
         TableAction(TablePosition.ROW_CLICK, label=_('Edit'), title=_('Edit record'),
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id'))"
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-row\"]').attr('data-id'))"
                               ", 'record', __TABLEID__);"),
         TableAction(TablePosition.ROW_END, label=_('Delete (refresh record)'), title=_('Delete record'),
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "

@@ -447,3 +447,25 @@ class ManyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
+
+
+class RTFField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
+
+    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
+                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
+                 allow_null=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
+        kwargs = dict(
+            max_length=None,
+            min_length=None,
+        )
+        for k, v in filter(lambda t: next(iter(t), None) and not t[0].startswith(('__', 'self', 'kw')),
+                           locals().items()):
+            kwargs[k] = v
+        kwargs.update(kw)
+        if style is None:
+            kwargs['style'] = dict(
+                base_template='rtf_field.html',
+            )
+        super().__init__(**kwargs)
