@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from dynamicforms import serializers, fields
+from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.viewsets import ModelViewSet
 from ..models import RefreshType

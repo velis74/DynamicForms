@@ -315,7 +315,8 @@ class Actions(object):
             self.actions.append(
                 TableAction(TablePosition.ROW_CLICK, _('Edit'), title=_('Edit record'), name='edit',
                             action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' "
-                                      "format='html' %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-row\"]').attr('data-id')), 'record', __TABLEID__);")
+                                      "format='html' %}'.replace('__ROWID__', $(event.target.parentElement).closest("
+                                      "'tr[class=\"df-table-row\"]').attr('data-id')), 'record', __TABLEID__);")
             )
             self.actions.append(
                 TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
