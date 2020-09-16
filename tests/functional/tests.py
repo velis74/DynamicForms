@@ -983,7 +983,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 3)
+        self.assertEqual(len(cells), 4)
 
         # Test Add action with refreshType='table'
         self.add_refresh_types_record(1, 'Refresh table')
@@ -1030,19 +1030,19 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 8)
 
         # Test Delete action with refreshType='record'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[0].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 7)
 
         # Test Delete action with refreshType='table'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 6)
 
         # Test Delete action with refreshType='no refresh'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[2].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 6)
@@ -1053,13 +1053,13 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 5)
 
         # Test Delete action with refreshType='reload'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[3].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 4)
 
         # Test Delete action with refreshType='redirect'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[4].click()
         # Redirection to /validated.html defined in action happens
         redirect_url = self.get_current_url()
@@ -1070,7 +1070,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='custom function'
-        del_btns = rows[0].find_elements_by_tag_name('td')[2].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[5].click()
 
         alert = self.get_alert()
