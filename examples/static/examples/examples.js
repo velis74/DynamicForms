@@ -43,6 +43,6 @@ examples = {
       },
     ];
 
-    dynamicforms.showSimpleDialog('Test dialog', '<p>Simple dialog content</p>', buttons);
+    dynamicforms.showModalDialog('Test dialog', '<p>Simple dialog content</p>', buttons);
   },
 };

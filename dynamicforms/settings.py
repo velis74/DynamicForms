@@ -108,7 +108,7 @@ class SettingsBootstrap(Settings):
 
     page_includes = property(lambda self: self.template + ('base_includes_%s.html' % self.bootstrap_version))
     field_base_template = property(lambda self: self.template + ('field/base_field_%s.html' % self.bootstrap_version))
-    modal_dialog_template = property(lambda self: self.template + ('modal_dialog_%s.html' % self.bootstrap_version))
+    modal_dialog_template = property(lambda self: self.template + 'modal_dialog.html')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'btn ml-1')

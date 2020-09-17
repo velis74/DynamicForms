@@ -124,4 +124,5 @@ DYNAMICFORMS = {
     # 'template': 'dynamicforms/jquery_ui/',
     'page_template': 'examples/page.html',
     'testing': sys.argv[1:2] == ['test'],
+    'bootstrap_version': 'v3',
 }

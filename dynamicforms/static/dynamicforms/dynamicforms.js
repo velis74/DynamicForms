@@ -215,6 +215,7 @@ dynamicforms = {
         $dlg.dialog('close');
       } else {
         $dlg.modal('hide');
+        // $dlg.remove();
       }
     }
     dynamicforms.progressDlgOverlay = false;
@@ -227,7 +228,7 @@ dynamicforms = {
    *  callbacks for closing progress dialog after operation completes
    */
   ajaxWithProgress:      function ajaxWithProgress(options) {
-    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
+    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-modal-dialog-container';
     var timestamp     = $.now()
 
     var showProgress  = undefined;
@@ -239,6 +240,22 @@ dynamicforms = {
       showProgress = true;
 
     if (showProgress && !dynamicforms.progressDlgOverlay) {
+      if (progressDlgID == 'df-modal-dialog-container') {
+        progressDlgID = 'df-modal-dialog-' + 'progress';
+        var $dlg      = $("#df-modal-dialog-container").clone();
+        $dlg.attr('id', progressDlgID);
+        $(document.body).append($dlg);
+      }
+
+      $dlg.find('.modal-title').html("Performing operation...");
+      tmp = '<div id="df-progress-comment"></div>' +
+        '<div id="df-progress-bar-div" class="progress" style="position: relative;">' +
+        '<div id="df-progress-bar-indeterminate" class="progress-bar progress-bar-striped indeterminate" ' +
+        'style="display: none"></div> <div id="df-progress-bar-determinate" class="progress-bar progress-bar-striped" ' +
+        'style="display: none" aria-valuemin="0" aria-valuemax="100"></div></div>';
+      $dlg.find('.modal-body').html(tmp);
+      $dlg.find('.modal-footer').remove();
+
       dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
     }
 
@@ -1550,7 +1567,7 @@ dynamicforms = {
     return string;
   },
 
-  simpleDialogCustomCommand: function simpleDialogCustomCommand(button) {
+  modalDialogCustomCommand: function modalDialogCustomCommand(button) {
     return function () {
       if (button['callback']) {
         var customFunction = eval(button['callback']);
@@ -1564,25 +1581,22 @@ dynamicforms = {
     };
   },
 
-  showSimpleDialog: function showSimpleDialog(title, body, buttons = []) {
-
-    var $dlg = $("#df-simple-dialog-container").clone();
+  showModalDialog: function showModalDialog(title, body, buttons = []) {
+    var $dlg = $("#df-modal-dialog-container").clone();
     $dlg.attr('id', 'dialog-' + dynamicforms.slugify(title));
-    var footer = '';
+    $(document.body).append($dlg);
 
     if (buttons.length == 0) {
       buttons = [
-        {title: 'Cancel', callback: 'dynamicforms.simpleDlgGenericCallback'},
-        {title: 'OK', style: 'primary', callback: 'dynamicforms.simpleDlgGenericCallback'},
+        {title: 'Cancel'},
+        {title: 'OK', style: 'primary'},
       ];
     }
 
     $dlg.on('show.bs.modal', function (event) {
+      var footer = '';
       buttons.forEach(function (button) {
         var btn_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
-        btn_id     = btn_id.toLowerCase();
-        btn_id     = btn_id.replace(/[^a-zA-Z0-9]+/g, '-');
-
         var button_style = 'secondary';
         if (button['style']) {
           button_style = button['style'];
@@ -1597,9 +1611,8 @@ dynamicforms = {
     });
 
     $dlg.on('shown.bs.modal', function (event) {
-
       buttons.forEach(function (button) {
-        var fn = dynamicforms.simpleDialogCustomCommand(button);
+        var fn = dynamicforms.modalDialogCustomCommand(button);
 
         if (button) {
           var button_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
@@ -1616,7 +1629,7 @@ dynamicforms = {
     if (dynamicforms.DYNAMICFORMS.jquery_ui) {
       var btns = [];
       buttons.forEach(function (button) {
-        var fn = dynamicforms.simpleDialogCustomCommand(button);
+        var fn = dynamicforms.modalDialogCustomCommand(button);
         btns.push({text: button['title'], click: fn});
       });
 
