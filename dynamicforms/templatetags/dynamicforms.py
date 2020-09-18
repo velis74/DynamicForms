@@ -292,6 +292,7 @@ def startswith(text, starts):
     except:
         return False
 
+
 @register.filter
 def handle_rtf_linebreaks(value):
     return mark_safe(unescape(value))
