@@ -1,5 +1,4 @@
 {% extends DYNAMICFORMS.field_base_template %}
-{% load static %}
 {% block field_input %}
     <textarea id="{{ field.uuid }}"
               name="{{ field.name }}"
@@ -11,22 +10,6 @@
               {% if field.read_only %}readonly{% endif %}
     >{% if field.value %}{{ field.value }}{% endif %}</textarea>
     <script>
-        var interval = null;
-        var editor = null;
-        var timestamp = Math.floor(Date.now() / 1000);
-        var initFunction = function () {
-            interval = window.setInterval(function () {
-                if (typeof window['tinymce'] != "undefined" && $("#{{ field.uuid }}").length === 1) {
-                    editor = tinyMCE.init({
-                        selector: "#{{ field.uuid }}"
-                    });
-                    window.clearInterval(interval)
-                }
-                if (Math.floor(Date.now() / 1000) - timestamp > 1) {
-                    window.clearInterval(interval)
-                }
-            }, 150);
-        }
-        initFunction();
+        dynamicforms.initRTFField("{{ field.uuid }}");
     </script>
 {% endblock %}

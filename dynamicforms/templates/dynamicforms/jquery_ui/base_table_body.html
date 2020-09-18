@@ -20,7 +20,7 @@
           {% render_table_commands serializer "fieldleft" key %}
           {% set_var klass=column|class_name %}
             {% if klass == 'RTFField' %}
-                {{ value | safe }}
+                {{ value | handle_rtf_linebreaks }}
             {% else %}
                 {{ value }}
             {% endif %}

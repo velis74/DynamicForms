@@ -306,14 +306,7 @@ dynamicforms = {
     // We need this so ve can call refresh from custom function (arguments.callee.performRefresh())
     doneFuncExec.performRefresh = performRefresh;
     doneFuncExec.getDlg = getDlg;
-    for (var key in data) {
-       if (data.hasOwnProperty(key)) {
-          var textareaInput = $form.find('textarea[name=' + key + ']')
-          if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length=== 1) {
-            data[key] = tinyMCE.get(textareaInput.prop('id')).getContent()
-          }
-       }
-    }
+    dynamicforms.handleRTFFieldsValue(data, $form);
     dynamicforms.ajaxWithProgress({
                                     ajax_setts: {
                                       type:        method,
@@ -577,6 +570,7 @@ dynamicforms = {
         dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
       }
     }
+    dynamicforms.removeRTFFields();
   },
 
   /**
@@ -1510,6 +1504,45 @@ dynamicforms = {
       $("#pwf-" + field).toggleClass(field_class_slash, false);
     }
   },
+
+  initRTFField: function initRTFField(fieldId) {
+    var interval = null;
+    var editor = null;
+    var timestamp = Math.floor(Date.now() / 1000);
+    var initFunction = function () {
+        interval = window.setInterval(function () {
+            if (typeof window['tinymce'] != "undefined" && $("#" + fieldId).length === 1) {
+                editor = tinymce.init({
+                    selector: "#" + fieldId,
+                    width: "100%",
+                });
+                window.clearInterval(interval)
+            }
+            if (Math.floor(Date.now() / 1000) - timestamp > 1) {
+                window.clearInterval(interval)
+            }
+        }, 100);
+    }
+    initFunction();
+  },
+
+  removeRTFFields: function removeRTFFields() {
+    // clear all rich text editors
+    if (typeof window['tinymce'] != "undefined") {
+          tinymce.remove()
+    }
+  },
+
+  handleRTFFieldsValue(_data, $_form) {
+    for (var key in _data) {
+       if (_data.hasOwnProperty(key)) {
+          var textareaInput = $_form.find('textarea[name=' + key + ']')
+          if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length=== 1) {
+            _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
+          }
+       }
+    }
+  }
 
 };
 

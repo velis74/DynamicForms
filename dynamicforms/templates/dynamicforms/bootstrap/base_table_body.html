@@ -19,11 +19,11 @@
         <td class="{{ column.table_classes }}{% if column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}d-none{% endif %}" {{ value|add_nested_class }} data-name="{{ key }}">
           {% render_table_commands serializer "fieldleft" key %}
             {% set_var klass=column|class_name %}
-            {% if klass == 'RTFField' %}
-                {{ value | safe }}
-            {% else %}
-                {{ value }}
-            {% endif %}
+              {% if klass == 'RTFField' %}
+                  {{ value | handle_rtf_linebreaks }}
+              {% else %}
+                  {{ value }}
+              {% endif %}
           {% render_table_commands serializer "fieldright" key %}
         </td>
       {% endif %}
