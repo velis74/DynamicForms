@@ -163,8 +163,8 @@ class TemplateRendererMixin():
                 if self.render_type in ('table', 'table rows'):
                     serializer.data_template = self.template_name
                 elif self.render_type == 'dialog':
-                    serializer.data_template = DYNAMICFORMS.modal_dialog_template
-                    res.template_name = DYNAMICFORMS.modal_dialog_template
+                    serializer.data_template = DYNAMICFORMS.modal_dialog_rest_template
+                    res.template_name = DYNAMICFORMS.modal_dialog_rest_template
                 elif self.render_type == 'form':
                     serializer.data_template = res.data.serializer.template_name
                     res.template_name = res.data.serializer.template_name

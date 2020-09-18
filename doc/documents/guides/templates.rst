@@ -30,7 +30,7 @@ form (modal dialog or separate page) and can be edited there.
 Base_form.html can be used for rendering ViewSet in form mode. It shows one record, and if crud is enabled in Viewset,
 it can also be edited.
 
-Form can be shown as modal dialog. For that template which is defined in settings.py - modal_dialog_template is used.
+Form can be shown as modal dialog. For that template which is defined in settings.py - modal_dialog_rest_template is used.
 When using bootstrap v4 default template is modal_dialog_v4.html.
 
 Template for dialog should have first div with »dynamicforms-dialog« class. JS searches for that to see if the response

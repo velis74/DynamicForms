@@ -16,7 +16,7 @@
         {% include data_template with serializer=serializer data=data %}
       </div>
     </div>
-    {% include "dynamicforms/bootstrap/simple_dialog.html" %}
+    {% include "dynamicforms/bootstrap/modal_dialog.html" %}
   {% elif DYNAMICFORMS.jquery_ui %}
     <div class="accordion df-card">
       <div>{{ serializer.page_title }}

@@ -215,7 +215,7 @@ dynamicforms = {
         $dlg.dialog('close');
       } else {
         $dlg.modal('hide');
-        // $dlg.remove();
+        $dlg.remove();
       }
     }
     dynamicforms.progressDlgOverlay = false;

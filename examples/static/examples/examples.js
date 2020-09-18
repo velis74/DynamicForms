@@ -29,20 +29,21 @@ examples = {
     }
   },
 
-  simpleDlgGenericCallback: function simpleDlgGenericCallback() {
+  modalDlgGenericCallback: function modalDlgGenericCallback() {
     alert(this.text);
   },
 
-  testSimpleDialog: function testSimpleDialog() {
+  testSimpleDialog: function testModalDialog() {
     buttons = [
-      {title: 'Cancel', callback: 'examples.simpleDlgGenericCallback', parameters: {text: "Test"}},
-      {title:       'OK',
+      {title: 'Cancel', callback: 'examples.modalDlgGenericCallback', parameters: {text: "Test"}},
+      {
+        title:      'OK',
         style:      'primary',
-        callback:   'examples.simpleDlgGenericCallback',
+        callback:   'examples.modalDlgGenericCallback',
         parameters: {text: "Clicked OK button"},
       },
     ];
 
-    dynamicforms.showModalDialog('Test dialog', '<p>Simple dialog content</p>', buttons);
+    dynamicforms.showModalDialog('Test dialog', '<p>Modal dialog content</p>', buttons);
   },
 };
