@@ -288,6 +288,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
+        time.sleep(0.5)
         # Check if record was stored
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
@@ -300,6 +301,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_name("enabled").click()
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
+        time.sleep(0.5)
 
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
@@ -461,6 +463,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         # Check that edited record is updated
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
+        time.sleep(0.5)
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
@@ -923,7 +926,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
         form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
+        containers = form.find_elements_by_css_selector("div[id^=container-]")
         for container in containers:
             container_id = container.get_attribute("id")
             if container_id.startswith("container-"):
