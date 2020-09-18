@@ -15,8 +15,8 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     form_template = 'examples/form_cols.html'
 
     actions = Actions(
-        TableAction(TablePosition.HEADER, _('Simple dialog'), title=_('Dialog test'), name='simple_dialog',
-                    action_js="examples.testSimpleDialog();"),
+        TableAction(TablePosition.HEADER, _('Modal dialog'), title=_('Dialog test'), name='modal_dialog',
+                    action_js="examples.testModalDialog();"),
         add_default_crud=True,
         add_form_buttons=True
     )

@@ -33,7 +33,7 @@ examples = {
     alert(this.text);
   },
 
-  testSimpleDialog: function testModalDialog() {
+  testModalDialog: function testModalDialog() {
     buttons = [
       {title: 'Cancel', callback: 'examples.modalDlgGenericCallback', parameters: {text: "Test"}},
       {

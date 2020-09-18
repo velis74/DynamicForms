@@ -79,11 +79,6 @@
       }
     {% endif %}
   </style>
-  {% if DYNAMICFORMS.bootstrap_version %}
-    {#    {%  include "dynamicforms/bootstrap/progress_dialog_style.html" %}#}
-  {% elif DYNAMICFORMS.jquery_ui %}
-    {% include "dynamicforms/jquery_ui/progress_dialog_style.html" %}
-  {% endif %}
 
 </head>
 <body>
@@ -136,8 +131,8 @@
     var $dlg  = $(".dynamicforms-dialog");
     var $form = $(".dynamicforms-form");
     dynamicforms.submitForm($dlg, $form, null, function (data) {
-      alert(data.test);
       dynamicforms.closeDialog($dlg);
+      alert(data.test);
     });
   }
 

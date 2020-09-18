@@ -484,7 +484,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_name("btn-add")
-        sd_btn = header.find_element_by_name("btn-simple_dialog")
+        md_btn = header.find_element_by_name("btn-modal_dialog")
         self.assertEqual(self.get_element_text(add_btn), "+ Add")
 
         # Check if there's a "no data" table row
@@ -496,7 +496,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        sd_btn.click()
+        md_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
         dialog.find_element_by_id("dlg-btn-ok").click()
         alert = self.browser.switch_to.alert
