@@ -177,3 +177,4 @@ class RefreshType(models.Model):
     Shows how DynamicForms handles different refresh types
     """
     description = models.CharField(max_length=20, help_text='Item description')
+    rich_text_field = models.TextField(blank=True, null=True)

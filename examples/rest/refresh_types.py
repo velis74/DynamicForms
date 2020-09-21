@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.viewsets import ModelViewSet
 from ..models import RefreshType
@@ -42,7 +42,7 @@ class RefreshTypesSerializer(serializers.ModelSerializer):
         # Edit actions
         TableAction(TablePosition.ROW_CLICK, label=_('Edit'), title=_('Edit record'),
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.target.parentElement).attr('data-id'))"
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-row\"]').attr('data-id'))"
                               ", 'record', __TABLEID__);"),
 
         # Delete actions
@@ -75,6 +75,8 @@ class RefreshTypesSerializer(serializers.ModelSerializer):
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               + "{{row.id}}, 'testRefreshType', __TABLEID__);"),
     )
+
+    rich_text_field = fields.RTFField(required=False)
 
     def suppress_action(self, action, request, viewset):
         if action.name == 'del 1':

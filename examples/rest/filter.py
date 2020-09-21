@@ -19,8 +19,7 @@ class FilterSerializer(serializers.ModelSerializer):
                               ", 'record', __TABLEID__);"),
         TableAction(TablePosition.ROW_CLICK, _('Edit'), title=_('Edit record'), name='edit',
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' "
-                              "format='html' %}'.replace('__ROWID__', $(event.target).parents('tr')."
-                              "attr('data-id')), 'record', __TABLEID__);"),
+                              "format='html' %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-row\"]').attr('data-id')), 'record', __TABLEID__);"),
         TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               "{{row.id}}, 'record', __TABLEID__);"),

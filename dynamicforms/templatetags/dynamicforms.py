@@ -1,4 +1,5 @@
 import json as jsonlib
+from html import unescape
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -290,3 +291,8 @@ def startswith(text, starts):
         return text.startswith(starts)
     except:
         return False
+
+
+@register.filter
+def handle_rtf_linebreaks(value):
+    return mark_safe(unescape(value))
