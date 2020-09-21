@@ -3,6 +3,7 @@ from django.utils import timezone
 from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
 from ..models import AdvancedFields, Relation
+from .fields.df_file_field import DfFileField
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
@@ -39,7 +40,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     # ))
 
     # TODO: FileField, ImageField
-    # file_field = serializers.FileField(required=False, use_url=True)
     # image_field = serializers.ImageField(required=False, use_url=True)
 
     # Error: The submitted data was not a file. Check the encoding type on the form.
@@ -78,13 +78,14 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     string_related_field = fields.StringRelatedField(source='primary_key_related_field')
     primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
     slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+    file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False)
 
     # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
     class Meta:
         model = AdvancedFields
-        exclude = ('multiplechoice_field', 'file_field', 'image_field', 'hyperlinked_related_field',
+        exclude = ('multiplechoice_field', 'image_field', 'hyperlinked_related_field',
                    'hyperlinked_identity_field')
 
     def create(self, validated_data):
@@ -97,3 +98,14 @@ class AdvancedFieldsViewset(ModelViewSet):
 
     queryset = AdvancedFields.objects.all()
     serializer_class = AdvancedFieldsSerializer
+
+    def update(self, request, *args, **kwargs):
+        # DynamicForms js client uses only PUT which makes fields checking for all fields. If you dont want to update
+        # all fields e.g. upload new file, we should use PATCH method, but current js client does not support this.
+        # To enable update of record without re-uploading new file,
+        # we enable partial update with line below -> kwargs['partial'] = True
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
+
+
+

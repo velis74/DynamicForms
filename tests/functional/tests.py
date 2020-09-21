@@ -3,6 +3,7 @@
 #   tudi SETTINGS.TIME_FORMAT (no, in ostala dva tudi)
 # TODO: unit test za nested serializerje. Preveriti je tudi treba, če imajo field serializerji na voljo pravilne
 #   row_data zapise
+import os
 import time
 
 from selenium.common.exceptions import NoSuchElementException
@@ -10,10 +11,20 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
 from examples.models import AdvancedFields, RefreshType, Validated
+from setup.settings import BASE_DIR, MEDIA_ROOT
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
+
+upload_file_name = '0_3142.prj'
+file_for_upload = "%s/tests/static_files/%s" % (BASE_DIR, upload_file_name)
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
+
+    def tearDown(self):
+        super().tearDown()
+        uploaded_file = "%s/examples/%s" % (MEDIA_ROOT, upload_file_name)
+        if os.path.exists(uploaded_file):
+            os.remove(uploaded_file)
 
     def add_validated_record(self, btn_position, amount, add_second_record=None):
         try:
@@ -832,10 +843,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                         self.assertEqual(field_tag_name, "select")
                         select.select_by_index(4)
                 # StringRelatedField is read only with primary_key_related_field as source and is not shown in dialog
+                elif label_text == "File field":
+                    container.find_element_by_name("file_field").send_keys(file_for_upload)
                 else:
                     field_count -= 1
 
-        self.assertEqual(field_count, 6)
+        self.assertEqual(field_count, 7)
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -844,7 +857,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 9)
+        self.assertEqual(len(cells), 11)
 
         # Check for relations
         self.assertEqual(self.get_element_text(cells[5]), "Relation object 7")
@@ -882,7 +895,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 9)
+        self.assertEqual(len(cells), 11)
 
         # Check for changed values
         self.assertEqual(self.get_element_text(cells[2]), "Choice 2")
