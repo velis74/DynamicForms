@@ -214,7 +214,7 @@ dynamicforms = {
       if (dynamicforms.DYNAMICFORMS.jquery_ui) {
         $dlg.dialog('close');
       } else {
-        $dlg.modal('hide');
+        $dlg.remove();
       }
     }
     dynamicforms.progressDlgOverlay = false;
@@ -227,7 +227,7 @@ dynamicforms = {
    *  callbacks for closing progress dialog after operation completes
    */
   ajaxWithProgress:      function ajaxWithProgress(options) {
-    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-progress-bar-container';
+    var progressDlgID = options['progress_id'] !== undefined ? options['progress_id'] : 'df-modal-dialog-container';
     var timestamp     = $.now()
 
     var showProgress  = undefined;
@@ -239,6 +239,35 @@ dynamicforms = {
       showProgress = true;
 
     if (showProgress && !dynamicforms.progressDlgOverlay) {
+      if (progressDlgID == 'df-modal-dialog-container') {
+        progressDlgID = 'df-modal-dialog-' + 'progress';
+        if ($('#' + progressDlgID).length) {
+          var $dlg = $('#' + progressDlgID);
+        } else {
+          var $dlg = $("#df-modal-dialog-container").clone();
+          $dlg.attr('id', progressDlgID);
+          $(document.body).append($dlg);
+        }
+      }
+
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        var dlg_template = '<div id="df-progress-comment"></div>' +
+          '<div id="df-progress-bar-indeterminate" class="indeterminate" style="display: none"></div>' +
+          '<div id="df-progress-bar-determinate" ></div>';
+        $dlg.attr('title', dynamicforms.DYNAMICFORMS.progress_dialog_title)
+        $dlg.html(dlg_template);
+      } else {
+        var dlg_template = '<div id="df-progress-comment"></div>' +
+          '<div id="df-progress-bar-div" class="progress" style="position: relative;">' +
+          '<div id="df-progress-bar-indeterminate" class="progress-bar progress-bar-striped indeterminate" ' +
+          'style="display: none"></div> <div id="df-progress-bar-determinate" class="progress-bar progress-bar-striped" ' +
+          'style="display: none" aria-valuemin="0" aria-valuemax="100"></div></div>';
+        $dlg.find('.modal-title').html(dynamicforms.DYNAMICFORMS.progress_dialog_title);
+        $dlg.find('.modal-body').html(dlg_template);
+        $dlg.find('.modal-footer').remove();
+
+      }
+
       dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
     }
 
@@ -501,6 +530,7 @@ dynamicforms = {
 
     $($dlg).on('hidden.bs.modal', function () {
       // dialog removes itself from DOM hierarchy
+      $('.modal-backdrop').remove();
       $dlg.remove();
 
       dynamicforms.removeFormDeclarations($form);
@@ -1535,15 +1565,99 @@ dynamicforms = {
 
   handleRTFFieldsValue(_data, $_form) {
     for (var key in _data) {
-       if (_data.hasOwnProperty(key)) {
-          var textareaInput = $_form.find('textarea[name=' + key + ']')
-          if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length=== 1) {
-            _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
-          }
-       }
+      if (_data.hasOwnProperty(key)) {
+        var textareaInput = $_form.find('textarea[name=' + key + ']')
+        if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length === 1) {
+          _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
+        }
+      }
     }
-  }
+  },
 
+  slugify: function slugify(string) {
+    string = string.toLowerCase();
+    string = string.replace(/[^a-zA-Z0-9]+/g, '-');
+    return string;
+  },
+
+  modalDialogCustomCommand: function modalDialogCustomCommand(button) {
+    return function () {
+      if (button['callback']) {
+        var customFunction = eval(button['callback']);
+        if (typeof customFunction == 'function') {
+          customFunction.apply(button['parameters']);
+        }
+      }
+      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+        $(this).dialog('close');
+      }
+    };
+  },
+
+  showModalDialog: function showModalDialog(title, body, buttons) {
+    var $dlg = $("#df-modal-dialog-container").clone();
+    $dlg.attr('id', 'dialog-' + dynamicforms.slugify(title));
+    $(document.body).append($dlg);
+
+    buttons = buttons || [
+      {title: 'Cancel'},
+      {title: 'OK', style: 'primary'},
+    ];
+
+    $dlg.on('show.bs.modal', function (event) {
+      var footer = '';
+      buttons.forEach(function (button) {
+        var btn_id       = 'dlg-btn-' + dynamicforms.slugify(button['title']);
+        var button_style = 'secondary';
+        if (button['style']) {
+          button_style = button['style'];
+        }
+
+        footer = footer.concat('<button id=' + btn_id + ' type="button" class="btn btn-' + button_style + '" data-dismiss="modal">' + button['title'] + '</button>');
+      });
+
+      $dlg.find('.modal-title').text(title);
+      $dlg.find('.modal-body').html(body);
+      $dlg.find('.modal-footer').html(footer);
+    });
+
+    $dlg.on('shown.bs.modal', function (event) {
+      buttons.forEach(function (button) {
+        var fn = dynamicforms.modalDialogCustomCommand(button);
+
+        if (button) {
+          var button_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
+          $('#' + button_id).on('click', {callback: button['callback'], parameters: button['parameters']}, fn);
+        }
+      });
+    });
+
+    $dlg.on('hidden.bs.modal', function (event) {
+      $dlg.remove();
+    });
+
+    // Show the dialog
+    if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+      var btns = [];
+      buttons.forEach(function (button) {
+        var fn = dynamicforms.modalDialogCustomCommand(button);
+        btns.push({text: button['title'], click: fn});
+      });
+
+      $dlg.html(body);
+      var dialog = $dlg.dialog({
+        resizable: false,
+        height:    "auto",
+        modal:     true,
+        buttons:   btns,
+      });
+
+      dialog.dialog("open");
+    } else {
+      $dlg.modal();
+    }
+
+  },
 };
 
 $(document).ready(function () {

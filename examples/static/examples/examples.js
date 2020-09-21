@@ -27,5 +27,23 @@ examples = {
       dynamicforms.fieldSetVisible(fields.qty_fld, unit_visible && newRec.unit == 'wt');
       dynamicforms.fieldSetVisible(fields.cst_fld, unit_visible && newRec.unit == 'cst');
     }
-  }
+  },
+
+  modalDlgGenericCallback: function modalDlgGenericCallback() {
+    alert(this.text);
+  },
+
+  testModalDialog: function testModalDialog() {
+    buttons = [
+      {title: 'Cancel', callback: 'examples.modalDlgGenericCallback', parameters: {text: "Test"}},
+      {
+        title:      'OK',
+        style:      'primary',
+        callback:   'examples.modalDlgGenericCallback',
+        parameters: {text: "Clicked OK button"},
+      },
+    ];
+
+    dynamicforms.showModalDialog('Test dialog', '<p>Modal dialog content</p>', buttons);
+  },
 };

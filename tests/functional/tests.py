@@ -483,7 +483,8 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 # jQueryUI
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
-        add_btn = header.find_element_by_class_name("btn")
+        add_btn = header.find_element_by_name("btn-add")
+        md_btn = header.find_element_by_name("btn-modal_dialog")
         self.assertEqual(self.get_element_text(add_btn), "+ Add")
 
         # Check if there's a "no data" table row
@@ -494,6 +495,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
+
+        md_btn.click()
+        dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        dialog.find_element_by_id("dlg-btn-ok").click()
+        alert = self.browser.switch_to.alert
+        self.assertEqual(alert.text, 'Clicked OK button')
+        alert.accept()
+        self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()

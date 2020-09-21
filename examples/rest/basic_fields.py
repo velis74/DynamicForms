@@ -1,4 +1,7 @@
+from django.utils.translation import ugettext_lazy as _
+
 from dynamicforms import fields, serializers
+from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields
 
@@ -10,6 +13,13 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
         'edit': 'Editing basic fields object',
     }
     form_template = 'examples/form_cols.html'
+
+    actions = Actions(
+        TableAction(TablePosition.HEADER, _('Modal dialog'), title=_('Dialog test'), name='modal_dialog',
+                    action_js="examples.testModalDialog();"),
+        add_default_crud=True,
+        add_form_buttons=True
+    )
 
     boolean_field = fields.BooleanField()
     nullboolean_field = fields.NullBooleanField()

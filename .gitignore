@@ -13,3 +13,4 @@ rest_framework
 db.sqlite3
 /doc/_build/
 /geckodriver.log
+venv/

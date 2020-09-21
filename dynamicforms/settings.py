@@ -1,4 +1,5 @@
 from django.conf import settings as s
+from django.utils.translation import ugettext_lazy as _
 
 from .struct import Struct
 
@@ -12,7 +13,7 @@ class Settings(Struct):
     jquery_ui = False
 
     # if True, base_list template will render the HTML such that it will display dialog
-    #   Make sure you {% include DYNAMICFORMS.modal_dialog_template %} somewhere top-level in your html body
+    #   Make sure you {% include DYNAMICFORMS.modal_dialog_rest_template %} somewhere top-level in your html body
     # if False, the record will be displayed in a new page
     edit_in_dialog = True
 
@@ -70,7 +71,7 @@ class Settings(Struct):
     table_body_base_template = property(lambda self: self.template + 'base_table_body.html')
 
     # Path to template for modal dialog
-    modal_dialog_template = property(lambda self: self.template + 'modal_dialog.html')
+    modal_dialog_rest_template = property(lambda self: self.template + 'modal_dialog_rest.html')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: '')
@@ -108,7 +109,8 @@ class SettingsBootstrap(Settings):
 
     page_includes = property(lambda self: self.template + ('base_includes_%s.html' % self.bootstrap_version))
     field_base_template = property(lambda self: self.template + ('field/base_field_%s.html' % self.bootstrap_version))
-    modal_dialog_template = property(lambda self: self.template + ('modal_dialog_%s.html' % self.bootstrap_version))
+    modal_dialog_rest_template = property(lambda self: self.template + 'modal_dialog_rest.html')
+    progress_dialog_title = _('Performing operation...')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'btn ml-1')
@@ -124,6 +126,8 @@ class SettingsJqueryUI(Settings):
         kwds.setdefault('page_template', DYNAMICFORMS_JQUERY_UI + 'page.html')
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
+
+    progress_dialog_title = _('Performing operation...')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'ui-button ui-corner-all ui-widget')
