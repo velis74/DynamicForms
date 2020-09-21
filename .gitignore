@@ -15,4 +15,3 @@ db.sqlite3
 /geckodriver.log
 venv/
 media
-
