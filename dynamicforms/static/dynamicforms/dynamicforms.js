@@ -214,7 +214,6 @@ dynamicforms = {
       if (dynamicforms.DYNAMICFORMS.jquery_ui) {
         $dlg.dialog('close');
       } else {
-        $('.modal-backdrop').remove();
         $dlg.remove();
       }
     }
@@ -531,6 +530,7 @@ dynamicforms = {
 
     $($dlg).on('hidden.bs.modal', function () {
       // dialog removes itself from DOM hierarchy
+      $('.modal-backdrop').remove();
       $dlg.remove();
 
       dynamicforms.removeFormDeclarations($form);
@@ -1565,14 +1565,14 @@ dynamicforms = {
 
   handleRTFFieldsValue(_data, $_form) {
     for (var key in _data) {
-       if (_data.hasOwnProperty(key)) {
-          var textareaInput = $_form.find('textarea[name=' + key + ']')
-          if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length=== 1) {
-            _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
-          }
-       }
+      if (_data.hasOwnProperty(key)) {
+        var textareaInput = $_form.find('textarea[name=' + key + ']')
+        if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length === 1) {
+          _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
+        }
+      }
     }
-  }
+  },
 
   slugify: function slugify(string) {
     string = string.toLowerCase();
@@ -1594,22 +1594,20 @@ dynamicforms = {
     };
   },
 
-  showModalDialog: function showModalDialog(title, body, buttons = []) {
+  showModalDialog: function showModalDialog(title, body, buttons) {
     var $dlg = $("#df-modal-dialog-container").clone();
     $dlg.attr('id', 'dialog-' + dynamicforms.slugify(title));
     $(document.body).append($dlg);
 
-    if (buttons.length == 0) {
-      buttons = [
-        {title: 'Cancel'},
-        {title: 'OK', style: 'primary'},
-      ];
-    }
+    buttons = buttons || [
+      {title: 'Cancel'},
+      {title: 'OK', style: 'primary'},
+    ];
 
     $dlg.on('show.bs.modal', function (event) {
       var footer = '';
       buttons.forEach(function (button) {
-        var btn_id = 'dlg-btn-' + dynamicforms.slugify(button['title']);
+        var btn_id       = 'dlg-btn-' + dynamicforms.slugify(button['title']);
         var button_style = 'secondary';
         if (button['style']) {
           button_style = button['style'];
