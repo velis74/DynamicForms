@@ -76,7 +76,7 @@ class RefreshTypesSerializer(serializers.ModelSerializer):
                               + "{{row.id}}, 'testRefreshType', __TABLEID__);"),
     )
 
-    rich_text_field = fields.RTFField(required=False)
+    rich_text_field = fields.RTFField(required=False, allow_blank=True)
 
     def suppress_action(self, action, request, viewset):
         if action.name == 'del 1':

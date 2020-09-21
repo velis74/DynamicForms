@@ -8,6 +8,10 @@ from django.core.management.base import BaseCommand
 from rest_framework import fields, relations
 
 
+class RTFField(object):
+    pass
+
+
 class Command(BaseCommand):
     help = 'Generate Field classes from DRF with applied DynamicForms mixins'
 
@@ -34,6 +38,8 @@ class Command(BaseCommand):
                         obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
+            field_list.append(RTFField)
+
             # get all the field-specific mixins
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
@@ -48,7 +54,7 @@ class Command(BaseCommand):
             print('\n    '.join(
                 [''] +
                 textwrap.wrap(
-                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin,  RelatedFieldAJAXMixin, ' +
+                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
                     'FieldHelpTextMixin, PasswordFieldMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
@@ -181,10 +187,15 @@ class Command(BaseCommand):
                     hstore_field_wrapper = "if hasattr(fields, 'HStoreField'):\n"
                     hstore_field_indent = ' ' * 4
 
+                drf_class = field_class
+                if issubclass(field, RTFField):
+                    drf_class = fields.CharField.__name__
+                    field_module = "fields."
+
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{field_class}):'
+                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),
