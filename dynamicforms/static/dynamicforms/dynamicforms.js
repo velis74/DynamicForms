@@ -214,7 +214,6 @@ dynamicforms = {
       if (dynamicforms.DYNAMICFORMS.jquery_ui) {
         $dlg.dialog('close');
       } else {
-        $('.modal-backdrop').remove();
         $dlg.remove();
       }
     }
