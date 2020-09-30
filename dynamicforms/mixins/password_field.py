@@ -10,7 +10,11 @@ class PasswordFieldMixin(object):
             self.display_table = 'DisplayMode.SUPRESS'
             self.style.update(input_type='password')
         else:
-            self.display_table = 'DisplayMode.FULL'
-            self.style.update(input_type='text')
+            try:
+                self.style['input_type']
+                self.style.update(input_type='text')
+                self.display_table = 'DisplayMode.FULL'
+            except:
+                pass
 
     password_field = property(lambda self: self._password_field, set_password_field)
