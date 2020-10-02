@@ -9,7 +9,7 @@ with open('README.rst', 'r') as fh:
 with open('requirements.txt', 'r') as fh:
     requirements = fh.readlines()
 
-version = '0.9.27'
+version = '0.9.29'
 
 if sys.argv[-1] == 'publish':
     if os.system('python -m wheel version'):
@@ -24,9 +24,8 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel')
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
-    print('You probably want to also tag the version now:')
-    print('  git tag -a %s -m \'version %s\'' % (version, version))
-    print('  git push --tags')
+    os.system('git tag -a %s -m \'version %s\'' % (version, version))
+    os.system('git push --tags')
     sys.exit()
 
 setuptools.setup(
