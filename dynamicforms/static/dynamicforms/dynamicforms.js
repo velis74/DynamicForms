@@ -205,6 +205,7 @@ dynamicforms = {
       clearInterval(dynamicforms.progressCheckInterval);
       dynamicforms.progressCheckInterval = null;
     }
+     $('.modal-backdrop').remove();
     $('#df-overlay').hide();
     if (dynamicforms.progressDlgShown) {
       dynamicforms.progressDlgShown = false;
