@@ -376,16 +376,19 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='table'
+        time.sleep(0.5)
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
+        time.sleep(0.5)
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
 
+        time.sleep(0.5)
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
 
