@@ -16,6 +16,10 @@ class CursorPagination(drf_p.CursorPagination):
 
         self.base_url = request.build_absolute_uri()
         self.ordering = self.get_ordering(request, queryset, view)
+        if 'id' not in self.ordering and '-id' not in self.ordering:
+            ordering = list(self.ordering)
+            ordering.append('id')
+            self.ordering = tuple(ordering)
 
         self.cursor = self.decode_cursor(request)
         if self.cursor is None:
@@ -67,6 +71,10 @@ class CursorPagination(drf_p.CursorPagination):
         # page following on from this one.
         results = list(queryset[offset:offset + self.page_size + 1])
         self.page = list(results[:self.page_size])
+        if not self.page:
+            # In rest_framework/pagination.py/get_previous_link is expected that self.page is not empty
+            # if cursor offset != 0
+            self.cursor = drf_p.Cursor(offset=0, reverse=False, position=None)
 
         # DF: contrary to DRF's implementation we always provide the "prev" and "next" links as there may appear
         # new records before / after the ones we already read. Mechanism for detecting whether they actually appeared
@@ -114,10 +122,13 @@ class CursorPagination(drf_p.CursorPagination):
 
         def process_field(idx):
             field_name = ordering[idx].lstrip('-')
+            attr = None
             if isinstance(instance, dict):
                 attr = instance[field_name]
             else:
-                attr = getattr(instance, field_name)
+                field_name_list = field_name.split('__')
+                for fn in field_name_list:
+                    attr = getattr(instance if attr is None else attr, fn)
             return field_name, self.field_to_representation(attr)
 
         return json.dumps({k: v for k, v in map(lambda idx: process_field(idx), range(len(ordering)))})
@@ -132,6 +143,11 @@ class CursorPagination(drf_p.CursorPagination):
         return str(value)
 
     def field_to_python(self, queryset, order_attr, value):
-        if isinstance(queryset.model._meta.get_field(order_attr), DurationField):
+        if order_attr in queryset.query.annotations:
+            field = queryset.query.annotations.get(order_attr).field
+        else:
+            # noinspection PyProtectedMember
+            field = queryset.model._meta.get_field(order_attr)
+        if isinstance(field, DurationField):
             return datetime.timedelta(seconds=float(value))
         return value
