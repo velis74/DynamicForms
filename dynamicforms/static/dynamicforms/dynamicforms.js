@@ -1265,10 +1265,37 @@ dynamicforms = {
         dynamicforms.paginatorCheckGetNextPage(formID);
       }).fail(function (xhr, status, error) {
         $("#loading-" + formID).hide();
-        console.log('Pagination failed.', xhr, status, error);
-        // TODO: what if the server returns an error? Do we continue with pagination? (Task #100)
+        if (xhr.status == 403) {
+          var body = '<p>You are not authorized for this action.</p>';
+          dynamicforms.showModalDialog('Authorisation', body, [{title: 'OK', style: 'primary'}]);
+        } else if (xhr.status == 401 && dynamicforms.DYNAMICFORMS.login_url) {
+          var body = '<p>You will be redirected to login screen.</p>';
+          dynamicforms.showModalDialog('Authorisation', body, [{
+            title:      'Login',
+            style:      'primary',
+            callback:   'dynamicforms.redirectToLogin',
+            parameters: {path_next: link_next.replace(window.location.origin, '')},
+          }]);
+        } else {
+          var body = 'General server error.'
+          if (xhr.responseText) {
+            body = xhr.responseText;
+          }
+          dynamicforms.showModalDialog('Server error', body, [{title: 'OK', style: 'primary'}]);
+        }
       });
     }
+  },
+
+  /*
+  * Callback function to redirect to login page
+   */
+  redirectToLogin: function redirectToLogin() {
+    var location = dynamicforms.DYNAMICFORMS.login_url;
+    if (this.path_next) {
+      location += '?next=' + this.path_next
+    }
+    window.location = location;
   },
 
   /**

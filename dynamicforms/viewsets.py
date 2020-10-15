@@ -3,7 +3,6 @@ from typing import List, Union
 
 import pytz
 from django.conf import settings
-from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from rest_framework import status, viewsets
@@ -175,10 +174,6 @@ class TemplateRendererMixin():
                     else:
                         serializer.render_type = 'form'
                         serializer.data_template = serializer.template_name
-            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
-                    self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action (only for 403)
-                res = redirect_to_login(request.path_info + get_query_params())
         return res
 
 
