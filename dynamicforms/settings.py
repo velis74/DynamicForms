@@ -30,6 +30,7 @@ class Settings(Struct):
         kwds.setdefault('page_template', DYNAMICFORMS_BOOTSTRAP + 'page.html')
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_BOOTSTRAP
+        self.login_url = s.LOGIN_URL
 
     def __to_dict__(self):
         res = {}

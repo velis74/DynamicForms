@@ -1,4 +1,4 @@
-{% load dynamicforms %}
+{% load i18n dynamicforms %}
 {% if serializer.render_type != 'table rows' %}
   {% block tablestart-includes %}{% endblock %}
   <table id="list-{{ serializer.uuid }}" class="table table-striped">
