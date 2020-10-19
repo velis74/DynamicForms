@@ -42,8 +42,6 @@ TLD.prototype = {
   },
 };
 
-var filter_sequence = 0;
-
 dynamicforms = {
   // DYNAMICFORMS is an object containing all dynamicforms settings as specified by defaults and in settings.py
   DYNAMICFORMS: {
@@ -52,6 +50,8 @@ dynamicforms = {
     'edit_in_dialog':    true,
     'bootstrap_version': 'v4',
   },
+
+  filter_sequence: 0,
 
   /**
    * Presents the error in data exchange with the server in a user understandable way
@@ -1234,13 +1234,14 @@ dynamicforms = {
         table.find('tr').remove();
       }
       $("#loading-" + formID).show();
-      var curr_sequence = filter_sequence;
+      var curr_sequence = dynamicforms.filter_sequence;
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
                url:     link_next
              }).done(function (data) {
-        if (curr_sequence != filter_sequence) {
+        if (curr_sequence != dynamicforms.filter_sequence) {
+          console.log('Update table action was discarded as the filter has changed.');
           return false;
         }
 
@@ -1341,7 +1342,7 @@ dynamicforms = {
    * @param returnDict: set to true if only filter data should be returned
    */
   filterData: function filterData(formID, returnDict) {
-    filter_sequence++;
+    dynamicforms.filter_sequence++;
 
     if (returnDict == undefined)
       returnDict = false;
