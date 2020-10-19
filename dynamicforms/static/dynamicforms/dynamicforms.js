@@ -39,7 +39,7 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  }
+  },
 };
 
 dynamicforms = {
@@ -48,8 +48,10 @@ dynamicforms = {
     'template':          'dynamicforms/bootstrap/',
     'jquery_ui':         false,
     'edit_in_dialog':    true,
-    'bootstrap_version': 'v4'
+    'bootstrap_version': 'v4',
   },
+
+  filter_sequence: 0,
 
   /**
    * Presents the error in data exchange with the server in a user understandable way
@@ -1232,12 +1234,16 @@ dynamicforms = {
         table.find('tr').remove();
       }
       $("#loading-" + formID).show();
-      //TODO: Remember sequence number... if data that comes back has other than last sequence number than just ignore it #114
+      var curr_sequence = dynamicforms.filter_sequence;
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
                url:     link_next
              }).done(function (data) {
+        if (curr_sequence != dynamicforms.filter_sequence) {
+          console.log('Update table action was discarded as the filter has changed.');
+          return false;
+        }
 
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
@@ -1336,10 +1342,12 @@ dynamicforms = {
    * @param returnDict: set to true if only filter data should be returned
    */
   filterData: function filterData(formID, returnDict) {
+    dynamicforms.filter_sequence++;
+
     if (returnDict == undefined)
       returnDict = false;
     var filter = {},
-        order = dynamicforms.df_tbl_pagination.get(formID, 'ordering');
+        order  = dynamicforms.df_tbl_pagination.get(formID, 'ordering');
 
     $("#list-" + formID).find(".dynamicforms-filterrow th").each(function (index) {
 
