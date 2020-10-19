@@ -39,8 +39,10 @@ TLD.prototype = {
       this.set(key1, key2, res);
     }
     return res;
-  }
+  },
 };
+
+var filter_sequence = 0;
 
 dynamicforms = {
   // DYNAMICFORMS is an object containing all dynamicforms settings as specified by defaults and in settings.py
@@ -48,7 +50,7 @@ dynamicforms = {
     'template':          'dynamicforms/bootstrap/',
     'jquery_ui':         false,
     'edit_in_dialog':    true,
-    'bootstrap_version': 'v4'
+    'bootstrap_version': 'v4',
   },
 
   /**
@@ -1232,12 +1234,15 @@ dynamicforms = {
         table.find('tr').remove();
       }
       $("#loading-" + formID).show();
-      //TODO: Remember sequence number... if data that comes back has other than last sequence number than just ignore it #114
+      var curr_sequence = filter_sequence;
       $.ajax({
                type:    'GET',
                headers: {'X-CSRFToken': dynamicforms.csrf_token, 'X-DF-RENDER-TYPE': 'table rows'},
                url:     link_next
              }).done(function (data) {
+        if (curr_sequence != filter_sequence) {
+          return false;
+        }
 
         data                     = $(data).filter("tr");
         tbl_pagination.link_next = data[0].getAttribute('data-next');
@@ -1336,10 +1341,12 @@ dynamicforms = {
    * @param returnDict: set to true if only filter data should be returned
    */
   filterData: function filterData(formID, returnDict) {
+    filter_sequence++;
+
     if (returnDict == undefined)
       returnDict = false;
     var filter = {},
-        order = dynamicforms.df_tbl_pagination.get(formID, 'ordering');
+        order  = dynamicforms.df_tbl_pagination.get(formID, 'ordering');
 
     $("#list-" + formID).find(".dynamicforms-filterrow th").each(function (index) {
 
