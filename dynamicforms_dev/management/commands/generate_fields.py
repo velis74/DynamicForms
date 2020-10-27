@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, \
-            RelatedFieldAJAXMixin, PasswordFieldMixin
+            RelatedFieldAJAXMixin, PasswordFieldMixin, NullIntegerMixin
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, ' + ', '.join(field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullIntegerMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
             print('from .settings import version_check', file=output)
@@ -75,6 +75,8 @@ class Command(BaseCommand):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
                     param_classes.append((0, PasswordFieldMixin))
+                if issubclass(field, fields.IntegerField):
+                    param_classes.append((0, NullIntegerMixin))
 
                 param_classes.append((0, ActionMixin))
                 param_classes.append((0, RenderMixin))
@@ -180,6 +182,8 @@ class Command(BaseCommand):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):
                     additional_mixin += 'PasswordFieldMixin, '
+                if issubclass(field, fields.IntegerField):
+                    additional_mixin += 'NullIntegerMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
                 hstore_field_wrapper, hstore_field_indent = '', ''

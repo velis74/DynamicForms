@@ -6,11 +6,9 @@ import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
-from .mixins import (
-    ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, BooleanFieldMixin, DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin, HiddenFieldMixin,
-    RTFFieldMixin
-)
+from .mixins import (ActionMixin, AllowTagsMixin, BooleanFieldMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode,
+                     FieldHelpTextMixin, HiddenFieldMixin, NullChoiceMixin, NullIntegerMixin, PasswordFieldMixin,
+                     RelatedFieldAJAXMixin, RenderMixin, RTFFieldMixin, TimeFieldMixin)
 from .settings import version_check
 
 
@@ -122,7 +120,7 @@ class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpText
         super().__init__(**kwargs)
 
 
-class IntegerField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
+class IntegerField(NullIntegerMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
