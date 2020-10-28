@@ -629,7 +629,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 17)
+        self.assertEqual(len(cells), 18)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
