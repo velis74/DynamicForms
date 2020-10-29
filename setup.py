@@ -48,10 +48,10 @@ if sys.argv[1] == 'publish':
     if os.system('tox -e check'):
         sys.exit()
 
+    write_ver_to_init(version)
     os.system('python setup.py sdist bdist_wheel')
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
-    write_ver_to_init(version)
     os.system('git tag -a %s -m \'version %s\'' % (version, version))
     os.system('git push --tags')
     sys.exit()
