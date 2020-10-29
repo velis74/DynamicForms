@@ -1,17 +1,43 @@
 #!/bin/python3
+import fileinput
 import os
 import sys
 
 import setuptools
+
+
+def write_ver_to_init(version="''"):
+    replacement = "__version__ = '%s'\n" % (version)
+    filename = 'dynamicforms/__init__.py'
+    for line in fileinput.input([filename], inplace=True):
+        if line.strip().startswith('__version__'):
+            line = replacement
+        sys.stdout.write(line)
+
+
+def get_version(version_arg):
+    try:
+        if version_arg == 'publish':
+            raise Exception('Missing version argument.')
+        for partial in version_arg.split('.', 2):
+            if not isinstance(int(partial), int):
+                raise Exception('Wrong version format.')
+    except Exception as e:
+        if sys.argv[-2] == 'publish':
+            sys.exit(str(e))
+        else:
+            return '0.9.x'
+    return version_arg
+
 
 with open('README.rst', 'r') as fh:
     long_description = fh.read()
 with open('requirements.txt', 'r') as fh:
     requirements = fh.readlines()
 
-version = '0.9.29'
+version = get_version(sys.argv[-1])
 
-if sys.argv[-1] == 'publish':
+if sys.argv[-2] == 'publish':
     if os.system('python -m wheel version'):
         print('wheel not installed.\nUse `pip install wheel`.\nExiting.')
         sys.exit()
@@ -24,9 +50,11 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel')
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
+    write_ver_to_init(version)
     os.system('git tag -a %s -m \'version %s\'' % (version, version))
     os.system('git push --tags')
     sys.exit()
+
 
 setuptools.setup(
     name="DynamicForms",
