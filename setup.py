@@ -5,6 +5,8 @@ import sys
 
 import setuptools
 
+from dynamicforms import __version__
+
 
 def write_ver_to_init(version="''"):
     replacement = "__version__ = '%s'\n" % (version)
@@ -18,15 +20,12 @@ def write_ver_to_init(version="''"):
 def get_version(version_arg):
     try:
         if version_arg == 'publish':
-            raise Exception('Missing version argument.')
-        for partial in version_arg.split('.', 2):
-            if not isinstance(int(partial), int):
-                raise Exception('Wrong version format.')
-    except Exception as e:
-        if sys.argv[-2] == 'publish':
-            sys.exit(str(e))
-        else:
-            return '0.9.x'
+            print('Missing version argument.')
+            sys.exit(1)
+        all(map(int, version_arg.split('.', 2)))
+    except Exception:
+        print('Invalid version format. Should be x.y.z (all numbers)')
+        sys.exit(1)
     return version_arg
 
 
@@ -35,9 +34,11 @@ with open('README.rst', 'r') as fh:
 with open('requirements.txt', 'r') as fh:
     requirements = fh.readlines()
 
-version = get_version(sys.argv[-1])
+version = __version__
 
-if sys.argv[-2] == 'publish':
+if sys.argv[1] == 'publish':
+    version = get_version(sys.argv[-1])
+
     if os.system('python -m wheel version'):
         print('wheel not installed.\nUse `pip install wheel`.\nExiting.')
         sys.exit()
