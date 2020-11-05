@@ -593,19 +593,19 @@ dynamicforms = {
    * @param dType: Custom dataType
    */
   updateDialog: function updateDialog($dlg, $newDlg, refreshType, listId, doneFunc, dType) {
-    $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
-    dynamicforms.closeDialog($dlg, refreshType, listId, doneFunc, dType);
+    if($dlg.hasClass('dynamicforms-dialog')){
+      $dlg.showNewAfterHide = $newDlg;  // Old dialog will show the new one after being hidden
+      dynamicforms.closeDialog($dlg, refreshType, listId, doneFunc, dType);
+    } else {
     /*
     // Replace current form with new form containing errors
-    var newForm     = $newDlg.find("form");
-    var currentForm = $dlg.find("form");
-    currentForm.replaceWith(newForm);
-
-    // Set updated form's id to dialog id
-    var dlgId       = $dlg.attr("id").split("-").slice(1).join("-");
-    var updatedForm = $dlg.find("form");
-    updatedForm.attr("id", dlgId);
     */
+      var newForm     = $newDlg.find("form");
+      var currentForm = $dlg.find("form");
+      dynamicforms.clearSerializedForm(currentForm, 'final');
+      currentForm.replaceWith(newForm);
+      dynamicforms.serializeForm(newForm, 'final');
+    }
   },
 
   /**
@@ -1572,6 +1572,11 @@ dynamicforms = {
       }
     });
     dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
+  },
+
+  select2CopyValue: function select2CopyValue(field) {
+    var select_text = $("#" + field).select2('data')[0].text
+    navigator.clipboard.writeText(select_text)
   },
 
   togglePasswordField: function togglePasswordField(field) {

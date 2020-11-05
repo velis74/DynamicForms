@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullIntegerMixin, ' + ', '.join(field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullIntegerMixin, EnableCopyMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
             print('from .settings import version_check', file=output)
@@ -177,7 +177,7 @@ class Command(BaseCommand):
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, '
+                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):

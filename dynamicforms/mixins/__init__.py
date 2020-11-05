@@ -12,3 +12,4 @@ from .password_field import PasswordFieldMixin
 from .related_field_ajax import RelatedFieldAJAXMixin
 from .render import DisplayMode, RenderMixin
 from .rtf_field import RTFFieldMixin
+from .enable_copy import EnableCopyMixin

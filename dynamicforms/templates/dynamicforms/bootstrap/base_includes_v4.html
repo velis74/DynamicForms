@@ -2,7 +2,6 @@
 {% if include_libs != False %}
   <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
   <link href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'dynamicforms/dynamicforms_v4.css' %}" rel="stylesheet">
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'tinymce/v5.4.2/jquery.tinymce.min.js' %}"></script>
   <script src="{% static 'tinymce/v5.4.2/tinymce.min.js' %}"></script>
@@ -47,7 +46,13 @@
 
   .select2-container--bootstrap4 {
     /* otherwise select2s are too narrow */
-    width: 100% !important;
+    width: auto !important;
+  }
+
+  .input-group > .select2-container--bootstrap4 {
+    /* otherwise select2s are too narrow */
+    width: 94% !important;
+    flex:  1 1 auto;
   }
 
   .df-card {
@@ -69,6 +74,23 @@
   th.ordering {
     cursor:      pointer;
     user-select: none;
+  }
+
+
+  .input-group > .select2-container--bootstrap .select2-selection--single {
+    height:      100%;
+    line-height: inherit;
+    padding:     0.5rem 1rem;
+  }
+
+  .select2-copy-field {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static 'dynamicforms/icons/copy.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
   }
 
   .password-field {
