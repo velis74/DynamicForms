@@ -41,4 +41,6 @@ template is field/base_field_v4.html. That template makes sure that the label, i
 shown. This template is extracted by templates that are used for rendering individual field types (e.g.: checkbox.html,
 input.html, radio.html, etc.)
 
+Some additional functionalities are not supported with jQuery templates (e.g. copy to clipboard on Select 2 fields).
+
 .. todo:: explain how to change template to another one

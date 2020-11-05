@@ -1,10 +1,11 @@
-{% extends DYNAMICFORMS.field_base_template %}
-{% load dynamicforms %}
+{% extends DYNAMICFORMS.field_base_template %}{% load dynamicforms %}
 {% block field_input %}
+  {% if field.enable_copy and DYNAMICFORMS.use_select2 %}
+    <div class="input-group">
+  {% endif %}
 <select id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }}
-        {% if field.errors %}is-invalid{% endif %}" name="{{ field.name }}"
-        {% if field.read_only %}disabled{% endif %}
-  >
+        {% if field.errors %}is-invalid{% endif %}"
+        name="{{ field.name }}" {% if field.read_only %}disabled{% endif %}>
   {% if field.allow_null or field.allow_blank %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
@@ -12,13 +13,28 @@
   {% for select in iter_options %}
     {% if select.start_option_group %}
       <optgroup label="{{ select.label }}">
-    {% elif select.end_option_group %}
+        {% elif select.end_option_group %}
       </optgroup>
     {% elif select.value is not None %}
-      <option value="{{ select.value }}" {% if select.value|as_string == field.value|as_string %}selected{% endif %} {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
+      <option value="{{ select.value }}" {% if select.value|as_string == field.value|as_string %}selected{% endif %}
+              {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
     {% endif %}
   {% endfor %}
 </select>
+{% if field.enable_copy  and DYNAMICFORMS.use_select2%}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    <div class="input-group-append">
+        <span id="pwf-{{ field.uuid }}" class="input-group-text select2-copy-field"
+              onclick="dynamicforms.select2CopyValue('{{ field.uuid }}')"></span>
+    </div>
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+    <span class="input-group-addon" style="background-color: transparent;"
+          onclick="dynamicforms.select2CopyValue('{{ field.uuid }}')">
+      <span id="pwf-{{ field.uuid }}" class="glyphicon glyphicon-copy"></span></span>
+  {% endif %}
+  </div>
+{% endif %}
+
 
 {% if DYNAMICFORMS.use_select2 %}
   <script type="text/javascript">

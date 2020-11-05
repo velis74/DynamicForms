@@ -1574,6 +1574,11 @@ dynamicforms = {
     dynamicforms.df_tbl_pagination.set(formID, 'ordering', dynamicforms.getCurrentOrder(formID).order);
   },
 
+  select2CopyValue: function select2CopyValue(field) {
+    var select_text = $("#" + field).select2('data')[0].text
+    navigator.clipboard.writeText(select_text)
+  },
+
   togglePasswordField: function togglePasswordField(field) {
     version = dynamicforms.DYNAMICFORMS.bootstrap_version;
 
