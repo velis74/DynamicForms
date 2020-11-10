@@ -1,7 +1,8 @@
 {% extends DYNAMICFORMS.field_base_template %}{% load dynamicforms %}
 {% block field_input %}
   {% if field.enable_copy and DYNAMICFORMS.use_select2 %}
-    <div class="input-group">
+    <div class="input-group input-group-select2">
+    <span style="width: 100%">
   {% endif %}
 <select id="{{ field.uuid }}" class="form-control {{ DYNAMICFORMS.select2_form_field_class }}
         {% if field.errors %}is-invalid{% endif %}"
@@ -23,6 +24,7 @@
 </select>
 {% if field.enable_copy  and DYNAMICFORMS.use_select2%}
   {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    </span>
     <div class="input-group-append">
         <span id="pwf-{{ field.uuid }}" class="input-group-text select2-copy-field"
               onclick="dynamicforms.select2CopyValue('{{ field.uuid }}')"></span>
@@ -65,6 +67,8 @@
       {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
       dropdownParent: $('#{{ style.serializer.uuid }}'),
+      dropdownAutoWidth: true,
+      width: 'resolve',
       theme: '{{ DYNAMICFORMS.select2_theme }}',
       tags: {% if field.allow_tags %}true{% else %}false{% endif %},
     };
