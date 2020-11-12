@@ -213,7 +213,8 @@ dynamicforms = {
       dynamicforms.progressDlgShown = false;
       dynamicforms.progressDlgStartShowing = false;
 
-      var $dlg = $('#' + progressDlgID);
+    var $dlg = $('#' + progressDlgID);
+    if($dlg.length) {
       if (dynamicforms.DYNAMICFORMS.jquery_ui) {
         $dlg.dialog('close');
       } else {
@@ -249,29 +250,29 @@ dynamicforms = {
         } else {
           var $dlg = $("#df-modal-dialog-container").clone();
           $dlg.attr('id', progressDlgID);
+          if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+            var dlg_template = '<div id="df-progress-comment"></div>' +
+              '<div id="df-progress-bar-indeterminate" class="indeterminate" style="display: none"></div>' +
+              '<div id="df-progress-bar-determinate" ></div>';
+            $dlg.attr('title', dynamicforms.DYNAMICFORMS.progress_dialog_title)
+            $dlg.html(dlg_template);
+          } else {
+            var dlg_template = '<div id="df-progress-comment"></div>' +
+              '<div id="df-progress-bar-div" class="progress" style="position: relative;">' +
+              '<div id="df-progress-bar-indeterminate" class="progress-bar progress-bar-striped indeterminate" ' +
+              'style="display: none"></div> <div id="df-progress-bar-determinate" class="progress-bar progress-bar-striped" ' +
+              'style="display: none" aria-valuemin="0" aria-valuemax="100"></div></div>';
+            $dlg.find('.modal-title').html(dynamicforms.DYNAMICFORMS.progress_dialog_title);
+            $dlg.find('.modal-body').html(dlg_template);
+            $dlg.find('.modal-footer').remove();
+          }
           $(document.body).append($dlg);
         }
       }
 
-      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
-        var dlg_template = '<div id="df-progress-comment"></div>' +
-          '<div id="df-progress-bar-indeterminate" class="indeterminate" style="display: none"></div>' +
-          '<div id="df-progress-bar-determinate" ></div>';
-        $dlg.attr('title', dynamicforms.DYNAMICFORMS.progress_dialog_title)
-        $dlg.html(dlg_template);
-      } else {
-        var dlg_template = '<div id="df-progress-comment"></div>' +
-          '<div id="df-progress-bar-div" class="progress" style="position: relative;">' +
-          '<div id="df-progress-bar-indeterminate" class="progress-bar progress-bar-striped indeterminate" ' +
-          'style="display: none"></div> <div id="df-progress-bar-determinate" class="progress-bar progress-bar-striped" ' +
-          'style="display: none" aria-valuemin="0" aria-valuemax="100"></div></div>';
-        $dlg.find('.modal-title').html(dynamicforms.DYNAMICFORMS.progress_dialog_title);
-        $dlg.find('.modal-body').html(dlg_template);
-        $dlg.find('.modal-footer').remove();
-
-      }
-
       dynamicforms.setProgressDlg(progressDlgID, timestamp, options['progress_setts']);
+    } else {
+      progressDlgID = 'df-modal-dialog-' + 'progress';
     }
 
     var closeProgressDialogFunc = function () {
