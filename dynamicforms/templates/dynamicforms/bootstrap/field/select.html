@@ -67,8 +67,6 @@
       {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
       // Attaches select2 to its form parent and enables input field (in dialog)
       dropdownParent: $('#{{ style.serializer.uuid }}'),
-      dropdownAutoWidth: true,
-      width: 'resolve',
       theme: '{{ DYNAMICFORMS.select2_theme }}',
       tags: {% if field.allow_tags %}true{% else %}false{% endif %},
     };
