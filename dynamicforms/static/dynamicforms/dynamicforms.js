@@ -210,15 +210,16 @@ dynamicforms = {
     $('.modal-backdrop').remove();
     $('#df-overlay').hide();
     if (dynamicforms.progressDlgShown) {
-      dynamicforms.progressDlgShown = false;
+      dynamicforms.progressDlgShown        = false;
       dynamicforms.progressDlgStartShowing = false;
 
-    var $dlg = $('#' + progressDlgID);
-    if($dlg.length) {
-      if (dynamicforms.DYNAMICFORMS.jquery_ui) {
-        $dlg.dialog('close');
-      } else {
-        $dlg.remove();
+      var $dlg = $('#' + progressDlgID);
+      if ($dlg.length) {
+        if (dynamicforms.DYNAMICFORMS.jquery_ui) {
+          $dlg.dialog('close');
+        } else {
+          $dlg.remove();
+        }
       }
     }
     dynamicforms.progressDlgOverlay = false;
