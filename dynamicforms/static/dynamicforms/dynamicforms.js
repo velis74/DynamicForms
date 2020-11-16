@@ -1666,7 +1666,7 @@ dynamicforms = {
     };
   },
 
-  showModalDialog: function showModalDialog(title, body, buttons) {
+  showModalDialog: function showModalDialog(title, body, buttons, size) {
     var $dlg = $("#df-modal-dialog-container").clone();
     $dlg.attr('id', 'dialog-' + dynamicforms.slugify(title));
     $(document.body).append($dlg);
@@ -1726,6 +1726,8 @@ dynamicforms = {
 
       dialog.dialog("open");
     } else {
+      if(size != undefined && size != '')
+        $dlg.find('div.modal-dialog').addClass('modal-' + size);
       $dlg.modal();
     }
 
