@@ -87,8 +87,9 @@ class RenderMixin(object):
     # noinspection PyUnresolvedReferences
     def use_pk_only_optimization(self):
         """
-        Overrides DRF RelatedField's method. It True is returned then value passed for serailization will be PK value
-        only, not entire relation object
+        Overrides DRF RelatedField's method. It True is returned then value passed for serialisation will be PK value
+        only, not entire relation object. we don't want that because then we can't resolve the value into something more
+        human-readable
         :return:
         """
         if self.is_rendering_to_list and self.is_rendering_to_html:
