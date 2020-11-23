@@ -82,6 +82,8 @@ class CursorPagination(drf_p.CursorPagination):
         if current_position is None and results:
             self.cursor = drf_p.Cursor(offset=0, reverse=False, position=None)
             current_position = self._get_position_from_instance(results[0], self.ordering)
+        elif isinstance(current_position, dict):
+            current_position = json.dumps(current_position)
 
         # Determine the position of the final item following the page.
         has_following_position = True  # len(results) > len(self.page)
