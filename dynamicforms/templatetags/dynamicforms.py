@@ -2,6 +2,9 @@ import json as jsonlib
 from html import unescape
 
 from django import template
+from django.template.base import FilterExpression, kwarg_re
+from django.template.loader import get_template
+from django.template.loader_tags import BlockNode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.templatetags import rest_framework as drftt
@@ -296,3 +299,106 @@ def startswith(text, starts):
 @register.filter
 def handle_rtf_linebreaks(value):
     return mark_safe(unescape(value))
+
+
+def parse_tag(token, parser):
+    """
+    Generic template tag parser.
+
+    Returns a three-tuple: (tag_name, args, kwargs)
+
+    tag_name is a string, the name of the tag.
+
+    args is a list of FilterExpressions, from all the arguments that didn't look like kwargs,
+    in the order they occurred, including any that were mingled amongst kwargs.
+
+    kwargs is a dictionary mapping kwarg names to FilterExpressions, for all the arguments that
+    looked like kwargs, including any that were mingled amongst args.
+
+    (At rendering time, a FilterExpression f can be evaluated by calling f.resolve(context).)
+    """
+    # Split the tag content into words, respecting quoted strings.
+    bits = token.split_contents()
+
+    # Pull out the tag name.
+    tag_name = bits.pop(0)
+
+    # Parse the rest of the args, and build FilterExpressions from them so that
+    # we can evaluate them later.
+    args = []
+    kwargs = {}
+    for bit in bits:
+        # Is this a kwarg or an arg?
+        match = kwarg_re.match(bit)
+        kwarg_format = match and match.group(1)
+        if kwarg_format:
+            key, value = match.groups()
+            kwargs[key] = FilterExpression(value, parser)
+        else:
+            args.append(FilterExpression(bit, parser))
+
+    return tag_name, args, kwargs
+
+
+class ExtendTemplateNode(template.Node):
+    """
+    Node for rendering extended template
+    """
+
+    def __init__(self, nodelist, template_name, kwargs, only, multiline):
+        self.nodelist = nodelist
+        self.template_name = template_name
+        self.kwargs = kwargs
+        self.only = only
+        self.multiline = multiline
+
+    def render(self, context):
+
+        extending_template = get_template(self.template_name.var)
+
+        if self.multiline:
+            blocks = {node.name: node for node in self.nodelist if isinstance(node, BlockNode)}
+
+            for idx, node in enumerate(extending_template.template.nodelist):
+                if isinstance(node, BlockNode) and node.name in blocks:
+                    extending_template.template.nodelist[idx] = blocks[node.name]
+
+        if self.only:
+            flattened_context = self.kwargs
+        else:
+            flattened_context = context.flatten()
+            flattened_context.update(self.kwargs)
+
+        content = extending_template.render(flattened_context)
+        content = mark_safe(content)
+        return content
+
+
+@register.tag("extendtemplate")
+def do_extendtemplate(parser, token):
+    """
+    Similar to base tag include, but with possibility to use blocks
+    It can be used as single line tag (no blocks) or multiline tag (can use blocks)
+
+    First parameter should be template name that will be extended
+    Keyword parameters will be used as context when rendering template
+    If there is "only" in parameters only keyword parameters will be used as context for rendering.
+    Otherwise keywords will be added to existing context
+    """
+
+    tag_name, args, kwargs = parse_tag(token, parser)
+    nodelist = []
+    token_contents = map(lambda x: x.contents, reversed(parser.tokens))
+    extendtemplate_tags = filter(lambda x: x.split(' ')[0] in ("extendtemplate", "endextendtemplate"), token_contents)
+    multiline = False
+
+    # We check if this is a block tag or single line tag (If there is 'endextendtemplate' token at right place)
+    if 'endextendtemplate' == next(extendtemplate_tags, []):
+        # Block (multiline) tag
+        nodelist = parser.parse(('endextendtemplate',))
+        parser.delete_first_token()
+        multiline = True
+
+    template_name = args[0]
+
+    return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), multiline)
