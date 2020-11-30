@@ -1434,7 +1434,7 @@ dynamicforms = {
 
     if (!$col.hasClass('ordering')) return;  // Only process columns that are sortable
 
-    event.stopPropagation();
+    this.stopEventPropagation(event);
 
     function renumber() {
       for (var i = 0; i < ordering.length; i++)
@@ -1732,6 +1732,15 @@ dynamicforms = {
     }
 
   },
+  stopEventPropagation: function stopEventPropagation(e){
+    if (!e) {
+        e = window.event;
+    }
+    e.cancelBubble = true;
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+  }
 };
 
 $(document).ready(function () {

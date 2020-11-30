@@ -139,7 +139,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         form = data.serializer
 
         style = renderer_context.get('style', {})
-        style['template_pack'] = DYNAMICFORMS.template + 'field'
+        style['template_pack'] = DYNAMICFORMS.template_root + 'field'
         style['renderer'] = self
 
         template_pack = style['template_pack'].strip('/')

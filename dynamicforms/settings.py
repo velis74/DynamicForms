@@ -3,8 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from .struct import Struct
 
-DYNAMICFORMS_BOOTSTRAP = 'dynamicforms/bootstrap/'
-DYNAMICFORMS_JQUERY_UI = 'dynamicforms/jquery_ui/'
+DYNAMICFORMS_ROOT = 'dynamicforms/'
+DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + 'bootstrap/'
+DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + 'jquery_ui/'
 
 
 class Settings(Struct):
@@ -27,9 +28,10 @@ class Settings(Struct):
     null_text_table = 'null'
 
     def __init__(self, data=None, **kwds):
-        kwds.setdefault('page_template', DYNAMICFORMS_BOOTSTRAP + 'page.html')
+        kwds.setdefault('page_template', DYNAMICFORMS_ROOT + 'page.html')
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_BOOTSTRAP
+        self.template_root = DYNAMICFORMS_ROOT
         self.login_url = s.LOGIN_URL
 
     def __to_dict__(self):
@@ -54,31 +56,33 @@ class Settings(Struct):
     select2_form_field_class = property(lambda self: 'select2-field' if self.use_select2 else '')
 
     # Path to template for :samp:`<html><head>` tag JS & CSS includes, necessary for the chosen template pack.
-    page_includes = property(lambda self: self.template + 'base_includes.html')
+    page_includes = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes.html')
 
     # Path to base template for fields.
-    field_base_template = property(lambda self: self.template + 'field/base_field.html')
+    field_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'field/base_field.html')
 
     # Path to base template for forms.
-    form_base_template = property(lambda self: self.template + 'base_form.html')
+    form_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_form.html')
 
     # Path to base template for forms.
-    table_base_template = property(lambda self: self.template + 'base_list.html')
+    table_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_list.html')
 
     # Path to base template for forms.
-    table_filter_base_template = property(lambda self: self.template + 'base_table_filter.html')
+    table_filter_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_table_filter.html')
 
     # Path to base template for table body.
-    table_body_base_template = property(lambda self: self.template + 'base_table_body.html')
+    table_body_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_table_body.html')
 
     # Path to template for modal dialog
-    modal_dialog_rest_template = property(lambda self: self.template + 'modal_dialog_rest.html')
+    modal_dialog_rest_template = property(lambda self: DYNAMICFORMS_ROOT + 'modal_dialog_rest.html')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: '')
     form_button_classes_cancel = property(lambda self: '')
     form_button_classes_primary = property(lambda self: '')
     form_button_classes_secondary = property(lambda self: '')
+
+    select2_include = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes_select2.html')
 
 
 def if3_4(if3, if4):
@@ -100,17 +104,14 @@ class SettingsBootstrap(Settings):
 
     # select2 helper variables
     select2_theme = property(if3_4('bootstrap', 'bootstrap4'))
-    select2_include = property(lambda self: self.template + 'base_includes_select2.html')
-    select2_bs_css = property(if3_4('select2/css/select2-bootstrap3.min.css', 'select2/css/select2-bootstrap4.min.css'))
+    select2_add_include = property(if3_4('select2/css/select2-bootstrap3.min.css',
+                                         'select2/css/select2-bootstrap4.min.css'))
 
     # classes for card divs
     bs_card_class = property(if3_4('panel panel-default', 'card'))
     bs_card_header = property(if3_4('panel-heading df-card-header', 'card-header df-card-header'))
     bs_card_body = property(if3_4('panel-body df-card-body', 'card-body df-card-body'))
 
-    page_includes = property(lambda self: self.template + ('base_includes_%s.html' % self.bootstrap_version))
-    field_base_template = property(lambda self: self.template + ('field/base_field_%s.html' % self.bootstrap_version))
-    modal_dialog_rest_template = property(lambda self: self.template + 'modal_dialog_rest.html')
     progress_dialog_title = _('Performing operation...')
 
     # classes to use on form buttons
@@ -124,7 +125,6 @@ class SettingsJqueryUI(Settings):
     jquery_ui = True
 
     def __init__(self, data=None, **kwds):
-        kwds.setdefault('page_template', DYNAMICFORMS_JQUERY_UI + 'page.html')
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
 

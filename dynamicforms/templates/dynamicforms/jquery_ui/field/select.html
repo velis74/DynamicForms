@@ -1,86 +1,37 @@
-{% extends DYNAMICFORMS.field_base_template %}
-{% load dynamicforms %}
-{% block field_input %}
-<select id="{{ field.uuid }}" class="ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs
-        {{ DYNAMICFORMS.select2_form_field_class }}" name="{{ field.name }}"
-        {% if field.read_only %}disabled{% endif %}
-  style="min-width: 6em">
-  {% if field.allow_null or field.allow_blank or field.allow_tags %}
-    <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
-  {% endif %}
-  {% iter_options_bound field as iter_options %}
-  {% for select in iter_options %}
-    {% if select.start_option_group %}
-      <optgroup label="{{ select.label }}">
-    {% elif select.end_option_group %}
-      </optgroup>
-    {% elif select.value is not None %}
-      {% if not field.url_reverse or select.value|as_string == field.value|as_string %}
-      <option value="{{ select.value }}" {% if select.value|as_string == field.value|as_string %}selected{% endif %} {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-</select>
-<script type="application/javascript">
-{% if DYNAMICFORMS.use_select2 %}
-  window.setTimeout(function() {
-    var sel2Conf = {
-      {% if field.url_reverse %}
-      ajax: {
-        url: '{% url field.url_reverse format='json' %}{{ field.additional_parameters_urlencoded }}',
-        dataType: 'json',
-        data: function(params) {
-          return { '{{ field.query_field }}': params.term };
-        },
-        processResults: function (data) {
-          var results = data.results ? data.results : data;  //data is paginated (or it isn't)
-          return {
-            results: $.map(results, function (item) {
-              return {
-                id: item.choice_id,
-                text: item.choice_text,
-              }
-            })
-          };
-        }
-      },
-      // Disables ajax request on dropdown opening
-      minimumInputLength: 1,
-      {% endif %}
-      {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
-     // Attaches select2 to its form parent and enables input field (in dialog)
-      dropdownParent: $('#{{ style.serializer.uuid }}').parent().parent(),
-      width: '100%'
-    };
+{% block start_copy_span %}
+{#  jQueryUI nima copy spana#}
+{% endblock %}
 
-    var $sel2 = $("#{{ field.uuid }}");
-    $sel2.data("sel2Conf", sel2Conf);
-    $sel2.select2(sel2Conf);
+{% block select_class %}
+ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs{% if errors %} ui-state-error{% endif %}
+{% endblock %}
 
-    $sel2.on("change", function (evt) {
-      if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
-        {#  If select2 is for filter#}
-        $(evt.currentTarget).parents('table').each(function (key, value) {
-          var id = value.getAttribute('id');
-          if (id.startsWith('list-'))
-            setTimeout(function(){dynamicforms.filterData(id.replace('list-', ''));}, 1);
-        });
-      }
-    });
+{% block select_style %}
+min-width: 6em
+{% endblock %}
 
+{% block end_copy_span %}
+{#  jQueryUI nima copy spana#}
+{% endblock %}
+
+{% block script_use_select_2 %}
+  {% if DYNAMICFORMS.use_select2 %}
+    window.setTimeout(function() {
+    {% block script_use_select_2_body %}{% endblock %}
   }, 1);
-{% else %}
+  {% else %}
   // Selectmenus need to be created AFTER the dialog... So use the setTimeout because we don't know the dialog here.
   window.setTimeout(function() {
     $('#{{ field.uuid }}').selectmenu();
   }, 1);
-{% endif %}
-</script>
+  {% endif %}
+
 {% endblock %}
-{% block field_onchange %}
-{% if DYNAMICFORMS.use_select2 %}
-  {{ block.super }}
-{% else %}
+
+{% block select2_additional_conf %}
+ , width: '100%',
+{% endblock %}
+
+{% block field_onchange_special_func %}
   $('#{{ field.uuid }}').on('selectmenuselect', function () { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });
-{% endif %}
 {% endblock %}

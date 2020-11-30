@@ -1,10 +1,5 @@
 {% load dynamicforms %}
-
-{% if data.id %}
-  {% set_var title=serializer.form_titles.edit %}
-{% else %}
-  {% set_var title=serializer.form_titles.new %}
-{% endif %}
+{#This template is extended by dynamicforms/modal_dialog_rest#}
 
 <div class="modal fade dynamicforms-dialog" id="dialog-{{ serializer.uuid }}" tabindex="-1" role="dialog"
      aria-hidden="true">
@@ -16,12 +11,8 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        {% include serializer.template_name with serializer=serializer data=data %}
-      </div>
-      <div class="modal-footer">
-        {% render_table_commands serializer 'form-buttons' button_position='dialog' %}
-      </div>
+      <div class="modal-body">{% block body %}{% endblock %}</div>
+      <div class="modal-footer">{% block footer %}{% endblock %}</div>
     </div>
   </div>
 </div>

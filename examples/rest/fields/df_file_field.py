@@ -10,7 +10,7 @@ class DfFileField(FileField):
         if not value:
             return ""
         link = mark_safe(
-            '<a href="#" onclick=\'event.stopPropagation(); window.open("%s", "_blank")\'>%s</a>' % (
+            '<a href="#" onclick=\'dynamicforms.stopEventPropagation(event); window.open("%s", "_blank")\'>%s</a>' % (
                 value.url, os.path.basename(value.url)))
         if self.is_rendering_to_list:
             return link

@@ -103,7 +103,7 @@ class TableAction(ActionBase, RenderableActionMixin):
 
     def render(self, serializer: Serializer, **kwds):
         ret = rowclick = rowrclick = ''
-        stop_propagation = 'if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'
+        stop_propagation = 'dynamicforms.stopEventPropagation(event);'
 
         action_action = self.prepare_string(self.action_js)
         if self.position != TablePosition.HEADER:

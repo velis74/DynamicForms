@@ -1,26 +1,10 @@
-{% load static dynamicforms %}
-{% if include_libs != False %}
-  <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
+{% load static %}
+{% block ui_library_include %}
   <link href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'tinymce/v5.4.2/jquery.tinymce.min.js' %}"></script>
-  <script src="{% static 'tinymce/v5.4.2/tinymce.min.js' %}"></script>
-{% endif %}
-<script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
-<script type="application/javascript">
-  dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};
-  dynamicforms.csrf_token   = '{{ csrf_token }}';
-</script>
+{% endblock %}
 
-{% if DYNAMICFORMS.use_select2 %}
-  {% include DYNAMICFORMS.select2_include %}
-{% endif %}
-
-<style>
-  .dynamicforms-actioncontrol {
-    padding: 0 .25rem;
-  }
-
+{% block additional_style %}
   .dynamicforms-actioncontrol .btn {
     margin-top:    -.25rem;
     margin-right:  .5rem;
@@ -36,12 +20,9 @@
     height: .75rem;
   }
 
-  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
-    display: none !important;
-  }
-
-  .dynamicforms-filterrow div {
-    margin: 0;
+  .df-card {
+    display: inline-block;
+    margin: 1em;
   }
 
   .input-group.input-group-select2 {
@@ -56,28 +37,6 @@
   .input-group > .select2-container--bootstrap4 {
     flex:  1 1 auto;
   }
-
-  .df-card {
-    display: inline-block;
-    margin: 1em;
-  }
-
-  input[type=number] {
-    max-width: 8em;
-  }
-
-  @media (max-width: 991px) {
-    .modal-lg {
-      max-width: calc(100% - 2em);
-    }
-  }
-
-  /* ordering indicators in table header */
-  th.ordering {
-    cursor:      pointer;
-    user-select: none;
-  }
-
 
   .input-group > .select2-container--bootstrap .select2-selection--single {
     height:      100%;
@@ -114,21 +73,5 @@
     background-color:    transparent;
     background-position: center;
   }
+{% endblock %}
 
-  .progress-bar.indeterminate {
-    position:  relative;
-    animation: progress-indeterminate 3s linear infinite;
-  }
-
-  @keyframes progress-indeterminate {
-    from {
-      left:  -25%;
-      width: 25%;
-    }
-    to {
-      left:  100%;
-      width: 25%;
-    }
-  }
-
-</style>

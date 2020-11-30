@@ -1,27 +1,31 @@
-{% extends DYNAMICFORMS.field_base_template %}
-{% block field_input %}
-  {% if field.password_field %}
-    <div class="input-group">{% endif %}
-<input id="{{ field.uuid }}" name="{{ field.name }}"
-       class="{% if style.input_type != "file" %}form-control{% else %} form-control-file{% endif %}{% if field.errors %} is-invalid{% endif %}"
-       type="{{ style.input_type }}" {% if style.input_type in "datetime-local,time" %}step="
-        {% if field.time_step %}{{ field.time_step }}{% else %}1{% endif %}"{% endif %}
-       {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
-       {% if field.value is not None %}value="{{ field.value }}"{% endif %}
-       {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
-       {% if field.read_only %}readonly{% endif %}/>
-{% if field.password_field %}
+{#This template is included by dynamicforms/field/input.html#}
+{% block div_password_class %}
+  input-group
+{% endblock %}
+
+{% block input_class %}
+  {% if input_type != "file" %}form-control{% else %} form-control-file{% endif %}{% if errors %} is-invalid{% endif %}
+{% endblock %}
+
+{% block password_toggle %}
+  {% load dynamicforms %}
   {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
     <div class="input-group-append">
-        <span id="pwf-{{ field.uuid }}" class="input-group-text password-field"
-              onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')"></span>
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True%}{% endextendtemplate %}
     </div>
   {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
     <span class="input-group-addon" style="background-color: transparent;"
-          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
-      <span id="pwf-{{ field.uuid }}" class="glyphicon glyphicon-eye-open"></span></span>
-
+      onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True%}{% endextendtemplate %}
+    </span>
   {% endif %}
-  </div>
-{% endif %}
+{% endblock %}
+
+{% block password_span_class %}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+input-group-text password-field
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+glyphicon glyphicon-eye-open
+  {% endif %}
+
 {% endblock %}

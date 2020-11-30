@@ -2,9 +2,10 @@ import json as jsonlib
 from html import unescape
 
 from django import template
-from django.template.base import FilterExpression, kwarg_re
+from django.template.base import FilterExpression, kwarg_re, NodeList
+from django.template.defaulttags import IfNode
 from django.template.loader import get_template
-from django.template.loader_tags import BlockNode
+from django.template.loader_tags import BlockNode, ExtendsNode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.templatetags import rest_framework as drftt
@@ -36,11 +37,6 @@ def items(value):
     Also see: https://stackoverflow.com/questions/15416662/django-template-loop-over-dictionary-items-with-items-as-key
     """
     return drftt.items(value)
-
-
-@register.filter
-def add_nested_class(value):
-    return drftt.add_nested_class(value)
 
 
 @register.filter
@@ -352,22 +348,64 @@ class ExtendTemplateNode(template.Node):
         self.only = only
         self.multiline = multiline
 
+    def rearrange_blocks(self, nodelist, blocks):
+        for idx, node in enumerate(nodelist):
+            if hasattr(node, 'nodelist'):
+                if isinstance(node, BlockNode):
+                    if node.name in blocks:
+                        nodelist[idx] = blocks[node.name]
+                if isinstance(node, IfNode):
+                    for nodelist_tmp in nodelist[idx].conditions_nodelists:
+                        for item_id, item in enumerate(nodelist_tmp):
+                            if isinstance(item, NodeList):
+                                self.rearrange_blocks(nodelist_tmp[item_id], blocks)
+                else:
+                    self.rearrange_blocks(nodelist[idx].nodelist, blocks)
+        return nodelist
+
+    def get_all_blocks(self, nodelist):
+        blocks = []
+        for node in [node for node in nodelist if isinstance(node, BlockNode)]:
+            blocks.extend(node)
+            blocks.extend(self.get_all_blocks(node.nodelist))
+        return blocks
+
+    @staticmethod
+    def get_node_list(nodelist):
+        while len(nodelist) == 1 and isinstance(nodelist[0], ExtendsNode):
+            nodelist = nodelist[0].nodelist
+        return nodelist
+
     def render(self, context):
 
-        extending_template = get_template(self.template_name.var)
+        kwargs = {key: value.resolve(context) for key, value in self.kwargs.items()}
+        try:
+            if 'template_name_var' in kwargs:
+                extending_template = get_template(kwargs.get('template_name_var'))
+            else:
+                extending_template = get_template(self.template_name.resolve())
+        except:
+            return ''
+
+        if 'block' in kwargs:
+            nodelist = self.get_node_list(extending_template.template.nodelist)
+            block_nodes = self.get_all_blocks(nodelist)
+            extending_template.template.nodelist = NodeList(
+                [node for node in block_nodes if node.name == kwargs.get('block')]
+            )
+            extending_template.template.nodelist.contains_nontext = True
 
         if self.multiline:
             blocks = {node.name: node for node in self.nodelist if isinstance(node, BlockNode)}
+            nodelist = self.get_node_list(extending_template.template.nodelist)
 
-            for idx, node in enumerate(extending_template.template.nodelist):
-                if isinstance(node, BlockNode) and node.name in blocks:
-                    extending_template.template.nodelist[idx] = blocks[node.name]
+            self.rearrange_blocks(nodelist, blocks)
 
         if self.only:
-            flattened_context = self.kwargs
+            flattened_context = kwargs
         else:
             flattened_context = context.flatten()
-            flattened_context.update(self.kwargs)
+            flattened_context.update(kwargs)
 
         content = extending_template.render(flattened_context)
         content = mark_safe(content)
@@ -379,8 +417,13 @@ def do_extendtemplate(parser, token):
     """
     Similar to base tag include, but with possibility to use blocks
     It can be used as single line tag (no blocks) or multiline tag (can use blocks)
+    if there is "multiline" in parameters it will be forcefully treated as multiline tag.
+      - Required when there is nested extend in this extend
 
-    First parameter should be template name that will be extended
+    Template name can be provided in two ways:
+      - If template name is static than declare it in first arg
+      - If template name is in variable than declare variable name in 'template_name_var' kwarg
+
     Keyword parameters will be used as context when rendering template
     If there is "only" in parameters only keyword parameters will be used as context for rendering.
     Otherwise keywords will be added to existing context
@@ -390,15 +433,19 @@ def do_extendtemplate(parser, token):
     nodelist = []
     token_contents = map(lambda x: x.contents, reversed(parser.tokens))
     extendtemplate_tags = filter(lambda x: x.split(' ')[0] in ("extendtemplate", "endextendtemplate"), token_contents)
-    multiline = False
+
+    # When we have nested extends there must be multiline arg in extend that includes sub extends
+    multiline = 'multiline' in (x.token for x in args)
 
     # We check if this is a block tag or single line tag (If there is 'endextendtemplate' token at right place)
-    if 'endextendtemplate' == next(extendtemplate_tags, []):
+    if multiline or 'endextendtemplate' == next(extendtemplate_tags, []):
         # Block (multiline) tag
         nodelist = parser.parse(('endextendtemplate',))
         parser.delete_first_token()
         multiline = True
 
-    template_name = args[0]
+    template_name = None
+    if not 'template_name_var' in kwargs:
+        template_name = args[0]
 
     return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), multiline)

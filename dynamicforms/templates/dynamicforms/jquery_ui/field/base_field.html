@@ -1,41 +1,16 @@
-{% load dynamicforms %}
-{% if field.display_form == DYNAMICFORMS.DisplayMode.FULL or field.display_form == DYNAMICFORMS.DisplayMode.INVISIBLE %}
-<div id="container-{{ field.uuid }}"
-     class="{% if field.errors %}ui-error-container{% endif %}
-            {% if style.display == 'none' or field.display_form == DYNAMICFORMS.DisplayMode.INVISIBLE %}ui-helper-hidden{% else %}dynamicforms-table-row{% endif %}">
+{% block class_container %}
+  {% if errors %}ui-error-container{% endif %}
+  {% if hide_container %}ui-helper-hidden{% else %}dynamicforms-table-row{% endif %}
+{% endblock %}
 
-  {% block field_input_label %}
-    {% if field.label %}
-      <label id="label-{{ field.uuid }}" {% if style.hide_label %}class="ui-helper-hidden"{% endif %} class="dynamicforms-label">
-        {{ field.label }}
-      </label>
-    {% endif %}
+{% block class_label %}
+  dynamicforms-label{% if hide_label %} ui-helper-hidden{% endif %}
+{% endblock %}
 
-    <div>
-    {% block field_input %}{% endblock %}
-    </div>
-  {% endblock %}
+{% block class_span_error %}
+  ui-error-span dynamicforms-field-error-message
+{% endblock %}
 
-  {% if field.errors %}
-    {% for error in field.errors %}
-      <span class="ui-error-span dynamicforms-field-error-message">{{ error }}</span>
-    {% endfor %}
-  {% endif %}
-
-  {% if field.help_text_form %}
-    <span id="help-{{ field.uuid }}" class="help-block">{{ field.help_text_form|safe }}</span>
-  {% endif %}
-</div>
-<script type="application/javascript">
-  {% block field_onchange %}$('#{{ field.uuid }}').on('change', function () { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });{% endblock %}
-  {% block field_get %}dynamicforms.registerFieldGetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldGetValue); {% endblock %}
-  {% block field_set %}dynamicforms.registerFieldSetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldSetValue); {% endblock %}
-  {% render_table_commands style.serializer 'onfieldinit' field_name=field.uuid %}
-</script>
-{% elif field.display_form == DYNAMICFORMS.DisplayMode.HIDDEN %}
-  <input type="hidden" id="{{ field.uuid }}" name="{{ field.name }}" value="{{ field.value }}"/>
-  <script type="application/javascript">
-    dynamicforms.registerFieldGetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldGetValue);
-    dynamicforms.registerFieldSetter('{{ style.serializer.uuid }}', '{{ field.uuid }}', dynamicforms.fieldSetValue);
-  </script>
-{% endif %}
+{% block class_span_help %}
+  help-block
+{% endblock %}

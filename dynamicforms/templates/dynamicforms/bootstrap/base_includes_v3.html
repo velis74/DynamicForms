@@ -1,27 +1,12 @@
-{% load static dynamicforms %}
-{% if include_libs != False %}
-<script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap-theme.min.css' %}">
-<script src="{% static 'bootstrap-3.4.1-dist/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'tinymce/v5.4.2/jquery.tinymce.min.js' %}"></script>
-<script src="{% static 'tinymce/v5.4.2/tinymce.min.js' %}"></script>
-{% endif %}
-<script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
-<script type="application/javascript">
-  dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};
-  dynamicforms.csrf_token = '{{ csrf_token }}';
-</script>
+{% load static %}
 
-{% if DYNAMICFORMS.use_select2 %}
-  {% include DYNAMICFORMS.select2_include %}
-{% endif %}
+{% block ui_library_include %}
+  <link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap-theme.min.css' %}">
+  <script src="{% static 'bootstrap-3.4.1-dist/js/bootstrap.min.js' %}"></script>
+{% endblock %}
 
-<style>
-  .dynamicforms-actioncontrol {
-    padding: 0 .25rem;
-  }
-
+{% block additional_style %}
   .dynamicforms-actioncontrol .btn {
     margin-top:    -.25rem;
     margin-right:  .5rem;
@@ -37,13 +22,6 @@
     height: 1.4rem;
   }
 
-  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
-    display: none !important;
-  }
-
-  .dynamicforms-filterrow div {
-    margin: 0;
-  }
 
   .df-card {
     /* display: inline-block; */
@@ -109,37 +87,4 @@
       display: table-cell;
     }
   }
-
-  input[type=number] {
-    max-width: 8em;
-  }
-
-  @media (max-width: 991px) {
-    .modal-lg {
-      max-width: calc(100% - 2em);
-    }
-  }
-
-  /* ordering indicators in table header */
-  th.ordering {
-    cursor:      pointer;
-    user-select: none;
-  }
-
-  .progress-bar.indeterminate {
-    position:  relative;
-    animation: progress-indeterminate 3s linear infinite;
-  }
-
-  @keyframes progress-indeterminate {
-    from {
-      left:  -25%;
-      width: 25%;
-    }
-    to {
-      left:  100%;
-      width: 25%;
-    }
-  }
-
-</style>
+{% endblock %}
