@@ -412,13 +412,21 @@ class ExtendTemplateNode(template.Node):
         return content
 
 
+def get_extend_data(token, parser):
+    tag_name, args, kwargs = parse_tag(token, parser)
+
+    template_name = None
+    if 'template_name_var' not in kwargs:
+        template_name = args[0]
+
+    return args, kwargs, template_name
+
+
 @register.tag("extendtemplate")
 def do_extendtemplate(parser, token):
     """
     Similar to base tag include, but with possibility to use blocks
-    It can be used as single line tag (no blocks) or multiline tag (can use blocks)
-    if there is "multiline" in parameters it will be forcefully treated as multiline tag.
-      - Required when there is nested extend in this extend
+    This tag is used as single line (without closing tag) For multiline use extendtemplateblock
 
     Template name can be provided in two ways:
       - If template name is static than declare it in first arg
@@ -429,23 +437,21 @@ def do_extendtemplate(parser, token):
     Otherwise keywords will be added to existing context
     """
 
-    tag_name, args, kwargs = parse_tag(token, parser)
-    nodelist = []
-    token_contents = map(lambda x: x.contents, reversed(parser.tokens))
-    extendtemplate_tags = filter(lambda x: x.split(' ')[0] in ("extendtemplate", "endextendtemplate"), token_contents)
+    args, kwargs, template_name = get_extend_data(token, parser)
 
-    # When we have nested extends there must be multiline arg in extend that includes sub extends
-    multiline = 'multiline' in (x.token for x in args)
+    return ExtendTemplateNode([], template_name, kwargs, 'only' in (x.token for x in args), False)
 
-    # We check if this is a block tag or single line tag (If there is 'endextendtemplate' token at right place)
-    if multiline or 'endextendtemplate' == next(extendtemplate_tags, []):
-        # Block (multiline) tag
-        nodelist = parser.parse(('endextendtemplate',))
-        parser.delete_first_token()
-        multiline = True
 
-    template_name = None
-    if not 'template_name_var' in kwargs:
-        template_name = args[0]
+@register.tag("extendtemplateblock")
+def do_extendtemplateblock(parser, token):
+    """
+    Same do_extendtemplate, only multiline... with posibillity to use blocks
+    """
 
-    return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), multiline)
+    args, kwargs, template_name = get_extend_data(token, parser)
+
+    # This si multiline block with closing tag
+    nodelist = parser.parse(('endextendtemplateblock',))
+    parser.delete_first_token()
+
+    return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), True)

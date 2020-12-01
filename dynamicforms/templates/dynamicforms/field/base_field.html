@@ -10,11 +10,11 @@
 
   {% block container_definition %}
 <div id="container-{{ field.uuid }}"
-     class="{% extendtemplate template_name_var=templatename block="class_container" errors=field.errors hide_container=hide_container input_type=input_type%}{% endextendtemplate %}">
+     class="{% extendtemplate template_name_var=templatename block="class_container" errors=field.errors hide_container=hide_container input_type=input_type %}">
   {% endblock %}
   {% block field_input_label %}
     {% if field.label %}
-      <label id="label-{{ field.uuid }}" for="{{ field.name }}" class="{% extendtemplate template_name_var=templatename block="class_label" hide_label=style.hide_label only%}">
+      <label id="label-{{ field.uuid }}" for="{{ field.name }}" class="{% extendtemplate template_name_var=templatename block="class_label" hide_label=style.hide_label only %}">
         {{ field.label }}
       </label>
     {% endif %}

@@ -4,7 +4,7 @@
 
 {% if serializer.render_type != 'table rows' %}
   {% block tablestart-includes %}{% endblock %}
-  <table id="list-{{ serializer.uuid }}" class="{% extendtemplate template_name_var=templatename block="table_class" only%}">
+  <table id="list-{{ serializer.uuid }}" class="{% extendtemplate template_name_var=templatename block="table_class" only %}">
   <thead>
   <tr>
     {% table_columns_count serializer as columns_count %}
@@ -13,7 +13,7 @@
     {% for column in serializer.fields.values %}
       {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
         {% set_var_conditional invisible=1 condition_var=column.display_table compare=DYNAMICFORMS.DisplayMode.INVISIBLE else_value=0 %}
-        <th {% extendtemplate template_name_var=templatename block="th_definition" invisible=invisible table_classes=column.table_classes ordering=column.ordering only%} data-field-name="{{ column.field_name }}">{{ column.label }}<span class="ordering"></span></th>
+        <th {% extendtemplate template_name_var=templatename block="th_definition" invisible=invisible table_classes=column.table_classes ordering=column.ordering only %} data-field-name="{{ column.field_name }}">{{ column.label }}<span class="ordering"></span></th>
       {% endif %}{% endfor %}
     {% render_table_commands serializer "thead_rowend" %}
   </tr>

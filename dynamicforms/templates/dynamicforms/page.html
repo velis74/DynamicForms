@@ -9,7 +9,7 @@
 
   {% set_var templatename=DYNAMICFORMS.template|add:'page.html' %}
 
-  {% extendtemplate template_name_var=templatename %}
+  {% extendtemplateblock template_name_var=templatename %}
     {% block title_header %}
       {{ serializer.page_title }}
     {% endblock %}
@@ -19,7 +19,7 @@
     {% block page_body %}
       {% include data_template with serializer=serializer data=data %}
     {% endblock %}
-  {% endextendtemplate %}
+  {% endextendtemplateblock %}
 
   {% include DYNAMICFORMS.template_root|add:"modal_dialog.html" %}
 {% endblock %}

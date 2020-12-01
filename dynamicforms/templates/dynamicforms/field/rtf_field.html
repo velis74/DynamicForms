@@ -6,7 +6,7 @@
 
     <textarea id="{{ field.uuid }}"
               name="{{ field.name }}"
-              class="{% extendtemplate template_name_var=templatename errors=field.errors block="field_class" only%}"
+              class="{% extendtemplate template_name_var=templatename errors=field.errors block="field_class" only %}"
               {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
               {% if style.rows %}rows="{{ style.rows }}"{% endif %}
               {% if field.read_only %}readonly{% endif %}

@@ -11,7 +11,7 @@
 
 <form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
 
-  {% extendtemplate template_name_var=templatename block="body"%}
+  {% extendtemplateblock template_name_var=templatename block="body"%}
     {% block form_body %}
       {% if data.id %}
         {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
@@ -20,13 +20,13 @@
       {% csrf_token %}
       {% render_form serializer %}
     {% endblock %}
-  {% endextendtemplate %}
+  {% endextendtemplateblock %}
   {% if df_render_type != 'dialog' %}
-  {% extendtemplate template_name_var=templatename block="buttons"%}
+  {% extendtemplateblock template_name_var=templatename block="buttons"%}
     {% block form_buttons %}
       {% render_table_commands serializer 'form-buttons' button_position='form' %}
     {% endblock %}
-  {% endextendtemplate %}
+  {% endextendtemplateblock %}
   {% endif %}
 
 

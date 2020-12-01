@@ -4,10 +4,10 @@
 
 {% if form.has_non_field_errors %}
   {% for error in form.errors.non_field_errors %}
-    {% extendtemplate template_name_var=templatename block="error_panel" %}
+    {% extendtemplateblock template_name_var=templatename block="error_panel" %}
       {% block error_class %}text-danger{% endblock %}
       {% block error_data %}{{ error }}{% endblock %}
-    {% endextendtemplate %}
+    {% endextendtemplateblock %}
   {% endfor %}
 {% endif %}
 

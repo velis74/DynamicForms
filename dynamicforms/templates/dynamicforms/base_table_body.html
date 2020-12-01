@@ -21,7 +21,7 @@
 
         {% set_var_conditional invisible=1 condition_var=column.display_table compare=DYNAMICFORMS.DisplayMode.INVISIBLE else_value=0 %}
 
-        <td {% extendtemplate template_name_var=templatename invisible=invisible table_classes=column.table_classes only%}
+        <td {% extendtemplate template_name_var=templatename invisible=invisible table_classes=column.table_classes only %}
         data-name="{{ key }}">
           {% render_table_commands serializer "fieldleft" key %}
           {% set_var klass=column|class_name %}

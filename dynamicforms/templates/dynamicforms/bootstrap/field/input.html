@@ -11,12 +11,12 @@
   {% load dynamicforms %}
   {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
     <div class="input-group-append">
-      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True%}{% endextendtemplate %}
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
     </div>
   {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
     <span class="input-group-addon" style="background-color: transparent;"
       onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
-      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True%}{% endextendtemplate %}
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
     </span>
   {% endif %}
 {% endblock %}
