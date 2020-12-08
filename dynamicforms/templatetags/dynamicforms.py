@@ -2,6 +2,7 @@ import json as jsonlib
 from html import unescape
 
 from django import template
+from django.template import engines, TemplateSyntaxError
 from django.template.base import FilterExpression, kwarg_re, NodeList
 from django.template.defaulttags import IfNode
 from django.template.loader import get_template
@@ -336,6 +337,26 @@ def parse_tag(token, parser):
     return tag_name, args, kwargs
 
 
+def template_from_string(template_string, using=None):
+    """
+    Convert a string into a template object,
+    using a given template engine or using the default backends
+    from settings.TEMPLATES if no engine was specified.
+    """
+    # This function is based on django.template.loader.get_template,
+    # but uses Engine.from_string instead of Engine.get_template.
+
+    # https://stackoverflow.com/a/46756430/9625282
+    chain = []
+    engine_list = engines.all() if using is None else [engines[using]]
+    for engine in engine_list:
+        try:
+            return engine.from_string(template_string)
+        except TemplateSyntaxError as e:
+            chain.append(str(e))
+    raise TemplateSyntaxError(template_string + ','.join(chain))
+
+
 class ExtendTemplateNode(template.Node):
     """
     Node for rendering extended template
@@ -374,7 +395,9 @@ class ExtendTemplateNode(template.Node):
     def get_node_list(nodelist):
         while len(nodelist) == 1 and isinstance(nodelist[0], ExtendsNode):
             nodelist = nodelist[0].nodelist
-        return nodelist
+        ret = NodeList(nodelist)
+        ret.contains_nontext = nodelist.contains_nontext
+        return ret
 
     def render(self, context):
 
@@ -387,25 +410,34 @@ class ExtendTemplateNode(template.Node):
         except:
             return ''
 
-        if 'block' in kwargs:
-            nodelist = self.get_node_list(extending_template.template.nodelist)
-            block_nodes = self.get_all_blocks(nodelist)
-            extending_template.template.nodelist = NodeList(
-                [node for node in block_nodes if node.name == kwargs.get('block')]
-            )
-            extending_template.template.nodelist.contains_nontext = True
-
-        if self.multiline:
-            blocks = {node.name: node for node in self.nodelist if isinstance(node, BlockNode)}
-            nodelist = self.get_node_list(extending_template.template.nodelist)
-
-            self.rearrange_blocks(nodelist, blocks)
-
         if self.only:
             flattened_context = kwargs
         else:
             flattened_context = context.flatten()
             flattened_context.update(kwargs)
+
+        nodelist_changed = False
+        new_nodelist = self.get_node_list(extending_template.template.nodelist)
+
+        if 'block' in kwargs:
+            block_nodes = self.get_all_blocks(new_nodelist)
+            new_nodelist = NodeList(
+                [node for node in block_nodes if node.name == kwargs.get('block')]
+            )
+            new_nodelist.contains_nontext = True
+            nodelist_changed = True
+
+        if self.multiline:
+            blocks = {node.name: node for node in self.nodelist if isinstance(node, BlockNode)}
+            self.rearrange_blocks(new_nodelist, blocks)
+            nodelist_changed = True
+
+        # This is because there can also be cache loader for template. And if in template loaded with such loader nodes
+        # are changed, they are changed in next iteration also.
+        # So now I load template from empty string and give him changed nodelist. So I don't change original template
+        if nodelist_changed:
+            extending_template = template_from_string('', None)
+            extending_template.template.nodelist = new_nodelist
 
         content = extending_template.render(flattened_context)
         content = mark_safe(content)
