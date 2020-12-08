@@ -3,7 +3,7 @@ from html import unescape
 
 from django import template
 from django.template import engines, TemplateSyntaxError
-from django.template.base import FilterExpression, kwarg_re, NodeList
+from django.template.base import NodeList, token_kwargs
 from django.template.defaulttags import IfNode
 from django.template.loader import get_template
 from django.template.loader_tags import BlockNode, ExtendsNode
@@ -299,40 +299,16 @@ def handle_rtf_linebreaks(value):
 
 
 def parse_tag(token, parser):
-    """
-    Generic template tag parser.
-
-    Returns a three-tuple: (tag_name, args, kwargs)
-
-    tag_name is a string, the name of the tag.
-
-    args is a list of FilterExpressions, from all the arguments that didn't look like kwargs,
-    in the order they occurred, including any that were mingled amongst kwargs.
-
-    kwargs is a dictionary mapping kwarg names to FilterExpressions, for all the arguments that
-    looked like kwargs, including any that were mingled amongst args.
-
-    (At rendering time, a FilterExpression f can be evaluated by calling f.resolve(context).)
-    """
-    # Split the tag content into words, respecting quoted strings.
     bits = token.split_contents()
-
-    # Pull out the tag name.
     tag_name = bits.pop(0)
-
-    # Parse the rest of the args, and build FilterExpressions from them so that
-    # we can evaluate them later.
-    args = []
-    kwargs = {}
-    for bit in bits:
-        # Is this a kwarg or an arg?
-        match = kwarg_re.match(bit)
-        kwarg_format = match and match.group(1)
-        if kwarg_format:
-            key, value = match.groups()
-            kwargs[key] = FilterExpression(value, parser)
+    args, kwargs = [], {}
+    while bits:
+        bit = bits.pop(0)
+        param = token_kwargs([bit], parser)
+        if param:
+            kwargs.update(param)
         else:
-            args.append(FilterExpression(bit, parser))
+            args.append(parser.compile_filter(bit))
 
     return tag_name, args, kwargs
 
