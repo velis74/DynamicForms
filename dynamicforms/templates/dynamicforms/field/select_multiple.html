@@ -2,7 +2,7 @@
 {% block field_input %}
   {% set_var templatename_fld=DYNAMICFORMS.template|add:'field/select_multiple.html' %}
 
-  <select multiple {{ field.choices|yesno:",disabled" }} id="{{ field.uuid }}"
+  <select multiple id="{{ field.uuid }}"
           class="{% extendtemplate template_name_var=templatename_fld block="select_class" errors=field.errors only %}
                  {{ DYNAMICFORMS.select2_form_field_class }}"
           name="{{ field.name }}"

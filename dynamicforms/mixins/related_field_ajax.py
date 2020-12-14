@@ -31,10 +31,17 @@ class RelatedFieldAJAXMixin(object):
         if self.url_reverse:
             if value is None:
                 return [dict(value="", display_text=self.placeholder)]
-            qry = self.get_queryset()
             try:
-                qry = qry.filter(pk=value)
-                return [dict(value=value, display_text=self.display_value(qry.first()))]
+                if hasattr(self, 'child_relation'):
+                    itm = self.child_relation
+                    qry = itm.get_queryset()
+                    qry = qry.filter(pk__in=value)
+                else:
+                    itm = self
+                    qry = self.get_queryset()
+                    qry = qry.filter(pk=value)
+
+                return [dict(value=rec.id, display_text=itm.display_value(rec)) for rec in qry.all()]
             except:
                 return []
         return super().iter_options()

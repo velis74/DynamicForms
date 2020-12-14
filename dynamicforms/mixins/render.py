@@ -135,15 +135,16 @@ class RenderMixin(object):
         :return: rendered value for table view
         """
         get_queryset = getattr(self, 'get_queryset', None)
-        if isinstance(self, RelatedField) or get_queryset:
-            return self.display_value(value)
-        elif isinstance(self, ManyRelatedField):
+
+        if isinstance(self, ManyRelatedField):
             # Hm, not sure if this is the final thing to do: an example of this field is in
             # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
             # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
             cr = self.child_relation
             return ', '.join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
+        elif isinstance(self, RelatedField) or get_queryset:
+            return self.display_value(value)
         else:
             choices = getattr(self, 'choices', {})
 
