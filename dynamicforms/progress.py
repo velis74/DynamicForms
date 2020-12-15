@@ -49,6 +49,18 @@ def set_progress_value(progress_key, value):
         cache.set('df_progress.%s' % progress_key, value)
 
 
+def add_progress_value(progress_key, value):
+    """
+    Updates operations progress by adding to existing progress value
+
+    :param progress_key: Key under which operations progress is stored
+    :param value: Progress in percentages (0.00 - 100.00)
+    :return:
+    """
+    if progress_key is not None:
+        cache.set('df_progress.%s' % progress_key, cache.get('df_progress.%s' % progress_key, 0) + value)
+
+
 def set_progress_comment(progress_key, value):
     """
     Updates operations comment

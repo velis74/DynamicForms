@@ -329,7 +329,7 @@ dynamicforms = {
       }
     } else{
       doneFuncExec = doneFunc;
-      dataType = 'json';  // This is a brazen assumption that custom done functions will only ever work with JSON
+      dataType = dType ? dType : 'json';  // If custom datatype is not given, we hope that JSON was meant
     }
     if (dType != undefined)
       dataType = dType;
