@@ -8,7 +8,7 @@ from rest_framework import fields, relations
 from .action import Actions
 from .mixins import (
     ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, NullIntegerMixin, EnableCopyMixin, BooleanFieldMixin, DateTimeFieldMixin, DateFieldMixin,
+    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, BooleanFieldMixin, DateTimeFieldMixin, DateFieldMixin,
     TimeFieldMixin, HiddenFieldMixin, RTFFieldMixin
 )
 from .settings import version_check
@@ -122,7 +122,7 @@ class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpText
         super().__init__(**kwargs)
 
 
-class IntegerField(NullIntegerMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
+class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -164,8 +164,8 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
 
 
 # noinspection PyShadowingBuiltins
-class DateTimeField(DateTimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateTimeField):
-
+class DateTimeField(DateTimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                    fields.DateTimeField):
     def __init__(self, format=fields.empty, input_formats=None, default_timezone=None, read_only=False,
                  write_only=False, required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
                  help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
@@ -177,7 +177,7 @@ class DateTimeField(DateTimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextM
 
 
 # noinspection PyShadowingBuiltins
-class DateField(DateFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateField):
+class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -191,7 +191,7 @@ class DateField(DateFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
 
 
 # noinspection PyShadowingBuiltins
-class TimeField(TimeFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.TimeField):
+class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.TimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,

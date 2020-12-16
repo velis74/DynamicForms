@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, \
-            RelatedFieldAJAXMixin, PasswordFieldMixin, NullIntegerMixin
+            RelatedFieldAJAXMixin, PasswordFieldMixin, NullValueMixin
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullIntegerMixin, EnableCopyMixin, ' + ', '.join(field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
             print('from .settings import version_check', file=output)
@@ -76,7 +76,13 @@ class Command(BaseCommand):
                 if issubclass(field, fields.CharField):
                     param_classes.append((0, PasswordFieldMixin))
                 if issubclass(field, fields.IntegerField):
-                    param_classes.append((0, NullIntegerMixin))
+                    param_classes.append((0, NullValueMixin))
+                if issubclass(field, fields.DateTimeField):
+                    param_classes.append((0, NullValueMixin))
+                if issubclass(field, fields.DateField):
+                    param_classes.append((0, NullValueMixin))
+                if issubclass(field, fields.TimeField):
+                    param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
                 param_classes.append((0, RenderMixin))
@@ -183,7 +189,13 @@ class Command(BaseCommand):
                 if issubclass(field, fields.CharField):
                     additional_mixin += 'PasswordFieldMixin, '
                 if issubclass(field, fields.IntegerField):
-                    additional_mixin += 'NullIntegerMixin, '
+                    additional_mixin += 'NullValueMixin, '
+                if issubclass(field, fields.DateTimeField):
+                    additional_mixin += 'NullValueMixin, '
+                if issubclass(field, fields.DateField):
+                    additional_mixin += 'NullValueMixin, '
+                if issubclass(field, fields.TimeField):
+                    additional_mixin += 'NullValueMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
                 hstore_field_wrapper, hstore_field_indent = '', ''
