@@ -359,7 +359,13 @@ dynamicforms = {
                formDataObject.append(key, fileInput.get(0).files[0]);
              }
            } else {
-             formDataObject.append(key, data[key]);
+             if ($.isArray(data[key])) {
+               for (var i = 0; i < data[key].length; i++) {
+                 formDataObject.append(key, data[key][i]);
+               }
+             } else {
+               formDataObject.append(key, data[key]);
+             }
            }
         }
       }
