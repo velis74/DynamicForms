@@ -337,55 +337,48 @@ dynamicforms = {
     function getDlg(){
       return $dlg;
     }
+
     // We need this so ve can call refresh from custom function (arguments.callee.performRefresh())
     doneFuncExec.performRefresh = performRefresh;
-    doneFuncExec.getDlg = getDlg;
+    doneFuncExec.getDlg         = getDlg;
     dynamicforms.handleRTFFieldsValue(data, $form);
 
-    var isFileUpload = $form.find('input[type=file]').length > 0;
-    var requestData = data;
-    var contentType = 'application/json';
-    if (isFileUpload) {
-      if (typeof window.FormData === "undefined") {
-        alert("Your browser does not support file upload.");
-        return;
-      }
-      var formDataObject = new FormData();
-      for (var key in data) {
-        if (data.hasOwnProperty(key)) {
-           var fileInput = $form.find('input[type=file][name=' + key + ']')
-           if (fileInput.length === 1) {
-             if (fileInput.get(0).files.length === 1 && !!fileInput.get(0).files[0]) {
-               formDataObject.append(key, fileInput.get(0).files[0]);
-             }
-           } else {
-             if ($.isArray(data[key])) {
-               for (var i = 0; i < data[key].length; i++) {
-                 formDataObject.append(key, data[key][i]);
-               }
-             } else {
-               formDataObject.append(key, data[key]);
-             }
-           }
+    if (typeof window.FormData === "undefined") {
+      alert("Your browser does not support file upload.");
+      return;
+    }
+    var formDataObject = new FormData();
+    for (var key in data) {
+      if (data.hasOwnProperty(key)) {
+        var fileInput = $form.find('input[type=file][name=' + key + ']')
+        if (fileInput.length === 1) {
+          if (fileInput.get(0).files.length === 1 && !!fileInput.get(0).files[0]) {
+            formDataObject.append(key, fileInput.get(0).files[0]);
+          }
+        } else {
+          if ($.isArray(data[key])) {
+            for (var i = 0; i < data[key].length; i++) {
+              formDataObject.append(key, data[key][i]);
+            }
+          } else {
+            formDataObject.append(key, data[key]);
+          }
         }
       }
-      requestData = formDataObject;
-      contentType = false;
-    } else {
-      requestData = JSON.stringify(requestData);
     }
+
     dynamicforms.ajaxWithProgress({
-                                    ajax_setts: {
-                                      type:        method,
-                                      url:         $form.attr("action"),
-                                      data:        requestData,
-                                      dataType:    dataType,
-                                      processData: false,
-                                      contentType: contentType,
-                                      headers:     headers,
-                                      traditional: true
-                                    }
-                                  })
+      ajax_setts: {
+        type:        method,
+        url:         $form.attr("action"),
+        data:        formDataObject,
+        dataType:    dataType,
+        processData: false,
+        contentType: false,
+        headers:     headers,
+        traditional: true,
+      },
+    })
       .done(doneFuncExec)
       .fail(function (xhr) {
         // TODO: this doesn't handle errors correctly: if return status is 400 something, it *might* be OK
