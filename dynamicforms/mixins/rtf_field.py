@@ -4,11 +4,17 @@ from re import sub
 
 class RTFFieldMixin(object):
 
+    def __init__(self, *args, parse=False, max_lines=3, max_line_length=40, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parse = parse or False
+        self.max_lines = max_lines
+        self.max_line_length = max_line_length
+
     def to_representation(self, instance, row_data=None):
         if not self.parent.is_filter:
             self.style.update({'base_template': 'rtf_field.html'})
-        if self.is_rendering_to_list and not self.parent.is_filter:
-            parser = RTFFieldHTMLParser()
+        if self.is_rendering_to_list and not self.parent.is_filter and self.parse:
+            parser = RTFFieldHTMLParser(max_lines=self.max_lines, max_line_length=self.max_line_length)
             parser.feed(instance)
             instance = parser.to_string()
 
@@ -17,12 +23,12 @@ class RTFFieldMixin(object):
 
 class RTFFieldHTMLParser(HTMLParser):
     text = []
-    max_lines = 3
-    max_line_length = 40
     curr_line = 1
 
-    def __init__(self):
+    def __init__(self, max_lines, max_line_length):
         self.text = []
+        self.max_lines = max_lines
+        self.max_line_length = max_line_length
         super(RTFFieldHTMLParser, self).__init__()
 
     def handle_data(self, data):
