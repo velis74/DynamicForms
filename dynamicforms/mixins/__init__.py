@@ -4,6 +4,7 @@ from .action import ActionMixin
 from .allow_tags import AllowTagsMixin
 from .boolean_field import BooleanFieldMixin
 from .enable_copy import EnableCopyMixin
+from .file_field import FileFieldMixin
 from .help_text import FieldHelpTextMixin
 from .implicit_hidden import HiddenFieldMixin
 from .implicit_natural_date import DateFieldMixin, DateTimeFieldMixin, TimeFieldMixin

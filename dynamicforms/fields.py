@@ -9,7 +9,7 @@ from .action import Actions
 from .mixins import (
     ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
     PasswordFieldMixin, NullValueMixin, EnableCopyMixin, BooleanFieldMixin, DateTimeFieldMixin, DateFieldMixin,
-    TimeFieldMixin, HiddenFieldMixin, RTFFieldMixin
+    TimeFieldMixin, FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
 )
 from .settings import version_check
 
@@ -251,7 +251,7 @@ class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, RenderMixi
         super().__init__(**kwargs)
 
 
-class FileField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
+class FileField(FileFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
