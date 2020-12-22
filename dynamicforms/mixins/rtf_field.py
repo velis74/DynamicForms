@@ -4,11 +4,11 @@ from re import sub
 
 class RTFFieldMixin(object):
 
-    def __init__(self, *args, parse=False, max_lines=3, max_line_length=40, **kwargs):
+    def __init__(self, *args, show_as_plain_text=False, plain_text_lines=3, plain_text_line_length=40, **kwargs):
         super().__init__(*args, **kwargs)
-        self.parse = parse or False
-        self.max_lines = max_lines
-        self.max_line_length = max_line_length
+        self.parse = show_as_plain_text or False
+        self.max_lines = plain_text_lines
+        self.max_line_length = plain_text_line_length
 
     def to_representation(self, instance, row_data=None):
         if not self.parent.is_filter:
