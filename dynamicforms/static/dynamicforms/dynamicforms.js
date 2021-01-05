@@ -1634,7 +1634,7 @@ dynamicforms = {
     }
   },
 
-  handleRTFFieldsValue(_data, $_form) {
+  handleRTFFieldsValue: function handleRTFFieldsValue(_data, $_form) {
     for (var key in _data) {
       if (_data.hasOwnProperty(key)) {
         var textareaInput = $_form.find('textarea[name=' + key + ']')
