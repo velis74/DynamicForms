@@ -1,5 +1,4 @@
 from html.parser import HTMLParser
-from re import sub
 
 
 class RTFFieldMixin(object):
@@ -26,25 +25,31 @@ class RTFFieldHTMLParser(HTMLParser):
 
     def __init__(self, max_lines, max_line_length):
         self.text = []
-        self.curr_line = 1
+        self.curr_line_count = 1
+        self.curr_line = ''
         self.max_lines = max_lines
         self.max_line_length = max_line_length
         super(RTFFieldHTMLParser, self).__init__()
 
     def handle_data(self, data):
         text = data.strip()
-        if len(text) > 0 and self.curr_line <= self.max_lines:
-            text = sub('[ \t\r\n]+', ' ', text)[0:self.max_line_length - 3]
-            if len(text) >= self.max_line_length - 3:
-                text += '...'
-            if self.curr_line < self.max_lines:
-                text += '<br/>'
-            self.text.append(text)
-        self.curr_line += 1
+        if self.curr_line_count <= self.max_lines:
+            if len(text) > 0:
+                self.curr_line += ' ' + text
+
+            elif "\n" in data:
+                line = self.curr_line[0:self.max_line_length - 3]
+                if len(self.curr_line) >= self.max_line_length - 3:
+                    line += '...'
+                line += '<br>'
+                self.text.append(line)
+                self.curr_line = ''
+                self.curr_line_count += 1
 
     def reset(self):
         self.text = []
-        self.curr_line = 1
+        self.curr_line_count = 1
+        self.curr_line = ''
         super(RTFFieldHTMLParser, self).reset()
 
     def to_string(self):
