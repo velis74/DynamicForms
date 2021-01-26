@@ -1390,8 +1390,8 @@ dynamicforms = {
   defaultFilter: function defaultFilter(event) {
     // And show the dialog
     var formId = (dynamicforms.DYNAMICFORMS.jquery_ui) ?
-      $(event.currentTarget).parents('div.accordion').find('div.ui-accordion-content').find('table')[0].getAttribute('id').replace('list-', '') :
-      $(event.currentTarget).parents('div.card').find('div.card-body').find('table')[0].getAttribute('id').replace('list-', '');
+      $(event.currentTarget).parents('div.accordion').find('div.ui-accordion-content').find('table[id^="list-"]')[0].getAttribute('id').replace('list-', '') :
+      $(event.currentTarget).parents('div.card').find('div.card-body').find('table[id^="list-"]')[0].getAttribute('id').replace('list-', '');
     dynamicforms.filterData(formId);
   },
 
