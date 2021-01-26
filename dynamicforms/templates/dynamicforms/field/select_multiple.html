@@ -1,5 +1,7 @@
-{% extends DYNAMICFORMS.field_base_template %}{% load i18n dynamicforms %}{% trans "No items to select." as no_items %}
+{% extends DYNAMICFORMS.field_base_template %}
+{% load i18n dynamicforms %}
 {% block field_input %}
+  {% trans "No items to select." as no_items %}
   {% set_var templatename_fld=DYNAMICFORMS.template|add:'field/select_multiple.html' %}
 
   <select multiple id="{{ field.uuid }}"
