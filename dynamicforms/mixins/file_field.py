@@ -1,9 +1,6 @@
-from .render import DisplayMode
-
-
 class FileFieldMixin(object):
 
-    def to_representation(self, instance, row_data=None):
-        if self.parent.is_filter:
-            self.display = DisplayMode.INVISIBLE
-        return super().to_representation(instance, row_data)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        # noinspection PyUnresolvedReferences
+        self.style.setdefault('no_filter', True)
