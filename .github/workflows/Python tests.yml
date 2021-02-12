@@ -16,12 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Install Tox and any other packages
-        run: pip install tox
       - name: Prepare Selenium enviroment
         run: |
           #Download geckodriver
@@ -33,20 +27,28 @@ jobs:
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
 
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+
       - name: Run Tox py-django22
         if: success() || failure()
-        run: tox -e py-django22
+        run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
 
       - name: Run Tox py-django30
         if: success() || failure()
-        run: tox -e py-django30
+        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
 
       - name: Run Tox py-django31
         if: (success() || failure())
-        run: tox -e py-django31
+        run: tox -e py-django31-drf310,py-django31-drf311,py-django31-drf312,py-django31-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: (success() || failure())
+        continue-on-error: true
         run: tox -e py-djangotip-drftip
 
   ubuntu_chrome:
@@ -61,79 +63,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: nanasess/setup-chromedriver@master
+      - run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
-      - name: Run Tox py-django110-drf39
-        if: matrix.python != 3.8 && (success() || failure())
-        continue-on-error: true
-        run: tox -e py-django110-drf39
 
-      - name: Run Tox py-django1tip-drf37
+      - name: Run Tox py-django22
         if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django1tip-drf37
+        run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
 
-      - name: Run Tox py-django1tip-drf38
+      - name: Run Tox py-django30
         if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django1tip-drf38
+        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
 
-      - name: Run Tox py-django1tip-drf39
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django1tip-drf39
-
-      - name: Run Tox py-django1tip-drftip
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django1tip-drftip
-
-      - name: Run Tox py-django20-drf39
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django20-drf39
-
-      - name: Run Tox py-django21-drf39
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django21-drf39
-
-      - name: Run Tox py-django22-drf39
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django22-drf39
-
-      - name: Run Tox py-django22-drf38
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django22-drf38
-
-      - name: Run Tox py-django22-drftip
-        if: success() || failure()
-        continue-on-error: true
-        run: tox -e py-django22-drftip
-
-      - name: Run Tox py-django30-drf310
-        if: matrix.python != 3.5 && (success() || failure())
-        continue-on-error: true
-        run: tox -e py-django30-drf310
-
-      - name: Run Tox py-django30-drf311
-        if: matrix.python != 3.5 && (success() || failure())
-        continue-on-error: true
-        run: tox -e py-django30-drf311
-
-      - name: Run Tox py-django30-drftip
-        if: matrix.python != 3.5 && (success() || failure())
-        continue-on-error: true
-        run: tox -e py-django30-drftip
+      - name: Run Tox py-django31
+        if: (success() || failure())
+        run: tox -e py-django31-drf310,py-django31-drf311,py-django31-drf312,py-django31-drftip
 
       - name: Run Tox py-djangotip-drftip
-        if: matrix.python != 3.5 && (success() || failure())
+        if: (success() || failure())
+        run: tox -e py-djangotip-drftip
+
+      - name: Run Tox py-djangotip-drftip
+        if: (success() || failure())
         continue-on-error: true
         run: tox -e py-djangotip-drftip
 
