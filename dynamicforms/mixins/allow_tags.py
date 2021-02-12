@@ -64,7 +64,7 @@ class AllowTagsMixin(object):
                 self.fail('invalid_choice', input=data)
 
     def to_representation(self, value, row_data=None):
-        if isinstance(self, ChoiceField) and self.allow_tags:
+        if isinstance(self, ChoiceField) and self.allow_tags and value:
             return DenormalisedArray(value, self)
 
         return super().to_representation(value, row_data)
