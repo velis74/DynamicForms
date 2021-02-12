@@ -2,7 +2,6 @@
 
 from .action import ActionMixin
 from .allow_tags import AllowTagsMixin
-from .boolean_field import BooleanFieldMixin
 from .enable_copy import EnableCopyMixin
 from .file_field import FileFieldMixin
 from .help_text import FieldHelpTextMixin
