@@ -22,7 +22,7 @@ jobs:
           wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
           #Extract geckodriver
           tar -xvzf geckodriver*
-          #Make geckodriver execuable
+          #Make geckodriver executable
           chmod +x geckodriver
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
@@ -106,7 +106,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - run: sudo safaridriver--enable
+      - run: sudo safaridriver --enable
 
       - name: Setup Python
         uses: actions/setup-python@v1
@@ -132,39 +132,39 @@ jobs:
         continue-on-error: true
         run: tox -e py-djangotip-drftip
 
-  win_edge:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        python: [3.8, 3.9]
-      fail-fast: false
-
-    # Da bodo delali fukcionalni testi v Edge-ju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/99
-    env:
-      BROWSER_SELENIUM: 'EDGE'
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Install Tox and any other packages
-        run: pip install tox
-
-      - name: Run Tox py-django22
-        if: success() || failure()
-        run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
-
-      - name: Run Tox py-django30
-        if: success() || failure()
-        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
-
-      - name: Run Tox py-django31
-        if: (success() || failure())
-        run: tox -e py-django31-drf311,py-django31-drf312,py-django31-drftip
-
-      - name: Run Tox py-djangotip-drftip
-        if: (success() || failure())
-        continue-on-error: true
-        run: tox -e py-djangotip-drftip
+#  win_edge:
+#    runs-on: windows-latest
+#    strategy:
+#      matrix:
+#        python: [3.8, 3.9]
+#      fail-fast: false
+#
+#    # Da bodo delali fukcionalni testi v Edge-ju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/99
+#    env:
+#      BROWSER_SELENIUM: 'EDGE'
+#
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Setup Python
+#        uses: actions/setup-python@v1
+#        with:
+#          python-version: ${{ matrix.python }}
+#      - name: Install Tox and any other packages
+#        run: pip install tox
+#
+#      - name: Run Tox py-django22
+#        if: success() || failure()
+#        run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
+#
+#      - name: Run Tox py-django30
+#        if: success() || failure()
+#        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
+#
+#      - name: Run Tox py-django31
+#        if: (success() || failure())
+#        run: tox -e py-django31-drf311,py-django31-drf312,py-django31-drftip
+#
+#      - name: Run Tox py-djangotip-drftip
+#        if: (success() || failure())
+#        continue-on-error: true
+#        run: tox -e py-djangotip-drftip
