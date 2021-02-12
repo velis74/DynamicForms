@@ -1,11 +1,10 @@
+# TODO: Implementation of this mixin is wrong for ChoiceField (single choice variant):
+#  The ChoiceField will return data in an array even for (Single)ChoiceField. Select2 handles this, maybe even requires
+#  this, but some other component might not
 import ast
 
 from rest_framework.fields import ChoiceField, MultipleChoiceField
 
-
-# TODO: Implementation of this mixin is wrong for ChoiceField (single choice variant):
-#  The ChoiceField will return data in an array even for (Single)ChoiceField. Select2 handles this, but some other
-#  component might not
 
 class DenormalisedArray(list):
 
