@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.5, 3.6, 3.7, 3.8]
+        python: [3.8, 3.9]
       fail-fast: false
 
     env:
@@ -33,54 +33,15 @@ jobs:
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
 
-      - name: Run Tox py-django110-drf39
-        if: matrix.python != 3.8 && (success() || failure())
-        # Looks like tests for django 1.* are in single thread. So there are sometimes strange errors (Alert doesn't
-        # show up, redirection doesn't work, etc...)
-        continue-on-error: true
-        run: tox -e py-django110-drf39
-
-      - name: Run Tox py-django1tip-drf37
+      - name: Run Tox py-django22-drf310
         if: success() || failure()
-        # Looks like tests for django 1.* are in single thread. So there are sometimes strange errors (Alert doesn't
-        # show up, redirection doesn't work, etc...)
-        continue-on-error: true
-        run: tox -e py-django1tip-drf37
+        run: tox -e py-django22-drf38
 
-      - name: Run Tox py-django1tip-drf38
+      - name: Run Tox py-django22-drf311
         if: success() || failure()
-        # Looks like tests for django 1.* are in single thread. So there are sometimes strange errors (Alert doesn't
-        # show up, redirection doesn't work, etc...)
-        continue-on-error: true
-        run: tox -e py-django1tip-drf38
+        run: tox -e py-django22-drf38
 
-      - name: Run Tox py-django1tip-drf39
-        if: success() || failure()
-        # Looks like tests for django 1.* are in single thread. So there are sometimes strange errors (Alert doesn't
-        # show up, redirection doesn't work, etc...)
-        continue-on-error: true
-        run: tox -e py-django1tip-drf39
-
-      - name: Run Tox py-django1tip-drftip
-        if: success() || failure()
-        # Looks like tests for django 1.* are in single thread. So there are sometimes strange errors (Alert doesn't
-        # show up, redirection doesn't work, etc...)
-        continue-on-error: true
-        run: tox -e py-django1tip-drftip
-
-      - name: Run Tox py-django20-drf39
-        if: success() || failure()
-        run: tox -e py-django20-drf39
-
-      - name: Run Tox py-django21-drf39
-        if: success() || failure()
-        run: tox -e py-django21-drf39
-
-      - name: Run Tox py-django22-drf39
-        if: success() || failure()
-        run: tox -e py-django22-drf39
-
-      - name: Run Tox py-django22-drf38
+      - name: Run Tox py-django22-drf312
         if: success() || failure()
         run: tox -e py-django22-drf38
 
@@ -89,26 +50,30 @@ jobs:
         run: tox -e py-django22-drftip
 
       - name: Run Tox py-django30-drf310
-        if: matrix.python != 3.5 && (success() || failure())
+        if: success() || failure()
         run: tox -e py-django30-drf310
 
       - name: Run Tox py-django30-drf311
-        if: matrix.python != 3.5 && (success() || failure())
+        if: success() || failure()
+        run: tox -e py-django30-drf311
+
+      - name: Run Tox py-django30-drf312
+        if: success() || failure()
         run: tox -e py-django30-drf311
 
       - name: Run Tox py-django30-drftip
-        if: matrix.python != 3.5 && (success() || failure())
+        if: (success() || failure())
         run: tox -e py-django30-drftip
 
       - name: Run Tox py-djangotip-drftip
-        if: matrix.python != 3.5 && (success() || failure())
+        if: (success() || failure())
         run: tox -e py-djangotip-drftip
 
   ubuntu_chrome:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.5, 3.6, 3.7, 3.8]
+        python: [3.8, 3.9]
       fail-fast: false
 
     env:

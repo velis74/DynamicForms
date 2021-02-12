@@ -20,8 +20,10 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms.mixins import RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin, \
+        from dynamicforms.mixins import (
+            RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin,
             RelatedFieldAJAXMixin, PasswordFieldMixin, NullValueMixin
+        )
         from dynamicforms import mixins, action
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -46,7 +48,6 @@ class Command(BaseCommand):
             print('import warnings', file=output)
             print('from typing import Optional', file=output)
             print('from uuid import UUID\n', file=output)
-            print('import rest_framework', file=output)
             print('from rest_framework import fields, relations\n', file=output)
             print('from .action import Actions', file=output)
 
@@ -55,10 +56,10 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(
+                        field_mixins), 115)
             ), file=output)
             print(')', file=output)
-            print('from .settings import version_check', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -75,13 +76,7 @@ class Command(BaseCommand):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
                     param_classes.append((0, PasswordFieldMixin))
-                if issubclass(field, fields.IntegerField):
-                    param_classes.append((0, NullValueMixin))
-                if issubclass(field, fields.DateTimeField):
-                    param_classes.append((0, NullValueMixin))
-                if issubclass(field, fields.DateField):
-                    param_classes.append((0, NullValueMixin))
-                if issubclass(field, fields.TimeField):
+                if issubclass(field, (fields.IntegerField, fields.DateTimeField, fields.DateField, fields.TimeField)):
                     param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
@@ -188,13 +183,7 @@ class Command(BaseCommand):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):
                     additional_mixin += 'PasswordFieldMixin, '
-                if issubclass(field, fields.IntegerField):
-                    additional_mixin += 'NullValueMixin, '
-                if issubclass(field, fields.DateTimeField):
-                    additional_mixin += 'NullValueMixin, '
-                if issubclass(field, fields.DateField):
-                    additional_mixin += 'NullValueMixin, '
-                if issubclass(field, fields.TimeField):
+                if issubclass(field, (fields.IntegerField, fields.DateTimeField, fields.DateField, fields.TimeField)):
                     additional_mixin += 'NullValueMixin, '
 
                 # Check if field is HStoreField to add wrapper and adjust indentation
@@ -238,21 +227,12 @@ class Command(BaseCommand):
                 elif issubclass(field, (fields.DateField, fields.TimeField)):
                     print(indt(8) + "self.time_step = kw.pop('time_step', None)", file=output)
 
-                print(indt(8) + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', "
-                f"'kw'))}}", file=output)
+                print(
+                    indt(8) +
+                    f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",
+                    file=output)
                 print(indt(8) + f'kwargs.update(kw)', file=output)
 
-                if issubclass(field, fields.DecimalField):
-                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
-                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.7.2'):", file=output)
-                    print(indt(12) + "kwargs.pop('rounding', None)", file=output)
-                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
-                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.4.0'):", file=output)
-                    print(indt(12) + "kwargs.pop('localize', None)", file=output)
-                elif issubclass(field, fields.SlugField):
-                    print(indt(8) + '# noinspection PyUnresolvedReferences', file=output)
-                    print(indt(8) + "if not version_check(rest_framework.VERSION, '3.6.4'):", file=output)
-                    print(indt(12) + "kwargs.pop('allow_unicode', None)", file=output)
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 
     print('fields.py successfully generated')

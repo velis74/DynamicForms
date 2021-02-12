@@ -2,19 +2,17 @@ import warnings
 from typing import Optional
 from uuid import UUID
 
-import rest_framework
 from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (
     ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, BooleanFieldMixin, DateTimeFieldMixin, DateFieldMixin,
-    TimeFieldMixin, FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
+    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin,
+    FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
 )
-from .settings import version_check
 
 
-class BooleanField(BooleanFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
+class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -81,9 +79,6 @@ class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
-        # noinspection PyUnresolvedReferences
-        if not version_check(rest_framework.VERSION, '3.6.4'):
-            kwargs.pop('allow_unicode', None)
         super().__init__(**kwargs)
 
 
@@ -154,12 +149,6 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
                  table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
-        # noinspection PyUnresolvedReferences
-        if not version_check(rest_framework.VERSION, '3.7.2'):
-            kwargs.pop('rounding', None)
-        # noinspection PyUnresolvedReferences
-        if not version_check(rest_framework.VERSION, '3.4.0'):
-            kwargs.pop('localize', None)
         super().__init__(**kwargs)
 
 
