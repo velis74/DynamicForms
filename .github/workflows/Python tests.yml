@@ -33,37 +33,17 @@ jobs:
           #Move geckodriver
           sudo mv geckodriver /usr/local/bin/
 
-      - name: Run Tox py-django22-drf310
+      - name: Run Tox py-django22
         if: success() || failure()
-        run: tox -e py-django22-drf38
+        run: tox -e py-django22
 
-      - name: Run Tox py-django22-drf311
+      - name: Run Tox py-django30
         if: success() || failure()
-        run: tox -e py-django22-drf38
+        run: tox -e py-django30
 
-      - name: Run Tox py-django22-drf312
-        if: success() || failure()
-        run: tox -e py-django22-drf38
-
-      - name: Run Tox py-django22-drftip
-        if: success() || failure()
-        run: tox -e py-django22-drftip
-
-      - name: Run Tox py-django30-drf310
-        if: success() || failure()
-        run: tox -e py-django30-drf310
-
-      - name: Run Tox py-django30-drf311
-        if: success() || failure()
-        run: tox -e py-django30-drf311
-
-      - name: Run Tox py-django30-drf312
-        if: success() || failure()
-        run: tox -e py-django30-drf311
-
-      - name: Run Tox py-django30-drftip
+      - name: Run Tox py-django31
         if: (success() || failure())
-        run: tox -e py-django30-drftip
+        run: tox -e py-django31
 
       - name: Run Tox py-djangotip-drftip
         if: (success() || failure())
