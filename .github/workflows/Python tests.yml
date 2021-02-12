@@ -78,14 +78,17 @@ jobs:
 
       - name: Run Tox py-django22
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
 
       - name: Run Tox py-django30
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
 
       - name: Run Tox py-django31
         if: (success() || failure())
+        continue-on-error: true
         run: tox -e py-django31-drf311,py-django31-drf312,py-django31-drftip
 
       - name: Run Tox py-djangotip-drftip
@@ -112,19 +115,23 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python }}
+
       - name: Install Tox and any other packages
         run: pip install tox
 
       - name: Run Tox py-django22
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
 
       - name: Run Tox py-django30
         if: success() || failure()
+        continue-on-error: true
         run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
 
       - name: Run Tox py-django31
         if: (success() || failure())
+        continue-on-error: true
         run: tox -e py-django31-drf311,py-django31-drf312,py-django31-drftip
 
       - name: Run Tox py-djangotip-drftip
