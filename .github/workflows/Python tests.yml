@@ -102,6 +102,7 @@ jobs:
       matrix:
         python: [3.8, 3.9]
       fail-fast: false
+      max-parallel: 1
 
     # Da bodo delali fukcionalni testi v Safariju morajo najprej urediti issue https://github.com/actions/virtual-environments/issues/91
     env:
