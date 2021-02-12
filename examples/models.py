@@ -87,7 +87,7 @@ class BasicFields(models.Model):
     Shows basic available fields in DynamicForms
     """
     boolean_field = models.BooleanField(null=False, default=False)
-    nullboolean_field = models.NullBooleanField(null=True)
+    nullboolean_field = models.BooleanField(null=True)
     char_field = models.CharField(null=True, max_length=32)
     email_field = models.EmailField(null=True)
     slug_field = models.SlugField(null=True)
