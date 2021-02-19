@@ -7,6 +7,7 @@ from django.db.models import DurationField, Q
 
 class CursorPagination(drf_p.CursorPagination):
     ordering = 'pk'
+    NONE_VALUE = '{`None`}'
 
     # noinspection PyAttributeOutsideInit
     def paginate_queryset(self, queryset, request, view=None):
@@ -52,11 +53,21 @@ class CursorPagination(drf_p.CursorPagination):
                     # Test for: (cursor reversed) XOR (queryset reversed)
                     if idx < segment_len - 1:
                         # if this is the last field in this segment
-                        kwargs[order_attr] = attr_value
+                        if attr_value == self.NONE_VALUE:
+                            kwargs[order_attr + '__isnull'] = True
+                        else:
+                            kwargs[order_attr] = attr_value
                     elif self.cursor.reverse != is_reversed:
-                        kwargs[order_attr + '__lt'] = attr_value
+                        if attr_value == self.NONE_VALUE:
+                            kwargs[order_attr + '__isnull'] = False
+                        else:
+                            kwargs[order_attr + '__lt'] = attr_value
                     else:
-                        kwargs[order_attr + '__gt'] = attr_value
+                        if attr_value == self.NONE_VALUE:
+                            # It just doesn't go higher than None... so we use some impossible to reach filter
+                            kwargs['id'] = -1
+                        else:
+                            kwargs[order_attr + '__gt'] = attr_value
 
                 return Q(**kwargs)
 
@@ -142,6 +153,8 @@ class CursorPagination(drf_p.CursorPagination):
         """
         if isinstance(value, datetime.timedelta):
             return str(value.total_seconds())
+        elif value is None:
+            return self.NONE_VALUE
         return str(value)
 
     def field_to_python(self, queryset, order_attr, value):
