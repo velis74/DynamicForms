@@ -1618,7 +1618,78 @@ dynamicforms = {
         if ($('#' + fieldId).length === 1) {
           var ckeditor_selector = 'ckeditor-' + fieldId
           ClassicEditor
-            .create(document.querySelector("[id='" + fieldId + "']"))
+            .create(document.querySelector("[id='" + fieldId + "']"), {
+              toolbar: {
+                removeItems: ['imageUpload', 'mediaEmbed'],
+              },
+              heading: {
+                options: [
+                  {model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph'},
+                  {model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1'},
+                  {model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2'},
+                  {
+                    model:             'div-alert-primary',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-primary'],
+                    },
+                    title:             'Alert - Primary',
+                    class:             'ck-heading_alert-primary',
+                    converterPriority: 'high',
+                  },
+                  {
+                    model:             'div-alert-secondary',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-secondary'],
+                    },
+                    title:             'Alert - Secondary',
+                    class:             'ck-heading_alert-secondary',
+                    converterPriority: 'high',
+                  },
+                  {
+                    model:             'div-alert-success',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-success'],
+                    },
+                    title:             'Alert - Success',
+                    class:             'ck-heading_alert-success',
+                    converterPriority: 'high',
+                  },
+                  {
+                    model:             'div-alert-danger',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-danger'],
+                    },
+                    title:             'Alert - Danger',
+                    class:             'ck-heading_alert-danger',
+                    converterPriority: 'high',
+                  },
+                  {
+                    model:             'div-alert-warning',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-warning'],
+                    },
+                    title:             'Alert - Warning',
+                    class:             'ck-heading_alert-warning',
+                    converterPriority: 'high',
+                  },
+                  {
+                    model:             'div-alert-info',
+                    view:              {
+                      name:    'div',
+                      classes: ['alert', 'alert-info'],
+                    },
+                    title:             'Alert - Info',
+                    class:             'ck-heading_alert-info',
+                    converterPriority: 'high',
+                  },
+                ],
+              },
+            })
             .then(editor => {
               ckeditor_selector = editor;
             })
