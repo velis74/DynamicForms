@@ -1283,7 +1283,11 @@ dynamicforms = {
             callback:   'dynamicforms.redirectToLogin',
             parameters: {path_next: link_next.replace(window.location.origin, '')},
           }]);
-        } else {
+        } else if (xhr.status != 0) {
+          //Fail with status 0 can occcur if request is not done yet and user refreshes browser.
+          //https://stackoverflow.com/a/12621912/9625282
+          //General server error dlg should not display in this case
+
           var body = 'General server error.'
           if (xhr.responseText) {
             body = xhr.responseText;

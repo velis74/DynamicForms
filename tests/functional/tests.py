@@ -15,7 +15,7 @@ from setup.settings import BASE_DIR, MEDIA_ROOT
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 upload_file_name = '0_3142.prj'
-file_for_upload = "%s/tests/static_files/%s" % (BASE_DIR, upload_file_name)
+file_for_upload = os.path.join(BASE_DIR, 'tests', 'static_files', upload_file_name)
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
@@ -1254,5 +1254,6 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.check_row(
-            rows[0], 4, ['2', 'Custom text', 'Multiple choice 1, Custom text', 'Delete', None]
+            # Record ID's value does't matter
+            rows[0], 4, [None, 'Custom text', 'Multiple choice 1, Custom text', 'Delete', None]
         )
