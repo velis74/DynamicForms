@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue table example</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></link>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+{# verbatim tag needs to be used so that django does not parse curly braces #}
+{% verbatim %}
+<script type="text/x-template" id="table-grid">
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th v-for="_col in columns">
+                    <a>
+                        {{ _col }}
+                    </a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="row in rows" :key="row.id">
+                <td v-for="col in columns">
+                    {{ row[col] }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<div id="app">
+    <!-- component has url, column names prop passed as input data, with this component knows where to get data and what to render-->
+    <table-grid-component url="/filter.json"
+                          :columns="['name', 'char_field', 'int_field', 'bool_field']"></table-grid-component>
+</div>
+{% endverbatim %}
+
+<script>
+  // register component, component is x-template type component
+  Vue.component('table-grid-component', {
+    template: `#table-grid`,
+    props: ['url', 'columns'],
+    data() {
+      return {
+        rows: [],
+      }
+    },
+    mounted() {
+      var self = this;
+      axios.get(this.url).then(function (res) {
+        // call api and set data as response, when data is set component is re-rendered
+        self.rows = res.data;
+      }).catch(function (err) {
+        alert(err.data)
+      });
+    },
+    methods: {}
+  })
+
+  // create vue app with app dic container
+  var tableApp = new Vue({
+    el: `#app`,
+  })
+</script>
+</body>
+</html>
