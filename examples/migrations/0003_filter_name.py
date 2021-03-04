@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-from dynamicforms.dynamicforms_migration_mixin import DynamicformsMigrationMixin
+from dynamicforms.migrations import DynamicformsMigrationMixin
 
 
 class Migration(DynamicformsMigrationMixin, migrations.Migration):
