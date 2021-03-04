@@ -633,7 +633,6 @@ dynamicforms = {
         dynamicforms.showDialog($dlg.showNewAfterHide, refreshType, listId, doneFunc, dataType);
       }
     }
-    dynamicforms.removeRTFFields();
   },
 
   /**
@@ -1611,39 +1610,40 @@ dynamicforms = {
   },
 
   initRTFField: function initRTFField(fieldId) {
-    var interval = null;
-    var editor = null;
-    var timestamp = Math.floor(Date.now() / 1000);
+    var interval     = null;
+    var editor       = null;
+    var timestamp    = Math.floor(Date.now() / 1000);
     var initFunction = function () {
-        interval = window.setInterval(function () {
-            if (typeof window['tinymce'] != "undefined" && $("#" + fieldId).length === 1) {
-                editor = tinymce.init({
-                    selector: "#" + fieldId,
-                    width: "100%",
-                });
-                window.clearInterval(interval)
-            }
-            if (Math.floor(Date.now() / 1000) - timestamp > 1) {
-                window.clearInterval(interval)
-            }
-        }, 100);
+      interval = window.setInterval(function () {
+        if ($('#' + fieldId).length === 1) {
+          var ckeditor_selector = 'ckeditor-' + fieldId
+          ClassicEditor
+            .create(document.querySelector("[id='" + fieldId + "']"))
+            .then(editor => {
+              ckeditor_selector = editor;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+          window.clearInterval(interval);
+        }
+        if (Math.floor(Date.now() / 1000) - timestamp > 1) {
+          window.clearInterval(interval)
+        }
+      }, 100);
     }
     initFunction();
-  },
-
-  removeRTFFields: function removeRTFFields() {
-    // clear all rich text editors
-    if (typeof window['tinymce'] != "undefined") {
-          tinymce.remove()
-    }
   },
 
   handleRTFFieldsValue: function handleRTFFieldsValue(_data, $_form) {
     for (var key in _data) {
       if (_data.hasOwnProperty(key)) {
         var textareaInput = $_form.find('textarea[name=' + key + ']')
-        if (textareaInput.length === 1 && !!textareaInput.prop('id') && $('#' + textareaInput.prop('id') + '_ifr').length === 1) {
-          _data[key] = tinymce.get(textareaInput.prop('id')).getContent()
+        if (textareaInput.length === 1) {
+          var domEditableElement = document.querySelector('.ck-editor__editable');
+          if (domEditableElement !== 'undefined') {
+            _data[key] = domEditableElement.ckeditorInstance.getData();
+          }
         }
       }
     }
