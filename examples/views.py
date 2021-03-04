@@ -18,3 +18,7 @@ def view_mode(request):
         many=True
     )
     return render(request, "examples/view_mode.html", dict(page_data=ser))
+
+
+def vue_table(request):
+    return render(request, "examples/vue-table.html")
