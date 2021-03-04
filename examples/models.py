@@ -63,7 +63,10 @@ class PageLoad(models.Model):
     description = models.CharField(max_length=20, help_text='Item description')
     choice = models.IntegerField(choices=((1, 'Choice 1'),
                                           (2, 'Choice 2'),
-                                          (3, 'Choice 3')), null=False, blank=False, default=1)
+                                          (3, 'Choice 3'),
+                                          (4, 'Choice 4'),
+                                          ),
+                                 null=False, blank=False, default=1)
 
 
 class Filter(models.Model):

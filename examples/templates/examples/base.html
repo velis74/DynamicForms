@@ -98,6 +98,7 @@
   <a href="#" onclick="singleDialog()">Choice allow tags dialog</a>
   <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
   <a href="{% url 'calculated-css-class-for-table-row-list' format='html' %}">Row css style</a>
+  <a href="{% url 'view-mode' %}">Render in template</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
@@ -111,7 +112,7 @@
     var $overlay  = $('#sidenav-overlay');
 
     if ($side_nav.width() == 0) {
-      $side_nav.width('15em');
+      $side_nav.width('20em');
       $overlay.show().animate({opacity: .33}, 500);
     }
     else {
