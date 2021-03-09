@@ -10,6 +10,4 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^dynamicforms/', include('dynamicforms.urls')),
     url(r'^api-docs/', include_docs_urls(title='Example API documentation')),
-    url(r'^vue-table', vue_table, name='vue-table'),
-
 ]
