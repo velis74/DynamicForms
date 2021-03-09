@@ -22,7 +22,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from dynamicforms.mixins import (
             RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin,
-            RelatedFieldAJAXMixin, PasswordFieldMixin, NullValueMixin
+            RelatedFieldAJAXMixin, PasswordFieldMixin, NullValueMixin,
+            SingleChoiceMixin
         )
         from dynamicforms import mixins, action
 
@@ -72,6 +73,7 @@ class Command(BaseCommand):
                 if issubclass(field, fields.ChoiceField):
                     param_classes.append((0, AllowTagsMixin))
                     param_classes.append((0, NullChoiceMixin))
+                    param_classes.append((0, SingleChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
@@ -178,7 +180,7 @@ class Command(BaseCommand):
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, '
+                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):

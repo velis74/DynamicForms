@@ -121,6 +121,7 @@ class AdvancedFields(models.Model):
     """
     regex_field = models.CharField(max_length=256)
     choice_field = models.CharField(null=True, max_length=8)
+    single_choice_field = models.CharField(null=True, max_length=8)
     multiplechoice_field = models.CharField(null=True, max_length=8)
     filepath_field = models.FilePathField(null=True)
     file_field = models.FileField(upload_to='examples/', null=True, blank=True)

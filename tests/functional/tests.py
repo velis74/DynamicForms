@@ -860,12 +860,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 11)
+        self.assertEqual(len(cells), 12)
 
         # Check for relations
-        self.assertEqual(self.get_element_text(cells[5]), "Relation object 7")
         self.assertEqual(self.get_element_text(cells[6]), "Relation object 7")
-        self.assertEqual(self.get_element_text(cells[7]), "Relation object 5")
+        self.assertEqual(self.get_element_text(cells[7]), "Relation object 7")
+        self.assertEqual(self.get_element_text(cells[8]), "Relation object 5")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -898,12 +898,12 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
-        self.assertEqual(len(cells), 11)
+        self.assertEqual(len(cells), 12)
 
         # Check for changed values
         self.assertEqual(self.get_element_text(cells[2]), "Choice 2")
-        self.assertEqual(self.get_element_text(cells[5]), "Relation object 9")
         self.assertEqual(self.get_element_text(cells[6]), "Relation object 9")
+        self.assertEqual(self.get_element_text(cells[7]), "Relation object 9")
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
