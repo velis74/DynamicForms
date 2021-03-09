@@ -36,8 +36,6 @@ class RTFFieldHTMLParser(HTMLParser):
         if self.curr_line_count <= self.max_lines:
             if len(text) > 0:
                 self.curr_line += ' ' + text
-
-            elif "\n" in data:
                 line = self.curr_line[0:self.max_line_length - 3]
                 if len(self.curr_line) >= self.max_line_length - 3:
                     line += '...'
