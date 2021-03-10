@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from rest_framework.documentation import include_docs_urls
 
 from examples.rest import router
-from .views import index, view_mode, vue_table
+from .views import index, view_mode
 
 urlpatterns = [
     url(r'^$', index, name='index'),

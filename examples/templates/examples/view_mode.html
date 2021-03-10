@@ -33,39 +33,39 @@
 
   <div id="app">
     <!-- component has url, column names prop passed as input data, with this component knows where to get data and what to render-->
-    <table-grid-component url="/filter.json"
-                          :columns="['name', 'char_field', 'int_field', 'bool_field']"></table-grid-component>
+    <table-grid-component url="/page-load.json"
+                          :columns="['id', 'description', 'choice']"></table-grid-component>
   </div>
   {% endverbatim %}
 
   {{ page_data }}
 
   <script>
-      // register component, component is x-template type component
-      Vue.component('table-grid-component', {
-          template: `#table-grid`,
-          props: ['url', 'columns'],
-          data() {
-              return {
-                  rows: [],
-              }
-          },
-          mounted() {
-              const self = this;
-              axios.get(this.url).then(function (res) {
-                  // call api and set data as response, when data is set component is re-rendered
-                  self.rows = res.data;
-              }).catch(function (err) {
-                  alert(err.data)
-              });
-          },
-          methods: {}
-      })
+    // register component, component is x-template type component
+    Vue.component('table-grid-component', {
+      template: `#table-grid`,
+      props: ['url', 'columns'],
+      data() {
+        return {
+          rows: [],
+        }
+      },
+      mounted() {
+        const self = this
+        axios.get(this.url).then(function (res) {
+          // call api and set data as response, when data is set component is re-rendered
+          self.rows = res.data;
+        }).catch(function (err) {
+          alert(err.data)
+        });
+      },
+      methods: {}
+    })
 
-      // create vue app with app dic container
-      const tableApp = new Vue({
-          el: `#app`,
-      });
+    // create vue app with app dic container
+    const tableApp = new Vue({
+      el: `#app`,
+    });
   </script>
 
 {% endblock %}
