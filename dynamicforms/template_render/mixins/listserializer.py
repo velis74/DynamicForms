@@ -5,6 +5,7 @@ from rest_framework.serializers import ListSerializer
 
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
+from django.template import loader
 
 
 class ViewModeListSerializer(ViewModeBase):
@@ -28,7 +29,13 @@ class ViewModeListSerializer(ViewModeBase):
         self.bound_value = value
 
     def render_table(self: '_ViewModeBoundListSerializer'):
-        return 'juhuhu'
+        template = loader.get_template('template_render/full_table.html')
+        context = dict(columns=self.render_fields)
+        return template.render(context)
+
+    @property
+    def render_fields(self: '_ViewModeBoundListSerializer'):
+        return self.child.render_fields
 
 
 # noinspection PyAbstractClass
