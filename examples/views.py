@@ -1,8 +1,9 @@
 from django.shortcuts import redirect, render
 from rest_framework.reverse import reverse
-from .rest.page_load import PageLoadSerializer
+
+from dynamicforms.template_render import ViewModeListSerializer
 from .models import PageLoad
-from dynamicforms.mixins.view_mode import ViewModeSerializer, ViewModeListSerializer
+from .rest.page_load import PageLoadSerializer
 
 
 # Create your views here.
@@ -18,7 +19,3 @@ def view_mode(request):
         many=True
     )
     return render(request, "examples/view_mode.html", dict(page_data=ser))
-
-
-def vue_table(request):
-    return render(request, "examples/vue-table.html")
