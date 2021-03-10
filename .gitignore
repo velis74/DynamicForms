@@ -15,3 +15,5 @@ db.sqlite3
 /geckodriver.log
 venv/
 media
+/node_modules/*
+/package-lock.json
