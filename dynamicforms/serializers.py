@@ -7,9 +7,9 @@ from rest_framework.fields import SkipField
 
 from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
+from dynamicforms.template_render import ViewModeSerializer
 from . import fields
 from .mixins import ActionMixin, DisplayMode, RenderMixin
-from .mixins.view_mode import ViewModeSerializer
 from .struct import StructDefault
 
 
