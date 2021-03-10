@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 from rest_framework.serializers import ListSerializer, Serializer
 
+from dynamicforms.mixins import DisplayMode
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 
@@ -42,10 +43,28 @@ class ViewModeSerializer(ViewModeBase):
     def set_bound_value(self, value: Dict[Any, Any]):
         self.bound_value = value
 
+    @property
+    def render_fields(self: '_ViewModeBoundSerializer'):
+        actions = self.actions.renderable_actions(self)
+        # if any(action.position == "rowstart" for action in actions):
+        #     yield fakefield(rowstart)
+
+        for f in self.fields.values():
+            if f.display_table == DisplayMode.FULL:
+                yield f
+
+        # if any(action.position == "rowend" for action in actions):
+        #     yield fakefield(rowend)
+
 
 # noinspection PyAbstractClass
 class _ViewModeBoundSerializer(ViewModeSerializer, Serializer):
     """
     Dummy class just for type hinting
     """
-    pass
+    class FakeActionsList(list):
+        @staticmethod
+        def renderable_actions(self, _unused):
+            return self
+
+    actions = FakeActionsList()

@@ -1,0 +1,28 @@
+<!-- component has url, column names prop passed as input data, with this component knows where to get data and what to render-->
+{% verbatim %}
+<table-grid-component url="/page-load.json" :columns="['id', 'description', 'choice']" inline-template>
+  <table class="table">
+    <thead>
+    <tr>
+{% endverbatim %}
+      {% for col in columns %}
+        <th>{{ col.label }}</th>
+      {% endfor %}
+{% verbatim %}
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="row in rows" :key="row.id">
+      <td v-for="col in columns">
+        {{ row[col] }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+<!--
+  <no-data-indicator v-if="rows.length == 0 && loading == false">{{ self.nodata_text }}</no-data-indicator>
+  <loading-indicator v-if="loading">{{ self.loading_indicator_text }}</loading-indicator>
+-->
+</table-grid-component>
+{% endverbatim %}
