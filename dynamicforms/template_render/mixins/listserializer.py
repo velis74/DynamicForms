@@ -15,7 +15,7 @@ class ViewModeListSerializer(ViewModeBase):
 
     # noinspection PySuperArguments,PyUnresolvedReferences
     @staticmethod
-    def mixin_to_serializer(view_mode: 'ViewModeSerializer.ViewMode', serializer: ListSerializer,
+    def mixin_to_serializer(view_mode: 'ViewModeListSerializer.ViewMode', serializer: ListSerializer,
                             value: Optional[List[Dict]] = None):
         serializer.__class__ = type(
             'ViewMode' + serializer.child.__class__.__name__, (ViewModeListSerializer, serializer.__class__), {}
