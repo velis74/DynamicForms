@@ -11,12 +11,19 @@
   </div>
 
   <script>
-    // register component, component is x-template type component
-    Vue.component('table-grid-component', {
-      props: ['url', 'columns'],
+    Vue.component('df-table', {
+      props: ['url', 'initialData'],
       data() {
-        return {
-          rows: [],
+        const self = this;
+        return {rows: self.initialRows};
+      },
+      computed: {
+        initialRows: function () {
+          const self = this;
+          if (self.initialData == undefined || self.initialData.constructor != Array) {
+            return [];
+          }
+          return self.initialData;
         }
       },
       mounted() {
@@ -27,12 +34,32 @@
           self.rows = res.data;
         }).catch(function (err) {
           alert(err.data)
-        }).always(function () {
+        }).then(function () {
           self.loading = false;
         });
       },
+      methods: {},
+    });
+    Vue.component('df-table-header', {
+      props: ['columns'],
+      data() {
+        // const self = this;
+        return {};
+      },
+      mounted() {
+      },
       methods: {}
-    })
+    });
+    Vue.component('df-table-header-col', {
+      props: ['column'],
+      data() {
+        const self = this;
+        return self.column;  // {name:str, label:str, align:str, sorted:[int, bool]}
+      },
+      mounted() {
+      },
+      methods: {}
+    });
 
     // create vue app with app dic container
     const tableApp = new Vue({

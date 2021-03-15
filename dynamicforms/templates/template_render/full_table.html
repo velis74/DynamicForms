@@ -1,28 +1,45 @@
-<!-- component has url, column names prop passed as input data, with this component knows where to get data and what to render-->
-{% verbatim %}
-<table-grid-component url="/page-load.json" :columns="['id', 'description', 'choice']" inline-template>
+<div>
+<df-table id="list-{{ serializer.uuid }}" url="/page-load.json" initial-data="" inline-template>
+  {% verbatim %}
   <table class="table">
-    <thead>
-    <tr>
-{% endverbatim %}
-      {% for col in columns %}
-        <th>{{ col.label }}</th>
-      {% endfor %}
-{% verbatim %}
-    </tr>
-    </thead>
+    <df-table-header :columns="`[{name:'id', label:'id', align:'right', sort:true}]`" inline-template>
+      <thead>
+      <tr>
+        <td>juhuhu</td>
+      </tr>
+      </thead>
+    </df-table-header>
     <tbody>
+    <tr>
+      <td>bla bla</td>
+    </tr>
+    </tbody>
+  </table>
+
+  {% endverbatim %}
+</df-table>
+</div>
+
+{% comment %}
+        <!--
+        <df-table-header-col v-for="col in columns" :key="col.name" column="col" inline-template>
+          <th :style="`text-align: ${col.align}`">{{ col.label }}</th>
+        </df-table-header-col>
+        -->
+
+
+<!--
+tbody
     <tr v-for="row in rows" :key="row.id">
       <td v-for="col in columns">
         {{ row[col] }}
       </td>
     </tr>
-    </tbody>
-  </table>
-
-<!--
-  <no-data-indicator v-if="rows.length == 0 && loading == false">{{ self.nodata_text }}</no-data-indicator>
-  <loading-indicator v-if="loading">{{ self.loading_indicator_text }}</loading-indicator>
 -->
-</table-grid-component>
-{% endverbatim %}
+
+
+  <!--
+    <no-data-indicator v-if="rows.length == 0 && loading == false">{{ self.nodata_text }}</no-data-indicator>
+    <loading-indicator v-if="loading">{{ self.loading_indicator_text }}</loading-indicator>
+  -->
+{% endcomment %}

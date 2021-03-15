@@ -30,12 +30,14 @@ class ViewModeListSerializer(ViewModeBase):
 
     def render_table(self: '_ViewModeBoundListSerializer'):
         template = loader.get_template('template_render/full_table.html')
-        context = dict(columns=self.render_fields)
+        context = dict(serializer=self, columns=self.render_fields)
         return template.render(context)
 
     @property
     def render_fields(self: '_ViewModeBoundListSerializer'):
         return self.child.render_fields
+
+    uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
 
 
 # noinspection PyAbstractClass
