@@ -45,7 +45,7 @@ class ViewModeSerializer(ViewModeBase):
 
     @property
     def render_fields(self: '_ViewModeBoundSerializer'):
-        actions = self.actions.renderable_actions(self)
+        # actions = self.actions.renderable_actions(self)
         # if any(action.position == "rowstart" for action in actions):
         #     yield fakefield(rowstart)
 

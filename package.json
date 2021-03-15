@@ -26,9 +26,13 @@
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "es6-promise": "^4.2.8",
+    "eslint": ">=7.21.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "lodash": "^4.17.20",
+    "object.assign": "^4.1.2",
+    "object.entries": "^1.1.3",
     "vue": "^2.6.12",
-    "vue-notification": "^1.3.20",
-    "eslint": ">=7.21.0"
+    "vue-notification": "^1.3.20"
   }
 }
