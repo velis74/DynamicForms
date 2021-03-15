@@ -1710,7 +1710,7 @@ dynamicforms = {
     for (var key in _data) {
       if (_data.hasOwnProperty(key)) {
         var textareaInput = $_form.find('textarea[name=' + key + ']')
-        if (textareaInput.length === 1) {
+        if (textareaInput.length === 1 && textareaInput.hasClass('.ck-editor__editable')) {
           var domEditableElement = document.querySelector('.ck-editor__editable');
           if (domEditableElement !== 'undefined') {
             _data[key] = domEditableElement.ckeditorInstance.getData();
