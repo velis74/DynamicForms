@@ -50,6 +50,8 @@ if sys.argv[1] == 'publish':
 
     write_ver_to_init(version)
     os.system('python setup.py sdist bdist_wheel')
+    # if you don't like to enter username / pass for pypi every time, run this command:
+    #  keyring set https://upload.pypi.org/legacy/ username  (it will ask for password)
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
     os.system('git checkout dynamicforms/__init__.py')

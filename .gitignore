@@ -16,3 +16,4 @@ db.sqlite3
 venv/
 media
 /node_modules
+/package-lock.json
