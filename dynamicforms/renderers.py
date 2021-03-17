@@ -2,6 +2,7 @@ import copy
 
 import six
 from django.template import loader
+from django.utils.safestring import mark_safe
 from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 from rest_framework.serializers import HiddenField, ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
@@ -29,8 +30,8 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         if isinstance(data, dict) and 'next' in data and 'results' in data and \
                 isinstance(data['results'], (ReturnList, ReturnDict)):
             # This is in case of Pagination
-            link_next = data.get('next', '')
-            link_prev = data.get('previous', '')
+            link_next = mark_safe(data.get('next', ''))
+            link_prev = mark_safe(data.get('previous', ''))
             data = data['results']
         if isinstance(data, (ReturnList, ReturnDict)):
             ser = data.serializer
