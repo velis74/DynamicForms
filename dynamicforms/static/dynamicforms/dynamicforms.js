@@ -1527,10 +1527,21 @@ dynamicforms = {
           fieldName = $col.attr('data-field-name');
       if ($col.hasClass('ordering')) {
         var ordr = order[fieldName];
-        if (ordr == null || ordr.index < 1) $col.attr('class', 'ordering unsorted');
-        else $col.attr('class',
-          ('ordering ' + (ordr.direction === true ? 'asc' : 'desc') + (' seg-' + ordr.index))
-        );
+
+        // First remove all existing sorting classes
+        $col.removeClass('asc');
+        $col.removeClass('desc');
+        $col.removeClass('unsorted');
+        $col.removeClass(function(index, className) {
+          return (className.match(/(^|\s)seg-\S+/g) || []).join(' ');
+        });
+
+        // Then add the new classes
+        if (ordr == null || ordr.index < 1) $col.addClass('unsorted');
+        else {
+          $col.addClass(ordr.direction === true ? 'asc' : 'desc');
+          $col.addClass('seg-' + ordr.index);
+        }
       }
     });
     dynamicforms.getInitialOrdering(formID, false);
