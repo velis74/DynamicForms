@@ -1516,7 +1516,7 @@ dynamicforms = {
 
     if ($col.hasClass('ordering')) {
       if (ordering_index.direction === true) dir = '\u2191';  // ascending
-      else if (ordering_index.direction === false) dir = '\u2193';  // ascending
+      else if (ordering_index.direction === false) dir = '\u2193';  // descending
       if (ordering_index.index) index = String.fromCharCode(0x2460 + ordering_index.index - 1);
       $col.find('span.ordering').text(dir + index);
     }

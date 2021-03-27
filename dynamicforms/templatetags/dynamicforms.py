@@ -250,11 +250,13 @@ def iter_options_bound(field):
 
 
 @register.filter
-def json(value):
+def json(value, field_list: str = None):
     """
     JSON serialises given variable. Use when you want to insert a variable directly into JavaScript
 
     :param value: variable to serialise
+    :param field_list: if supplied, the "value" is assumed to be iterable of dict or object. only field_list members
+      will be serialized
     :return: JSON serialised string
     """
 
@@ -264,6 +266,13 @@ def json(value):
                 return obj.__to_dict__()
             return super().default(obj)
 
+    def extract_item(item):
+        if isinstance(item, dict):
+            return {name: item[name] for name in field_list.split(',')}
+        return {name: getattr(item, name) for name in field_list.split(',')}
+
+    if field_list:
+        value = [extract_item(item) for item in value]
     return mark_safe(jsonlib.dumps(value, cls=Encoder))
 
 
