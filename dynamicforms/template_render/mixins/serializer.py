@@ -6,6 +6,7 @@ from rest_framework.serializers import ListSerializer, Serializer
 from dynamicforms.mixins import DisplayMode
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
+from .serializer_render_fields import SerializerRenderFields
 
 # noinspection PyUnreachableCode
 if False:
@@ -44,17 +45,33 @@ class ViewModeSerializer(ViewModeBase):
         self.bound_value = value
 
     @property
+    def is_rendering_as_table(self):
+        """
+        Overrides RenderMixin's implementation
+        :return:
+        """
+        return self.view_mode in (ViewModeSerializer.ViewMode.TABLE_ROW, ViewModeSerializer.ViewMode.TABLE_HEAD)
+
+    @property
     def render_fields(self: '_ViewModeBoundSerializer'):
-        # actions = self.actions.renderable_actions(self)
-        # if any(action.position == "rowstart" for action in actions):
-        #     yield fakefield(rowstart)
+        this = self
 
-        for f in self.fields.values():
-            if f.display_table == DisplayMode.FULL:
-                yield f
+        class BoundSerializerRenderFields(SerializerRenderFields):
 
-        # if any(action.position == "rowend" for action in actions):
-        #     yield fakefield(rowend)
+            @property
+            def fields(self):
+                # actions = self.actions.renderable_actions(self)
+                # if any(action.position == "rowstart" for action in actions):
+                #     yield fakefield(rowstart)
+
+                for f in this.fields.values():
+                    if f.display_table != DisplayMode.SUPPRESS:
+                        yield f
+
+                # if any(action.position == "rowend" for action in actions):
+                #     yield fakefield(rowend)
+
+        return BoundSerializerRenderFields()
 
 
 # noinspection PyAbstractClass

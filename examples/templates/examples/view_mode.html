@@ -2,6 +2,18 @@
 {% block head_extra %}
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js" crossorigin="anonymous"></script>
+
+  <style>
+      th.ordering {
+          cursor: pointer;
+          user-select: none;
+      }
+      th.ordering > span.ordering > div.ordering-arrow {
+          font-size: 125%;   {# increase font size for the arrow #}
+          line-height: .8em; {# but do not allow it to affect line size #}
+          display: inline-block;
+      }
+  </style>
 {% endblock %}
 {% block title %}Render in template example{% endblock %}
 {% block body %}
@@ -9,6 +21,19 @@
   <div id="app">
     {{ page_data }}
   </div>
+
+  {% verbatim %}
+  <script type="text/x-template" id="df-table-header-template">
+    <thead>
+    <tr>
+      <th v-for="col in enhancedColumns" :key="col.name" :style="`text-align: ${col.align}`" :class="col.classes">
+        {{ col.label }}
+        <span v-if="col.isOrdered" class="ordering"><div class="ordering-arrow">{{ col.ascDescChar }}</div>{{ col.orderIndexChar }}</span>
+      </th>
+    </tr>
+    </thead>
+  </script>
+  {% endverbatim %}
 
   <script>
     Vue.component('df-table', {
@@ -41,10 +66,40 @@
       methods: {},
     });
     Vue.component('df-table-header', {
+      template: `#df-table-header-template`,
       props: ['columns'],
       data() {
-        // const self = this;
-        return {};
+        const self = this;
+        console.log(self.columns);
+        return {
+          DisplayMode: Object.freeze({
+            // This enum is actually declared in dynamicforms.mixins.render.py
+            SUPPRESS: 1,
+            HIDDEN: 5,
+            INVISIBLE: 8,
+            FULL: 10,
+          })
+        };
+      },
+      computed: {
+        enhancedColumns: function () {
+          const self = this;
+          return self.columns.map(column => {
+            let res = Object.assign({}, column);
+            res.isOrdered = res.ordering.includes('ordering');
+            res.classes = (res.table_classes + ' ' + (res.isOrdered ? 'ordering' : '')).trim();
+            res.isAscending = res.ordering.includes('asc');
+            res.isDescending = res.ordering.includes('desc');
+            res.isUnsorted = res.ordering.includes('unsorted');
+            if (res.isAscending) { res.ascDescChar = '\u25b2'; }
+            else if (res.isDescending) { res.ascDescChar = '\u25b4'; }
+            else { res.ascDescChar = '\u2195'; }  // isUnsorted;
+            let ordrIdxMatch = /(?:seg-)(\d+)/.exec(res.ordering);
+            res.orderIndex = ordrIdxMatch != null ? Number(ordrIdxMatch[1]) : -1;
+            res.orderIndexChar = res.orderIndex > -1 ? String.fromCharCode(0x2460 + res.orderIndex - 1) : '';
+            return res;
+          });
+        },
       },
       mounted() {
       },

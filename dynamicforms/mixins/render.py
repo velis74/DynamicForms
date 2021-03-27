@@ -11,6 +11,12 @@ from dynamicforms.settings import DYNAMICFORMS
 
 
 class DisplayMode(IntEnum):
+    """
+    The ways a field might be rendered (or not).
+
+    NOTE: This class has a copy in Vue component "df-table-header", so if you change here, the change needs to be
+          implemented there as well
+    """
     SUPPRESS = 1  # Field will be entirely suppressed. it will not render (not even to JSON) and will not parse for PUT
     HIDDEN = 5  # Field will render as <input type="hidden"> or <tr data-field_name>
     INVISIBLE = 8  # Field will render completely, but with display: none. Equal to setting its style = {display: none}
@@ -51,8 +57,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+                display_table or display
+                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -84,6 +90,18 @@ class RenderMixin(object):
             pass
         return False
 
+    @property
+    def is_rendering_as_table(self):
+        from dynamicforms.template_render.mixins.serializer import ViewModeSerializer
+        base = getattr(self, 'parent', None)
+        while base:
+            # if anywhere in the serializing stack there is a ViewModeSerializer, we will ask it, otherwise default
+            if isinstance(base, ViewModeSerializer):
+                return base.is_rendering_as_table
+            base = getattr(base, 'parent', None)
+
+        return self.is_rendering_to_list and self.is_rendering_to_html
+
     # noinspection PyUnresolvedReferences
     def use_pk_only_optimization(self):
         """
@@ -92,7 +110,7 @@ class RenderMixin(object):
         human-readable
         :return:
         """
-        if self.is_rendering_to_list and self.is_rendering_to_html:
+        if self.is_rendering_as_table:
             return False
         return super().use_pk_only_optimization()
 
@@ -105,7 +123,7 @@ class RenderMixin(object):
         :param row_data: instance with row data
         :return: serialized value
         """
-        if self.is_rendering_to_list and self.is_rendering_to_html and self.display_table != DisplayMode.HIDDEN:
+        if self.is_rendering_as_table and self.display_table != DisplayMode.HIDDEN:
             # if rentering to html table, let's try to resolve any lookups
             # hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there
             #   we have discussed alternatives but decided that right now a more complete solution is not needed
