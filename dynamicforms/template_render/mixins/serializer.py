@@ -1,6 +1,5 @@
 from enum import auto
 from typing import Any, Dict
-
 from rest_framework.serializers import ListSerializer, Serializer
 
 from dynamicforms.mixins import DisplayMode
@@ -72,6 +71,15 @@ class ViewModeSerializer(ViewModeBase):
                 #     yield fakefield(rowend)
 
         return BoundSerializerRenderFields()
+
+    @property
+    def component_params(self):
+        from rest_framework.utils.encoders import JSONEncoder
+        import json
+        params = {
+            'columns': self.render_fields.columns.as_field_def()  # todo: we need a self.setviewmode(hearder_row)
+        }
+        return json.dumps(params, cls=JSONEncoder)
 
 
 # noinspection PyAbstractClass

@@ -37,6 +37,10 @@ class ViewModeListSerializer(ViewModeBase):
     def render_fields(self: '_ViewModeBoundListSerializer'):
         return self.child.render_fields
 
+    @property
+    def component_params(self: '_ViewModeBoundListSerializer'):
+        return self.child.component_params
+
     uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
 
 
