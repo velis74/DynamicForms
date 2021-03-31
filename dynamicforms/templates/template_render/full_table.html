@@ -1,19 +1,7 @@
-<df-table id="list-{{ serializer.uuid }}" url="/page-load.json" initial-data="" inline-template>
-  <table class="table">
-    <thead is="df-table-header" :columns="{{ serializer.render_fields.as_json_field_def }}"></thead>
-    <tbody>
-    <tr>
-      <td>bla bla</td>
-    </tr>
-    </tbody>
-  </table>
-
+<df-table id="list-{{ serializer.uuid }}" url="/page-load.json" :data="{{ serializer.component_params }}">
 </df-table>
 
 {% comment %}
-<!--
--->
-
 
 <!--
 tbody
