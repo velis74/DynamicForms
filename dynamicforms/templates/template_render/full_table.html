@@ -1,18 +1,6 @@
 <df-table id="list-{{ serializer.uuid }}" url="/page-load.json" :data="{{ serializer.component_params }}">
 </df-table>
-
 {% comment %}
-
-<!--
-tbody
-    <tr v-for="row in rows" :key="row.id">
-      <td v-for="col in columns">
-        {{ row[col] }}
-      </td>
-    </tr>
--->
-
-
 <!--
   <no-data-indicator v-if="rows.length == 0 && loading == false">{{ self.nodata_text }}</no-data-indicator>
   <loading-indicator v-if="loading">{{ self.loading_indicator_text }}</loading-indicator>

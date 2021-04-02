@@ -6,6 +6,7 @@ from rest_framework.serializers import ListSerializer
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from django.template import loader
+from .util import convert_to_json_if
 
 
 class ViewModeListSerializer(ViewModeBase):
@@ -37,9 +38,10 @@ class ViewModeListSerializer(ViewModeBase):
     def render_fields(self: '_ViewModeBoundListSerializer'):
         return self.child.render_fields
 
-    @property
     def component_params(self: '_ViewModeBoundListSerializer'):
-        return self.child.component_params
+        res = self.child.component_params(output_json=False)
+        res['rows'] = self.data
+        return convert_to_json_if(res, True)
 
     uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
 
