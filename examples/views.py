@@ -1,10 +1,9 @@
 from django.shortcuts import redirect, render
-from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
 
 from dynamicforms.filters import FilterBackend
-from dynamicforms.template_render import ViewModeListSerializer
+from dynamicforms.template_render import ViewModeListSerializer, ViewModeSerializer
 from dynamicforms.viewsets import ModelViewSet
 from .models import PageLoad
 from .rest.page_load import PageLoadSerializer
@@ -46,6 +45,7 @@ def view_mode(request):
 
     ser = PageLoadSerializer(
         page,
+        view_mode=ViewModeSerializer.ViewMode.TABLE_ROW,
         view_mode_list=ViewModeListSerializer.ViewMode.TABLE,
         context=dict(view=viewset),
         many=True
