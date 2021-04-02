@@ -196,17 +196,9 @@
         },
         orderingParam() { return this.sortedColumns.map(o => (o.direction === true ? '' : '-') + o.fieldName); },
       },
-      mounted1() {
-        const self = this;
-        self.loading = true;
-        axios.get(this.url).then(function (res) {
-          // call api and set data as response, when data is set component is re-rendered
-          self.rows = res.data;
-        }).catch(function (err) { alert(err.data) })
-            .then(function () { self.loading = false; });
-      },
+      mounted() {},
       methods: {
-        changeOrder: function changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
+        changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
           const orderChanged = this.columns[colIdx].orderIndex != sortSeq;
           this.columns.forEach(function (column, index) {
             if (index == colIdx) {
@@ -218,8 +210,22 @@
               }
             }
           });
+        },
+        loadData() {
+          const self = this;
+          self.loading = true;
+          axios.get(this.url + '?ordering=' + self.orderingParam).then(function(res) {
+            // call api and set data as response, when data is set component is re-rendered
+            self.rows = res.data;
+          }).catch(function (err) { alert(err.data) })
+              .then(function () { self.loading = false; });
         }
       },
+      watch: {
+        orderingParam(_newVal, _oldVal) {
+          this.loadData();
+        }
+      }
     });
     Vue.component('df-table-header', {
       template: `#df-table-header-template`,
@@ -285,7 +291,10 @@
       methods: {
         rowPropsWithData(row) {
           const self = this;
-          let rp = this.rowProperties.reduce(function(obj, val) { obj['data-' + val] = row[val]; return obj; } , {})
+          let rp = this.rowProperties.reduce(function (obj, val) {
+            obj['data-' + val] = row[val];
+            return obj;
+          }, {})
           delete rp['data-row_css_style'];
           return rp;
         }
