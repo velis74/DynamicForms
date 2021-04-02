@@ -6,6 +6,7 @@ from dynamicforms.mixins import DisplayMode
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from .serializer_render_fields import SerializerRenderFields
+from .util import convert_to_json_if
 
 # noinspection PyUnreachableCode
 if False:
@@ -72,14 +73,13 @@ class ViewModeSerializer(ViewModeBase):
 
         return BoundSerializerRenderFields()
 
-    @property
-    def component_params(self):
-        from rest_framework.utils.encoders import JSONEncoder
-        import json
+    def component_params(self: '_ViewModeBoundSerializer', output_json: bool=True):
         params = {
-            'columns': self.render_fields.columns.as_field_def()  # todo: we need a self.setviewmode(hearder_row)
+            'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
+            'row-properties': self.render_fields.properties.as_name(),
+            'record': None if self.parent else self.data
         }
-        return json.dumps(params, cls=JSONEncoder)
+        return convert_to_json_if(params, output_json)
 
 
 # noinspection PyAbstractClass

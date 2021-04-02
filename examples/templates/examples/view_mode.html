@@ -27,11 +27,7 @@
   <script type="text/x-template" id="df-table-template">
     <table class="table">
       <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
-      <tbody>
-      <tr>
-        <td>bla bla</td>
-      </tr>
-      </tbody>
+      <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"></tbody>
     </table>
   </script>
 
@@ -50,6 +46,19 @@
       <span v-if="column.isOrdered" class="ordering"
       ><div class="ordering-arrow">{{ column.ascDescChar }}</div>{{ column.orderIndexChar }}</span>
     </th>
+  </script>
+
+  <script type="text/x-template" id="df-table-body-template">
+    <tbody :key="renderSeq">
+    <tr v-for="row in rows" :key="row['id']" :style="`${row['row_css_style']}`" v-bind="rowPropsWithData(row)">
+      <td is="df-table-body-col" v-for="(col, idx) in columns" :key="col.name"
+          :column="col" :col-idx="idx" :value="row[col.name]"></td>
+    </tr>
+    </tbody>
+  </script>
+
+  <script type="text/x-template" id="df-table-body-col-template">
+    <td :style="`text-align: ${column.align}`">{{ value }}</td>
   </script>
   {% endverbatim %}
 
@@ -175,6 +184,7 @@
         return {
           rows: self.data.rows == undefined || self.data.rows.constructor != Array ? [] : self.data.rows,
           columns: self.data.columns.map(c => new DFTableColumn(c)),
+          rowProperties: self.data['row-properties'],
         };
       },
       computed: {
@@ -186,7 +196,7 @@
         },
         orderingParam() { return this.sortedColumns.map(o => (o.direction === true ? '' : '-') + o.fieldName); },
       },
-      mounted() {
+      mounted1() {
         const self = this;
         self.loading = true;
         axios.get(this.url).then(function (res) {
@@ -213,10 +223,10 @@
     });
     Vue.component('df-table-header', {
       template: `#df-table-header-template`,
-      props: ['columns', 'sortedColumns'],
+      props: ['columns'],
       data() {
         const self = this;
-        // console.log({headerColumns: self.columns, sorted: self.sortedColumns});
+        // console.log({headerColumns: self.columns});
         return {
           renderSeq: 1,
         };
@@ -229,7 +239,7 @@
     });
     Vue.component('df-table-header-col', {
       template: `#df-table-header-col-template`,
-      props: ['column', 'sortedColumns', 'colIdx', 'numSortedCols'],
+      props: ['column', 'colIdx', 'numSortedCols'],
       data() {
         return {};
       },
@@ -261,6 +271,33 @@
           }
         },
       }
+    });
+    Vue.component('df-table-body', {
+      template: `#df-table-body-template`,
+      props: ['columns', 'rows', 'rowProperties'],
+      data() {
+        return {
+          renderSeq: 1,
+        };
+      },
+      computed: {},
+      mounted() {},
+      methods: {
+        rowPropsWithData(row) {
+          const self = this;
+          let rp = this.rowProperties.reduce(function(obj, val) { obj['data-' + val] = row[val]; return obj; } , {})
+          delete rp['data-row_css_style'];
+          return rp;
+        }
+      },
+    });
+    Vue.component('df-table-body-col', {
+      template: `#df-table-body-col-template`,
+      props: ['column', 'colIdx', 'value'],
+      data() { return {}; },
+      computed: {},
+      mounted() {},
+      methods: {},
     });
 
     const tableApp = new Vue({

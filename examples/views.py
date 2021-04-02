@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render
+from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
 
+from dynamicforms.filters import FilterBackend
 from dynamicforms.template_render import ViewModeListSerializer
 from dynamicforms.viewsets import ModelViewSet
-from dynamicforms.filters import FilterBackend
 from .models import PageLoad
 from .rest.page_load import PageLoadSerializer
 
@@ -36,6 +37,7 @@ def view_mode(request):
 
     # first we try to paginate the queryset, together with some sort ordering & stuff
     req = Request(request)
+    req.accepted_renderer = None  # viewsets.py->MyCursorPagination.encode_cursor
     viewset = FakeViewSet(req, queryset)
     page = paginator.paginate_queryset(queryset, req)
     if page is None:

@@ -19,9 +19,8 @@ class SerializerRenderFields(object):
                for field in self.fields]
         return res
 
-    def as_name_value(self):
-        res = [{f'data-{field.field_name}': str(getattr(field, 'bound_value', ''))}
-               for field in self.fields]
+    def as_name(self):
+        res = [field.field_name for field in self.fields]
         return res
 
     @property
