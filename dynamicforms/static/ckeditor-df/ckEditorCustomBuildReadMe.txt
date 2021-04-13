@@ -1,3 +1,4 @@
+install Node.js and npm
 cd TO REPOSITORY ROOT
 cd dynamicforms/static
 git clone git@github.com:ckeditor/ckeditor5.git
@@ -8,6 +9,7 @@ npm install
 
 Change function in following files to:
 
+*** 1 STEP ***
 node_modules/@ckeditor/ckeditor5-font/src/utils.js -> renderDowncastElement:
 export function renderDowncastElement( styleAttr ) {
 	return ( modelAttributeValue, { writer } ) => writer.createAttributeElement( 'span', {
@@ -15,6 +17,7 @@ export function renderDowncastElement( styleAttr ) {
 	}, { priority: 7 } );
 }
 
+*** 2 STEP ***
 node_modules/@ckeditor/ckeditor5-font/src/utils.js -> addColorTableToDropdown:
 export function addColorTableToDropdown( { dropdownView, colors, columns, removeButtonLabel, documentColorsLabel, documentColorsCount } ) {
 	const locale = dropdownView.locale;
@@ -28,6 +31,7 @@ export function addColorTableToDropdown( { dropdownView, colors, columns, remove
 	return colorTableView;
 }
 
+*** 3 STEP ***
 node_modules/@ckeditor/ckeditor5-font/src/ui/colortableview.js -> _createDocumentColorsGrid:
     _createDocumentColorsGrid() {
 		const bind = Template.bind( this.documentColors, this.documentColors );
@@ -43,6 +47,7 @@ node_modules/@ckeditor/ckeditor5-font/src/ui/colortableview.js -> _createDocumen
 		return documentColorsGrid;
 	}
 
+*** 4 STEP ***
 node_modules/@ckeditor/ckeditor5-ui/src/colorgrid/colorgridview.js -> constructor:
 	constructor( locale, options ) {
 		super( locale );
@@ -105,6 +110,7 @@ node_modules/@ckeditor/ckeditor5-ui/src/colorgrid/colorgridview.js -> constructo
 		} );
 	}
 
+*** 5 STEP ***
 node_modules/@ckeditor/ckeditor5-ui/src/colorgrid/colortileview.js -> constructor:
     constructor( locale, color = null ) {
 		super( locale );
@@ -124,13 +130,12 @@ node_modules/@ckeditor/ckeditor5-ui/src/colorgrid/colortileview.js -> constructo
 		} );
 	}
 
-
+*** 6 STEP ***
 node_modules/@ckeditor/ckeditor5-font/src/fontcolor/fontcolorediting.js	-> set content to:
-//** content start
+
 import {Plugin} from 'ckeditor5/src/core';
 import FontColorCommand from './fontcolorcommand';
 import {FONT_COLOR, renderDowncastElement, renderUpcastAttribute} from '../utils';
-
 
 export default class FontColorEditing extends Plugin {
 
@@ -237,12 +242,11 @@ export default class FontColorEditing extends Plugin {
 	});
   }
 }
-//** content end
 
-
+*** 7 STEP ***
 edit file src/ckeditor.js
-    add import: import Font from '@ckeditor/ckeditor5-font/src/font';
-    add Font to  ClassicEditor.builtinPlugins
+add import: import Font from '@ckeditor/ckeditor5-font/src/font';
+add Font to  ClassicEditor.builtinPlugins
 
 npm run build
 cp build/ckeditor.js ../../../ckeditor-df
