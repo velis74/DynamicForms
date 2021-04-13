@@ -1632,7 +1632,37 @@ dynamicforms = {
             .create(document.querySelector("[id='" + fieldId + "']"), {
               toolbar: {
                 removeItems: ['imageUpload', 'mediaEmbed'],
-              },
+			          items: ["heading", "|", "bold", "italic", "link", "fontColor", "bulletedList", "numberedList", "|", "indent",
+				          "outdent", "|", "imageUpload", "blockQuote", "insertTable", "mediaEmbed", "undo", "redo"],
+		          },
+              fontColor: {
+			          colors: [
+                  {
+                    label: 'Alert - Primary',
+                    color: 'primary',
+                  },
+                  {
+                    color: 'secondary',
+                    label: 'Alert - Secondary'
+                  },
+                  {
+                    color: 'success',
+                    label: 'Alert - Success'
+                  },
+                  {
+                    color: 'danger',
+                    label: 'Alert - Danger'
+                  },
+                  {
+                    color: 'warning',
+                    label: 'Alert - Warning',
+                  },
+                  {
+                    color: 'info',
+                    label: 'Alert - Info',
+                  },
+                ]
+		          },
               heading: {
                 options: [
                   {model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph'},

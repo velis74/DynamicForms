@@ -17,3 +17,4 @@ venv/
 media
 /node_modules
 /package-lock.json
+/dynamicforms/static/ckeditor5/

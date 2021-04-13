@@ -124,4 +124,102 @@
     animation: progress-indeterminate 3s linear infinite;
   }
 
+  {% include DYNAMICFORMS.template_root|add:'rtf_field_style.html' %}
+
+  {% with primary_color='#007bff' secondary_color='#6c757d' success_color='#28a745' danger_color='#dc3545' warning_color='#ffc107' info_color='#17a2b8' %}
+
+      .alert {
+        position: relative;
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+      }
+
+      .text-primary {
+        color: {{ primary_color }};
+      }
+
+      .bg-primary {
+        background-color: {{ primary_color }} !important;
+      }
+
+      .alert-primary {
+        color: #004085;
+        background-color: #cce5ff;
+        border-color: #b8daff;
+      }
+
+      .text-secondary {
+        color: {{ secondary_color }};
+      }
+
+      .bg-secondary {
+        background-color: {{ secondary_color }} !important;
+      }
+
+      .alert-secondary {
+        color: #383d41;
+        background-color: #e2e3e5;
+        border-color: #d6d8db;
+      }
+
+      .text-success {
+        color: {{ success_color }};
+      }
+
+      .bg-success {
+        background-color: {{ success_color }} !important;
+      }
+
+      .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+      }
+
+      .text-danger {
+        color: {{ danger_color }};
+      }
+
+      .bg-danger {
+        background-color: {{ danger_color }} !important;
+      }
+
+      .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+
+      .text-warning {
+        color: {{ warning_color }};
+      }
+
+      .bg-warning {
+        background-color: {{ warning_color }} !important;
+      }
+
+      .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+      }
+
+      .text-info {
+        color: {{ info_color }};
+      }
+
+      .bg-info {
+        background-color: {{ info_color }} !important;
+      }
+
+      .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+      }
+
+  {% endwith %}
+
 {% endblock %}
