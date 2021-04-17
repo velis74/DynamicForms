@@ -2,7 +2,7 @@ from enum import auto
 from typing import Any, Dict
 from rest_framework.serializers import ListSerializer, Serializer
 
-from dynamicforms.mixins import DisplayMode
+from dynamicforms.mixins import DisplayMode, RenderMixin
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from .serializer_render_fields import SerializerRenderFields
@@ -75,6 +75,7 @@ class ViewModeSerializer(ViewModeBase):
 
     def component_params(self: '_ViewModeBoundSerializer', output_json: bool=True):
         params = {
+            'guid': self.uuid,
             'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
             'row-properties': self.render_fields.properties.as_name(),
             'record': None if self.parent else self.data
@@ -83,7 +84,7 @@ class ViewModeSerializer(ViewModeBase):
 
 
 # noinspection PyAbstractClass
-class _ViewModeBoundSerializer(ViewModeSerializer, Serializer):
+class _ViewModeBoundSerializer(ViewModeSerializer, RenderMixin, Serializer):
     """
     Dummy class just for type hinting
     """

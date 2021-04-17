@@ -4,16 +4,27 @@
   <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js" crossorigin="anonymous"></script>
 
   <style>
-      th.ordering {
-          cursor: pointer;
-          user-select: none;
-      }
+    th.ordering {
+      cursor:      pointer;
+      user-select: none;
+    }
 
-      th.ordering > span.ordering > div.ordering-arrow {
-          font-size: 125%;
-      {# increase font size for the arrow #} line-height: .8em;
-      {# but do not allow it to affect line size #} display: inline-block;
-      }
+    th.ordering > span.ordering > div.ordering-arrow {
+      font-size:   125%;
+      line-height: .8em; /* increase font size for the arrow */
+      display:     inline-block; /* but do not allow it to affect line size */
+    }
+
+    tfoot tr.no-data-indicator td {
+      text-align:       center;
+      vertical-align:   middle;
+      height:           10em;
+      background-color: #00000020;  /* just darken a little */
+    }
+
+    tfoot tr.loading-indicator td {
+      text-align: center;
+    }
   </style>
 {% endblock %}
 {% block title %}Render in template example{% endblock %}
@@ -27,7 +38,21 @@
   <script type="text/x-template" id="df-table-template">
     <table class="table">
       <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
-      <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"></tbody>
+      <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
+             :loading="loading"></tbody>
+      <tfoot>
+        <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
+          <td :colspan="columns.length">{{ noDataString }}</td>
+        </tr>
+        <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
+          <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
+        </tr>
+        <tr class="loading-indicator" v-if="rows.length > 0 && loading">
+          <td :colspan="columns.length">
+            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </script>
 
@@ -58,7 +83,7 @@
   </script>
 
   <script type="text/x-template" id="df-table-body-col-template">
-    <td :style="`text-align: ${column.align}`">{{ value }}</td>
+    <td>{{ value }}</td>
   </script>
   {% endverbatim %}
 
@@ -185,6 +210,8 @@
           rows: self.data.rows == undefined || self.data.rows.constructor != Array ? [] : self.data.rows,
           columns: self.data.columns.map(c => new DFTableColumn(c)),
           rowProperties: self.data['row-properties'],
+          loading: false,
+          noDataString: gettext('no data'),
         };
       },
       computed: {
@@ -196,7 +223,19 @@
         },
         orderingParam() { return this.sortedColumns.map(o => (o.direction === true ? '' : '-') + o.fieldName); },
       },
-      mounted() {},
+      mounted() {
+        const self = this;
+        let bodyColumnCss = "";
+        this.data.columns.forEach(function (column, idx) {
+          bodyColumnCss += `#list-${self.data.guid} tbody tr td:nth-child(${idx + 1}) {
+            text-align: ${column.align};
+          }
+          `
+        });
+        let styleTag = document.createElement('style');
+        styleTag.appendChild(document.createTextNode(bodyColumnCss));
+        document.head.appendChild(styleTag);
+      },
       methods: {
         changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
           const orderChanged = this.columns[colIdx].orderIndex != sortSeq;
@@ -214,7 +253,7 @@
         loadData() {
           const self = this;
           self.loading = true;
-          axios.get(this.url + '?ordering=' + self.orderingParam).then(function(res) {
+          axios.get(this.url + '?ordering=' + self.orderingParam).then(function (res) {
             // call api and set data as response, when data is set component is re-rendered
             self.rows = res.data;
           }).catch(function (err) { alert(err.data) })
@@ -280,7 +319,7 @@
     });
     Vue.component('df-table-body', {
       template: `#df-table-body-template`,
-      props: ['columns', 'rows', 'rowProperties'],
+      props: ['columns', 'rows', 'rowProperties', 'loading'],
       data() {
         return {
           renderSeq: 1,
