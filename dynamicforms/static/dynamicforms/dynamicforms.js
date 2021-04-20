@@ -1011,6 +1011,11 @@ dynamicforms = {
       if ($field.data('select2').options.options.ajax) {
         var opt = $('<option value="' + value + '"></option>').text(select2_ajax_option_text);
         $field.append(opt);
+      } else {
+        if ($field.data("allow-tags") && !$field.find("option[value='" + value + "']").length) {
+          var newOption = new Option(value, value, true, true);
+          $field.append(newOption).trigger('change');
+        }
       }
       $field.val(value);
       dynamicforms.setSelect2Order($field, value);
