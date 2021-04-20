@@ -10,7 +10,7 @@
         name="{{ field.name }}"
         {% if field.read_only %}disabled{% endif %}
         style="{% extendtemplate template_name_var=templatename_fld block="select_style" errors=field.errors only %}"
-        >
+        {% if field.allow_tags %}data-allow-tags="true"{% endif %}>
   {% if field.allow_null or field.allow_blank or field.allow_tags %}
     <option value="" {% if not field.value %}selected{% endif %}>{{ field.null_choice_text }}</option>
   {% endif %}
