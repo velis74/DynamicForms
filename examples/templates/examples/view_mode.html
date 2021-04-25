@@ -76,14 +76,9 @@
   <script type="text/x-template" id="df-table-body-template">
     <tbody :key="renderSeq">
     <tr v-for="row in rows" :key="row['id']" :style="`${row['row_css_style']}`" v-bind="rowPropsWithData(row)">
-      <td is="df-table-body-col" v-for="(col, idx) in columns" :key="col.name"
-          :column="col" :col-idx="idx" :value="row[col.name]"></td>
+      <td v-for="(col, idx) in columns" :key="col.name">{{ row[col.name] }}</td>
     </tr>
     </tbody>
-  </script>
-
-  <script type="text/x-template" id="df-table-body-col-template">
-    <td>{{ value }}</td>
   </script>
   {% endverbatim %}
 
@@ -339,15 +334,6 @@
         }
       },
     });
-    Vue.component('df-table-body-col', {
-      template: `#df-table-body-col-template`,
-      props: ['column', 'colIdx', 'value'],
-      data() { return {}; },
-      computed: {},
-      mounted() {},
-      methods: {},
-    });
-
     const tableApp = new Vue({
       el: `#app`,
     });
