@@ -29,11 +29,18 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
 
     df_control_data = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
 
+    """
+    we're currently using two additional headers for axios:
+    'x-viewmode': 'TABLE_ROW' - tells DF what viewMode to use for rendering the response
+    'x-pagination': 1 - tells DRF to paginate (or not) the result
+    """
     def __init__(self, *args, view_mode: 'ViewModeSerializer.ViewMode' = None,
                  view_mode_list: 'ViewModeListSerializer.ViewMode' = None,
                  **kwds
                  ):
         super().__init__(*args, **kwds)
+        if not view_mode and self.request and 'HTTP_X_VIEWMODE' in self.request.META:
+            view_mode = self.ViewMode[self.request.META['HTTP_X_VIEWMODE']]
         self.set_view_mode(view_mode)
         self.view_mode_list = view_mode_list
 
@@ -48,6 +55,12 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
 
     def set_bound_value(self, value: Dict[Any, Any]):
         self.bound_value = value
+
+    @property
+    def request(self: '_ViewModeBoundSerializer'):
+        if self.context and 'view' in self.context and self.context['view'].request:
+            return self.context['view'].request
+        return None
 
     @property
     def is_rendering_as_table(self):

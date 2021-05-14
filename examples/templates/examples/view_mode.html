@@ -208,7 +208,7 @@
           sequence = this.orderIndex > 0 ? this.orderIndex : 1
 
         if (!this.isOrdered) {
-          console.warn(`column $(this.name) is not orderable. Why are you trying to set it's order direction?`)
+          console.warn(`column $(this.name) is not orderable. Why are you trying to set its order direction?`)
         } else if (direction == 'asc' || direction == 'desc' || direction == 'unsorted') {
           this._columnDef.ordering = `ordering ${direction} ${direction == 'unsorted' ? '' : 'seg-' + sequence}`;
         } else {
@@ -327,11 +327,21 @@
         loadData() {
           const self = this;
           self.loading = true;
-          axios.get(this.url + '?ordering=' + self.orderingParam).then(function (res) {
-            // call api and set data as response, when data is set component is re-rendered
-            self.rows = res.data;
-          }).catch(function (err) { alert(err.data) })
-              .then(function () { self.loading = false; });
+          window.setTimeout(() => {
+            // if it takes more than 250ms to load the new records, clear existing ones.
+            // don't do it before to reduce flicker
+            if (self.loading)
+              self.rows = []; // clear existing rows, we're making a full refresh
+          }, 250);
+          axios
+            .get(this.url + '?ordering=' + self.orderingParam, { headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1} })
+            .then(res => {
+              // call api and set data as response, when data is set component is re-rendered
+              self.data.rows = res.data;  // replace .next, .previous and .results
+              self.rows = res.data.results;  // replace just the rows that are rendering in the component
+            })
+            .catch(function (err) { alert(err.data) })
+            .then(function () { self.loading = false; });
         },
       },
       watch: {
