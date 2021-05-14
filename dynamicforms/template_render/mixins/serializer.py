@@ -1,11 +1,14 @@
 from enum import auto
 from typing import Any, Dict
-from rest_framework.serializers import ListSerializer, Serializer
+from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
 
-from dynamicforms.mixins import DisplayMode, RenderMixin
+from dynamicforms.mixins import DisplayMode, RenderMixin, ActionMixin
+from dynamicforms.action import TablePosition
+from dynamicforms import fields
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from .serializer_render_fields import SerializerRenderFields
+from .serializer_render_actions import SerializerRenderActions
 from .util import convert_to_json_if
 
 # noinspection PyUnreachableCode
@@ -13,7 +16,7 @@ if False:
     from .listserializer import ViewModeListSerializer
 
 
-class ViewModeSerializer(ViewModeBase):
+class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
     """
     This one is actually a mixin, not a monkey-patch like the other two
     """
@@ -23,6 +26,8 @@ class ViewModeSerializer(ViewModeBase):
         FORM = auto()  # Render to form field
         TABLE_ROW = auto()  # Render to table tr
         TABLE_HEAD = auto()  # Render to table header
+
+    df_control_data = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
 
     def __init__(self, *args, view_mode: 'ViewModeSerializer.ViewMode' = None,
                  view_mode_list: 'ViewModeListSerializer.ViewMode' = None,
@@ -60,36 +65,69 @@ class ViewModeSerializer(ViewModeBase):
 
             @property
             def fields(self):
-                # actions = self.actions.renderable_actions(self)
-                # if any(action.position == "rowstart" for action in actions):
-                #     yield fakefield(rowstart)
+                actions = list(this.actions.renderable_actions(this))
+                if any(action.position == TablePosition.ROW_START for action in actions):
+                    yield SerializerRenderFields.ActionField(actions, TablePosition.ROW_START)
 
                 for f in this.fields.values():
                     if f.display_table != DisplayMode.SUPPRESS:
                         yield f
 
-                # if any(action.position == "rowend" for action in actions):
-                #     yield fakefield(rowend)
+                if any(action.position == TablePosition.ROW_END for action in actions):
+                    yield SerializerRenderFields.ActionField(actions, TablePosition.ROW_END)
 
         return BoundSerializerRenderFields()
 
-    def component_params(self: '_ViewModeBoundSerializer', output_json: bool=True):
+    @property
+    def render_actions(self: '_ViewModeBoundSerializer'):
+        this = self
+
+        class BoundSerializerRenderActions(SerializerRenderActions):
+
+            @property
+            def actions(self):
+                return this.actions
+
+        return BoundSerializerRenderActions()
+
+    def component_params(self: '_ViewModeBoundSerializer', output_json: bool = True):
         params = {
             'guid': self.uuid,
+            'title': self.form_titles['table'],
             'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
+            'actions': self.render_actions.table.as_action_def(),
             'row-properties': self.render_fields.properties.as_name(),
             'record': None if self.parent else self.data
         }
         return convert_to_json_if(params, output_json)
 
+    def get_df_control_data(self: '_ViewModeBoundSerializer', row):
+        """
+        Returns any additional data needed for rendering or operating the serializer on the client, such as presence of
+        action buttons, thir parameters, CSS, etc.
+
+          deprecates row_css_style and df_prev_link
+
+        :param row: row data to consider when presenting the return data
+        :return: dict of settings for actions and row-related data
+        """
+        return dict(
+            row_css_style=self.get_row_css_style(row),
+            actions=dict(
+                filter(lambda x: x[1] is not None,
+                       (action.to_component_params(row, self) for action in self.render_actions.table.actions))
+            )
+        )
+
 
 # noinspection PyAbstractClass
-class _ViewModeBoundSerializer(ViewModeSerializer, RenderMixin, Serializer):
+class _ViewModeBoundSerializer(ViewModeSerializer, RenderMixin, ActionMixin, Serializer):
     """
     Dummy class just for type hinting
     """
+
     class FakeActionsList(list):
-        @staticmethod
+
         def renderable_actions(self, _unused):
             return self
 

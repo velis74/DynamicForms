@@ -1,7 +1,7 @@
 {% extends 'examples/base.html' %}
 {% block head_extra %}
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js" crossorigin="anonymous"></script>
 
   <style>
     th.ordering {
@@ -25,6 +25,25 @@
     tfoot tr.loading-indicator td {
       text-align: center;
     }
+
+    .actions-holder {
+      transform: scale(.75, .75);
+      display:   inline-block;
+      margin:    -.5em;
+    }
+
+    .actions-holder div:not(:first-child) {
+      margin-left: .5em;
+    }
+
+    .ionicon {
+      display: inline-block;
+      height:  1.5em;
+    }
+
+    .actions-holder .btn :not(:first-child) {
+      margin-left: .5em;
+    }
   </style>
 {% endblock %}
 {% block title %}Render in template example{% endblock %}
@@ -36,28 +55,33 @@
 
   {% verbatim %}
   <script type="text/x-template" id="df-table-template">
-    <table class="table">
-      <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
-      <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
-             :loading="loading"></tbody>
-      <tfoot>
-        <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
-          <td :colspan="columns.length">{{ noDataString }}</td>
-        </tr>
-        <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
-          <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
-        </tr>
-        <tr class="loading-indicator" v-if="rows.length > 0 && loading">
-          <td :colspan="columns.length">
-            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="card">
+      <div class="card-header">{{ data.title }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
+      <div class="card-body">
+        <table class="table">
+          <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
+          <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
+                 :loading="loading" :actions="actions"></tbody>
+          <tfoot>
+            <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
+              <td :colspan="columns.length">{{ noDataString }}</td>
+            </tr>
+            <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
+              <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
+            </tr>
+            <tr class="loading-indicator" v-if="rows.length > 0 && loading">
+              <td :colspan="columns.length">
+                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
   </script>
 
   <script type="text/x-template" id="df-table-header-template">
-    <thead :key="renderSeq">
+    <thead>
     <tr>  <!-- v-bind="properties" -->
       <th is="df-table-header-col" v-for="(col, idx) in columns" :key="col.name"
           :column="col" :col-idx="idx" :num-sorted-cols="numSortedCols"></th>
@@ -74,11 +98,25 @@
   </script>
 
   <script type="text/x-template" id="df-table-body-template">
-    <tbody :key="renderSeq">
-    <tr v-for="row in rows" :key="row['id']" :style="`${row['row_css_style']}`" v-bind="rowPropsWithData(row)">
-      <td v-for="(col, idx) in columns" :key="col.name">{{ row[col.name] }}</td>
+    <tbody>
+    <tr v-for="row in rows" :key="row['id']" :style="`${row['row_css_style']}`" v-bind="rowPropsWithData(row)"
+        @click="rowClick('ROW_CLICK', row)" @mouseup.right="rowClick('ROW_RIGHTCLICK', row)">
+      <td v-for="(col, idx) in columns" :key="col.name">
+        <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)"
+                    :actions="actions.filter(col.name.substr(9).toUpperCase())" :row="row"></df-actions>
+        <template v-else>{{ row[col.name] }}</template>
+      </td>
     </tr>
     </tbody>
+  </script>
+  <script type="text/x-template" id="df-actions-template">
+  <div class="actions-holder">
+    <div v-for="action in actions.list" class="btn btn-sm btn-info"
+         @click="actions.exec(action, row)"><IonIcon :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
+  </div>
+  </script>
+  <script type="text/x-template" id="ionicon-template">
+    <div class="float-left" v-if="loaded_svg" v-html="loaded_svg"></div>
   </script>
   {% endverbatim %}
 
@@ -127,7 +165,8 @@
           case 10:
             return DisplayMode.FULL;
           default:
-            console.warn(`Table column came with visibility set to $(this._columnDef.visibility), but we don't know that constant`)
+            console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know` +
+                         ` that constant`)
             return DisplayMode.FULL;
         }
       }
@@ -196,6 +235,45 @@
       }
     }
 
+    class ActionsHandler {
+      constructor(actions) {
+        this.actions = actions;
+        this.filterCache = {};  // contains cached .filter results
+      }
+
+      /**
+       * returns list of action objects
+       * @returns [Action]
+       */
+      get list() {
+        return Object.values(this.actions);
+      }
+
+      /**
+       * filters actions to include only those rendering at given position
+       * @param position
+       * @returns {ActionsHandler}
+       */
+      filter(position) {
+        const self = this;
+        if (self.filterCache[position] == undefined) {
+          self.filterCache[position] = new ActionsHandler(
+            Object.values(self.actions)
+              .filter(action => action.position == position)
+              .reduce((obj, item) => {
+                const name = item.name;
+                obj[name] = self.actions[name];
+                return obj;
+              }, {}));
+        }
+        return self.filterCache[position];
+      }
+
+      exec(action, row) {
+        console.log(['executing action', JSON.parse(JSON.stringify(action)), JSON.parse(JSON.stringify(row))])
+      }
+    }
+
     Vue.component('df-table', {
       template: `#df-table-template`,
       props: ['url', 'data'],
@@ -204,6 +282,7 @@
         return {
           rows: self.data.rows == undefined || self.data.rows.constructor != Array ? [] : self.data.rows,
           columns: self.data.columns.map(c => new DFTableColumn(c)),
+          actions: new ActionsHandler(self.data.actions),
           rowProperties: self.data['row-properties'],
           loading: false,
           noDataString: gettext('no data'),
@@ -253,7 +332,7 @@
             self.rows = res.data;
           }).catch(function (err) { alert(err.data) })
               .then(function () { self.loading = false; });
-        }
+        },
       },
       watch: {
         orderingParam(_newVal, _oldVal) {
@@ -264,13 +343,7 @@
     Vue.component('df-table-header', {
       template: `#df-table-header-template`,
       props: ['columns'],
-      data() {
-        const self = this;
-        // console.log({headerColumns: self.columns});
-        return {
-          renderSeq: 1,
-        };
-      },
+      data() { return {}; },
       computed: {
         numSortedCols() { return this.columns.filter(col => col.ordering.includes('seg-')).length; },
       },
@@ -314,25 +387,74 @@
     });
     Vue.component('df-table-body', {
       template: `#df-table-body-template`,
-      props: ['columns', 'rows', 'rowProperties', 'loading'],
-      data() {
-        return {
-          renderSeq: 1,
-        };
-      },
+      props: ['columns', 'rows', 'rowProperties', 'loading', 'actions'],
+      data() { return {}; },
       computed: {},
       mounted() {},
       methods: {
         rowPropsWithData(row) {
-          const self = this;
           let rp = this.rowProperties.reduce(function (obj, val) {
             obj['data-' + val] = row[val];
             return obj;
           }, {})
           delete rp['data-row_css_style'];
+          delete rp['data-df_control_data'];
+          delete rp['data-df_prev_id'];
           return rp;
+        },
+        renderRowColumn(row, col) {
+          /* !!!!! remove !!!! */
+          if (col.name == '#actions-row_start' || col.name == '#actions-row_end') {
+            return `<df-actions :actions="filteredActions('${col.name.substr(9).toUpperCase()}')"></df-actions>`;
+          }
+          return row[col.name];
+        },
+        rowClick(position, row) {
+          const self = this;
+          const actions = self.actions.filter(position);
+          actions.list.forEach(action => { actions.exec(action, row); });
         }
       },
+    });
+    Vue.component('df-actions', {
+      template: `#df-actions-template`,
+      props: {
+        actions: {},
+        row: { default: null },
+      },
+      data() { return {}; },
+      computed: {},
+      mounted() {},
+      methods: {},
+    });
+    Vue.component('IonIcon', {
+      template: `#ionicon-template`,
+      props: ['name'],
+      data() {
+        return {
+          loaded_svg: '',
+        };
+      },
+      computed: {},
+      mounted() {
+        const self = this, name = self.name;
+        if (!window.cache_ionicon) { window.cache_ionicon = {}; }
+        if (!name) {}
+        else if (window.cache_ionicon[name]) {
+          if (typeof window.cache_ionicon[name].then == 'function') {
+            window.cache_ionicon[name].then(res => { self.loaded_svg = res.data; });
+            self.loaded_svg = '&hellip;';
+            return;
+          }
+          self.loaded_svg = window.cache_ionicon[name];
+        }
+        else {
+          self.loaded_svg = '&hellip;';
+          window.cache_ionicon[name] = axios.get('https://unpkg.com/ionicons@5.5.1/dist/svg/' + name + '.svg');
+          window.cache_ionicon[name].then(res => { self.loaded_svg = window.cache_ionicon[name] = res.data; });
+        }
+      },
+      methods: {},
     });
     const tableApp = new Vue({
       el: `#app`,

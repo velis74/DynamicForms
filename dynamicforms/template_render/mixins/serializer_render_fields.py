@@ -2,8 +2,12 @@
 Class that contains renderable fields for the templates.
 The class provides transformation functionality
 """
-from django.utils.safestring import mark_safe
 
+from typing import Iterable
+
+from django.utils.translation import ugettext_lazy as _
+
+from dynamicforms.action import TableAction, TablePosition
 from dynamicforms.mixins import DisplayMode
 
 
@@ -59,3 +63,20 @@ class SerializerRenderFields(object):
 
     def __aiter__(self):
         return self.fields
+
+    class ActionField(object):
+        def __init__(self, actions: Iterable[TableAction], pos: TablePosition):
+            from collections.abc import Iterable as Itr
+            if not isinstance(actions, Itr) or not all(isinstance(action, TableAction) for action in actions):
+                raise AssertionError('Actions should be an iterable of TableAction')
+            actions = [action for action in actions if action.position == pos]
+            self.position = pos
+            self.actions = actions
+            self.field_name = '#actions-' + pos.name.lower()
+            self.label = _('Actions')
+            self.table_classes = ''
+            self.display_table = DisplayMode.FULL
+
+        # noinspection PyMethodMayBeStatic
+        def ordering(self):
+            return ''

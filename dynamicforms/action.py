@@ -101,6 +101,19 @@ class TableAction(ActionBase, RenderableActionMixin):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
                            serializer, self.btn_classes)
 
+    def to_component_params(self, row_data, serializer):
+        """
+        generates a dict with parameters for component that is going to represent this action.
+        none means don't render / activate this action on this row
+
+        :param row_data:
+        :param serializer:
+        :return:
+        """
+        if self.position in (TablePosition.HEADER, TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
+            return self.name, None
+        return self.name, {}
+
     def render(self, serializer: Serializer, **kwds):
         ret = rowclick = rowrclick = ''
         stop_propagation = 'dynamicforms.stopEventPropagation(event);'
@@ -309,21 +322,26 @@ class Actions(object):
         if add_default_crud:
             self.actions.append(
                 TableAction(TablePosition.HEADER, _('+ Add'), title=_('Add new record'), name='add',
+                            icon='add-circle-outline',
                             action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
                                       ", 'record', __TABLEID__);")
             )
             self.actions.append(
                 TableAction(TablePosition.ROW_CLICK, _('Edit'), title=_('Edit record'), name='edit',
+                            icon='pencil-outline',
                             action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' "
                                       "format='html' %}'.replace('__ROWID__', $(event.target.parentElement).closest("
                                       "'tr[class=\"df-table-row\"]').attr('data-id')), 'record', __TABLEID__);")
             )
             self.actions.append(
                 TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
+                            icon='trash-outline',
                             action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-                                      "{{row.id}}, 'record', __TABLEID__);"))
+                                      "{{row.id}}, 'record', __TABLEID__);",
+                            ))
         if add_default_filter:
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',
+                                            icon='search-outline',
                                             action_js="dynamicforms.defaultFilter(event);"))
 
         if add_form_buttons:

@@ -205,7 +205,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'fields'):
-            self._make_df_special_fields_present_in_fields(['df_prev_id', 'row_css_style'])
+            self._make_df_special_fields_present_in_fields(['df_prev_id', 'row_css_style', 'df_control_data'])
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
 

@@ -38,6 +38,10 @@ class ViewModeListSerializer(ViewModeBase):
     def render_fields(self: '_ViewModeBoundListSerializer'):
         return self.child.render_fields
 
+    @property
+    def render_actions(self: '_ViewModeBoundListSerializer'):
+        return self.child.render_actions
+
     def component_params(self: '_ViewModeBoundListSerializer'):
         res = self.child.component_params(output_json=False)
         res['rows'] = self.data
