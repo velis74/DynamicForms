@@ -2,6 +2,7 @@
 {% block head_extra %}
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue-observe-visibility/dist/vue-observe-visibility.min.js"></script><!-- requires intersection polyfill -->
 
   <style>
     th.ordering {
@@ -100,9 +101,10 @@
   <script type="text/x-template" id="df-table-body-template">
     <tbody>
     <tr v-for="row in rows" :key="row['id']" :style="`${row['row_css_style']}`" v-bind="rowPropsWithData(row)"
-        @click="rowClick('ROW_CLICK', row)" @mouseup.right="rowClick('ROW_RIGHTCLICK', row)">
+        @click="rowClick('ROW_CLICK', row)" @mouseup.right="rowClick('ROW_RIGHTCLICK', row)"
+        v-observe-visibility="rows.getVisibilityHandler(row['id'])">
       <td v-for="(col, idx) in columns" :key="col.name">
-        <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)"
+        <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)" :key="row['id']"
                     :actions="actions.filter(col.name.substr(9).toUpperCase())" :row="row"></df-actions>
         <template v-else>{{ row[col.name] }}</template>
       </td>
@@ -112,11 +114,11 @@
   <script type="text/x-template" id="df-actions-template">
   <div class="actions-holder">
     <div v-for="action in actions.list" class="btn btn-sm btn-info"
-         @click="actions.exec(action, row)"><IonIcon :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
+         @click="actions.exec(action, row)"><IonIcon :key="action.icon" :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
   </div>
   </script>
   <script type="text/x-template" id="ionicon-template">
-    <div class="float-left" v-if="loaded_svg" v-html="loaded_svg"></div>
+    <div class="float-left" :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg"></div>
   </script>
   {% endverbatim %}
 
@@ -280,7 +282,7 @@
       data() {
         const self = this;
         return {
-          rows: self.data.rows == undefined || self.data.rows.constructor != Array ? [] : self.data.rows,
+          rows: self.loadableRows(self.data.rows),
           columns: self.data.columns.map(c => new DFTableColumn(c)),
           actions: new ActionsHandler(self.data.actions),
           rowProperties: self.data['row-properties'],
@@ -338,11 +340,47 @@
             .then(res => {
               // call api and set data as response, when data is set component is re-rendered
               self.data.rows = res.data;  // replace .next, .previous and .results
-              self.rows = res.data.results;  // replace just the rows that are rendering in the component
+              self.rows = self.loadableRows(res.data);  // replace just the rows that are rendering in the component
             })
             .catch(function (err) { alert(err.data) })
             .then(function () { self.loading = false; });
         },
+        loadableRows(rowsData) {
+          const self = this;
+          let res = [], next = null;
+          if (rowsData && rowsData.results && rowsData.results.constructor == Array) {
+            res = rowsData.results;
+            next = rowsData.next;
+          }
+          let decorate = triggerRow => {
+            res.getVisibilityHandler = rowId => {
+              return rowId == triggerRow ? {callback: res.loadMoreRows, once: true} : false;
+            }
+          };
+          decorate(res.length && next ? res[0]['id'] : null);
+          res.loadMoreRows = (isVisible) => {
+            if (!isVisible) return;
+            self.loading = true;
+            axios
+              .get(self.data.rows.next, { headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1} })
+              .then(res => {
+                // first we map existing row ids to respective array indexes
+                let idIndices = self.data.rows.results.reduce((ind, item, idx) => { ind[item['id']] = idx; return ind; }, {});
+                res.data.results.map(item => {
+                  // then we iterate through results updating any existing entries and adding new ones
+                  let idIdx = idIndices[item['id']];
+                  if (idIdx) self.data.rows.results[idIdx] = item;
+                  else self.data.rows.results.push(item);
+                });
+                self.data.rows.next = res.data.next;  // replace next so we can load another set of rows
+                // finally create a new loadableRows so that it will load new rows based on this result set
+                decorate(res.data.results[0]['id']);
+              })
+              .catch(function (err) { console.log(err); alert(err.data); })
+              .then(function () { self.loading = false; });
+          }
+          return res;
+        }
       },
       watch: {
         orderingParam(_newVal, _oldVal) {

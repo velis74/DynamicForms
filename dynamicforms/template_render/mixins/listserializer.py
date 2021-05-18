@@ -1,11 +1,12 @@
 from enum import auto
 from typing import Dict, List, Optional
 
+from django.template import loader
+from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer
 
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
-from django.template import loader
 from .util import convert_to_json_if
 
 
@@ -44,10 +45,14 @@ class ViewModeListSerializer(ViewModeBase):
 
     def component_params(self: '_ViewModeBoundListSerializer'):
         res = self.child.component_params(output_json=False)
-        res['rows'] = self.data
+        res['rows'] = self.paginator.get_paginated_response(self.data).data
         return convert_to_json_if(res, True)
 
     uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
+
+    @classmethod
+    def get_reverse_url(cls, view_name, request):
+        return reverse(view_name + '-list', format='json', request=request)
 
 
 # noinspection PyAbstractClass

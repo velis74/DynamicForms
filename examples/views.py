@@ -6,7 +6,7 @@ from dynamicforms.filters import FilterBackend
 from dynamicforms.template_render import ViewModeListSerializer, ViewModeSerializer
 from dynamicforms.viewsets import ModelViewSet
 from .models import PageLoad
-from .rest.page_load import PageLoadSerializer
+from .rest.page_load import PageLoadSerializer, PageLoadViewSet
 
 
 # Create your views here.
@@ -18,6 +18,7 @@ class FakeViewSet(object):
     """
     We fake a DRF ViewSet here to get ordering and pagination to work
     """
+
     def __init__(self, request, queryset):
         self.filter_backend = FilterBackend()
         self.request = request
@@ -50,4 +51,8 @@ def view_mode(request):
         context=dict(view=viewset),
         many=True
     )
+    base_url = paginator.base_url.split('?', 1)
+    ser.reverse_url = ser.get_reverse_url(PageLoadViewSet.template_context['url_reverse'], request)
+    paginator.base_url = ser.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
+    ser.paginator = paginator
     return render(request, "examples/view_mode.html", dict(page_data=ser))

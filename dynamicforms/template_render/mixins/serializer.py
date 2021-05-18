@@ -1,14 +1,16 @@
 from enum import auto
 from typing import Any, Dict
+
+from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
 
-from dynamicforms.mixins import DisplayMode, RenderMixin, ActionMixin
-from dynamicforms.action import TablePosition
 from dynamicforms import fields
+from dynamicforms.action import TablePosition
+from dynamicforms.mixins import ActionMixin, DisplayMode, RenderMixin
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
-from .serializer_render_fields import SerializerRenderFields
 from .serializer_render_actions import SerializerRenderActions
+from .serializer_render_fields import SerializerRenderFields
 from .util import convert_to_json_if
 
 # noinspection PyUnreachableCode
@@ -131,6 +133,10 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
                        (action.to_component_params(row, self) for action in self.render_actions.table.actions))
             )
         )
+
+    @classmethod
+    def get_reverse_url(cls, view_name, request):
+        return reverse(view_name + '-detail', format='json', request=request)
 
 
 # noinspection PyAbstractClass
