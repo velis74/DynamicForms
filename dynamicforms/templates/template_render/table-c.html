@@ -1,0 +1,262 @@
+{% verbatim %}
+  <script type="text/x-template" id="df-table-template">
+    <div class="card">
+      <div class="card-header">{{ data.title }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
+      <div class="card-body">
+        <table class="table">
+          <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
+          <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
+                 :loading="loading" :actions="actions"></tbody>
+          <tfoot>
+            <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
+              <td :colspan="columns.length">{{ noDataString }}</td>
+            </tr>
+            <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
+              <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
+            </tr>
+            <tr class="loading-indicator" v-if="rows.length > 0 && loading">
+              <td :colspan="columns.length">
+                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </script>
+{% endverbatim %}
+
+<script>
+  const DisplayMode = Object.freeze({
+    // This enum is actually declared in dynamicforms.mixins.render.py
+    SUPPRESS: 1,
+    HIDDEN: 5,
+    INVISIBLE: 8,
+    FULL: 10,
+  });
+
+  class DFTableColumn {
+    constructor(columnDef) {
+      this._columnDef = columnDef;
+    }
+
+    get name() {
+      return this._columnDef.name;
+    }
+
+    get label() {
+      return this._columnDef.label;
+    }
+
+    get align() {
+      return this._columnDef.align;
+    }
+
+    get table_classes() {
+      return this._columnDef.table_classes;
+    }
+
+    get ordering() {
+      return this._columnDef.ordering;
+    }
+
+    get visibility() {
+      switch (this._columnDef.visibility) {
+        case 1:
+          return DisplayMode.SUPPRESS;
+        case 5:
+          return DisplayMode.HIDDEN;
+        case 8:
+          return DisplayMode.INVISIBLE;
+        case 10:
+          return DisplayMode.FULL;
+        default:
+          console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know` +
+            ` that constant`)
+          return DisplayMode.FULL;
+      }
+    }
+
+    get isOrdered() {
+      return this.ordering.includes('ordering');
+    }
+
+    get th_classes() {
+      return (this.table_classes + ' ' + (this.isOrdered ? 'ordering' : '')).trim()
+    }
+
+    get isAscending() {
+      return this.isOrdered && this.ordering.includes('asc');
+    }
+
+    get isDescending() {
+      return this.isOrdered && this.ordering.includes('desc');
+    }
+
+    get isUnsorted() {
+      return this.isOrdered && this.ordering.includes('unsorted');
+    }
+
+    /**
+     * cycles field ordering 'asc' -> 'desc' -> 'unsorted'
+     */
+    get cycleOrdering() {
+      return this.isAscending ? 'desc' : this.isDescending ? 'unsorted' : 'asc';
+    }
+
+    /**
+     * sets column sort sequence and direction
+     * @param direction: one of "asc", "desc" or "unsorted"
+     * @param sequence: integer. if none is provided, existing sequence # will be used or 1 if column was unsorted
+     */
+    setSorted(direction, sequence) {
+      if (sequence === undefined)
+        sequence = this.orderIndex > 0 ? this.orderIndex : 1
+
+      if (!this.isOrdered) {
+        console.warn(`column $(this.name) is not orderable. Why are you trying to set its order direction?`)
+      } else if (direction == 'asc' || direction == 'desc' || direction == 'unsorted') {
+        this._columnDef.ordering = `ordering ${direction} ${direction == 'unsorted' ? '' : 'seg-' + sequence}`;
+      } else {
+        console.warn(`unknown sort direction "${direction}" for the column ${this.name}. not doing anything`);
+      }
+    }
+
+    get ascDescChar() {
+      if (!this.isOrdered) return '';
+      else if (this.isAscending) return '\u25b2';
+      else if (this.isDescending) return '\u25bc';
+      else if (this.isUnsorted) return '\u2195';
+      else return '';
+    }
+
+    get orderIndex() {
+      if (!this.isOrdered) return 0;
+      let ordrIdxMatch = /(?:seg-)(\d+)/.exec(this.ordering);
+      return ordrIdxMatch != null ? Number(ordrIdxMatch[1]) : 0;
+    }
+
+    get orderIndexChar() {
+      return this.orderIndex > 0 ? String.fromCharCode(0x2460 + this.orderIndex - 1) : '';
+    }
+  }
+
+  Vue.component('df-table', {
+    template: `#df-table-template`,
+    props: ['url', 'data'],
+    data() {
+      const self = this;
+      return {
+        rows: self.loadableRows(self.data.rows),
+        columns: self.data.columns.map(c => new DFTableColumn(c)),
+        actions: new ActionsHandler(self.data.actions),
+        rowProperties: self.data['row-properties'],
+        loading: false,
+        noDataString: gettext('no data'),
+      };
+    },
+    computed: {
+      sortedColumns() {
+        // list of columns
+        return this.columns.filter(col => col.isOrdered && !col.isUnsorted)
+          .map(col => { return {fieldName: col.name, direction: col.isAscending, index: col.orderIndex}; })
+          .sort((a, b) => a.index - b.index);
+      },
+      orderingParam() { return this.sortedColumns.map(o => (o.direction === true ? '' : '-') + o.fieldName); },
+    },
+    mounted() {
+      const self = this;
+      let bodyColumnCss = "";
+      this.data.columns.forEach(function (column, idx) {
+        bodyColumnCss += `#list-${self.data.guid} tbody tr td:nth-child(${idx + 1}) {
+            text-align: ${column.align};
+          }
+          `
+      });
+      let styleTag = document.createElement('style');
+      styleTag.appendChild(document.createTextNode(bodyColumnCss));
+      document.head.appendChild(styleTag);
+    },
+    methods: {
+      changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
+        const orderChanged = this.columns[colIdx].orderIndex != sortSeq;
+        this.columns.forEach(function (column, index) {
+          if (index == colIdx) {
+            column.setSorted(sortDirection, sortSeq);
+          } else if (column.orderIndex > 0) {
+            if (clearAllOthers) column.setSorted('unsorted');
+            else if (orderChanged && column.orderIndex >= sortSeq) {
+              column.setSorted(column.isAscending ? 'asc' : 'desc', column.orderIndex + 1);
+            }
+          }
+        });
+      },
+      loadData() {
+        const self = this;
+        self.loading = true;
+        window.setTimeout(() => {
+          // if it takes more than 250ms to load the new records, clear existing ones.
+          // don't do it before to reduce flicker
+          if (self.loading)
+            self.rows = []; // clear existing rows, we're making a full refresh
+        }, 250);
+        axios
+          .get(this.url + '?ordering=' + self.orderingParam, {headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1}})
+          .then(res => {
+            // call api and set data as response, when data is set component is re-rendered
+            self.data.rows = res.data;  // replace .next, .previous and .results
+            self.rows = self.loadableRows(res.data);  // replace just the rows that are rendering in the component
+          })
+          .catch(function (err) { alert(err.data) })
+          .then(function () { self.loading = false; });
+      },
+      loadableRows(rowsData) {
+        const self = this;
+        let res = [], next = null;
+        if (rowsData && rowsData.results && rowsData.results.constructor == Array) {
+          res = rowsData.results;
+          next = rowsData.next;
+        }
+        let decorate = triggerRow => {
+          res.getVisibilityHandler = rowId => {
+            return rowId == triggerRow ? {callback: res.loadMoreRows, once: true} : false;
+          }
+        };
+        decorate(res.length && next ? res[0]['id'] : null);
+        res.loadMoreRows = (isVisible) => {
+          if (!isVisible) return;
+          self.loading = true;
+          axios
+            .get(self.data.rows.next, {headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1}})
+            .then(res => {
+              // first we map existing row ids to respective array indexes
+              let idIndices = self.data.rows.results.reduce((ind, item, idx) => {
+                ind[item['id']] = idx;
+                return ind;
+              }, {});
+              res.data.results.map(item => {
+                // then we iterate through results updating any existing entries and adding new ones
+                let idIdx = idIndices[item['id']];
+                if (idIdx) self.data.rows.results[idIdx] = item;
+                else self.data.rows.results.push(item);
+              });
+              self.data.rows.next = res.data.next;  // replace next so we can load another set of rows
+              // finally create a new loadableRows so that it will load new rows based on this result set
+              decorate(res.data.results[0]['id']);
+            })
+            .catch(function (err) {
+              console.log(err);
+              alert(err.data);
+            })
+            .then(function () { self.loading = false; });
+        }
+        return res;
+      }
+    },
+    watch: {
+      orderingParam(_newVal, _oldVal) {
+        this.loadData();
+      }
+    }
+  });
+</script>

@@ -1,0 +1,35 @@
+{% verbatim %}
+<script type="text/x-template" id="ionicon-template">
+  <div class="float-left" :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg"></div>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('IonIcon', {
+    template: `#ionicon-template`,
+    props: ['name'],
+    data() {
+      return {
+        loaded_svg: '',
+      };
+    },
+    computed: {},
+    mounted() {
+      const self = this, name = self.name;
+      if (!window.cache_ionicon) { window.cache_ionicon = {}; }
+      if (!name) {} else if (window.cache_ionicon[name]) {
+        if (typeof window.cache_ionicon[name].then == 'function') {
+          window.cache_ionicon[name].then(res => { self.loaded_svg = res.data; });
+          self.loaded_svg = '&hellip;';
+          return;
+        }
+        self.loaded_svg = window.cache_ionicon[name];
+      } else {
+        self.loaded_svg = '&hellip;';
+        window.cache_ionicon[name] = axios.get('https://unpkg.com/ionicons@5.5.1/dist/svg/' + name + '.svg');
+        window.cache_ionicon[name].then(res => { self.loaded_svg = window.cache_ionicon[name] = res.data; });
+      }
+    },
+    methods: {},
+  });
+</script>

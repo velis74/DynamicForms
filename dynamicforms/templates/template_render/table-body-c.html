@@ -1,0 +1,54 @@
+{% verbatim %}
+<script type="text/x-template" id="df-table-body-template">
+  <tbody>
+  <tr is="df-table-body-row" v-for="row in rows" :key="row['id']" :row="row" :columns="columns" :actions="actions"
+      :row-properties="rowProperties" v-observe-visibility="rows.getVisibilityHandler(row['id'])"/>
+  </tbody>
+</script>
+
+<script type="text/x-template" id="df-table-body-row-template">
+  <tr :key="row['id']" :style="row['df_control_data']['row_css_style']" v-bind="rowProps"
+      @click="rowClick('ROW_CLICK')" @mouseup.right="rowClick('ROW_RIGHTCLICK')">
+    <td v-for="(col, idx) in columns" :key="col.name">
+      <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)" :key="row['id']"
+                  :actions="actions.filter(col.name.substr(9).toUpperCase())" :row="row"></df-actions>
+      <template v-else>{{ row[col.name] }}</template>
+    </td>
+  </tr>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-table-body', {
+    template: `#df-table-body-template`,
+    props: ['columns', 'rows', 'rowProperties', 'loading', 'actions'],
+    data() { return {}; },
+    computed: {},
+    mounted() {},
+    methods: {},
+  });
+
+  Vue.component('df-table-body-row', {
+    template: `#df-table-body-row-template`,
+    props: ['columns', 'row', 'rowProperties', 'actions'],
+    data() {
+      return {
+        rowProps: this.rowProperties.reduce(function (obj, val) {
+          if (!['row_css_style', 'df_control_data', 'df_prev_id'].includes(val)) {
+            obj['data-' + val] = row[val];
+          }
+          return obj;
+        }, {})
+      };
+    },
+    computed: {},
+    mounted() {},
+    methods: {
+      rowClick(position) {
+        const self = this;
+        const actions = self.actions.filter(position);
+        actions.list.forEach(action => { actions.exec(action, self.row); });
+      },
+    },
+  });
+</script>
