@@ -21,15 +21,19 @@ class ValidatedPageTest(TestCase):
         Validated.objects.create(code="123", enabled=False, amount=5, item_type=2, item_flags='A')
         our_record = Validated.objects.create(code="12345", enabled=True, amount=5, item_type=1, item_flags='B')
         response = self.client.get(self.base_url.format(our_record.id, "/"))
-        self.assertEqual(json.loads(response.content.decode('utf8')), {'id': our_record.id, 'code': our_record.code,
-                                                                       'enabled': our_record.enabled,
-                                                                       'amount': our_record.amount,
-                                                                       'item_type': our_record.item_type,
-                                                                       'item_flags': our_record.item_flags,
-                                                                       'comment': our_record.comment,
-                                                                       'df_prev_id': '',
-                                                                       'row_css_style': '',
-                                                                       })
+        self.assertEqual(json.loads(response.content.decode('utf8')),
+                         {'id': our_record.id, 'code': our_record.code,
+                          'enabled': our_record.enabled,
+                          'amount': our_record.amount,
+                          'item_type': our_record.item_type,
+                          'item_flags': our_record.item_flags,
+                          'comment': our_record.comment,
+                          'df_prev_id': '',
+                          'row_css_style': '',
+                          'df_control_data': {
+                              'actions': {'del 1': {}, 'del_nr': {}, 'del_rr': {}, 'del_rt': {}, 'edit': {}},
+                              'row_css_style': ''},
+                          })
 
     def testPOSTing_a_new_record(self):
         response = self.client.post(

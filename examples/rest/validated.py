@@ -14,26 +14,26 @@ class ValidatedSerializer(serializers.ModelSerializer):
         'edit': 'Editing validated object',
     }
     actions = Actions(
-        TableAction(TablePosition.HEADER, label=_('+ Add (refresh record)'), title=_('Add new record'),
+        TableAction(TablePosition.HEADER, label=_('+ Add (refresh record)'), title=_('Add new record'), name='add_rr',
                     action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
                               ", 'record', __TABLEID__);"),
-        TableAction(TablePosition.HEADER, label=_('+ Add (refresh table)'), title=_('Add new record'),
+        TableAction(TablePosition.HEADER, label=_('+ Add (refresh table)'), title=_('Add new record'), name='add_rt',
                     action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
                               ", 'table', __TABLEID__);"),
-        TableAction(TablePosition.HEADER, label=_('+ Add (no refresh)'), title=_('Add new record'),
+        TableAction(TablePosition.HEADER, label=_('+ Add (no refresh)'), title=_('Add new record'), name='add_nr',
                     action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
                               ", 'no refresh', __TABLEID__);"),
-        TableAction(TablePosition.ROW_CLICK, label=_('Edit'), title=_('Edit record'),
+        TableAction(TablePosition.ROW_CLICK, label=_('Edit'), title=_('Edit record'), name='edit',
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
-                              " %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-row\"]').attr('data-id'))"
-                              ", 'record', __TABLEID__);"),
-        TableAction(TablePosition.ROW_END, label=_('Delete (refresh record)'), title=_('Delete record'),
+                              " %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-"
+                              "row\"]').attr('data-id')), 'record', __TABLEID__);"),
+        TableAction(TablePosition.ROW_END, label=_('Delete (refresh record)'), title=_('Delete record'), name='del_rr',
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               + "{{row.id}}, 'record', __TABLEID__);"),
-        TableAction(TablePosition.ROW_END, label=_('Delete (refresh table)'), title=_('Delete record'),
+        TableAction(TablePosition.ROW_END, label=_('Delete (refresh table)'), title=_('Delete record'), name='del_rt',
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               + "{{row.id}}, 'table', __TABLEID__);"),
-        TableAction(TablePosition.ROW_END, label=_('Delete (no refresh)'), title=_('Delete record'),
+        TableAction(TablePosition.ROW_END, label=_('Delete (no refresh)'), title=_('Delete record'), name='del_nr',
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               + "{{row.id}}, 'no refresh', __TABLEID__);"),
         # The following action is duplicated unnecessarily just to later eliminate it in suppress_action

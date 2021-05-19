@@ -10,12 +10,13 @@ from .settings import DYNAMICFORMS
 
 class ActionBase(object):
 
-    def __init__(self, action_js: str, name: Union[str, None] = None, serializer: Serializer = None):
+    def __init__(self, action_js: str, name: str, serializer: Serializer = None):
         """
         :param action_js: JavaScript to execute when action is run
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
         :param serializer: bind to this serializer instance
         """
+        assert name is not None, 'Action name must not be None'
         self.name = name
         self.action_js = action_js
         assert self.action_js is not None, 'When declaring action, it must declare action JavaScript to execute'

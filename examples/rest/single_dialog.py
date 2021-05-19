@@ -22,9 +22,10 @@ class SingleDialogSerializer(serializers.Serializer):
     ))
 
     actions = Actions(
-        FormButtonAction(FormButtonTypes.CANCEL),
-        FormButtonAction(FormButtonTypes.CUSTOM, label='Download it', action_js="customSingleDialogBtnPost();"),
-        FormButtonAction(FormButtonTypes.CUSTOM, label='Say it', button_is_primary=True,
+        FormButtonAction(FormButtonTypes.CANCEL, name='cancel'),
+        FormButtonAction(FormButtonTypes.CUSTOM, name='download', label='Download it',
+                         action_js="customSingleDialogBtnPost();"),
+        FormButtonAction(FormButtonTypes.CUSTOM, name='say_it', label='Say it', button_is_primary=True,
                          action_js="customSingleDialogBtn();"),
         add_form_buttons=False
     )
