@@ -177,6 +177,10 @@ class DynamicFormsSerializer(ViewModeSerializer, RenderMixin, ActionMixin):
 
         return ret
 
+   # noinspection PyMethodMayBeStatic
+    def get_row_css_style(self, obj):
+        return ''
+
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     """
@@ -309,10 +313,6 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         except:
             pass
 
-        return ''
-
-    # noinspection PyMethodMayBeStatic
-    def get_row_css_style(self, obj):
         return ''
 
 

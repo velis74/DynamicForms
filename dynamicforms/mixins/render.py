@@ -97,7 +97,10 @@ class RenderMixin(object):
         while base:
             # if anywhere in the serializing stack there is a ViewModeSerializer, we will ask it, otherwise default
             if isinstance(base, ViewModeSerializer):
-                return base.is_rendering_as_table
+                if base.view_mode is not None:  # check if the serializer had even been initialised with view_mode
+                    return base.is_rendering_as_table
+                else:
+                    break
             base = getattr(base, 'parent', None)
 
         return self.is_rendering_to_list and self.is_rendering_to_html
