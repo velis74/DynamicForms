@@ -46,6 +46,9 @@ class AllowTagsMixin(object):
         Validator is taken directly from DRF and updated, to check for allow_tags.
         Option allow_tags enables adding value that is not on the options list.
         """
+        if not self.allow_tags:
+            data = super().to_internal_value(data)
+
         if isinstance(self, MultipleChoiceField):
             if isinstance(data, str) or not hasattr(data, '__iter__'):
                 self.fail('not_a_list', input_type=type(data).__name__)

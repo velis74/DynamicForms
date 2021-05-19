@@ -26,6 +26,10 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         ('3', 'Choice 4'),
     ))
 
+    single_choice_field = fields.ChoiceField(choices=(
+        ('0', 'Choice 1'),
+    ), single_choice_hide=True)
+
     hidden_field = fields.DateTimeField(default=timezone.now, display=fields.DisplayMode.HIDDEN)
     readonly_field = fields.BooleanField(read_only=True)
     filepath_field = fields.FilePathField(path='examples')

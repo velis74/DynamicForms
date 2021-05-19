@@ -7,7 +7,8 @@ from rest_framework import fields, relations
 from .action import Actions
 from .mixins import (
     ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, DateTimeFieldMixin, DateFieldMixin, TimeFieldMixin,
+    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, DateTimeFieldMixin, DateFieldMixin, SingleChoiceMixin,
+    TimeFieldMixin,
     FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
 )
 
@@ -204,8 +205,8 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         super().__init__(**kwargs)
 
 
-class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
-                  fields.ChoiceField):
+class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
+                  FieldHelpTextMixin, fields.ChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
                  validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
@@ -216,7 +217,7 @@ class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, RenderMixin,
         super().__init__(**kwargs)
 
 
-class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
+class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
                           FieldHelpTextMixin, fields.MultipleChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -228,8 +229,8 @@ class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, Rend
         super().__init__(**kwargs)
 
 
-class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
-                    fields.FilePathField):
+class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
+                    FieldHelpTextMixin, fields.FilePathField):
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
                  label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
