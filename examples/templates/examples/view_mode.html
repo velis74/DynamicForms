@@ -114,7 +114,7 @@
   <script type="text/x-template" id="df-actions-template">
   <div class="actions-holder">
     <div v-for="action in actions.list" class="btn btn-sm btn-info"
-         @click="actions.exec(action, row)"><IonIcon :key="action.icon" :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
+         @click.stop="actions.exec(action, row)"><IonIcon :key="action.icon" :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
   </div>
   </script>
   <script type="text/x-template" id="ionicon-template">
@@ -272,7 +272,7 @@
       }
 
       exec(action, row) {
-        console.log(['executing action', JSON.parse(JSON.stringify(action)), JSON.parse(JSON.stringify(row))])
+        console.log(['executing action', JSON.parse(JSON.stringify(action)), JSON.parse(JSON.stringify(row))]);
       }
     }
 
@@ -441,14 +441,12 @@
       mounted() {},
       methods: {
         rowPropsWithData(row) {
-          let rp = this.rowProperties.reduce(function (obj, val) {
-            obj['data-' + val] = row[val];
+          return this.rowProperties.reduce(function (obj, val) {
+            if (!['row_css_style', 'df_control_data', 'df_prev_id'].includes(val)) {
+              obj['data-' + val] = row[val];
+            }
             return obj;
           }, {})
-          delete rp['data-row_css_style'];
-          delete rp['data-df_control_data'];
-          delete rp['data-df_prev_id'];
-          return rp;
         },
         renderRowColumn(row, col) {
           /* !!!!! remove !!!! */
