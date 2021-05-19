@@ -177,7 +177,7 @@ class DynamicFormsSerializer(ViewModeSerializer, RenderMixin, ActionMixin):
 
         return ret
 
-   # noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def get_row_css_style(self, obj):
         return ''
 
