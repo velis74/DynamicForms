@@ -1,26 +1,29 @@
 {% verbatim %}
   <script type="text/x-template" id="df-table-template">
-    <div class="card">
-      <div class="card-header">{{ data.title }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
-      <div class="card-body">
-        <table class="table">
-          <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
-          <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
-                 :loading="loading" :actions="actions"></tbody>
-          <tfoot>
-            <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
-              <td :colspan="columns.length">{{ noDataString }}</td>
-            </tr>
-            <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
-              <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
-            </tr>
-            <tr class="loading-indicator" v-if="rows.length > 0 && loading">
-              <td :colspan="columns.length">
-                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+    <div>
+      <df-modal :title="editDialogTitle" :setDialog="setEditModal"/>
+      <div class="card">
+        <div class="card-header">{{ data.titles.table }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
+        <div class="card-body">
+          <table class="table">
+            <thead is="df-table-header" :columns="columns" v-on:change-order="changeOrder"></thead>
+            <tbody is="df-table-body" :columns="columns" :row-properties="rowProperties" :rows="rows"
+                   :loading="loading" :actions="actions"></tbody>
+            <tfoot>
+              <tr class="no-data-indicator" v-if="rows.length == 0 && !loading">
+                <td :colspan="columns.length">{{ noDataString }}</td>
+              </tr>
+              <tr class="no-data-indicator" v-if="rows.length == 0 && loading">
+                <td :colspan="columns.length"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></td>
+              </tr>
+              <tr class="loading-indicator" v-if="rows.length > 0 && loading">
+                <td :colspan="columns.length">
+                  <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
   </script>
@@ -149,10 +152,12 @@
       return {
         rows: self.loadableRows(self.data.rows),
         columns: self.data.columns.map(c => new DFTableColumn(c)),
-        actions: new ActionsHandler(self.data.actions),
+        actions: new ActionsHandler(self.data.actions, self.showModal),
         rowProperties: self.data['row-properties'],
         loading: false,
         noDataString: gettext('no data'),
+        editModal: null,
+        editDialogTitle: 'Test dialog',
       };
     },
     computed: {
@@ -251,7 +256,17 @@
             .then(function () { self.loading = false; });
         }
         return res;
-      }
+      },
+      setEditModal(component) {
+        this.editModal = component;
+      },
+      showModal(action, row) {
+        console.log("yay, should be showing modal now!!!");
+        if (action.name == 'edit') this.editDialogTitle = this.data.titles.edit + ' ' + row['id'];
+        else if (action.name == 'add') this.editDialogTitle = this.data.titles.new;
+        else this.editDialogTitle = 'unknown action ' + action.name + ', so stupid title';
+        this.editModal.show();
+      },
     },
     watch: {
       orderingParam(_newVal, _oldVal) {

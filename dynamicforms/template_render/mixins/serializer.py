@@ -108,7 +108,7 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
     def component_params(self: '_ViewModeBoundSerializer', output_json: bool = True):
         params = {
             'guid': self.uuid,
-            'title': self.form_titles['table'],
+            'titles': self.form_titles,
             'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
             'actions': self.render_actions.table.as_action_def(),
             'row-properties': self.render_fields.properties.as_name(),

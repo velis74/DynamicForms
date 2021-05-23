@@ -1,0 +1,70 @@
+{% verbatim %}
+<script type="text/x-template" id="df-modal">
+  <div>
+    <transition @enter="startTransitionModal" @after-enter="endTransitionModal" @before-leave="endTransitionModal"
+                @after-leave="startTransitionModal">
+      <div class="modal fade" tabindex="-1" role="dialog" v-if="visible" id="modal" @click.self="hide()">
+        <div :class="'modal-dialog ' + sizeClass" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">
+                <slot name="title">{{ title }}</slot>
+              </h5>
+              <button type="button" class="close" @click="hide()" tabindex="-1">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">...</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="hide()">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <div class="modal-backdrop fade d-none" id="backdrop"></div>
+  </div>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-modal', {
+    template: `#df-modal`,
+    props: {
+      'setDialog': null,  // method to be called which will receive this component instance so that .show can be called
+      'title': null,
+      'size': {default: ''},
+    },
+    data() {
+      return {
+        visible: false,
+      };
+    },
+    computed: {
+      sizeClass() {
+        if (['large', 'lg', 'modal-lg'].includes(this.size)) return 'modal-lg';
+        else if (['small', 'sm', 'modal-sm'].includes(this.size)) return 'modal-sm';
+        return '';
+      }
+    },
+    mounted() {
+      // notify parent component of who we are so that it can call .show, .hide, etc.
+      this.setDialog(this);
+    },
+    methods: {
+      show: function show() { this.visible = true; },
+      hide: function hide() { this.visible = false; },
+      startTransitionModal() {
+        this.$el.querySelector('#backdrop').classList.toggle('d-block');
+        if (this.visible) { this.$el.querySelector('#modal').classList.toggle("d-block"); }
+      },
+      endTransitionModal() {
+        this.$el.querySelector('#backdrop').classList.toggle("show");
+        this.$el.querySelector('#modal').classList.toggle("show");
+      }
+    },
+  });
+</script>

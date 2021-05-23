@@ -8,8 +8,9 @@
 {% endverbatim %}
 <script>
   class ActionsHandler {
-    constructor(actions) {
+    constructor(actions, showModal) {
       this.actions = actions;
+      this.showModal = showModal; // method to call for showing medal dialog with item editor
       this.filterCache = {};  // contains cached .filter results
     }
 
@@ -36,13 +37,14 @@
               const name = item.name;
               obj[name] = self.actions[name];
               return obj;
-            }, {}));
+            }, {}), self.showModal);
       }
       return self.filterCache[position];
     }
 
     exec(action, row) {
       console.log(['executing action', JSON.parse(JSON.stringify(action)), JSON.parse(JSON.stringify(row))]);
+      this.showModal(action, row);
     }
   }
 
