@@ -7,13 +7,16 @@ if TYPE_CHECKING:
 
 
 class Field(object):
-    def __init__(self, field_name: str, field_def: DRFField, render_format: Optional[str] = None):
+    def __init__(self, field_name: str, field_def: Optional[DRFField], render_format: Optional[str] = None):
         self.field_name = field_name
         self.field_def = field_def
         self.render_format = render_format
 
-    def is_field(self, field_name: str) -> bool:
-        return self.field_name == field_name
+    def bind_field(self, field_name: str, field) -> bool:
+        res = self.field_name == field_name
+        if res and not self.field_def:
+            self.field_def = field
+        return res
 
     def as_component_def(self):
         fdef = self.field_def
@@ -28,17 +31,19 @@ class Field(object):
 
 
 class Column(object):
-    def __init__(self, field: Union[Tuple[str, DRFField], Field, None], width_classes: Optional[str] = None):
+    def __init__(self, field: Union[Tuple[str, DRFField], Field, str, None], width_classes: Optional[str] = None):
         if isinstance(field, tuple):
             self.field = Field(field[0], field[1])
+        elif isinstance(field, str):
+            self.field = Field(field, None)
         elif isinstance(field, Field):
             self.field = field
         else:
             raise NotImplementedError(f'Unknown field type {field.__class__.__name__}')
         self.width_classes = width_classes or ''
 
-    def has_field(self, field_name: str) -> bool:
-        return self.field.is_field(field_name)
+    def bind_field(self, field_name: str, field) -> bool:
+        return self.field.bind_field(field_name, field)
 
     def as_component_def(self) -> Dict:
         res = dict(type='column', field=self.field.as_component_def())
@@ -60,28 +65,54 @@ class Row(object):
             else:
                 raise NotImplementedError(f'Unknown column type {column.__class__.__name__}')
 
-    def has_field(self, field_name: str) -> bool:
-        return any(map(lambda column: column.has_field(field_name), self.columns))
+    def bind_field(self, field_name: str, field) -> bool:
+        # list() is necessary so that all rows evaluate
+        return any(list(map(lambda column: column.bind_field(field_name, field), self.columns)))
 
     def as_component_def(self) -> List[Dict]:
         return [col.as_component_def() for col in self.columns]
 
 
 class Layout(object):
-    def __init__(self, *rows: List[Row]):
-        self.rows = [Row(row) for row in rows]
+    def __init__(self, *rows: Row, columns: int = 1, size: str = ''):
+        """
+        Creates layout definition
+        :param rows: layout rows containing columns & fields
+        :param columns: for all fields not added in layout manually, add them in n-column layout
+        :param size: 'small', 'large' or ''
+        """
+        self.rows = rows or []
+        self.columns = columns
+        self.size = size
 
-    def has_field(self, field_name: str) -> bool:
-        return any(map(lambda row: row.has_field(field_name), self.rows))
+    def bind_field(self, field_name: str, field_def) -> bool:
+        # list() is necessary so that all rows evaluate
+        return any(list(map(lambda row: row.bind_field(field_name, field_def), self.rows)))
 
-    def as_component_def(self, serializer: Optional['Serializer']) -> List[List[Dict]]:
-        res = [row.as_component_def() for row in self.rows]
+    def as_component_def(self, serializer: Optional['Serializer']) -> Dict:
+        if serializer:
+            for field_name, field in serializer.fields.items():
+                self.bind_field(field_name, field)
+
+        res = dict(rows=[row.as_component_def() for row in self.rows])
+        if self.size:
+            res['size'] = self.size
+
         if serializer:
             default_layout = Layout()
+            row = []
+            row_num = 0
             for field_name, field in serializer.fields.items():
-                if not self.has_field(field_name) and field.display_form != DisplayMode.SUPPRESS:
-                    default_layout.rows.append(Row((field_name, field)))
-            res += default_layout.as_component_def(None)
+                if not self.bind_field(field_name, field) and field.display_form != DisplayMode.SUPPRESS:
+                    row.append((field_name, field))
+                    if field.display_form == DisplayMode.FULL:
+                        row_num += 1
+                    if row_num >= self.columns:
+                        default_layout.rows.append(Row(*row))
+                        row, row_num = [], 0
+            if row:
+                default_layout.rows.append(Row(*row))
+            res['rows'] += default_layout.as_component_def(None)['rows']
         return res
 
 

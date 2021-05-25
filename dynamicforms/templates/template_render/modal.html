@@ -3,7 +3,7 @@
   <div>
     <transition @enter="startTransitionModal" @after-enter="endTransitionModal" @before-leave="endTransitionModal"
                 @after-leave="startTransitionModal">
-      <div class="modal fade" tabindex="-1" role="dialog" v-if="visible" id="modal" @click.self="hide()">
+      <div class="modal fade" tabindex="-1" role="dialog" v-if="visible" style="overflow-y: auto" id="modal" @click.self="hide()">
         <div :class="'modal-dialog ' + sizeClass" role="document">
           <div class="modal-content">
             <div class="modal-header">

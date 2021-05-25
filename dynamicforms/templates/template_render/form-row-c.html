@@ -1,9 +1,7 @@
 {% verbatim %}
 <script type="text/x-template" id="df-form-row-template">
-  <slot name="hidden-single" class="row" v-if="isHiddenSingle">
-    <df-form-col v-for="(column, idx) in columns" :key="idx" :def="column" :data="data"/>
-  </slot>
-  <div class="row" v-else="isHiddenSingle">
+  <df-form-col v-if="isHiddenSingle" :def="columns[0]" :data="data"/>
+  <div class="row" v-else>
     <df-form-col v-for="(column, idx) in columns" :key="idx" :def="column" :data="data"/>
   </div>
 </script>

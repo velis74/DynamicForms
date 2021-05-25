@@ -4,9 +4,11 @@ from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields
+from dynamicforms.template_render.layout import Layout
 
 
 class BasicFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='basic-fields')
     form_titles = {
         'table': 'Basic fields list',
         'new': 'New basic fields object',
@@ -42,10 +44,10 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasicFields
         exclude = ()
+        layout = Layout(columns=3, size='large')
 
 
 class BasicFieldsViewset(ModelViewSet):
-    template_context = dict(url_reverse='basic-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = BasicFields.objects.all()

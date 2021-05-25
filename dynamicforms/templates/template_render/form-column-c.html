@@ -13,10 +13,8 @@
       </div>
     </div>
   </div>
-  <slot name="hidden-slot" v-else-if="isHidden">
-    <component :is="def.field.render_widget" :def="def.field" :data="data"/>
-  </slot>
-  <div class="col" v-else="isHidden">
+  <component v-else-if="isHidden" :is="def.field.render_widget" :def="def.field" :data="data"/>
+  <div class="col" v-else>
     <component :is="def.field.render_widget" :def="def.field" :data="data"/>
   </div>
 </script>

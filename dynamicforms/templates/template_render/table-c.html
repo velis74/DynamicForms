@@ -1,7 +1,7 @@
 {% verbatim %}
   <script type="text/x-template" id="df-table-template">
     <div>
-      <df-modal :title="editDialogTitle" :setDialog="setEditModal">
+      <df-modal :title="editDialogTitle" :setDialog="setEditModal" :size="data.dialog.size">
         <df-form-layout slot="body" :def="data.dialog" :uuid="data.uuid"/>
       </df-modal>
       <div class="card">

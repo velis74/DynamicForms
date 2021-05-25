@@ -12,7 +12,7 @@
     <td v-for="(col, idx) in columns" :key="col.name">
       <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)" :key="row['id']"
                   :actions="actions.filter(col.name.substr(9).toUpperCase())" :row="row"></df-actions>
-      <template v-else>{{ row[col.name] }}</template>
+      <div v-else v-html="row[col.name]"/>
     </td>
   </tr>
 </script>
