@@ -107,19 +107,20 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
 
     def component_params(self: '_ViewModeBoundSerializer', output_json: bool = True):
         params = {
-            'guid': self.uuid,
+            'uuid': self.uuid,
             'titles': self.form_titles,
             'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
             'actions': self.render_actions.table.as_action_def(),
             'row-properties': self.render_fields.properties.as_name(),
-            'record': None if self.parent else self.data
+            'record': None if self.parent else self.data,
+            'dialog': self.get_dialog_def(),
         }
         return convert_to_json_if(params, output_json)
 
     def get_df_control_data(self: '_ViewModeBoundSerializer', row):
         """
         Returns any additional data needed for rendering or operating the serializer on the client, such as presence of
-        action buttons, thir parameters, CSS, etc.
+        action buttons, their parameters, CSS, etc.
 
           deprecates row_css_style and df_prev_link
 
@@ -134,9 +135,60 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
             )
         )
 
+    def get_dialog_def(self):
+        if hasattr(self, 'Meta') and hasattr(self.Meta, 'layout'):
+            return self.Meta.layout.as_component_def(self)
+        from dynamicforms.template_render.layout import Layout
+        return Layout().as_component_def(self)
+
     @classmethod
     def get_reverse_url(cls, view_name, request):
         return reverse(view_name + '-detail', format='json', request=request)
+
+    @classmethod
+    def get_component_context(cls, request, queryset):
+        from rest_framework.request import Request
+        from dynamicforms.filters import FilterBackend
+        from dynamicforms.template_render import ViewModeListSerializer, ViewModeSerializer
+        from dynamicforms.viewsets import ModelViewSet
+
+        class FakeViewSet(object):
+            """
+            We fake a DRF ViewSet here to get ordering and pagination to work
+            """
+
+            def __init__(self, request, queryset):
+                self.filter_backend = FilterBackend()
+                self.request = request
+                self.queryset = queryset
+
+            @property
+            def ordering(self):
+                return self.filter_backend.get_ordering(self.request, self.queryset, None)
+
+        paginator = ModelViewSet.generate_paged_loader()()
+
+        # first we try to paginate the queryset, together with some sort ordering & stuff
+        req = Request(request)
+        req.accepted_renderer = None  # viewsets.py->MyCursorPagination.encode_cursor
+        viewset = FakeViewSet(req, queryset)
+        page = paginator.paginate_queryset(queryset, req)
+        if page is None:
+            # if unsuccessful, just resume with the entire queryset
+            page = queryset
+
+        ser = cls(
+            page,
+            view_mode=ViewModeSerializer.ViewMode.TABLE_ROW,
+            view_mode_list=ViewModeListSerializer.ViewMode.TABLE,
+            context=dict(view=viewset),
+            many=True
+        )
+        base_url = paginator.base_url.split('?', 1)
+        ser.reverse_url = ser.get_reverse_url(cls.template_context['url_reverse'], request)
+        paginator.base_url = ser.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
+        ser.paginator = paginator
+        return ser
 
 
 # noinspection PyAbstractClass

@@ -3,6 +3,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue-observe-visibility/dist/vue-observe-visibility.min.js"></script><!-- requires intersection polyfill -->
+  <script src="{% url 'javascript-catalog' %}"></script>
 
   <style>{% include 'template_render/table.css' %}</style>
 {% endblock %}
@@ -19,6 +20,13 @@
   {% include 'template_render/table-body-c.html' %}
   {% include 'template_render/ionicon.html' %}
   {% include 'template_render/modal.html' %}
+
+  {% include 'template_render/form-layout-c.html' %}
+  {% include 'template_render/form-row-c.html' %}
+  {% include 'template_render/form-column-c.html' %}
+
+  {% include 'template_render/widget-base-c.html' %}
+  {% include 'template_render/widget-input-c.html' %}
 
   <script>
     const tableApp = new Vue({ el: `#app`, });

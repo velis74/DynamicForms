@@ -14,13 +14,25 @@ class DisplayMode(IntEnum):
     """
     The ways a field might be rendered (or not).
 
-    NOTE: This class has a copy in Vue component "df-table-header", so if you change here, the change needs to be
+    NOTE: This class has a copy in Vue component "df-table", so if you change here, the change needs to be
           implemented there as well
     """
     SUPPRESS = 1  # Field will be entirely suppressed. it will not render (not even to JSON) and will not parse for PUT
     HIDDEN = 5  # Field will render as <input type="hidden"> or <tr data-field_name>
     INVISIBLE = 8  # Field will render completely, but with display: none. Equal to setting its style = {display: none}
     FULL = 10  # Field will render completely
+
+
+class FieldAlignment(IntEnum):
+    """
+    How field's contents should be aligned in their respective containers (table cell / input)
+
+    NOTE: This class has a copy in Vue component "df-table", so if you change here, the change needs to be
+          implemented there as well
+    """
+    LEFT = -1
+    CENTER = 0
+    RIGHT = 1
 
 
 class RenderMixin(object):
@@ -43,6 +55,8 @@ class RenderMixin(object):
                  display_table: DisplayMode = None,  # None == Leave at default
                  display_form: DisplayMode = None,  # None == Leave at default
                  table_classes: str = '',
+                 alignment: FieldAlignment = FieldAlignment.LEFT,
+                 render_widget: str = 'df-widget-input',
                  **kwargs):
         """
 
@@ -51,6 +65,8 @@ class RenderMixin(object):
         :param display: see DisplayMode enum. Specifies how field will render. Leave at None for default (FULL)
             display_form and display_table also accepted for better granularity
         :param table_classes: css classes to add to the table column
+        :param alignment: How field's contents should be aligned in their respective containers (table cell / input)
+        :param render_widget: what widget to use for render. e.g. our Vue implementation uses this for component id
         :param kwargs: passed on to inherited constructors
         """
         super().__init__(*args, **kwargs)
@@ -62,6 +78,8 @@ class RenderMixin(object):
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
+        self.alignment = alignment
+        self.render_widget = render_widget
 
     @property
     def is_rendering_to_list(self):

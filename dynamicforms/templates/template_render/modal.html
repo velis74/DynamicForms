@@ -15,11 +15,15 @@
               </button>
             </div>
             <div class="modal-body">
-              <div class="container-fluid">...</div>
+              <slot name="body">
+                <div class="container-fluid">&hellip;</div>
+              </slot>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="hide()">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <slot name="footer">
+                <button type="button" class="btn btn-secondary" @click="hide()">{{ gettext('Close') }}</button>
+                <button type="button" class="btn btn-primary">{{ gettext('Save changes') }}</button>
+              </slot>
             </div>
           </div>
         </div>
@@ -34,9 +38,12 @@
   Vue.component('df-modal', {
     template: `#df-modal`,
     props: {
+      // aside from props, dialog also has three slots: title, body and footer
       'setDialog': null,  // method to be called which will receive this component instance so that .show can be called
-      'title': null,
-      'size': {default: ''},
+      'title': null,      // dialog title
+      'large': Boolean,   // if specified (valueless prop), modal will be large - small or size ignored when specified
+      'small': Boolean,   // if specified (valueless prop), modal will be small - size ignored when specified
+      'size': {default: ''},  // one of 'large', 'lg', 'modal-lg', 'small', 'sm', 'modal-sm'
     },
     data() {
       return {
@@ -45,8 +52,8 @@
     },
     computed: {
       sizeClass() {
-        if (['large', 'lg', 'modal-lg'].includes(this.size)) return 'modal-lg';
-        else if (['small', 'sm', 'modal-sm'].includes(this.size)) return 'modal-sm';
+        if (this.large || ['large', 'lg', 'modal-lg'].includes(this.size)) return 'modal-lg';
+        else if (this.small || ['small', 'sm', 'modal-sm'].includes(this.size)) return 'modal-sm';
         return '';
       }
     },
@@ -57,6 +64,7 @@
     methods: {
       show: function show() { this.visible = true; },
       hide: function hide() { this.visible = false; },
+      gettext: (str) => { return django.gettext(str); },
       startTransitionModal() {
         this.$el.querySelector('#backdrop').classList.toggle('d-block');
         if (this.visible) { this.$el.querySelector('#modal').classList.toggle("d-block"); }

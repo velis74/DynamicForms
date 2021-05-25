@@ -8,7 +8,7 @@ from typing import Iterable
 from django.utils.translation import ugettext_lazy as _
 
 from dynamicforms.action import TableAction, TablePosition
-from dynamicforms.mixins import DisplayMode
+from dynamicforms.mixins import DisplayMode, FieldAlignment
 
 
 class SerializerRenderFields(object):
@@ -17,7 +17,7 @@ class SerializerRenderFields(object):
         raise NotImplementedError('You must implement the fields property in your serializer render_fields method')
 
     def as_field_def(self):
-        res = [dict(name=str(field.field_name), label=str(field.label), align='left',
+        res = [dict(name=str(field.field_name), label=str(field.label), align=field.alignment.name.lower(),
                     table_classes=field.table_classes, ordering=field.ordering(), visibility=field.display_table.name,
                     )
                for field in self.fields]
@@ -76,6 +76,7 @@ class SerializerRenderFields(object):
             self.label = _('Actions')
             self.table_classes = ''
             self.display_table = DisplayMode.FULL
+            self.alignment = FieldAlignment.LEFT
 
         # noinspection PyMethodMayBeStatic
         def ordering(self):

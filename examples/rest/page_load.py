@@ -4,6 +4,7 @@ from ..models import PageLoad
 
 
 class PageLoadSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='page-load')
     form_titles = {
         'table': 'Dynamic page loader list',
         'new': 'New object',

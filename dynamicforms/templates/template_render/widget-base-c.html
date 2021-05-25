@@ -1,0 +1,20 @@
+{% verbatim %}
+<script type="text/x-template" id="df-widget-base-template">
+  <input v-if="isHidden" type="hidden" :name="def.field_name" :value="data[def.field_name]"/>
+  <div v-else :id="'container-' + def.uuid" class="form-group">
+    <slot name="label"><label :for="def.uuid" v-if="def.label">{{ def.label }}</label></slot>
+    <slot name="input"></slot>
+    <slot name="help"><small v-if="def.help_text" :id="def.field_name + '-help'" class="form-text text-muted">{{ def.help_text }}</small></slot>
+  </div>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-widget-base', {
+    template: `#df-widget-base-template`,
+    props: ['def', 'data'],
+    computed: {
+      isHidden() { return this.def.display == DisplayMode.HIDDEN; }
+    }
+  });
+</script>

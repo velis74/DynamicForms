@@ -1,0 +1,34 @@
+{% verbatim %}
+<script type="text/x-template" id="df-form-col-template">
+  <div class="col" v-if="isGroup">
+    <div class="card">
+      <div class="card-header">
+        {{ def.title }}
+      </div>
+      <div class="card-body">
+        <component :is="def.field.render_widget" :def="def.field"/>
+      </div>
+      <div class="card-footer" v-if="def.footer">
+        {{ def.footer }}
+      </div>
+    </div>
+  </div>
+  <slot name="hidden-slot" v-else-if="isHidden">
+    <component :is="def.field.render_widget" :def="def.field" :data="data"/>
+  </slot>
+  <div class="col" v-else="isHidden">
+    <component :is="def.field.render_widget" :def="def.field" :data="data"/>
+  </div>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-form-col', {
+    template: `#df-form-col-template`,
+    props: ['def', 'data'],
+    computed: {
+      isGroup() { return this.def.type == 'group'; },
+      isHidden() { return this.def.field.display == DisplayMode.HIDDEN; }
+    }
+  });
+</script>

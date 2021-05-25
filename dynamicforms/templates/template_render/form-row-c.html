@@ -1,0 +1,22 @@
+{% verbatim %}
+<script type="text/x-template" id="df-form-row-template">
+  <slot name="hidden-single" class="row" v-if="isHiddenSingle">
+    <df-form-col v-for="(column, idx) in columns" :key="idx" :def="column" :data="data"/>
+  </slot>
+  <div class="row" v-else="isHiddenSingle">
+    <df-form-col v-for="(column, idx) in columns" :key="idx" :def="column" :data="data"/>
+  </div>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-form-row', {
+    template: `#df-form-row-template`,
+    props: ['columns', 'data'],
+    computed: {
+      isHiddenSingle() {
+        return this.columns.length == 1 && this.columns[0].field.display == DisplayMode.HIDDEN;
+      }
+    }
+  });
+</script>

@@ -1,7 +1,9 @@
 {% verbatim %}
   <script type="text/x-template" id="df-table-template">
     <div>
-      <df-modal :title="editDialogTitle" :setDialog="setEditModal"/>
+      <df-modal :title="editDialogTitle" :setDialog="setEditModal">
+        <df-form-layout slot="body" :def="data.dialog" :uuid="data.uuid"/>
+      </df-modal>
       <div class="card">
         <div class="card-header">{{ data.titles.table }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
         <div class="card-body">
@@ -173,7 +175,7 @@
       const self = this;
       let bodyColumnCss = "";
       this.data.columns.forEach(function (column, idx) {
-        bodyColumnCss += `#list-${self.data.guid} tbody tr td:nth-child(${idx + 1}) {
+        bodyColumnCss += `#list-${self.data.uuid} tbody tr td:nth-child(${idx + 1}) {
             text-align: ${column.align};
           }
           `
@@ -261,7 +263,6 @@
         this.editModal = component;
       },
       showModal(action, row) {
-        console.log("yay, should be showing modal now!!!");
         if (action.name == 'edit') this.editDialogTitle = this.data.titles.edit + ' ' + row['id'];
         else if (action.name == 'add') this.editDialogTitle = this.data.titles.new;
         else this.editDialogTitle = 'unknown action ' + action.name + ', so stupid title';

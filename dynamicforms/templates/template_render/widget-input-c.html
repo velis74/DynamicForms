@@ -1,0 +1,14 @@
+{% verbatim %}
+<script type="text/x-template" id="df-widget-input-template">
+  <df-widget-base :def="def" :data="data">
+    <input slot="input" :id="def.uuid" type="text" class="form-control" :name="def.field_name" :aria-describedby="def.help_text ? def.field_name + '-help' : null" :placeholder="def.placeholder" :value="data[def.field_name]">
+  </df-widget-base>
+</script>
+{% endverbatim %}
+
+<script>
+  Vue.component('df-widget-input', {
+    template: `#df-widget-input-template`,
+    props: ['def', 'data'],
+  });
+</script>

@@ -1,0 +1,20 @@
+{% verbatim %}
+<script type="text/x-template" id="df-form-layout-template">
+  <form :id="'form-' + uuid">
+    <df-form-row v-for="(row, idx) in def" :key="idx" :columns="row" :data="data"/>
+  </form>
+</script>
+{% endverbatim %}
+
+<script>
+  //
+  Vue.component('df-form-layout', {
+    template: `#df-form-layout-template`,
+    props: ['def', 'uuid'],
+    data() {
+      return {
+        data: {},
+      }
+    },
+  });
+</script>
