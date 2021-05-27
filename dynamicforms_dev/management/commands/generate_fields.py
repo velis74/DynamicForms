@@ -26,6 +26,7 @@ class Command(BaseCommand):
             SingleChoiceMixin
         )
         from dynamicforms import mixins, action
+        from dynamicforms.mixins import FieldAlignment
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
 
@@ -47,7 +48,7 @@ class Command(BaseCommand):
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
             print('import warnings', file=output)
-            print('from typing import Optional', file=output)
+            print('from typing import Dict, Optional', file=output)
             print('from uuid import UUID\n', file=output)
             print('from rest_framework import fields, relations\n', file=output)
             print('from .action import Actions', file=output)
@@ -57,10 +58,11 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(
-                        field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, ' +
+                    ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
+            print('from .mixins import FieldAlignment', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -125,8 +127,8 @@ class Command(BaseCommand):
                                     parm_str += ': ' + p_an.__name__
                                 elif p_an == typing.Union[str, None]:
                                     parm_str += ': Optional[str]'
-                                elif p_an == typing.Union[dict, None]:
-                                    parm_str += ': Optional[dict]'
+                                elif p_an in (typing.Union[dict, None], typing.Union[typing.Dict, None]):
+                                    parm_str += ': Optional[Dict]'
                                 else:
                                     # if you get this error, you need to add the type to includes at the top
                                     # of this function and then implement the actual printing just above here
@@ -135,7 +137,13 @@ class Command(BaseCommand):
 
                             if p_def != inspect._empty:
                                 equals = ' = ' if ':' in parm_str else '='
-                                if isinstance(p_def, (str, int, float, bool,)) or p_def is None:
+                                if isinstance(p_def, FieldAlignment):
+                                    if issubclass(field, (fields.IntegerField, fields.DecimalField)):
+                                        p_def = FieldAlignment.RIGHT
+                                    if issubclass(field, fields.FloatField):
+                                        p_def = FieldAlignment.DECIMAL
+                                    parm_str += equals + str(p_def)
+                                elif isinstance(p_def, (str, int, float, bool,)) or p_def is None:
                                     parm_str += equals + repr(p_def)
                                 elif p_def in (fields.empty,):
                                     parm_str += equals + '.'.join((p_def.__module__.split('.')[-1], p_def.__name__))
@@ -152,7 +160,7 @@ class Command(BaseCommand):
                 field_params.insert(0, 'self')
                 field_params.append('**kw')
                 field_params = textwrap.wrap((', '.join(field_params)).replace(': ', ':_').replace(' = ', '_=_'),
-                                             width=102 if field_class != 'HStoreField' else 98)
+                                             width=102 if field_class != 'HStoreField' else 98, break_on_hyphens=False)
 
                 # Special case indentation for HStoreField
                 if field_class != 'HStoreField':
@@ -233,7 +241,24 @@ class Command(BaseCommand):
                     indt(8) +
                     f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",
                     file=output)
-                print(indt(8) + f'kwargs.update(kw)', file=output)
+                print(indt(8) + 'kwargs.update(kw)', file=output)
+
+                if issubclass(field, (fields.BooleanField, fields.NullBooleanField)):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-bool')", file=output)
+                elif issubclass(field, fields.FloatField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', '#df-tablecell-float')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table_show_zeroes', False)", file=output)
+                elif issubclass(field, fields.URLField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-link')", file=output)
+                elif issubclass(field, fields.EmailField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-email')", file=output)
+                elif issubclass(field, fields.IPAddressField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-ipaddr')", file=output)
 
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 

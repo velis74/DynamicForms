@@ -6,16 +6,16 @@
         {{ def.title }}
       </div>
       <div class="card-body">
-        <component :is="def.field.render_widget" :def="def.field"/>
+        <component :is="def.field.render_params.form" :def="def.field" :data="data"/>
       </div>
       <div class="card-footer" v-if="def.footer">
         {{ def.footer }}
       </div>
     </div>
   </div>
-  <component v-else-if="isHidden" :is="def.field.render_widget" :def="def.field" :data="data"/>
+  <component v-else-if="isHidden" :is="def.field.render_params.form" :def="def.field" :data="data"/>
   <div class="col" v-else>
-    <component :is="def.field.render_widget" :def="def.field" :data="data"/>
+    <component :is="def.field.render_params.form" :def="def.field" :data="data"/>
   </div>
 </script>
 {% endverbatim %}

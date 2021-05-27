@@ -10,9 +10,10 @@
   <tr :key="row['id']" :style="row['df_control_data']['row_css_style']" v-bind="rowProps"
       @click="rowClick('ROW_CLICK')" @mouseup.right="rowClick('ROW_RIGHTCLICK')">
     <td v-for="(col, idx) in columns" :key="col.name">
-      <df-actions v-if="['#actions-row_start', '#actions-row_end'].includes(col.name)" :key="row['id']"
+      <component v-if="col.renderDecoratorComponentName" :is="col.renderDecoratorComponentName" :row="row" :column="col" :value="row[col.name]" :body-id="$parent._uid"/>
+      <df-actions v-else-if="['#actions-row_start', '#actions-row_end'].includes(col.name)" :key="row['id']"
                   :actions="actions.filter(col.name.substr(9).toUpperCase())" :row="row"></df-actions>
-      <div v-else v-html="row[col.name]"/>
+      <div v-else v-html="col.renderDecoratorFunction(row, col, row[col.name])"/>
     </td>
   </tr>
 </script>

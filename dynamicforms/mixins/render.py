@@ -1,6 +1,6 @@
 import uuid as uuid_module
 from enum import IntEnum
-from typing import Hashable
+from typing import Hashable, Optional, Dict
 
 from rest_framework.fields import Field as DrfField
 from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
@@ -33,6 +33,7 @@ class FieldAlignment(IntEnum):
     LEFT = -1
     CENTER = 0
     RIGHT = 1
+    DECIMAL = 2  # Aligned on the decimal separator
 
 
 class RenderMixin(object):
@@ -56,7 +57,7 @@ class RenderMixin(object):
                  display_form: DisplayMode = None,  # None == Leave at default
                  table_classes: str = '',
                  alignment: FieldAlignment = FieldAlignment.LEFT,
-                 render_widget: str = 'df-widget-input',
+                 render_params: Optional[Dict] = None,
                  **kwargs):
         """
 
@@ -66,7 +67,7 @@ class RenderMixin(object):
             display_form and display_table also accepted for better granularity
         :param table_classes: css classes to add to the table column
         :param alignment: How field's contents should be aligned in their respective containers (table cell / input)
-        :param render_widget: what widget to use for render. e.g. our Vue implementation uses this for component id
+        :param render_params: what widget to use for render and its parameters. Whatever you want that affects rendering
         :param kwargs: passed on to inherited constructors
         """
         super().__init__(*args, **kwargs)
@@ -79,7 +80,12 @@ class RenderMixin(object):
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
         self.alignment = alignment
-        self.render_widget = render_widget
+
+        # render_params need not only include form renderer and table formatting function. add anything you need!
+        render_params = render_params or {}
+        render_params.setdefault('form', 'df-widget-input')
+        render_params.setdefault('table', 'df-tablecell-plaintext')
+        self.render_params = render_params
 
     @property
     def is_rendering_to_list(self):
@@ -197,10 +203,14 @@ class RenderMixin(object):
         if isinstance(value, Hashable) and value in choices:
             # choice field: let's render display names, not values
             value = choices[value]
-        if value is None:
-            return DYNAMICFORMS.null_text_table
 
-        return drftt.format_value(value)
+        if self.is_rendering_to_html:
+            if value is None:
+                return DYNAMICFORMS.null_text_table
+
+            return drftt.format_value(value)
+
+        return str(value)
 
     def validate_empty_values(self: DrfField, data):
         # noinspection PyUnresolvedReferences

@@ -17,8 +17,10 @@ class SerializerRenderFields(object):
         raise NotImplementedError('You must implement the fields property in your serializer render_fields method')
 
     def as_field_def(self):
-        res = [dict(name=str(field.field_name), label=str(field.label), align=field.alignment.name.lower(),
+        res = [dict(name=str(field.field_name), label=str(field.label),
+                    align='right' if field.alignment == FieldAlignment.DECIMAL else field.alignment.name.lower(),
                     table_classes=field.table_classes, ordering=field.ordering(), visibility=field.display_table.name,
+                    render_params=field.render_params
                     )
                for field in self.fields]
         return res
@@ -77,6 +79,7 @@ class SerializerRenderFields(object):
             self.table_classes = ''
             self.display_table = DisplayMode.FULL
             self.alignment = FieldAlignment.LEFT
+            self.render_params = {}
 
         # noinspection PyMethodMayBeStatic
         def ordering(self):

@@ -144,6 +144,57 @@
     get orderIndexChar() {
       return this.orderIndex > 0 ? String.fromCharCode(0x2460 + this.orderIndex - 1) : '';
     }
+
+    get render_params() {
+      return this._columnDef.render_params || {};
+    }
+    get renderDecoratorComponentName() {
+      if (this.render_params.table) {
+        const tableDecorator = this.render_params.table;
+        return tableDecorator.substr(0, 1) == '#' ? tableDecorator.substr(1) : '';
+      }
+      return null;
+    }
+
+    get renderDecoratorFunction() {
+      if (this.render_params && this.render_params.table) {
+        const tableDecorator = this.render_params.table;
+        if (tableDecorator.substr(0, 13) == 'df-tablecell-') {
+          // built-in decorator functions
+          const decoratorFunction = tableDecorator.substr(13);
+          switch (decoratorFunction) {
+            case 'bool': return (row, column, value) => { return `<code>${value}</code>`; };
+            case 'link': return (row, column, value) => { return `<a href="${value}">${value}</a>`; };
+            case 'email': return (row, column, value) => {
+              let nameOnly = value.includes('<') ? value.substr(0, value.indexOf('<')).trim(): value;
+              return `<a href="mailto:${value}">${nameOnly}</a>`;
+            };
+            case 'ipaddr': return (row, column, value) => {
+              const segments = value.split('.');
+              if (segments.length == 4) {
+                value = segments.map(x => {
+                  let padding = x.length < 3 ? `<span style="visibility: hidden">${'000'.slice(x.length - 3)}</span>` : '';
+                  return padding + x;
+                }).join('.');
+              }
+              return `<code>${value}</code>`;
+            };
+            // DRF also formats simple lists, complex dicts / lists
+            // DRF also parses ordinary strings to check if they are valid URLs(link), emails(email) or contain \n (pre)
+          }
+        }
+        else {
+          // Here we're expecting the decorator to either suggest we use a component or a globally accessible function
+          // When component, name will start with #, e.g. #df-tablecell-float. This will instruct table body to render
+          //   a component with this name
+          // When a function, name will be in format module.submodule.submodule_n.function, e.g. myModule.formatEmail
+          //   The above example will look for function in window['myModule']['formatEmail'] and call it.
+          return tableDecorator.split('.').reduce((res, val) => res[val], window);
+        }
+      }
+      // if special JS function for formatting data is not provided, we just format the data as plain text
+      return (row, column, value) => { return value; };
+    }
   }
 
   Vue.component('df-table', {

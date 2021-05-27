@@ -22,7 +22,7 @@ class Field(object):
         fdef = self.field_def
         res = dict(
             field_name=self.field_name, uuid=fdef.uuid, display=fdef.display_form,
-            alignment=fdef.alignment.name.lower(), render_widget=fdef.render_widget, help_text=fdef.help_text,
+            alignment=fdef.alignment.name.lower(), render_params=fdef.render_params, help_text=fdef.help_text,
             label=fdef.label,
         )
         if self.render_format:
