@@ -160,7 +160,7 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', False)
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
         super().__init__(**kwargs)
 
 

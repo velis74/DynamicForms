@@ -249,7 +249,7 @@ class Command(BaseCommand):
                 elif issubclass(field, fields.FloatField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', '#df-tablecell-float')", file=output)
-                    print(indt(8) + "kwargs['render_params'].setdefault('table_show_zeroes', False)", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table_show_zeroes', True)", file=output)
                 elif issubclass(field, fields.URLField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-link')", file=output)
