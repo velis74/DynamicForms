@@ -173,7 +173,7 @@
               const segments = value.split('.');
               if (segments.length == 4) {
                 value = segments.map(x => {
-                  let padding = x.length < 3 ? `<span style="visibility: hidden">${'000'.slice(x.length - 3)}</span>` : '';
+                  let padding = x.length < 3 ? `<span style="opacity: .5">${'000'.slice(x.length - 3)}</span>` : '';
                   return padding + x;
                 }).join('.');
               }

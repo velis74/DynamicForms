@@ -1,8 +1,8 @@
 {% verbatim %}
 <script type="text/x-template" id="df-actions-template">
   <div class="actions-holder">
-    <div v-for="action in actions.list" class="btn btn-sm btn-info"
-         @click.stop="actions.exec(action, row)"><IonIcon :key="action.icon" :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
+    <div v-for="action in actions.list" class="btn btn-sm btn-info text-nowrap"
+         @click.stop="actions.exec(action, row)"><IonIcon class="d-inline-block" :key="action.icon" :name="action.icon"/><span class="d-none d-md-inline-block">{{ action.label }}</span></div>
   </div>
 </script>
 {% endverbatim %}
