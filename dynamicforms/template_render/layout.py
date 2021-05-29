@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class Field(object):
-    def __init__(self, field_name: str, field_def: Optional[DRFField], render_format: Optional[str] = None):
+    def __init__(self, field_name: str, field_def: Optional[DRFField] = None, render_format: Optional[str] = None):
         self.field_name = field_name
         self.field_def = field_def
         self.render_format = render_format
@@ -58,6 +58,8 @@ class Row(object):
         for column in columns:
             if isinstance(column, tuple):
                 self.columns.append(Column(Field(*column)))
+            elif isinstance(column, str):
+                self.columns.append(Column(Field(column)))
             elif isinstance(column, Field):
                 self.columns.append(Column(column))
             elif isinstance(column, Column):

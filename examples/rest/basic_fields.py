@@ -2,9 +2,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
+from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields
-from dynamicforms.template_render.layout import Layout
 
 
 class BasicFieldsSerializer(serializers.ModelSerializer):

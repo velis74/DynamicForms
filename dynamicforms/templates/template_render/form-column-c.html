@@ -14,7 +14,7 @@
     </div>
   </div>
   <component v-else-if="isHidden" :is="def.field.render_params.form" :def="def.field" :data="data"/>
-  <div class="col" v-else>
+  <div :class="'col' + columnClasses" v-else>
     <component :is="def.field.render_params.form" :def="def.field" :data="data"/>
   </div>
 </script>
@@ -26,7 +26,8 @@
     props: ['def', 'data'],
     computed: {
       isGroup() { return this.def.type == 'group'; },
-      isHidden() { return this.def.field.display == DisplayMode.HIDDEN; }
+      isHidden() { return this.def.field.display == DisplayMode.HIDDEN; },
+      columnClasses() { return this.def.width_classes ? ' ' + this.def.width_classes : ''; }
     }
   });
 </script>
