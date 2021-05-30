@@ -2,7 +2,7 @@
   <script type="text/x-template" id="df-table-template">
     <div>
       <df-modal :title="editDialogTitle" :setDialog="setEditModal" :size="data.dialog.size">
-        <df-form-layout slot="body" :def="data.dialog" :uuid="data.uuid"/>
+        <df-form-layout slot="body" :def="data.dialog" :uuid="data.uuid" :url="editingRowURL"/>
       </df-modal>
       <div class="card">
         <div class="card-header">{{ data.titles.table }}<div class="float-right"><df-actions :actions="actions.filter('HEADER')"></df-actions></div></div>
@@ -199,7 +199,7 @@
 
   Vue.component('df-table', {
     template: `#df-table-template`,
-    props: ['url', 'data'],
+    props: ['data'],
     data() {
       const self = this;
       return {
@@ -211,6 +211,7 @@
         noDataString: gettext('no data'),
         editModal: null,
         editDialogTitle: 'Test dialog',
+        editingRowURL: '',
       };
     },
     computed: {
@@ -259,7 +260,7 @@
             self.rows = []; // clear existing rows, we're making a full refresh
         }, 250);
         axios
-          .get(this.url + '?ordering=' + self.orderingParam, {headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1}})
+          .get(this.data.list_url + '?ordering=' + self.orderingParam, {headers: {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1}})
           .then(res => {
             // call api and set data as response, when data is set component is re-rendered
             self.data.rows = res.data;  // replace .next, .previous and .results
@@ -314,9 +315,18 @@
         this.editModal = component;
       },
       showModal(action, row) {
-        if (action.name == 'edit') this.editDialogTitle = this.data.titles.edit + ' ' + row['id'];
-        else if (action.name == 'add') this.editDialogTitle = this.data.titles.new;
-        else this.editDialogTitle = 'unknown action ' + action.name + ', so stupid title';
+        if (action.name == 'edit') {
+          this.editDialogTitle = this.data.titles.edit + ' ' + row['id'];
+          this.editingRowURL = this.data.detail_url.replace('--record_id--', row['id']);
+        }
+        else if (action.name == 'add') {
+          this.editDialogTitle = this.data.titles.new;
+          this.editingRowURL = this.data.detail_url.replace('--record_id--', 'new');
+        }
+        else {
+          this.editDialogTitle = 'unknown action ' + action.name + ', so stupid title';
+          this.editingRowURL = '';
+        }
         this.editModal.show();
       },
     },

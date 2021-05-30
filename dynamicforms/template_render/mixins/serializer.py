@@ -114,6 +114,7 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
             'row-properties': self.render_fields.properties.as_name(),
             'record': None if self.parent else self.data,
             'dialog': self.get_dialog_def(),
+            'detail_url': self.reverse_url,
         }
         return convert_to_json_if(params, output_json)
 
@@ -142,8 +143,8 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         return Layout().as_component_def(self)
 
     @classmethod
-    def get_reverse_url(cls, view_name, request):
-        return reverse(view_name + '-detail', format='json', request=request)
+    def get_reverse_url(cls, view_name, request, kwargs=None):
+        return reverse(view_name + '-detail', format='json', request=request, kwargs=kwargs)
 
     @classmethod
     def get_component_context(cls, request, queryset):
@@ -186,6 +187,9 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         )
         base_url = paginator.base_url.split('?', 1)
         ser.reverse_url = ser.get_reverse_url(cls.template_context['url_reverse'], request)
+        ser.child.reverse_url = ser.child.get_reverse_url(
+            cls.template_context['url_reverse'], request, kwargs=dict(pk='--record_id--')
+        )
         paginator.base_url = ser.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
         ser.paginator = paginator
         return ser
