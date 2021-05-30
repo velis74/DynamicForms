@@ -350,7 +350,7 @@ dynamicforms = {
     var formDataObject = new FormData();
     for (var key in data) {
       if (data.hasOwnProperty(key)) {
-        var fileInput = $form.find('input[type=file][name=' + key + ']')
+        var fileInput = $form.find('input[type="file"][name="' + key + '"]')
         if (fileInput.length === 1) {
           if (fileInput.get(0).files.length === 1 && !!fileInput.get(0).files[0]) {
             formDataObject.append(key, fileInput.get(0).files[0]);
@@ -1755,7 +1755,7 @@ dynamicforms = {
   handleRTFFieldsValue: function handleRTFFieldsValue(_data, $_form) {
     for (var key in _data) {
       if (_data.hasOwnProperty(key)) {
-        var textareaInput = $_form.find('textarea[name=' + key + ']')
+        var textareaInput = $_form.find('textarea[name="' + key + '"]')
         if (textareaInput.length === 1 && textareaInput.hasClass('.ck-editor__editable')) {
           var domEditableElement = document.querySelector('.ck-editor__editable');
           if (domEditableElement !== 'undefined') {
