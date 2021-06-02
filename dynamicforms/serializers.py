@@ -170,7 +170,17 @@ class DynamicFormsSerializer(RenderMixin, ActionMixin):
                 if not isinstance(field, RenderMixin):
                     ret[field.field_name] = field.to_representation(attribute)
                 else:
-                    ret[field.field_name] = field.to_representation(attribute, instance)
+                    try:
+                        ret[field.field_name] = field.to_representation(attribute, instance)
+                    except:
+                        if attribute is None and not field.required:
+                            # DRF makes a special check for none and then always returns None if the check is None.
+                            # We still want to process custom field to_representation, even if value is None.
+                            # But when field is a sub-serializer and it (it's FK reference) is none, it's OK
+                            # to pass None as result of serialization of such field
+                            raise SkipField()
+                        else:
+                            raise
             except SkipField:
                 pass
 
