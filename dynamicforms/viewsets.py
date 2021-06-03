@@ -114,6 +114,16 @@ class TemplateRendererMixin():
             self.template_context = getattr(self.serializer_class, 'template_context', {})
         super().__init__(*args, **kwds)
 
+    def get_serializer(self, *args, **kwargs):
+        serializer = super().get_serializer(*args, **kwargs)
+        if self.format_kwarg == 'component':
+            # view_mode support: set viewmode when DRF renderer is the component renderer
+            if isinstance(serializer, ListSerializer):
+                serializer.apply_component_context(self.request, self.paginator)
+            else:
+                serializer.apply_component_context(self.request, None)
+        return serializer
+
     # noinspection PyAttributeOutsideInit
     def initialize_request(self, request, *args, **kwargs):
         # Caution: just to be sure for any future debugging: the request parameter to this function is a WSGIRequest

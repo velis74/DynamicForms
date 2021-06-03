@@ -17,6 +17,9 @@ class ViewModeListSerializer(ViewModeBase):
         TABLE = auto()  # Render to full table with header, filter, rows
 
     # noinspection PySuperArguments,PyUnresolvedReferences
+    def __init__(self):
+        self.child = None
+
     @staticmethod
     def mixin_to_serializer(view_mode: 'ViewModeListSerializer.ViewMode', serializer: ListSerializer,
                             value: Optional[List[Dict]] = None):
@@ -54,6 +57,17 @@ class ViewModeListSerializer(ViewModeBase):
     @classmethod
     def get_reverse_url(cls, view_name, request):
         return reverse(view_name + '-list', format='json', request=request)
+
+    def apply_component_context(self, request, paginator):
+        # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
+        # this one will decorate existing instance with the appropriate values needed for rendering
+        # in all other respects, they are the same
+        self.child.apply_component_context(request, paginator)
+        self.view_mode = ViewModeListSerializer.ViewMode.TABLE
+        self.reverse_url = self.get_reverse_url(self.child.template_context['url_reverse'], request)
+        self.paginator = paginator
+        base_url = paginator.base_url.split('?', 1)
+        paginator.base_url = self.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
 
 
 # noinspection PyAbstractClass

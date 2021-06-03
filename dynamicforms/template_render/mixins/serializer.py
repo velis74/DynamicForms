@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
+from django.template import loader
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition
@@ -72,6 +73,11 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         """
         return self.view_mode in (ViewModeSerializer.ViewMode.TABLE_ROW, ViewModeSerializer.ViewMode.TABLE_HEAD)
 
+    def render_form(self: '_ViewModeBoundSerializer'):
+        template = loader.get_template('template_render/full_form.html')
+        context = dict(serializer=self, columns=self.render_fields)
+        return template.render(context)
+
     @property
     def render_fields(self: '_ViewModeBoundSerializer'):
         this = self
@@ -116,6 +122,8 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
             'dialog': self.get_dialog_def(),
             'detail_url': self.reverse_url,
         }
+        if not getattr(self, 'parent', None):
+            params['record_data'] = self.data
         return convert_to_json_if(params, output_json)
 
     def get_df_control_data(self: '_ViewModeBoundSerializer', row):
@@ -193,6 +201,17 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         paginator.base_url = ser.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
         ser.paginator = paginator
         return ser
+
+    def apply_component_context(self, request, paginator):
+        # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
+        # this one will decorate existing instance with the appropriate values needed for rendering
+        # in all other respects, they are the same
+
+        self.view_mode = ViewModeSerializer.ViewMode.FORM if not paginator else ViewModeSerializer.ViewMode.TABLE_ROW
+        self.reverse_url = self.get_reverse_url(
+            self.template_context['url_reverse'], request,
+            kwargs=dict(pk=self.data['id'] if not getattr(self, 'parent', None) else '--record_id--')
+        )
 
 
 # noinspection PyAbstractClass

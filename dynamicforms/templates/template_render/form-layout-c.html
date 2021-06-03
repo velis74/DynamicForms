@@ -1,7 +1,7 @@
 {% verbatim %}
 <script type="text/x-template" id="df-form-layout-template">
   <form :id="'form-' + uuid">
-    <df-form-row v-for="(row, idx) in def.rows" :key="idx" :columns="row" :data="data"/>
+    <df-form-row v-for="(row, idx) in def.rows" :key="idx" :columns="row" :data="record_data"/>
   </form>
 </script>
 {% endverbatim %}
@@ -13,7 +13,7 @@
     props: ['def', 'uuid', 'url'],
     data() {
       return {
-        data: {},
+        record_data: this.def.record_data || {},
       }
     },
   });
