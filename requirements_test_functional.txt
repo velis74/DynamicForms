@@ -2,3 +2,4 @@ selenium
 tox
 flake8
 isort
+parameterized

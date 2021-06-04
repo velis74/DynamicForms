@@ -1,20 +1,24 @@
 import time
 
 from django.urls import reverse
+from parameterized import parameterized
 
 from .selenium_test_case import WaitingStaticLiveServerTestCase
+from ..request_sync import RequestSyncMiddleware
+
 
 MAX_WAIT = 10
 
 
 class PageLoadFormTest(WaitingStaticLiveServerTestCase):
 
-    def test_validated_list(self):
-        self.browser.get(self.live_server_url + reverse('page-load-list', args=['html']))
-        tbody = self.browser.find_element_by_tag_name('tbody')
-        rows = tbody.find_elements_by_tag_name('tr')
-        new_num_elements = num_elements = len(rows)
-        self.assertTrue(num_elements > 0, 'Initial page load should contain data rows')
+    @parameterized.expand(['html', 'component'])
+    def test_validated_list(self, renderer):
+        with RequestSyncMiddleware.add_sync_url_mutex('page-load', 1):
+            self.browser.get(self.live_server_url + reverse('page-load-list', args=[renderer]))
+            tbody = self.browser.find_element_by_tag_name('tbody')
+            new_num_elements = num_elements = len(tbody.find_elements_by_tag_name('tr'))
+            self.assertEqual(num_elements, 30, 'Initial page load should contain 30 data rows')
 
         def load_next():
             nonlocal new_num_elements, num_elements
@@ -26,15 +30,21 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
                 new_num_elements = len(tbody.find_elements_by_tag_name('tr'))
 
         load_next()
-        self.assertGreater(new_num_elements, num_elements,
-                           'The page was supposed to load next page of elements in a second after initial load')
+        self.assertGreater(
+            new_num_elements, num_elements,
+            'The page was supposed to load next page of elements within a second after initial load'
+        )
 
         load_next()
-        self.assertEqual(new_num_elements, num_elements,
-                         'The page was supposed to stop loading following pages of elements after the initial addendum')
+        self.assertEqual(
+            new_num_elements, num_elements,
+            'The page was supposed to stop loading following pages of elements after the initial addendum'
+        )
 
         self.browser.execute_script('window.scrollBy(0, 50000);')
 
         load_next()
-        self.assertGreater(new_num_elements, num_elements,
-                           'The page was supposed to load next page of elements in a second after scrolling to bottom')
+        self.assertGreater(
+            new_num_elements, num_elements,
+            'The page was supposed to load next page of elements in a second after scrolling to bottom'
+        )

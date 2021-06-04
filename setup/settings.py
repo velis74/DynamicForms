@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 
+# Are we running unit tests
+TESTING = sys.argv[1:2] == ['test']
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,6 +55,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if TESTING:
+    MIDDLEWARE.insert(0, 'tests.request_sync.RequestSyncMiddleware')
 
 ROOT_URLCONF = 'setup.urls'
 
@@ -127,5 +133,5 @@ REST_FRAMEWORK = {
 DYNAMICFORMS = {
     # 'template': 'dynamicforms/jquery_ui/',
     'page_template': 'examples/page.html',
-    'testing': sys.argv[1:2] == ['test'],
+    'testing': TESTING,
 }

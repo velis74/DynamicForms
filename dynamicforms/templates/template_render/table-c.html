@@ -276,12 +276,14 @@
           res = rowsData.results;
           next = rowsData.next;
         }
-        let decorate = triggerRow => {
+        let decorate = rows => {
+          let triggerRow1 = rows[0]['id'];
+          let triggerRow2 = rows[rows.length - 1]['id'];
           res.getVisibilityHandler = rowId => {
-            return rowId == triggerRow ? {callback: res.loadMoreRows, once: true} : false;
+            return triggerRow1 == rowId || triggerRow2 == rowId ? {callback: res.loadMoreRows, once: true} : false;
           }
         };
-        decorate(res.length && next ? res[0]['id'] : null);
+        decorate(res.length && next ? res : null);
         res.loadMoreRows = (isVisible) => {
           if (!isVisible) return;
           self.loading = true;
@@ -301,7 +303,7 @@
               });
               self.data.rows.next = res.data.next;  // replace next so we can load another set of rows
               // finally create a new loadableRows so that it will load new rows based on this result set
-              decorate(res.data.results[0]['id']);
+              decorate(res.data.results.length && res.data.next ? res.data.results : null);
             })
             .catch(function (err) {
               console.log(err);
