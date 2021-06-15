@@ -5,6 +5,7 @@ from examples.models import AdvancedFields
 
 
 class WriteOnlyFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='write-only-fields')
     form_titles = {
         'table': 'Write only fields list',
         'new': 'New write only fields object',
@@ -20,7 +21,6 @@ class WriteOnlyFieldsSerializer(serializers.ModelSerializer):
 
 
 class WriteOnlyFieldsViewSet(ModelViewSet):
-    template_context = dict(url_reverse='write-only-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()

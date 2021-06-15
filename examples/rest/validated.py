@@ -8,6 +8,7 @@ from ..models import Validated
 
 
 class ValidatedSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='validated')
     form_titles = {
         'table': 'Validated list',
         'new': 'New validated object',
@@ -65,7 +66,5 @@ class ValidatedSerializer(serializers.ModelSerializer):
 
 
 class ValidatedViewSet(ModelViewSet):
-    template_context = dict(url_reverse='validated')
-
     queryset = Validated.objects.all()
     serializer_class = ValidatedSerializer

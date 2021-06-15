@@ -5,7 +5,61 @@ import typing
 import uuid
 
 from django.core.management.base import BaseCommand
-from rest_framework import fields, relations
+from rest_framework import serializers, fields, relations
+
+
+class ClassAssemblyDict:
+    """
+    Takes a dictionary with classes as keys.
+    Lookups against this object will traverse the object's inheritance hierarchy in method resolution order,
+    and assemble response from keys as defined in this dict. Any keys not found in higher MRO levels will be populated
+    from lower ones.
+    See e.g. EmailField and Field mappings below: EmailField will return a dict with three members,
+      two of them from Field mapping: dict(form='df-widget-input', input_type='email', table='df-tablecell-plaintext'),
+    raises a KeyError if nothing matches
+    """
+    def __init__(self, mapping):
+        self.mapping = mapping
+
+    def __getitem__(self, key):
+        base_class = key.__class__
+
+        res = dict()
+        for cls in reversed(inspect.getmro(base_class)):
+            if cls in self.mapping:
+                res.update(self.mapping[cls])
+        if res:
+            return res
+        raise KeyError('Class %s not found in lookup.' % base_class.__name__)
+
+    def __setitem__(self, key, value):
+        self.mapping[key] = value
+
+
+render_params = ClassAssemblyDict({
+    fields.Field: dict(form='df-widget-input', input_type='text', table='df-tablecell-plaintext'),
+    fields.EmailField: dict(input_type='email', table='df-tablecell-email'),
+    fields.URLField: dict(input_type='url', table='df-tablecell-link'),
+    fields.IntegerField: dict(input_type='number'),
+    fields.FloatField: dict(input_type='number', table='#df-tablecell-float', table_show_zeroes=True),
+    fields.DateTimeField: dict(input_type='datetime-local'),
+    fields.DateField: dict(input_type='date'),
+    fields.TimeField: dict(input_type='time'),
+    serializers.FileField: dict(input_type='file'),
+    fields.BooleanField: dict(form='df-widget-checkbox', table='df-tablecell-bool'),
+    fields.IPAddressField: dict(table='df-tablecell-ipaddr'),
+    fields.ChoiceField: dict(form='df-widget-select', multiple=False),
+    fields.MultipleChoiceField: dict(multiple=True),
+    relations.RelatedField: dict(form='df-widget-select', multiple=False),
+    relations.ManyRelatedField: dict(form='df-widget-select', multiple=True),
+    # TODO: The following two aren't taken care of yet for rendering in components
+    serializers.Serializer: dict(form='df-widget-fieldset'),
+    serializers.ListSerializer: dict(form='df-widget-list-fieldset'),
+    fields.ListField: dict(form='df-widget-list-field'),
+    fields.DictField: dict(form='df-widget-dict-field'),
+    fields.FilePathField: dict(form='df-widget-select', multiple=False),
+    fields.JSONField: dict(form='df-widget-textarea'),
+})
 
 
 class RTFField(object):

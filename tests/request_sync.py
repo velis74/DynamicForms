@@ -21,7 +21,7 @@ class RequestSyncMiddleware:
         pth = request.path
         while any(map(lambda mutex_item: process_mutex(pth, mutex_item[0], mutex_item[1]),
                       RequestSyncMiddleware.sync_url_mutexes.items())):
-            print('waiting for mutex to be removed...')
+            # print('waiting for mutex to be removed...')
             time.sleep(.1)
 
         response = self.get_response(request)

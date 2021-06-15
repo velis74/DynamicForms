@@ -208,7 +208,7 @@
         actions: new ActionsHandler(self.data.actions, self.showModal),
         rowProperties: self.data['row-properties'],
         loading: false,
-        noDataString: gettext('no data'),
+        noDataString: gettext('No data'),
         editModal: null,
         editDialogTitle: 'Test dialog',
         editingRowURL: '',
@@ -277,8 +277,11 @@
           next = rowsData.next;
         }
         let decorate = rows => {
-          let triggerRow1 = rows[0]['id'];
-          let triggerRow2 = rows[rows.length - 1]['id'];
+          let triggerRow1 = null, triggerRow2 = null;
+          if (rows && rows.length) {
+            triggerRow1 = rows[0]['id'];
+            triggerRow2 = rows[rows.length - 1]['id'];
+          }
           res.getVisibilityHandler = rowId => {
             return triggerRow1 == rowId || triggerRow2 == rowId ? {callback: res.loadMoreRows, once: true} : false;
           }

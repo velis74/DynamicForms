@@ -48,7 +48,12 @@ class ViewModeListSerializer(ViewModeBase):
 
     def component_params(self: '_ViewModeBoundListSerializer'):
         res = self.child.component_params(output_json=False)
-        res['rows'] = self.paginator.get_paginated_response(self.data).data
+
+        if self.paginator:
+            res['rows'] = self.paginator.get_paginated_response(self.data).data
+        else:
+            res['rows'] = dict(prev=None, next=None, results=self.data)
+
         res['list_url'] = self.reverse_url
         return convert_to_json_if(res, True)
 
@@ -66,8 +71,9 @@ class ViewModeListSerializer(ViewModeBase):
         self.view_mode = ViewModeListSerializer.ViewMode.TABLE
         self.reverse_url = self.get_reverse_url(self.child.template_context['url_reverse'], request)
         self.paginator = paginator
-        base_url = paginator.base_url.split('?', 1)
-        paginator.base_url = self.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
+        if paginator:
+            base_url = paginator.base_url.split('?', 1)
+            paginator.base_url = self.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
 
 
 # noinspection PyAbstractClass

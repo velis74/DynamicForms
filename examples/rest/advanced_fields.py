@@ -7,6 +7,7 @@ from .fields.df_file_field import DfFileField
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='advanced-fields')
     form_titles = {
         'table': 'Advanced fields list',
         'new': 'New advanced fields object',
@@ -97,7 +98,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
 
 class AdvancedFieldsViewset(ModelViewSet):
-    template_context = dict(url_reverse='advanced-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()

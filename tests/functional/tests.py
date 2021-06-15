@@ -6,6 +6,7 @@
 import os
 import time
 
+from parameterized import parameterized
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -110,8 +111,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def test_validated_list(self):
-        self.browser.get(self.live_server_url + '/validated.html')
+    @parameterized.expand(['html', 'component'])
+    def test_validated_list(self, renderer='html'):
+        self.browser.get(self.live_server_url + '/validated.' + renderer)
         # Go to validated html and check if there's a "+ Add" button
 
         try:
@@ -483,8 +485,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
-    def test_basic_fields(self):
-        self.browser.get(self.live_server_url + '/basic-fields.html')
+    @parameterized.expand(['html', 'component'])
+    def test_basic_fields(self, renderer):
+        self.browser.get(self.live_server_url + '/basic-fields.' + renderer)
         # Go to basic-fields html and check if there's a "+ Add" button
 
         try:
@@ -691,8 +694,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(errors[6].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
 
-    def test_advanced_fields(self):
-        self.browser.get(self.live_server_url + '/advanced-fields.html')
+    @parameterized.expand(['html', 'component'])
+    def test_advanced_fields(self, renderer):
+        self.browser.get(self.live_server_url + '/advanced-fields.' + renderer)
         # Go to advanced-fields html and check if there's a "+ Add" button
 
         try:
@@ -980,8 +984,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    def test_refresh_types_list(self):
-        self.browser.get(self.live_server_url + '/refresh-types.html')
+    @parameterized.expand(['html', 'component'])
+    def test_refresh_types_list(self, renderer):
+        self.browser.get(self.live_server_url + '/refresh-types.' + renderer)
 
         try:
             header = self.browser.find_element_by_class_name('card-header')
@@ -1042,9 +1047,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.add_refresh_types_record(4, 'Redirect')
         # Redirection to /validated.html defined in action happens
         redirect_url = self.get_current_url()
-        self.assertRegex(redirect_url, '/validated.html')
+        self.assertRegex(redirect_url, '/validated.' + renderer)
         # Back to /refresh-types.html
-        self.browser.get(self.live_server_url + '/refresh-types.html')
+        self.browser.get(self.live_server_url + '/refresh-types.' + renderer)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 7)
 
@@ -1091,9 +1096,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         del_btns[4].click()
         # Redirection to /validated.html defined in action happens
         redirect_url = self.get_current_url()
-        self.assertRegex(redirect_url, '/validated.html')
+        self.assertRegex(redirect_url, '/validated.' + renderer)
         # Back to /refresh-types.html
-        self.browser.get(self.live_server_url + '/refresh-types.html')
+        self.browser.get(self.live_server_url + '/refresh-types.' + renderer)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 3)
 
@@ -1110,69 +1115,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
 
-    def test_single_dialog(self):
-        self.browser.get(self.live_server_url + '/refresh-types.html')
-
-        hamburger = self.browser.find_element_by_id('hamburger')
-        hamburger.click()
-
-        pop_up_dialog = self.browser.find_element_by_link_text('Pop-up dialog')
-        pop_up_dialog.click()
-
-        dialog, modal_serializer_id = self.wait_for_modal_dialog()
-
-        # check if all fields are in the dialog and no excessive fields too
-        field_count = 0
-
-        form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
-        for container in containers:
-            container_id = container.get_attribute("id")
-            if container_id.startswith("container-"):
-                field_id = container_id.split('-', 1)[1]
-                label = container.find_element_by_id("label-" + field_id)
-                field = container.find_element_by_id(field_id)
-
-                field_count += 1
-
-                if label.text == "What should we say?":
-                    # Check if choice_field field is select2 element
-                    try:
-                        select2 = container.find_element_by_class_name("select2-field")
-                    except NoSuchElementException:
-                        select2 = None
-
-                    if select2:
-                        initial_choice = container.find_element_by_class_name("select2-selection__rendered")
-                        self.assertEqual(self.get_element_text(initial_choice), "Today is sunny")
-
-                        select2_options = select2.find_elements_by_tag_name("option")
-                        self.assertEqual(len(select2_options), 2)
-                        self.assertEqual(select2.get_attribute("name"), "test")
-                        self.assertEqual(self.get_tag_name(select2), "select")
-                        self.select_option_for_select2(container, field_id, text="Never-ending rain")
-                    else:
-                        select = Select(field)
-                        selected_options = select.all_selected_options
-                        self.assertEqual(len(selected_options), 1)
-                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(self.get_element_text(selected_options[0]), "Today is sunny")
-                        self.assertEqual(field.get_attribute("name"), "test")
-                        self.assertEqual(self.get_tag_name(field), "select")
-                        select.select_by_index(1)
-
-        try:
-            dialog.find_element_by_class_name("btn-primary").click()
-        except NoSuchElementException:
-            dialog.find_element_by_class_name("ui-button").click()
-
-        alert = self.get_alert(wait_time=15)
-        self.assertEqual(self.get_element_text(alert), 'Never-ending rain')
-        alert.accept()
-
-    def test_write_only_fields(self):
+    @parameterized.expand(['html', 'component'])
+    def test_write_only_fields(self, renderer):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
-        self.browser.get(self.live_server_url + '/write-only-fields.html')
+        self.browser.get(self.live_server_url + '/write-only-fields.' + renderer)
         table = self.get_table_body(whole_table=True)
         header = table.find_elements_by_css_selector('thead tr th')
         self.assertEqual(len(header), 3)
@@ -1187,8 +1133,9 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="regex_field"]')), 0)
         af.delete()
 
-    def test_choice_allow_tags_fields(self):
-        self.browser.get(self.live_server_url + '/choice-allow-tags-fields.html')
+    @parameterized.expand(['html', 'component'])
+    def test_choice_allow_tags_fields(self, renderer):
+        self.browser.get(self.live_server_url + '/choice-allow-tags-fields.' + renderer)
         try:
             header = self.browser.find_element_by_class_name('card-header')
         except NoSuchElementException:

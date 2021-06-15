@@ -48,6 +48,7 @@
     data() {
       return {
         visible: false,
+        org_overflow: null,
       };
     },
     computed: {
@@ -62,8 +63,8 @@
       this.setDialog(this);
     },
     methods: {
-      show: function show() { this.visible = true; },
-      hide: function hide() { this.visible = false; },
+      show: function show() { this.saveOrgOverflow(); this.visible = true; },
+      hide: function hide() { this.restoreOrgOverflow(); this.visible = false; },
       gettext: (str) => { return django.gettext(str); },
       startTransitionModal() {
         this.$el.querySelector('#backdrop').classList.toggle('d-block');
@@ -72,6 +73,18 @@
       endTransitionModal() {
         this.$el.querySelector('#backdrop').classList.toggle("show");
         this.$el.querySelector('#modal').classList.toggle("show");
+      },
+      saveOrgOverflow: function saveOrgOverflow() {
+        if (this.visible) return;
+        this.org_overflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+      },
+      restoreOrgOverflow: function saveOrgOverflow() {
+        if (!this.visible) return;
+        if (this.org_overflow)
+          document.body.style.overflow = this.org_overflow;
+        else
+          document.body.style.removeProperty('overflow');
       }
     },
   });

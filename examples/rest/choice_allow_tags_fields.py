@@ -5,6 +5,7 @@ from examples.models import AdvancedFields
 
 
 class ChoiceAllowTagsFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='choice-allow-tags-fields')
     form_titles = {
         'table': 'Choices allow tags list',
         'new': 'New Choices allow tags fields object',
@@ -40,7 +41,6 @@ class ChoiceAllowTagsFieldsSerializer(serializers.ModelSerializer):
 
 
 class ChoiceAllowTagsFieldsViewSet(ModelViewSet):
-    template_context = dict(url_reverse='choice-allow-tags-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()

@@ -7,6 +7,7 @@ from ..models import RefreshType
 
 
 class RefreshTypesSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='refresh-types')
     form_titles = {
         'table': 'Refresh type list',
         'new': 'New refresh type object',
@@ -89,7 +90,5 @@ class RefreshTypesSerializer(serializers.ModelSerializer):
 
 
 class RefreshTypesViewSet(ModelViewSet):
-    template_context = dict(url_reverse='refresh-types')
-
     queryset = RefreshType.objects.all()
     serializer_class = RefreshTypesSerializer

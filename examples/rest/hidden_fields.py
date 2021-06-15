@@ -5,6 +5,7 @@ from ..models import HiddenFields
 
 
 class HiddenFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='hidden-fields')
     form_titles = {
         'table': 'Hidden fields list',
         'new': 'New hidden fields object',
@@ -24,7 +25,5 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
 
 
 class HiddenFieldsViewSet(ModelViewSet):
-    template_context = dict(url_reverse='hidden-fields')
-
     queryset = HiddenFields.objects.all()
     serializer_class = HiddenFieldsSerializer

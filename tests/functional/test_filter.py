@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import localize
+from parameterized import parameterized
 from selenium.webdriver.common.keys import Keys
 
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
@@ -26,8 +27,10 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         except:
             return False
 
-    def test_filter_list(self):
-        self.browser.get(self.live_server_url + reverse('filter-list', args=['html']))
+    @parameterized.expand(['html', 'component'])
+    def test_filter_list(self, renderer):
+        # TODO: this test, naturally, fails because we don't have filter support yet in component render
+        self.browser.get(self.live_server_url + reverse('filter-list', args=[renderer]))
 
         filter_btn = None
         for button in self.browser.find_elements_by_css_selector('.dynamicforms-actioncontrol button'):

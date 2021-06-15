@@ -126,7 +126,9 @@
 
   function singleDialog() {
     togglemenu();
-    dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
+    let format = window.singleDialogFormat || 'html';
+    if (format == 'html') dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
+    else dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='component' %}");
   }
 
   function customSingleDialogBtn() {

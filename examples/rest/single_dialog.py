@@ -9,6 +9,7 @@ from dynamicforms.progress import get_progress_key, set_progress_comment, set_pr
 
 
 class SingleDialogSerializer(serializers.Serializer):
+    template_context = dict(url_reverse='single-dialog', dialog_classes='modal-lg', dialog_header_classes='bg-info')
     form_titles = {
         'table': '',
         'new': 'Choose a value',
@@ -33,8 +34,6 @@ class SingleDialogSerializer(serializers.Serializer):
 
 class SingleDialogViewSet(viewsets.SingleRecordViewSet):
     serializer_class = SingleDialogSerializer
-
-    template_context = dict(url_reverse='single-dialog', dialog_classes='modal-lg', dialog_header_classes='bg-info')
 
     def new_object(self):
         return dict(test=None)

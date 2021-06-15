@@ -4,6 +4,7 @@ from ..models import Relation
 
 
 class RelationSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='relation')
     form_titles = {
         'table': 'Relation fields list',
         'new': 'New relation object',
@@ -18,7 +19,6 @@ class RelationSerializer(serializers.ModelSerializer):
 
 
 class RelationViewset(ModelViewSet):
-    template_context = dict(url_reverse='relation')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = Relation.objects.all()

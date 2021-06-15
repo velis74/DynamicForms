@@ -208,10 +208,13 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         # in all other respects, they are the same
 
         self.view_mode = ViewModeSerializer.ViewMode.FORM if not paginator else ViewModeSerializer.ViewMode.TABLE_ROW
-        self.reverse_url = self.get_reverse_url(
-            self.template_context['url_reverse'], request,
-            kwargs=dict(pk=self.data['id'] if not getattr(self, 'parent', None) else '--record_id--')
-        )
+        if not self.parent and 'id' not in self.data:
+            self.reverse_url = self.get_reverse_url(self.template_context['url_reverse'], request, kwargs=dict(pk=None))
+        else:
+            self.reverse_url = self.get_reverse_url(
+                self.template_context['url_reverse'], request,
+                kwargs=dict(pk=self.data['id'] if not getattr(self, 'parent', None) else '--record_id--')
+            )
 
 
 # noinspection PyAbstractClass

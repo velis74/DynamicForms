@@ -271,8 +271,11 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             return table
 
         while True:
-            tbody = table.find_element_by_tag_name('tbody')
-            rows = tbody.find_elements_by_tag_name('tr')
+            rows = table.find_element_by_tag_name('tbody').find_elements_by_tag_name('tr')
+            if not rows:
+                # component renders "no data" in tfoot
+                rows = table.find_element_by_tag_name('tfoot').find_elements_by_tag_name('tr')
+
             if expected_rows is not None and len(rows) != expected_rows:
                 self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')
                 time.sleep(0.01)
