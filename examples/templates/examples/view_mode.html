@@ -1,8 +1,9 @@
 {% extends 'examples/base.html' %}
+{% load dynamicforms %}
 {% block head_extra %}
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/vue-observe-visibility/dist/vue-observe-visibility.min.js"></script><!-- requires intersection polyfill -->
+  <script src="https://unpkg.com/vue-observe-visibility/dist/vue-observe-visibility.min.js" crossorigin="anonymous" type="application/javascript"></script><!-- requires intersection polyfill -->
   <script src="{% url 'javascript-catalog' %}"></script>
 
   <style>{% include 'template_render/table.css' %}</style>
@@ -12,7 +13,11 @@
 
   <div id="app">
     {{ page_data }}
+
+    {% include_modal_handler %}
   </div>
+
+  {% include 'template_render/modal-handler-c.html' %}
 
   {% include 'template_render/actions.html' %}
   {% include 'template_render/table-c.html' %}

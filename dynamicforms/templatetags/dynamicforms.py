@@ -472,3 +472,11 @@ def do_extendtemplateblock(parser, token):
     parser.delete_first_token()
 
     return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), True)
+
+
+@register.simple_tag()
+def include_modal_handler():
+    template = get_template('template_render/modal_handler_wrapper.html')
+    content = template.render(dict())
+    content = mark_safe(content)
+    return content
