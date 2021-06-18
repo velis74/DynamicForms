@@ -74,8 +74,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-                display_table or display
-                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            display_table or display
+            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -85,6 +85,10 @@ class RenderMixin(object):
         render_params = render_params or {}
         render_params.setdefault('form', 'df-widget-input')
         render_params.setdefault('table', 'df-tablecell-plaintext')
+        render_params.setdefault('input_type', 'text')
+        render_params.setdefault('class', 'form-control')
+        render_params.setdefault('label_after_element', False)
+        render_params.setdefault('container_class', 'form-group')
         self.render_params = render_params
 
     @property

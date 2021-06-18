@@ -24,6 +24,10 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('input_type', 'checkbox')
+        kwargs['render_params'].setdefault('label_after_element', True)
+        kwargs['render_params'].setdefault('class', 'form-check-input')
+        kwargs['render_params'].setdefault('container_class', 'form-check')
         super().__init__(**kwargs)
 
 
@@ -38,6 +42,10 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('input_type', 'checkbox')
+        kwargs['render_params'].setdefault('label_after_element', True)
+        kwargs['render_params'].setdefault('class', 'form-check-input')
+        kwargs['render_params'].setdefault('container_class', 'form-check')
         super().__init__(**kwargs)
 
 
@@ -65,6 +73,7 @@ class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('input_type', 'email')
         kwargs['render_params'].setdefault('table', 'df-tablecell-email')
         super().__init__(**kwargs)
 
@@ -107,6 +116,8 @@ class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('table', 'df-tablecell-link')
+        kwargs['render_params'].setdefault('input_type', 'url')
+        kwargs['render_params'].setdefault('pattern', 'https?://.*')
         super().__init__(**kwargs)
 
 
@@ -146,6 +157,8 @@ class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
                  alignment: FieldAlignment = FieldAlignment.RIGHT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('input_type', 'number')
         super().__init__(**kwargs)
 
 
@@ -161,6 +174,8 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
+        kwargs['render_params'].setdefault('input_type', 'number')
+        kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
 
@@ -175,6 +190,11 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
+        kwargs['render_params'].setdefault('input_type', 'number')
+        kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
 
@@ -189,6 +209,8 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('input_type', 'datetime-local')
         super().__init__(**kwargs)
 
 
@@ -204,6 +226,8 @@ class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         self.time_step = kw.pop('time_step', None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('input_type', 'date')
         super().__init__(**kwargs)
 
 
@@ -219,6 +243,8 @@ class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         self.time_step = kw.pop('time_step', None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('input_type', 'time')
         super().__init__(**kwargs)
 
 

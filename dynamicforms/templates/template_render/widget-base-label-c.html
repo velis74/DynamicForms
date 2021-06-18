@@ -1,0 +1,11 @@
+{% verbatim %}
+<script type="text/x-template" id="df-widget-base-label-template">
+     <label :for="def.uuid" :def="def" :data="data" v-if="def.label">{{ def.label }}</label>
+</script>
+{% endverbatim %}
+<script>
+  Vue.component('df-widget-base-label', {
+    template: `#df-widget-base-label-template`,
+    props:    ['def', 'data'],
+  });
+</script>

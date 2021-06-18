@@ -18,6 +18,7 @@ class ClassAssemblyDict:
       two of them from Field mapping: dict(form='df-widget-input', input_type='email', table='df-tablecell-plaintext'),
     raises a KeyError if nothing matches
     """
+
     def __init__(self, mapping):
         self.mapping = mapping
 
@@ -46,7 +47,7 @@ render_params = ClassAssemblyDict({
     fields.DateField: dict(input_type='date'),
     fields.TimeField: dict(input_type='time'),
     serializers.FileField: dict(input_type='file'),
-    fields.BooleanField: dict(form='df-widget-checkbox', table='df-tablecell-bool'),
+    fields.BooleanField: dict(table='df-tablecell-bool'),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr'),
     fields.ChoiceField: dict(form='df-widget-select', multiple=False),
     fields.MultipleChoiceField: dict(multiple=True),
@@ -87,13 +88,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                        obj.__name__.endswith('Field'):
+                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                    obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -160,9 +161,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                    (parm.kind == parm.POSITIONAL_ONLY or
-                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                    ):
+                                (parm.kind == parm.POSITIONAL_ONLY or
+                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 
@@ -300,19 +301,47 @@ class Command(BaseCommand):
                 if issubclass(field, (fields.BooleanField, fields.NullBooleanField)):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-bool')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'checkbox')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('label_after_element', True)", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('class', 'form-check-input')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('container_class', 'form-check')", file=output)
+                elif issubclass(field, fields.IntegerField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'number')", file=output)
                 elif issubclass(field, fields.FloatField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', '#df-tablecell-float')", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table_show_zeroes', True)", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'number')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('step', '0.1')", file=output)
+                elif issubclass(field, fields.DecimalField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table', '#df-tablecell-float')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('table_show_zeroes', True)", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'number')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('step', '0.1')", file=output)
                 elif issubclass(field, fields.URLField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-link')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'url')", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('pattern', 'https?://.*')", file=output)
                 elif issubclass(field, fields.EmailField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'email')", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-email')", file=output)
                 elif issubclass(field, fields.IPAddressField):
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     print(indt(8) + "kwargs['render_params'].setdefault('table', 'df-tablecell-ipaddr')", file=output)
+                elif issubclass(field, fields.DateField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'date')", file=output)
+                elif issubclass(field, fields.DateTimeField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'datetime-local')", file=output)
+                elif issubclass(field, fields.TimeField):
+                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                    print(indt(8) + "kwargs['render_params'].setdefault('input_type', 'time')", file=output)
+
 
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 
