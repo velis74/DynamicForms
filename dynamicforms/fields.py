@@ -23,10 +23,11 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
-        kwargs['render_params'].setdefault('label_after_element', True)
-        kwargs['render_params'].setdefault('class', 'form-check-input')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('label_after_element', 'True')
+        kwargs['render_params'].setdefault('field_class', 'form-check-input')
         kwargs['render_params'].setdefault('container_class', 'form-check')
         super().__init__(**kwargs)
 
@@ -41,10 +42,11 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
-        kwargs['render_params'].setdefault('label_after_element', True)
-        kwargs['render_params'].setdefault('class', 'form-check-input')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('label_after_element', 'True')
+        kwargs['render_params'].setdefault('field_class', 'form-check-input')
         kwargs['render_params'].setdefault('container_class', 'form-check')
         super().__init__(**kwargs)
 
@@ -59,6 +61,10 @@ class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -73,6 +79,7 @@ class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'email')
         kwargs['render_params'].setdefault('table', 'df-tablecell-email')
         super().__init__(**kwargs)
@@ -88,6 +95,10 @@ class RegexField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -101,6 +112,10 @@ class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -115,8 +130,9 @@ class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('table', 'df-tablecell-link')
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'url')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-link')
         kwargs['render_params'].setdefault('pattern', 'https?://.*')
         super().__init__(**kwargs)
 
@@ -130,6 +146,10 @@ class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -144,7 +164,12 @@ class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpText
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-ipaddr')
+        kwargs['render_params'].setdefault('minlength', '7')
+        kwargs['render_params'].setdefault('maxlength', '15')
+        kwargs['render_params'].setdefault('size', '15')
         super().__init__(**kwargs)
 
 
@@ -158,7 +183,9 @@ class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -172,9 +199,10 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', True)
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
+        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
+        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
@@ -191,9 +219,10 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', True)
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
+        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
+        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
@@ -210,7 +239,9 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'datetime-local')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -227,7 +258,9 @@ class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'date')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -244,7 +277,9 @@ class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'time')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -257,6 +292,10 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -270,6 +309,11 @@ class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoice
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -283,6 +327,11 @@ class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, Sing
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'True')
         super().__init__(**kwargs)
 
 
@@ -297,6 +346,11 @@ class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoi
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -309,6 +363,10 @@ class FileField(FileFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'file')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -321,6 +379,10 @@ class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'file')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -333,6 +395,10 @@ class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-list-field')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -345,6 +411,10 @@ class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-dict-field')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -359,6 +429,10 @@ if hasattr(fields, 'HStoreField'):
                      render_params: Optional[Dict] = None, **kw):
             kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
             kwargs.update(kw)
+            kwargs['render_params'] = kwargs.get('render_params', None) or {}
+            kwargs['render_params'].setdefault('form', 'df-widget-dict-field')
+            kwargs['render_params'].setdefault('input_type', 'text')
+            kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
             super().__init__(**kwargs)
 
 
@@ -371,6 +445,10 @@ class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-textarea')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -387,6 +465,10 @@ class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnl
         read_only = True  # NOQA
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -403,6 +485,10 @@ class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         display = DisplayMode.HIDDEN  # NOQA
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -417,6 +503,10 @@ class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -430,6 +520,10 @@ class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         super().__init__(**kwargs)
 
 
@@ -444,6 +538,11 @@ class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldH
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -458,6 +557,11 @@ class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, Fi
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -472,6 +576,11 @@ class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, F
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -486,6 +595,11 @@ class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, 
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -500,6 +614,11 @@ class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'False')
         super().__init__(**kwargs)
 
 
@@ -513,6 +632,11 @@ class ManyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', 'True')
         super().__init__(**kwargs)
 
 
