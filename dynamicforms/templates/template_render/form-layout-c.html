@@ -1,7 +1,7 @@
 {% verbatim %}
 <script type="text/x-template" id="df-form-layout-template">
   <form :id="'form-' + uuid">
-    <df-form-row v-for="(row, idx) in def.rows" :key="idx" :columns="row" :data="record_data"/>
+    <df-form-row v-for="(row, idx) in definition.rows" :key="idx" :columns="row" :data="record_data"/>
   </form>
 </script>
 {% endverbatim %}
@@ -10,10 +10,12 @@
   //
   Vue.component('df-form-layout', {
     template: `#df-form-layout-template`,
-    props: ['def', 'uuid', 'url'],
+    props: ['data', 'def', 'uuid', 'url'],
     data() {
+      const definition = this.data.dialog || this.def;
       return {
-        record_data: this.def.record_data || {},
+        definition: definition,
+        record_data: definition.record_data || {},
       }
     },
   });

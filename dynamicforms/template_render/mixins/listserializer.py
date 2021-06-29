@@ -46,7 +46,7 @@ class ViewModeListSerializer(ViewModeBase):
     def render_actions(self: '_ViewModeBoundListSerializer'):
         return self.child.render_actions
 
-    def component_params(self: '_ViewModeBoundListSerializer'):
+    def component_params(self: '_ViewModeBoundListSerializer', output_json: bool = True):
         res = self.child.component_params(output_json=False)
 
         if self.paginator:
@@ -55,7 +55,7 @@ class ViewModeListSerializer(ViewModeBase):
             res['rows'] = dict(prev=None, next=None, results=self.data)
 
         res['list_url'] = self.reverse_url
-        return convert_to_json_if(res, True)
+        return convert_to_json_if(res, output_json)
 
     uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
 

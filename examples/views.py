@@ -11,6 +11,6 @@ def index(request):
 
 def view_mode(request):
     return render(request, "examples/view_mode.html", dict(
-        page_data=BasicFieldsSerializer.get_component_context(request, BasicFields.objects.all()),
+        serializer=BasicFieldsSerializer.get_component_context(request, BasicFields.objects.all()),
         # page_data = PageLoadSerializer.get_component_context(request, PageLoad.objects.all()),
     ))

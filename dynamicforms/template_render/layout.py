@@ -115,6 +115,7 @@ class Layout(object):
             if row:
                 default_layout.rows.append(Row(*row))
             res['rows'] += default_layout.as_component_def(None)['rows']
+            res['actions'] = serializer.render_actions.form.as_action_def()
         return res
 
 

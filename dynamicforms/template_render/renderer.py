@@ -10,13 +10,21 @@ class ComponentHTMLRenderer(TemplateHTMLRenderer):
         return super().render(data, accepted_media_type, renderer_context)
 
     def get_template_names(self, response, view):
-        return ['examples/view_mode.html']
+        request = view.request
+        render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
+        if render_type == 'page':
+            return ['examples/view_mode.html']
+        elif render_type == 'dialog':
+            response['Content-Type'] = 'application/json'  # response.accepted_media_type and .content_type don't work
+            return ['template_render/render_dialog.json']
+        else:
+            raise NotImplementedError(f'ComponentHTMLRenderer doesn\'t know how to render {render_type}')
         # return super().get_template_names(response, view)
 
     def get_template_context(self, data, renderer_context):
         if isinstance(data, dict) and 'next' in data and 'results' in data and \
                 isinstance(data['results'], (ReturnList, ReturnDict)):
-            return dict(page_data=data['results'].serializer)
+            return dict(serializer=data['results'].serializer)
         if isinstance(data, (ReturnList, ReturnDict)):
-            return dict(page_data=data.serializer)
+            return dict(serializer=data.serializer)
         return super().get_template_context(data, renderer_context)

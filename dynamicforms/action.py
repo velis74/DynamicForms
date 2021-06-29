@@ -10,7 +10,7 @@ from .settings import DYNAMICFORMS
 
 class ActionBase(object):
 
-    def __init__(self, action_js: str, name: str, serializer: Serializer = None):
+    def __init__(self, action_js: Union[str, bool], name: str, serializer: Serializer = None):
         """
         :param action_js: JavaScript to execute when action is run
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
@@ -52,6 +52,9 @@ class ActionBase(object):
             string = string.replace(key, val)
         return string
 
+    def as_component_def(self):
+        return {k: getattr(self, k) for k in ('name', 'action_js')}
+
 
 class RenderableActionMixin(object):
     """
@@ -71,6 +74,9 @@ class RenderableActionMixin(object):
         self.title = title
         self.icon = icon
         self.btn_classes = btn_classes
+
+    def as_component_def(self):
+        return dict(label=self.label, title=self.title, icon=self.icon, classes=self.btn_classes)
 
 
 class TablePosition(IntEnum):
@@ -114,6 +120,12 @@ class TableAction(ActionBase, RenderableActionMixin):
         if self.position in (TablePosition.HEADER, TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
             return self.name, None
         return self.name, {}
+
+    def as_component_def(self):
+        res = dict(position=self.position.name, field_name=self.field_name)
+        res.update(ActionBase.as_component_def(self))
+        res.update(RenderableActionMixin.as_component_def(self))
+        return res
 
     def render(self, serializer: Serializer, **kwds):
         ret = rowclick = rowrclick = ''
@@ -192,6 +204,11 @@ class FieldChangeAction(ActionBase):
         if serializer:
             self.tracked_fields = [self._resolve_reference(f) for f in self.tracked_fields]
 
+    def as_component_def(self):
+        res = dict(tracked_fields=list(self.tracked_fields))
+        res.update(ActionBase.as_component_def(self))
+        return res
+
     def _resolve_reference(self, ref):
         from .mixins import RenderMixin
 
@@ -251,7 +268,7 @@ class FormButtonTypes(IntEnum):
     CUSTOM = 3
 
 
-class FormButtonAction(ActionBase):
+class FormButtonAction(ActionBase, RenderableActionMixin):
     DEFAULT_LABELS = {
         FormButtonTypes.CANCEL: _('Cancel'),
         FormButtonTypes.SUBMIT: _('Save changes'),
@@ -260,11 +277,13 @@ class FormButtonAction(ActionBase):
 
     def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
                  button_is_primary: bool = None, positions: List[str] = None,
-                 name: Union[str, None] = None, serializer: Serializer = None):
-        super().__init__(action_js or False, name, serializer)
+                 name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None):
+        ActionBase.__init__(self, action_js or False, name, serializer)
+        title=label
+        label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
+        RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
         self.uuid = uuid_module.uuid1()
         self.btn_type = btn_type
-        self.label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         self.positions = positions or ['dialog', 'form']
 
         if button_is_primary is None:
@@ -277,6 +296,12 @@ class FormButtonAction(ActionBase):
                else DYNAMICFORMS.form_button_classes_secondary) + ' '
             + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
         )
+
+    def as_component_def(self):
+        res = dict(uuid=str(self.uuid), type=self.btn_type.name, positions=list(self.positions))
+        res.update(ActionBase.as_component_def(self))
+        res.update(RenderableActionMixin.as_component_def(self))
+        return res
 
     def copy_and_resolve_reference(self, serializer):
         return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.action_js, self.button_is_primary,
