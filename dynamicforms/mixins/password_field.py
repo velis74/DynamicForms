@@ -9,6 +9,7 @@ class PasswordFieldMixin(object):
         if value:
             self.display_table = 'DisplayMode.SUPRESS'
             self.style.update(input_type='password')
+            self.render_params['form'] = 'df-widget-password'
         else:
             try:
                 self.style['input_type']
