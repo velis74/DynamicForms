@@ -3,7 +3,7 @@
 {% field_to_serializer_and_data field %}
 {% get_data_template as data_template %}
 
-<div class="{{ DYNAMICFORMS.bs_card_class }} form-group">
+<div class="{{ DYNAMICFORMS.bs_card_class }} form-group" id="container-{{ field.uuid }}">
   <div class="{{ DYNAMICFORMS.bs_card_header }}">
     {{ field.label }}
   </div>
