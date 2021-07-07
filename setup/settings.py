@@ -29,6 +29,23 @@ SECRET_KEY = '7*jikkyt=9!1n-p03id76ki_j15vkif$#^z@gl0!))eukn0n!r'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ALLOW_CREDENTIALS = DEBUG
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-pagination',
+    'x-viewmode',
+    'x-df-render-type',
+]
 
 # Application definition
 
@@ -44,11 +61,13 @@ INSTALLED_APPS = [
     'dynamicforms',
     'dynamicforms_dev',
     'examples',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

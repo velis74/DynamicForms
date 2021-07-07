@@ -18,3 +18,5 @@ media
 /node_modules
 /package-lock.json
 /dynamicforms/static/ckeditor5/
+/dynamicforms/df-vue-components/node_modules/
+/dynamicforms/df-vue-components/package-lock.json

@@ -1,0 +1,37 @@
+<template>
+  <input v-if="isHidden" type="hidden" :name="def.field_name" :value="data[def.field_name]"/>
+  <div v-else :id="'container-' + def.uuid" :class="def.render_params.container_class">
+    <dfwidgetbaselabel v-if="labelAfterElement === false" v-bind:data="data" v-bind:def="def">
+    </dfwidgetbaselabel>
+    <slot name="input"></slot>
+    <dfwidgetbaselabel v-if="labelAfterElement" v-bind:data="data" v-bind:def="def">
+    </dfwidgetbaselabel>
+    <slot name="help"><small v-if="def.help_text" :id="def.field_name + '-help'"
+                             class="form-text text-muted">{{ def.help_text }}</small></slot>
+  </div>
+</template>
+
+<script>
+import DisplayMode from '@/logic/displayMode';
+import dfwidgetbaselabel from '@/components/bootstrap/widget/dfwidgetbaselabel.vue';
+
+export default {
+  name: 'dfwidgetbase',
+  props: ['def', 'data'],
+  computed: {
+    isHidden() {
+      return this.def.display === DisplayMode.HIDDEN;
+    },
+    labelAfterElement() {
+      return this.def.render_params.label_after_element;
+    },
+  },
+  components: {
+    dfwidgetbaselabel,
+  },
+};
+</script>
+
+<style scoped>
+
+</style>
