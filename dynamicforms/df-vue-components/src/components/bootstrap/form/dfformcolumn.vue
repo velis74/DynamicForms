@@ -26,6 +26,7 @@
 import DisplayMode from '@/logic/displayMode';
 import dfwidgetinput from '@/components/bootstrap/widget/dfwidgetinput.vue';
 import dfwidgetpassword from '@/components/bootstrap/widget/dfwidgetpassword.vue';
+import dfwidgetckeditor from '@/components/bootstrap/widget/dfwidgetckeditor.vue';
 
 export default {
   name: 'dfformcolumn',
@@ -41,6 +42,7 @@ export default {
   components: {
     dfwidgetinput,
     dfwidgetpassword,
+    dfwidgetckeditor,
   },
 };
 </script>
