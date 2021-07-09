@@ -11,6 +11,8 @@ class RTFFieldMixin(object):
         self.parser = RTFFieldHTMLParser(max_lines=self.max_lines, max_line_length=self.max_line_length)
 
     def to_representation(self, instance, row_data=None):
+        self.style.update(input_type='input')
+        self.render_params['form'] = 'df-widget-ckeditor'
         if not self.parent.is_filter:
             self.style.update({'base_template': 'rtf_field.html'})
         if self.is_rendering_to_list and not self.parent.is_filter and self.parse:
