@@ -49,7 +49,6 @@ export default {
       return '#df-modal-handler';
     },
     currentDialog() {
-      console.log(this.dialogs);
       const res = this.dialogs.length ? this.dialogs[this.dialogs.length - 1] : null;
       // eslint-disable-next-line no-plusplus,vue/no-side-effects-in-computed-properties
       if (res) res.uniqId = res.uniqId || this.uniqIdCounter++;
@@ -75,7 +74,6 @@ export default {
       return this.currentDialog ? this.currentDialog.uniqId : null;
     },
     isComponent() {
-      console.log(this.currentDialog);
       return this.currentDialog ? this.currentDialog.body.component
         && this.currentDialog.body.data : false;
     },
@@ -124,7 +122,6 @@ export default {
   },
   methods: {
     show: function show() {
-      console.log(this.dialogs, 'show', this.body);
       if (!this.initialEventAssignDone) {
         // created is too soon. if we try to do this there, the dialog won't even show.
         this.initialEventAssignDone = true;

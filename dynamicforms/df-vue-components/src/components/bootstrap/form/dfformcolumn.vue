@@ -27,13 +27,11 @@ import DisplayMode from '@/logic/displayMode';
 import dfwidgetinput from '@/components/bootstrap/widget/dfwidgetinput.vue';
 import dfwidgetpassword from '@/components/bootstrap/widget/dfwidgetpassword.vue';
 import dfwidgetckeditor from '@/components/bootstrap/widget/dfwidgetckeditor.vue';
+import dfwidgetselect from '@/components/bootstrap/widget/dfwidgetselect.vue';
 
 export default {
   name: 'dfformcolumn',
   props: ['def', 'data'],
-  created() {
-    // console.log(this.def, this.data, 5678);
-  },
   computed: {
     isGroup() { return this.def.type === 'group'; },
     isHidden() { return this.def.field.display === DisplayMode.HIDDEN; },
@@ -43,6 +41,7 @@ export default {
     dfwidgetinput,
     dfwidgetpassword,
     dfwidgetckeditor,
+    dfwidgetselect,
   },
 };
 </script>

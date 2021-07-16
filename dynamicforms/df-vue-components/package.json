@@ -18,6 +18,7 @@
     "jquery": "^3.6.0",
     "lodash": "^4.17.15",
     "popper.js": "^1.16.1",
+    "select2": "^4.1.0-rc.0",
     "vue": "^2.6.11",
     "vue-observe-visibility": "^1.0.0",
     "webpack": "^4.46.0"

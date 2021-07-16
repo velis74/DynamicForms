@@ -16,7 +16,7 @@
 import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
 
 export default {
-  name: 'widgetinput',
+  name: 'dfwidgetinput',
   props: ['def', 'data'],
   components: {
     dfwidgetbase,

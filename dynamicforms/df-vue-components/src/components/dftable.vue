@@ -74,7 +74,6 @@ export default {
       window.setTimeout(() => {
         // if it takes more than 250ms to load the new records, clear existing ones.
         // don't do it before to reduce flicker
-        console.log('reset');
         // if (this.loading) this.rows = []; // clear
         // existing rows,
         // we're making a full refresh
@@ -88,7 +87,6 @@ export default {
       }).then((res) => {
         // call api and set data as response, when data is set component is re-rendered
         this.rows = res.data;
-        // console.log(this.loadableRows(res.data), 666);
         // this.rows = this.loadableRows(res.data);
       }).catch((err) => {
         console.error(err);
@@ -154,7 +152,6 @@ export default {
         this.editingRowURL = this.detail_url.replace(
           '--record_id--', row.id,
         ).replace('.json', '.component');
-        console.log(this.editingRowURL, 'edit -url');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.new;
