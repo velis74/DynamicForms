@@ -25,7 +25,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
 
     boolean_field = fields.BooleanField()
     nullboolean_field = fields.NullBooleanField()
-    char_field = fields.CharField()
+    char_field = fields.MultipleChoiceField(choices=(('a', 'aaa'), ('b', 'bbb')))
     email_field = fields.EmailField()
     slug_field = fields.SlugField()
     url_field = fields.URLField()

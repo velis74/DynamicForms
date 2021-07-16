@@ -1,7 +1,11 @@
 <template>
   <dfwidgetbase :def="def" :data="data">
     <select slot="input" class="form-control" :id="id" :name="name"
-            :disabled="disabled" :required="required"></select>
+            :disabled="disabled" :required="required">
+      <option selected="selected">orange</option>
+      <option>white</option>
+      <option>purple</option>
+    </select>
   </dfwidgetbase>
 </template>
 
@@ -39,20 +43,6 @@ export default {
       required: true,
     },
   },
-  watch: {
-    options: {
-      handler(val) {
-        this.setOption(val);
-      },
-      deep: true,
-    },
-    modelValue: {
-      handler(val) {
-        this.setValue(val);
-      },
-      deep: true,
-    },
-  },
   methods: {
     setOption(val = []) {
       this.select2.empty();
@@ -60,6 +50,8 @@ export default {
         placeholder: this.placeholder,
         ...this.settings,
         data: val,
+        dropdownParent: $('#df-modal-handler'),
+        tags: true,
       });
       this.setValue(this.modelValue);
     },
@@ -73,24 +65,63 @@ export default {
     },
   },
   mounted() {
+    this.options = [{
+      id: 1,
+      text: 'Option 1',
+    },
+    {
+      id: 2,
+      text: 'Option 2',
+    }];
     this.select2 = $(this.$el)
       .find('select')
       .select2({
         placeholder: this.placeholder,
         ...this.settings,
         data: this.options,
-      })
-      .on('select2:select select2:unselect', (ev) => {
+        tags: true,
+        dropdownParent: $('#df-modal-handler'),
+      }).on('select2:select select2:unselect', (ev) => {
         this.$emit('update:modelValue', this.select2.val());
         this.$emit('select', ev.params.data);
       });
     this.setValue(this.modelValue);
+
+    setTimeout(() => {
+      this.options = [{
+        id: 6,
+        text: 'Option 6',
+      },
+      {
+        id: 5,
+        text: 'Option 5',
+      },
+      {
+        id: 7,
+        text: 'Option 7',
+      }];
+      this.modelValue = 5;
+    }, 3000);
   },
   beforeUnmount() {
     this.select2.select2('destroy');
   },
   components: {
     dfwidgetbase,
+  },
+  watch: {
+    options: {
+      handler(val) {
+        this.setOption(val);
+      },
+      deep: true,
+    },
+    modelValue: {
+      handler(val) {
+        this.setValue(val);
+      },
+      deep: true,
+    },
   },
 };
 </script>
