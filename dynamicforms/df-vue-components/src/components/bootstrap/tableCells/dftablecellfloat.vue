@@ -11,7 +11,7 @@ export default {
   computed: {
     displayValue() {
       // First, ensure we have the namespace ready
-      // eslint-disable-next-line no-return-assign,no-param-reassign
+      // eslint-disable-next-line no-return-assign
       ['dynamicforms', 'df-tablecell-float-configs'].reduce((res, val) => (res[val] || (res[val] = {})), window);
       //  read any existing config and create it if it's not there already
       let config = window.dynamicforms['df-tablecell-float-configs'][this.bodyId];

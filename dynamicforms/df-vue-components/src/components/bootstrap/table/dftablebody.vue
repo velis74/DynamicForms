@@ -32,7 +32,6 @@ export default {
     return {
       // rowProps: this.rowProperties.reduce((obj, val) => {
       //   if (!['row_css_style', 'df_control_data', 'df_prev_id'].includes(val)) {
-      //     // eslint-disable-next-line no-param-reassign
       //     obj[`data-${val}`] = row[val];
       //   }
       //   return obj;

@@ -125,7 +125,6 @@ export default {
         }).then((res) => {
           // first we map existing row ids to respective array indexes
           const idIndices = this.rows.results.reduce((ind, item, idx) => {
-            // eslint-disable-next-line no-param-reassign
             ind[item.id] = idx;
             return ind;
           }, {});

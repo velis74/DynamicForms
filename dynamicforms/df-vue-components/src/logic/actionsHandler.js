@@ -25,9 +25,7 @@ class ActionsHandler {
         Object.values(self.actions)
             .filter((action) => action.position === position)
             .reduce((obj, item) => {
-              const { name } = item;
-              // eslint-disable-next-line no-param-reassign
-              obj[name] = self.actions[name];
+              obj[item.name] = self.actions[item.name];
               return obj;
             }, {}), self.showModal,
       );

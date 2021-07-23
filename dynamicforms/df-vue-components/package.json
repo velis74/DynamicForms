@@ -55,6 +55,7 @@
       "no-plusplus": "off",
       "indent": ["error", 2, { "MemberExpression": 2 }],
       "es/no-destructuring": "error",
+      "no-param-reassign": ["error", { "props": false }],
       "prefer-destructuring": [
         "warn", {
           "VariableDeclarator": { "array": false, "object": false },

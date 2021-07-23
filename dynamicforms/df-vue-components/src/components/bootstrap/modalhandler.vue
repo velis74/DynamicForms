@@ -103,13 +103,10 @@ export default {
             data_return: 'no',
           };
         }
-        // eslint-disable-next-line no-param-reassign
         value.arias = value.arias || {};
-        // eslint-disable-next-line no-param-reassign
         value.guid = value.guid || '';
         const clss = (value.classes || '').split(' ');
         if (clss.indexOf('btn') === -1) clss.push('btn');
-        // eslint-disable-next-line no-param-reassign
         value.classes = clss.join(' ');
         return value;
       });
@@ -143,7 +140,6 @@ export default {
     buttonClick(button, callback) {
       if (callback) {
         callback(button.data_return);
-        // eslint-disable-next-line no-param-reassign
         callback.df_called = true;
       }
       this.hide();
