@@ -45,6 +45,7 @@ CORS_ALLOW_HEADERS = [
     'x-pagination',
     'x-viewmode',
     'x-df-render-type',
+    'x-df-component-def',
 ]
 
 # Application definition

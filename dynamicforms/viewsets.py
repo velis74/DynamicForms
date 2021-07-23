@@ -331,6 +331,20 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                     cursor_url += '&x_df_pagination=1'
                 return cursor_url
 
+            def get_paginated_response(self, data):
+                serializer = data.serializer
+                request = serializer.context['request']
+                if isinstance(request.accepted_renderer, JSONRenderer) and \
+                        BooleanField().to_internal_value(request.META.get('HTTP_X_DF_COMPONENT_DEF', False)):
+                    # if component definition was requested, let's return that and not just the data
+                    serializer.apply_component_context(request, self)
+                    return Response(serializer.component_params(
+                        output_json=False, data=dict(
+                            next=self.get_next_link(), previous=self.get_previous_link(), results=data
+                        )
+                    ))
+                return super().get_paginated_response(data)
+
         return MyCursorPagination
 
     def handle_create_validation_exception(self, e, request, *args, **kwargs):

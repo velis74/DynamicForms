@@ -46,13 +46,13 @@ class ViewModeListSerializer(ViewModeBase):
     def render_actions(self: '_ViewModeBoundListSerializer'):
         return self.child.render_actions
 
-    def component_params(self: '_ViewModeBoundListSerializer', output_json: bool = True):
+    def component_params(self: '_ViewModeBoundListSerializer', output_json: bool = True, data=None):
         res = self.child.component_params(output_json=False)
 
         if self.paginator:
-            res['rows'] = self.paginator.get_paginated_response(self.data).data
+            res['rows'] = data or self.paginator.get_paginated_response(self.data).data
         else:
-            res['rows'] = dict(prev=None, next=None, results=self.data)
+            res['rows'] = dict(prev=None, next=None, results=data or self.data)
 
         res['list_url'] = self.reverse_url
         return convert_to_json_if(res, output_json)
