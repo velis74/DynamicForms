@@ -151,7 +151,7 @@ export default {
       this.show();
     },
     showComponent(componentDef, whichTitle) {
-      const { actions } = componentDef.data.dialog;
+      const actions = componentDef.data.dialog.actions;
       this.dialogs.push({
         title: componentDef.data.titles[whichTitle || 'new'],
         body: componentDef,
