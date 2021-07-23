@@ -1,6 +1,13 @@
 <template>
-<div :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg" class="ionicon"></div>
+  <div :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg"></div>
 </template>
+
+<style>
+.ionicon {
+  display: inline-block;
+  height:  1.5em;
+}
+</style>
 
 <script>
 import apiClient from '@/apiClient';
@@ -19,8 +26,9 @@ export default {
     const self = this;
     const name = self.name;
     if (!window.cache_ionicon) { window.cache_ionicon = {}; }
-    if (!name) noop();
-    else if (window.cache_ionicon[name]) {
+    if (!name) {
+      noop();
+    } else if (window.cache_ionicon[name]) {
       if (typeof window.cache_ionicon[name].then === 'function') {
         window.cache_ionicon[name].then((res) => { self.loaded_svg = res.data; });
         self.loaded_svg = '&hellip;';
