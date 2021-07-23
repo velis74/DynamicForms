@@ -4,6 +4,7 @@
 
 <script>
 import apiClient from '@/apiClient';
+import { noop } from 'lodash';
 
 export default {
   name: 'ionicon',
@@ -15,11 +16,11 @@ export default {
   },
   computed: {},
   mounted() {
-    const self = this; const
-      { name } = self;
+    const self = this;
+    const name = self.name;
     if (!window.cache_ionicon) { window.cache_ionicon = {}; }
-    // eslint-disable-next-line no-empty
-    if (!name) {} else if (window.cache_ionicon[name]) {
+    if (!name) noop();
+    else if (window.cache_ionicon[name]) {
       if (typeof window.cache_ionicon[name].then === 'function') {
         window.cache_ionicon[name].then((res) => { self.loaded_svg = res.data; });
         self.loaded_svg = '&hellip;';

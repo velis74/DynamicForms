@@ -50,7 +50,7 @@ export default {
     },
     currentDialog() {
       const res = this.dialogs.length ? this.dialogs[this.dialogs.length - 1] : null;
-      // eslint-disable-next-line no-plusplus,vue/no-side-effects-in-computed-properties
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       if (res) res.uniqId = res.uniqId || this.uniqIdCounter++;
       return res;
     },
@@ -75,10 +75,11 @@ export default {
     },
     isComponent() {
       return this.currentDialog ? this.currentDialog.body.component
-        && this.currentDialog.body.data : false;
+          && this.currentDialog.body.data : false;
     },
     buttons() {
-      const res = this.currentDialog && this.currentDialog.buttons ? this.currentDialog.buttons : [{ close: 'default' }];
+      const cdb = this.currentDialog ? this.currentDialog.buttons : null;
+      const res = this.currentDialog && cdb ? cdb : [{ close: 'default' }];
       return res.map((value) => {
         if (value.close === 'default') {
           // eslint-disable-next-line no-param-reassign
@@ -172,14 +173,14 @@ export default {
     fromURL(url, whichTitle) {
       this.loading = true;
       apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
-        .then((res) => { // call api and set data as response, when data is
-          // set component is re-rendered
-          this.showComponent(res.data, whichTitle);
-        }).catch((err) => {
-          console.error(err);
-        }).finally(() => {
-          this.loading = false;
-        });
+          .then((res) => { // call api and set data as response, when data is
+            // set component is re-rendered
+            this.showComponent(res.data, whichTitle);
+          }).catch((err) => {
+            console.error(err);
+          }).finally(() => {
+            this.loading = false;
+          });
     },
   },
   components: {

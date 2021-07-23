@@ -7,6 +7,7 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
+cd dynamicforms/df-vue-components
 npm run serve
 ```
 

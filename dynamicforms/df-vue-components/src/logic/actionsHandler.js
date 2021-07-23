@@ -23,13 +23,13 @@ class ActionsHandler {
     if (self.filterCache[position] === undefined) {
       self.filterCache[position] = new ActionsHandler(
         Object.values(self.actions)
-          .filter((action) => action.position === position)
-          .reduce((obj, item) => {
-            const { name } = item;
-            // eslint-disable-next-line no-param-reassign
-            obj[name] = self.actions[name];
-            return obj;
-          }, {}), self.showModal,
+            .filter((action) => action.position === position)
+            .reduce((obj, item) => {
+              const { name } = item;
+              // eslint-disable-next-line no-param-reassign
+              obj[name] = self.actions[name];
+              return obj;
+            }, {}), self.showModal,
       );
     }
     return self.filterCache[position];

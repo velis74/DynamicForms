@@ -74,17 +74,17 @@ export default {
       text: 'Option 2',
     }];
     this.select2 = $(this.$el)
-      .find('select')
-      .select2({
-        placeholder: this.placeholder,
-        ...this.settings,
-        data: this.options,
-        tags: true,
-        dropdownParent: $('#df-modal-handler'),
-      }).on('select2:select select2:unselect', (ev) => {
-        this.$emit('update:modelValue', this.select2.val());
-        this.$emit('select', ev.params.data);
-      });
+        .find('select')
+        .select2({
+          placeholder: this.placeholder,
+          ...this.settings,
+          data: this.options,
+          tags: true,
+          dropdownParent: $('#df-modal-handler'),
+        }).on('select2:select select2:unselect', (ev) => {
+          this.$emit('update:modelValue', this.select2.val());
+          this.$emit('select', ev.params.data);
+        });
     this.setValue(this.modelValue);
 
     setTimeout(() => {

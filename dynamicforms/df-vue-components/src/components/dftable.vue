@@ -48,8 +48,8 @@ export default {
     },
     sortedColumns() {
       return this.processedConfiguration.columns.filter((col) => col.isOrdered && !col.isUnsorted)
-        .map((col) => ({ fieldName: col.name, direction: col.isAscending, index: col.orderIndex }))
-        .sort((a, b) => a.index - b.index);
+          .map((col) => ({ fieldName: col.name, direction: col.isAscending, index: col.orderIndex }))
+          .sort((a, b) => a.index - b.index);
     },
     orderingParam() {
       return this.sortedColumns.map((o) => (o.direction === true ? '' : '-') + o.fieldName);
@@ -62,8 +62,9 @@ export default {
         if (index === colIdx) {
           column.setSorted(sortDirection, sortSeq);
         } else if (column.orderIndex > 0) {
-          if (clearAllOthers) column.setSorted('unsorted');
-          else if (orderChanged && column.orderIndex >= sortSeq) {
+          if (clearAllOthers) {
+            column.setSorted('unsorted');
+          } else if (orderChanged && column.orderIndex >= sortSeq) {
             column.setSorted(column.isAscending ? 'asc' : 'desc', column.orderIndex + 1);
           }
         }
@@ -78,7 +79,6 @@ export default {
         // existing rows,
         // we're making a full refresh
       }, 250);
-      // eslint-disable-next-line no-unreachable
       apiClient.get(`${this.list_url}?ordering=${this.orderingParam}`, {
         headers: {
           'x-viewmode': 'TABLE_ROW',
@@ -102,8 +102,8 @@ export default {
         next = rowsData.next;
       }
       const decorate = (rows) => {
-        let triggerRow1 = null; let
-          triggerRow2 = null;
+        let triggerRow1 = null;
+        let triggerRow2 = null;
         if (rows && rows.length) {
           triggerRow1 = rows[0].id;
           triggerRow2 = rows[rows.length - 1].id;
@@ -129,12 +129,15 @@ export default {
             ind[item.id] = idx;
             return ind;
           }, {});
-            // eslint-disable-next-line array-callback-return
+          // eslint-disable-next-line array-callback-return
           res.data.results.map((item) => {
             // then we iterate through results updating any existing entries and adding new ones
             const idIdx = idIndices[item.id];
-            if (idIdx) this.rows.results[idIdx] = item;
-            else this.rows.results.push(item);
+            if (idIdx) {
+              this.rows.results[idIdx] = item;
+            } else {
+              this.rows.results.push(item);
+            }
           });
           this.rows.next = res.data.next; // replace next so we can load another set of rows
           // finally create a new loadableRows so that it will load new
@@ -149,15 +152,15 @@ export default {
     showModal(action, row) {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
-        this.editingRowURL = this.detail_url.replace(
-          '--record_id--', row.id,
-        ).replace('.json', '.component');
+        this.editingRowURL = this.detail_url
+            .replace('--record_id--', row.id)
+            .replace('.json', '.component');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.new;
-        this.editingRowURL = this.detail_url.replace(
-          '--record_id--', 'new',
-        ).replace('.json', '.component');
+        this.editingRowURL = this.detail_url
+            .replace('--record_id--', 'new')
+            .replace('.json', '.component');
         console.log(this.editingRowURL, 'add -url');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
       } else {

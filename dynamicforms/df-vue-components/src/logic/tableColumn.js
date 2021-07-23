@@ -2,52 +2,44 @@ import DisplayMode from '@/logic/displayMode';
 
 class TableColumn {
   constructor(columnDef) {
-    // eslint-disable-next-line no-underscore-dangle
     this._columnDef = columnDef;
   }
 
   get name() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.name;
   }
 
   get label() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.label;
   }
 
   get align() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.align;
   }
 
   // eslint-disable-next-line camelcase
   get table_classes() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.table_classes;
   }
 
   get ordering() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.ordering;
   }
 
   get visibility() {
-    // eslint-disable-next-line no-underscore-dangle
     switch (this._columnDef.visibility) {
-      case 1:
-        return DisplayMode.SUPPRESS;
-      case 5:
-        return DisplayMode.HIDDEN;
-      case 8:
-        return DisplayMode.INVISIBLE;
-      case 10:
-        return DisplayMode.FULL;
-      default:
-        // eslint-disable-next-line no-underscore-dangle
-        console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know`
-          + ' that constant');
-        return DisplayMode.FULL;
+    case 1:
+      return DisplayMode.SUPPRESS;
+    case 5:
+      return DisplayMode.HIDDEN;
+    case 8:
+      return DisplayMode.INVISIBLE;
+    case 10:
+      return DisplayMode.FULL;
+    default:
+      console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know`
+        + ' that constant');
+      return DisplayMode.FULL;
     }
   }
 
@@ -76,8 +68,8 @@ class TableColumn {
    * cycles field ordering 'asc' -> 'desc' -> 'unsorted'
    */
   get cycleOrdering() {
-    // eslint-disable-next-line no-nested-ternary
-    return this.isAscending ? 'desc' : this.isDescending ? 'unsorted' : 'asc';
+    if (this.isAscending) return 'desc';
+    return this.isDescending ? 'unsorted' : 'asc';
   }
 
   /**
@@ -93,7 +85,6 @@ class TableColumn {
     if (!this.isOrdered) {
       console.warn('column $(this.name) is not orderable. Why are you trying to set its order direction?');
     } else if (direction === 'asc' || direction === 'desc' || direction === 'unsorted') {
-      // eslint-disable-next-line no-underscore-dangle
       this._columnDef.ordering = `ordering ${direction} ${direction === 'unsorted' ? '' : `seg-${sequence}`}`;
     } else {
       console.warn(`unknown sort direction "${direction}" for the column ${this.name}. not doing anything`);
@@ -120,7 +111,6 @@ class TableColumn {
 
   // eslint-disable-next-line camelcase
   get render_params() {
-    // eslint-disable-next-line no-underscore-dangle
     return this._columnDef.render_params || {};
   }
 
@@ -141,45 +131,39 @@ class TableColumn {
         const decoratorFunction = tableDecorator.substr(13);
         // eslint-disable-next-line default-case
         switch (decoratorFunction) {
-          case 'bool':
-            return (row, column, value) => `<code>${value}</code>`;
-          case 'link':
-            return (row, column, value) => `<a href="${value}">${value}</a>`;
-          case 'email':
-            return (row, column, value) => {
-              const nameOnly = value.includes('<') ? value.substr(0, value.indexOf('<')).trim() : value;
-              return `<a href="mailto:${value}">${nameOnly}</a>`;
-            };
-          case 'ipaddr':
-            return (row, column, value) => {
-              const segments = value.split('.');
-              if (segments.length === 4) {
-                // eslint-disable-next-line no-param-reassign
-                value = segments.map((x) => {
-                  const padding = x.length < 3 ? `<span style="opacity: .5">${'000'.slice(x.length - 3)}</span>` : '';
-                  return padding + x;
-                }).join('.');
-              }
-              return `<code>${value}</code>`;
-            };
+        case 'bool':
+          return (row, column, value) => `<code>${value}</code>`;
+        case 'link':
+          return (row, column, value) => `<a href="${value}">${value}</a>`;
+        case 'email':
+          return (row, column, value) => {
+            const nameOnly = value.includes('<') ? value.substr(0, value.indexOf('<')).trim() : value;
+            return `<a href="mailto:${value}">${nameOnly}</a>`;
+          };
+        case 'ipaddr':
+          return (row, column, value) => {
+            const segments = value.split('.');
+            if (segments.length === 4) {
+              // eslint-disable-next-line no-param-reassign
+              value = segments.map((x) => {
+                const padding = x.length < 3 ? `<span style="opacity: .5">${'000'.slice(x.length - 3)}</span>` : '';
+                return padding + x;
+              }).join('.');
+            }
+            return `<code>${value}</code>`;
+          };
           // DRF also formats simple lists, complex dicts / lists
-          // eslint-disable-next-line max-len
           // DRF also parses ordinary strings to check if they are valid URLs(link), emails(email) or contain \n (pre)
         }
       } else {
-        // eslint-disable-next-line max-len
         // Here we're expecting the decorator to either suggest we use a component or a globally accessible function
-        // eslint-disable-next-line max-len
         // When component, name will start with #, e.g. #df-tablecell-float. This will instruct table body to render
         //   a component with this name
-        // eslint-disable-next-line max-len
         // When a function, name will be in format module.submodule.submodule_n.function, e.g. myModule.formatEmail
-        // eslint-disable-next-line max-len
         //   The above example will look for function in window['myModule']['formatEmail'] and call it.
         return tableDecorator.split('.').reduce((res, val) => res[val], window);
       }
     }
-    // eslint-disable-next-line max-len
     // if special JS function for formatting data is not provided, we just format the data as plain text
     return (row, column, value) => value;
   }
