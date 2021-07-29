@@ -163,6 +163,7 @@ export default {
           }, [],
         ),
         callback: null,
+        size: componentDef.data.dialog.size,
       });
       this.show();
     },
