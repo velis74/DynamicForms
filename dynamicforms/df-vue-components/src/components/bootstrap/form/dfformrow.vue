@@ -1,6 +1,6 @@
 <template>
   <dfformcolumn v-if="isHiddenSingle" :def="columns[0]" :data="data"/>
-  <div class="row" v-else>
+  <div class="row align-items-end" v-else>
     <dfformcolumn v-for="(column, idx) in columns" :key="idx" :def="column" :data="data"/>
   </div>
 </template>

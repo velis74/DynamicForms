@@ -47,7 +47,7 @@ render_params = ClassAssemblyDict({
     fields.TimeField: dict(input_type='time'),
     serializers.FileField: dict(input_type='file'),
     fields.BooleanField: dict(table='df-tablecell-bool', input_type='checkbox', label_after_element=True,
-                              field_class='form-check-input', container_class='form-check'),
+                              field_class='form-check-input', container_class='form-check form-group'),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
     fields.ChoiceField: dict(form='df-widget-select', multiple=False),
     fields.MultipleChoiceField: dict(multiple=True),
@@ -59,7 +59,6 @@ render_params = ClassAssemblyDict({
     fields.ListField: dict(form='df-widget-list-field'),
     fields.DictField: dict(form='df-widget-dict-field'),
     fields.FilePathField: dict(form='df-widget-select', multiple=False),
-    fields.JSONField: dict(form='df-widget-textarea'),
     fields.JSONField: dict(form='df-widget-textarea'),
 })
 

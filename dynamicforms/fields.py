@@ -28,7 +28,7 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
         kwargs['render_params'].setdefault('label_after_element', 'True')
         kwargs['render_params'].setdefault('field_class', 'form-check-input')
-        kwargs['render_params'].setdefault('container_class', 'form-check')
+        kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
 
 
@@ -47,7 +47,7 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
         kwargs['render_params'].setdefault('label_after_element', 'True')
         kwargs['render_params'].setdefault('field_class', 'form-check-input')
-        kwargs['render_params'].setdefault('container_class', 'form-check')
+        kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
 
 

@@ -22,6 +22,12 @@
   </div>
 </template>
 
+<style>
+  label {
+    margin-inline-end: .5em;
+  }
+</style>
+
 <script>
 import DisplayMode from '@/logic/displayMode';
 import dfwidgetinput from '@/components/bootstrap/widget/dfwidgetinput.vue';
