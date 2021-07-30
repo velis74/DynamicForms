@@ -1,5 +1,5 @@
 <template>
-  <dfwidgetbase :def="def" :data="data">
+  <dfwidgetbase :def="def" :data="data" :errors="errors">
     <select slot="input" class="form-control" :id="id" :name="name"
             :disabled="disabled" :required="required">
       <option selected="selected">orange</option>
@@ -39,6 +39,10 @@ export default {
       required: true,
     },
     data: {
+      type: Object,
+      required: true,
+    },
+    errors: {
       type: Object,
       required: true,
     },

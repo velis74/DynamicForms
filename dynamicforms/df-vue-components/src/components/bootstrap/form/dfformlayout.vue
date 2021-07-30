@@ -1,25 +1,54 @@
 <template>
-<form :id="'form-' + uuid">
-    <dfformrow v-for="(row, idx) in definition.rows" :key="idx" :columns="row" :data="record_data"/>
+  <form :id="'form-' + formUUID">
+    <slot name="form-error"><div v-if="getErrorText"><small :id="'form-' + formUUID + '-err'"
+                                   class="form-text text-danger">{{ getErrorText }}</small><hr></div></slot>
+
+    <dfformrow v-for="(row, idx) in definition.rows" :key="idx" :columns="row" :data="record_data" :errors="errors"/>
   </form>
 </template>
 
 <script>
 import dfformrow from '@/components/bootstrap/form/dfformrow.vue';
+import eventBus from '../../../logic/eventBus';
 
 export default {
   name: 'formlayout',
   props: ['data', 'def', 'uuid', 'url'],
   data() {
     const definition = this.data.dialog || this.def;
+    const formUUID = this.data.uuid || this.uuid;
     return {
       definition,
-      record_data: definition.record_data || {},
+      formUUID,
+      record_data: this.data.record || {},
+      errors: {},
     };
+  },
+  computed: {
+    getErrorText() {
+      const nonFieldError = 'non_field_errors';
+      try {
+        if (this.errors && this.errors[nonFieldError]) return this.errors[nonFieldError];
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+      return '';
+    },
   },
   components: {
     dfformrow,
   },
+  beforeDestroy() {
+    eventBus.$off(`formEvents_${this.formUUID}`);
+  },
+  mounted() {
+    eventBus.$on(`formEvents_${this.formUUID}`, (payload) => {
+      console.log(payload);
+      if (payload.type === 'submitErrors') {
+        this.errors = payload.data;
+      }
+    });
+  },
+
 };
 </script>
 

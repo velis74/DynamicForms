@@ -1,6 +1,8 @@
 <template>
   <input v-if="isHidden" type="hidden" :name="def.field_name" :value="data[def.field_name]"/>
   <div v-else :id="'container-' + def.uuid" :class="def.render_params.container_class">
+    <slot name="error"><small v-if="getErrorText" :id="def.field_name + '-err'"
+                             class="form-text text-danger">{{ getErrorText }}</small></slot>
     <dfwidgetbaselabel v-if="labelAfterElement === false" v-bind:data="data" v-bind:def="def">
     </dfwidgetbaselabel>
     <slot name="input"></slot>
@@ -17,13 +19,20 @@ import dfwidgetbaselabel from '@/components/bootstrap/widget/dfwidgetbaselabel.v
 
 export default {
   name: 'dfwidgetbase',
-  props: ['def', 'data'],
+  props: ['def', 'data', 'errors'],
   computed: {
     isHidden() {
       return this.def.display === DisplayMode.HIDDEN;
     },
     labelAfterElement() {
       return this.def.render_params.label_after_element;
+    },
+    getErrorText() {
+      try {
+        if (this.errors && this.errors[this.def.field_name]) return this.errors[this.def.field_name];
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+      return '';
     },
   },
   components: {

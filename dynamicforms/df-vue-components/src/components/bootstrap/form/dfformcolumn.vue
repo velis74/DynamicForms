@@ -6,7 +6,7 @@
       </div>
       <div class="card-body">
         <component :is="def.field.render_params.form.replace(/-/g, '')"
-                   :def="def.field" :data="data"/>
+                   :def="def.field" :data="data" :errors="errors"/>
       </div>
       <div class="card-footer" v-if="def.footer">
         {{ def.footer }}
@@ -15,10 +15,10 @@
   </div>
   <component v-else-if="isHidden"
              :is="def.field.render_params.form.replace(/-/g, '')"
-             :def="def.field" :data="data"/>
+             :def="def.field" :data="data" :errors="errors"/>
   <div :class="'col' + columnClasses" v-else>
     <component :is="def.field.render_params.form.replace(/-/g, '')"
-               :def="def.field" :data="data"/>
+               :def="def.field" :data="data" :errors="errors"/>
   </div>
 </template>
 
@@ -37,7 +37,7 @@ import dfwidgetselect from '@/components/bootstrap/widget/dfwidgetselect.vue';
 
 export default {
   name: 'dfformcolumn',
-  props: ['def', 'data'],
+  props: ['def', 'data', 'errors'],
   computed: {
     isGroup() { return this.def.type === 'group'; },
     isHidden() { return this.def.field.display === DisplayMode.HIDDEN; },

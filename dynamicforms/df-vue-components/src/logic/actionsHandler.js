@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+import eventBus from './eventBus';
+
 class ActionsHandler {
   constructor(actions, showModal) {
     this.actions = actions;
@@ -19,22 +22,26 @@ class ActionsHandler {
    * @returns {ActionsHandler}
    */
   filter(position) {
-    const self = this;
-    if (self.filterCache[position] === undefined) {
-      self.filterCache[position] = new ActionsHandler(
-        Object.values(self.actions)
+    if (this.filterCache[position] === undefined) {
+      this.filterCache[position] = new ActionsHandler(
+        Object.values(this.actions)
             .filter((action) => action.position === position)
             .reduce((obj, item) => {
-              obj[item.name] = self.actions[item.name];
+              obj[item.name] = this.actions[item.name];
               return obj;
-            }, {}), self.showModal,
+            }, {}), this.showModal,
       );
     }
-    return self.filterCache[position];
+    return this.filterCache[position];
   }
 
+  // eslint-disable-next-line class-methods-use-this
   exec(action, row) {
-    this.showModal(action, row);
+    console.log(action, action.name);
+    if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(action.name)) {
+      eventBus.$emit('tableActionExecuted', { action, data: row });
+    }
+    // TODO: Kako se izvajajo custom akcije???
   }
 }
 

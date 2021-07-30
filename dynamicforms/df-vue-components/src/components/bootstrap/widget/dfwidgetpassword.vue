@@ -1,5 +1,5 @@
 <template>
-  <dfwidgetbase :def="def" :data="data">
+  <dfwidgetbase :def="def" :data="data" :errors="errors">
     <div slot="input" class="input-group">
       <input :id="def.uuid" :type="passwordFieldType" v-model='password'
              :class="def.render_params.class"
@@ -19,7 +19,7 @@ import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
 
 export default {
   name: 'dfwidgetpassword',
-  props: ['def', 'data'],
+  props: ['def', 'data', 'errors'],
   data() {
     return {
       password: '',

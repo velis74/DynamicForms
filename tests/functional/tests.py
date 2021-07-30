@@ -710,7 +710,11 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
                 header = self.browser.find_element_by_class_name("ui-accordion-header")
 
         add_btn = header.find_element_by_class_name("btn")
-        self.assertEqual(self.get_element_text(add_btn), "+ Add")
+        if add_btn.tag_name == 'div':
+            btn_text = self.get_element_text(add_btn.find_element_by_tag_name('span'))
+        else:
+            btn_text = self.get_element_text(add_btn)
+        self.assertEqual(btn_text, "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()

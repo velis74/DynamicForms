@@ -11,11 +11,17 @@ import ActionsHandler from '@/logic/actionsHandler';
 import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
+import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
+import eventBus from '../logic/eventBus';
 
 export default {
   name: 'dftable',
+  mixins: [tableActionHandlerMixin],
   data() {
     return this.$parent;
+  },
+  beforeDestroy() {
+    eventBus.$off('tableActionExecuted');
   },
   mounted() {
     let bodyColumnCss = '';
@@ -28,6 +34,10 @@ export default {
     const styleTag = document.createElement('style');
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
+
+    eventBus.$on('tableActionExecuted', (payload) => {
+      this.executeTableAction(payload.action, payload.data, payload.modal);
+    });
   },
   computed: {
     processedConfiguration() {

@@ -31,6 +31,7 @@ import apiClient from '@/apiClient';
 import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
 import * as $ from 'jquery';
 import 'bootstrap';
+import eventBus from '../../logic/eventBus';
 
 export default {
   name: 'modalhandler',
@@ -138,11 +139,17 @@ export default {
     // gettext: (str) => window.django.gettext(str),
     gettext: (str) => str,
     buttonClick(button, callback) {
-      if (callback) {
+      if (['submit', 'cancel'].includes(button.name)) {
+        console.log('onclick', this.currentDialog.body.data.record);
+        eventBus.$emit('tableActionExecuted', {
+          action: button,
+          data: this.currentDialog.body.data.record,
+          modal: this,
+        });
+      } else if (callback) {
         callback(button.data_return);
         callback.df_called = true;
       }
-      this.hide();
     },
     yesNo(title, question, callback) {
       this.dialogs.push({
