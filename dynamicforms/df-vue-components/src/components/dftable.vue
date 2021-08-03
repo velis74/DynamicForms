@@ -18,7 +18,29 @@ export default {
   name: 'dftable',
   mixins: [tableActionHandlerMixin],
   data() {
-    return this.$parent;
+    // I have to add property 'loading' to data for this property to be reactive.
+    // Tried with following code, but it just didnt work.
+    //
+    // const ret = { loading: true };
+    // _.each(_.keys(this.$parent), (key) => {
+    //   ret[`${key}`] = this.$parent[`${key}`];
+    // });
+    //
+    // So I had to insert all this.$parent attributes manually.
+
+    return {
+      loading: false,
+      rows: this.$parent.rows,
+      columns: this.$parent.columns,
+      titles: this.$parent.titles,
+      actions: this.$parent.actions,
+      uuid: this.$parent.uuid,
+      list_url: this.$parent.list_url,
+      detail_url: this.$parent.detail_url,
+      editingRowURL: this.$parent.editingRowURL,
+      editDialogTitle: this.$parent.editDialogTitle,
+      'row-properties': this.$parent['row-properties'],
+    };
   },
   beforeDestroy() {
     eventBus.$off('tableActionExecuted');
@@ -166,7 +188,7 @@ export default {
             .replace('.json', '.component');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
       } else if (action.name === 'add') {
-        this.editDialogTitle = this.titles.new;
+        this.editDialogTitle = this.titles.add;
         this.editingRowURL = this.detail_url
             .replace('--record_id--', 'new')
             .replace('.json', '.component');
