@@ -4,11 +4,25 @@
 
 
 {% if include_libs != False %}
-  <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
-  {% extendtemplate template_name_var=templatename block="ui_library_include" %}
-  <script src="{% static 'ckeditor-df/ckeditor.js' %}"></script>
+  {% if DYNAMICFORMS.components %}
+    {# if we're using component renderer, then all rendering is handler by the bundles, so let's just import those #}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
+    <link rel="icon" href="{% static 'df-components/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'df-components/css/df-components.css' %}"/>
+    <link rel="stylesheet" href="{% static 'df-components/css/df-components-vendor.css' %}"/>
+    <script src="{% static 'df-components/js/df-components-vendors.js' %}" type="application/javascript"></script>
+    <script src="{% static 'df-components/js/df-components.js' %}" type="application/javascript"></script>
+  {% else %}
+    {# "standard" HTML renderer requires libraries depending on template pack, so we load the template pack's libs #}
+    <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
+    {% extendtemplate template_name_var=templatename block="ui_library_include" %}
+    <script src="{% static 'ckeditor-df/ckeditor.js' %}"></script>
+  {% endif %}
 {% endif %}
+
 <script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
 <script type="application/javascript">
   dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};

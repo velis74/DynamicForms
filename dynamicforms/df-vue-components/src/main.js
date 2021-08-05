@@ -3,6 +3,7 @@ import dftable from '@/components/dftable.vue';
 import ModalHandler from '@/components/bootstrap/modalhandler.vue';
 import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
+import $ from 'jquery';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
@@ -47,5 +48,10 @@ const createApp = (elementId, template, props, modalId = null) => {
   });
 };
 
+// This is exposed so that the base page template may use jQuery. Probably soon won't be needed
+window.$ = $;
+window.jQuery = window.$;
+
+// Standard entry points to our Vue app. createApp initializes the Vue app and getComponentDef retrieves any definition
 window.createApp = createApp;
 window.getComponentDef = getComponentDef;

@@ -1,3 +1,5 @@
+import threading
+
 from django.conf import settings as s
 from django.utils.translation import ugettext_lazy as _
 
@@ -6,6 +8,7 @@ from .struct import Struct
 DYNAMICFORMS_ROOT = 'dynamicforms/'
 DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + 'bootstrap/'
 DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + 'jquery_ui/'
+DYNAMICFORMS_VUE = DYNAMICFORMS_ROOT + 'vue/'
 
 
 class Settings(Struct):
@@ -48,6 +51,14 @@ class Settings(Struct):
         from .mixins import DisplayMode
         return {e.name: e.value for e in DisplayMode}  # A copy to be accessible in the templates
 
+    def _get_components(self):
+        return getattr(threading.current_thread(), 'is_component_renderer', False)
+
+    def _set_components(self, value):
+        threading.current_thread().is_component_renderer = value
+
+    components = property(_get_components, _set_components)
+
     # ****************************************************************************
     # These are constants, generated from settings. They are shortcuts for quick use in templates and are specific
     # to the chosen template pack.
@@ -84,6 +95,8 @@ class Settings(Struct):
 
     select2_include = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes_select2.html')
 
+    progress_dialog_title = _('Performing operation...')
+
 
 def if3_4(if3, if4):
     def inner(self):
@@ -112,8 +125,6 @@ class SettingsBootstrap(Settings):
     bs_card_header = property(if3_4('panel-heading df-card-header', 'card-header df-card-header'))
     bs_card_body = property(if3_4('panel-body df-card-body', 'card-body df-card-body'))
 
-    progress_dialog_title = _('Performing operation...')
-
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'btn ml-1')
     form_button_classes_cancel = property(lambda self: '')
@@ -127,8 +138,6 @@ class SettingsJqueryUI(Settings):
     def __init__(self, data=None, **kwds):
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
-
-    progress_dialog_title = _('Performing operation...')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'ui-button ui-corner-all ui-widget')

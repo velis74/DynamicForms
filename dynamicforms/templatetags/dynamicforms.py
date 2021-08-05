@@ -207,7 +207,7 @@ def get_data_template(context, context_data=None):
     if context_data:
         context = context_data
     serializer = context['serializer']
-    return serializer.data_template
+    return getattr(serializer, 'data_template', None)
 
 
 @register.simple_tag(takes_context=True)

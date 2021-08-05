@@ -1,5 +1,6 @@
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
+from dynamicforms.settings import DYNAMICFORMS
 
 
 class ComponentHTMLRenderer(TemplateHTMLRenderer):
@@ -7,13 +8,17 @@ class ComponentHTMLRenderer(TemplateHTMLRenderer):
     format = 'component'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        return super().render(data, accepted_media_type, renderer_context)
+        DYNAMICFORMS.components = True
+        try:
+            return super().render(data, accepted_media_type, renderer_context)
+        finally:
+            DYNAMICFORMS.components = False
 
     def get_template_names(self, response, view):
         request = view.request
         render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
         if render_type == 'page':
-            return ['examples/view_mode.html']
+            return [DYNAMICFORMS.page_template]
         elif render_type == 'dialog':
             response['Content-Type'] = 'application/json'  # response.accepted_media_type and .content_type don't work
             return ['template_render/render_dialog.json']

@@ -1,2 +1,6 @@
-<df-table id="list-{{ serializer.uuid }}" :data="{{ serializer.component_params }}">
-</df-table>
+{% load dynamicforms %}
+<script>
+  window.dynamicformsUi = 'bootstrap';
+  createApp('app', '<dftable/>', {{ serializer.component_params | safe }}, 'modal-app');
+</script>
+{# <df-table id="list-{{ serializer.uuid }}" :data="{{ serializer.component_params }}"></df-table>#}

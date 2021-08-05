@@ -5,8 +5,13 @@
 {% endblock %}
 {% block body %}
   {% get_data_template as data_template %}
+  {% if DYNAMICFORMS.components %}
+    <div id="app"></div>
+    <div id="modal-app"></div>
 
-  {% if DYNAMICFORMS.bootstrap_version %}
+    {# components, we just render the serializer and it knows everything #}
+    {{ serializer }}
+  {% elif DYNAMICFORMS.bootstrap_version %}
     <div class="{{ DYNAMICFORMS.bs_card_class }}">
       <div class="{{ DYNAMICFORMS.bs_card_header }}">
         {{ serializer.page_title }}
