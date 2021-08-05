@@ -5,7 +5,7 @@
       v-observe-visibility="rows.getVisibilityHandler(row.id)"
       @click="rowClick($event,'ROW_CLICK', row)" @mouseup.right="rowClick($event,'ROW_RIGHTCLICK')"
   >
-    <td v-for="col in columns" :key="col.name">
+    <td v-for="col in columns" :key="col.name" :data-name="col.name">
       <Actions :row="row" :actions="actions.filter('FIELD_START', col.name)"></Actions>
       <component v-if="col.renderDecoratorComponentName"
                  :is="col.renderDecoratorComponentName"
