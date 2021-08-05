@@ -279,7 +279,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
                  button_is_primary: bool = None, positions: List[str] = None,
                  name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None):
         ActionBase.__init__(self, action_js or False, name, serializer)
-        title=label
+        title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
         self.uuid = uuid_module.uuid1()

@@ -7,4 +7,4 @@ from .mixins.listserializer import ViewModeListSerializer
 from .mixins.serializer import ViewModeSerializer
 from .renderer import ComponentHTMLRenderer
 
-__all__ = (ViewModeField, ViewModeSerializer, ViewModeListSerializer)
+__all__ = (ViewModeField, ViewModeSerializer, ViewModeListSerializer, ComponentHTMLRenderer)
