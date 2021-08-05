@@ -4,6 +4,8 @@ import os
 import sys
 
 import setuptools
+from versio.version import Version
+from versio.version_scheme import Simple3VersionScheme
 
 from dynamicforms import __version__
 
@@ -22,7 +24,7 @@ def get_version(version_arg):
         if version_arg == 'publish':
             print('Missing version argument.')
             sys.exit(1)
-        all(map(int, version_arg.split('.', 2)))
+        Version(version_arg, scheme=Simple3VersionScheme)
     except Exception:
         print('Invalid version format. Should be x.y.z (all numbers)')
         sys.exit(1)
@@ -58,7 +60,6 @@ if sys.argv[1] == 'publish':
     os.system('git tag -a %s -m \'version %s\'' % (version, version))
     os.system('git push --tags')
     sys.exit()
-
 
 setuptools.setup(
     name="DynamicForms",

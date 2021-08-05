@@ -7,3 +7,4 @@ django-filter
 pillow
 typing; python_version < '3.5'
 django-cors-headers
+versio

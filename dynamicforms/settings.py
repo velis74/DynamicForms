@@ -2,6 +2,8 @@ import threading
 
 from django.conf import settings as s
 from django.utils.translation import ugettext_lazy as _
+from versio.version import Version
+from versio.version_scheme import Pep440VersionScheme
 
 from .struct import Struct
 
@@ -12,7 +14,6 @@ DYNAMICFORMS_VUE = DYNAMICFORMS_ROOT + 'vue/'
 
 
 class Settings(Struct):
-
     # Support for jQueryUI (this will be queried in dynamicforms.js)
     jquery_ui = False
 
@@ -173,32 +174,6 @@ def version_check(checked_version, min_version):
     :return: True when checked version is high enough
     """
 
-    def version_transform(ver):
-        version = ''
-        vn = va = ''
-        stage = 0
-        ver = '.' + (ver or '')
-        for c in ver:
-            if c == '.':
-                if vn or va:
-                    version += '{0:0>3}{1: <2}.'.format(vn, va)
-                vn = va = ''
-                stage = 0
-                continue
-            if c.isdigit():
-                pass
-            elif c.isalpha():
-                stage = max(1, stage)
-            else:
-                stage = max(2, stage)
-            if stage == 0:
-                vn += c
-            elif stage == 1:
-                va += c
-        if vn or va:
-            version += '{0:0>3}{1: <2}.'.format(vn, va)
-        return version[:-1]
-
     if not checked_version:
         return False
-    return version_transform(checked_version) >= version_transform(min_version)
+    return Version(checked_version, scheme=Pep440VersionScheme) >= Version(min_version, scheme=Pep440VersionScheme)
