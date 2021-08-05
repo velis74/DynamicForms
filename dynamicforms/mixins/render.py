@@ -1,6 +1,6 @@
 import uuid as uuid_module
 from enum import IntEnum
-from typing import Hashable, Optional, Dict
+from typing import Dict, Hashable, Optional
 
 from rest_framework.fields import Field as DrfField
 from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField

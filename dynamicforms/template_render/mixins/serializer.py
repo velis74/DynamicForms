@@ -1,9 +1,9 @@
 from enum import auto
 from typing import Any, Dict
 
+from django.template import loader
 from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
-from django.template import loader
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition
@@ -157,6 +157,7 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
     @classmethod
     def get_component_context(cls, request, queryset):
         from rest_framework.request import Request
+
         from dynamicforms.filters import FilterBackend
         from dynamicforms.template_render import ViewModeListSerializer, ViewModeSerializer
         from dynamicforms.viewsets import ModelViewSet

@@ -3,9 +3,8 @@ import time
 from django.urls import reverse
 from parameterized import parameterized
 
-from .selenium_test_case import WaitingStaticLiveServerTestCase
-from ..request_sync import RequestSyncMiddleware
-
+from tests.functional.selenium_test_case import WaitingStaticLiveServerTestCase
+from tests.request_sync import RequestSyncMiddleware
 
 MAX_WAIT = 10
 

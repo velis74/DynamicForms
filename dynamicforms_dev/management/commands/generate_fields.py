@@ -5,7 +5,7 @@ import typing
 import uuid
 
 from django.core.management.base import BaseCommand
-from rest_framework import serializers, fields, relations
+from rest_framework import fields, relations, serializers
 
 
 class ClassAssemblyDict:
@@ -75,13 +75,11 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
+        from dynamicforms import action, mixins
         from dynamicforms.mixins import (
-            RenderMixin, ActionMixin, AllowTagsMixin, NullChoiceMixin,
-            RelatedFieldAJAXMixin, PasswordFieldMixin, NullValueMixin,
-            SingleChoiceMixin
+            ActionMixin, AllowTagsMixin, FieldAlignment, NullChoiceMixin, NullValueMixin, PasswordFieldMixin,
+            RelatedFieldAJAXMixin, RenderMixin, SingleChoiceMixin
         )
-        from dynamicforms import mixins, action
-        from dynamicforms.mixins import FieldAlignment
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
 
