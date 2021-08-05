@@ -17,7 +17,7 @@
         <div class="modal-footer">
           <button :id="button.uuid" type="button" v-for="button in buttons" :key="button.uuid"
                   :class="button.classes" v-bind="button.arias"
-                  @click.stop="buttonClick(button, callback)">{{ button.label }}
+                  @click.stop="buttonClick($event, button, callback)">{{ button.label }}
           </button>
         </div>
       </div>
@@ -138,15 +138,14 @@ export default {
     },
     // gettext: (str) => window.django.gettext(str),
     gettext: (str) => str,
-    buttonClick(button, callback) {
-      if (['submit', 'cancel'].includes(button.name)) {
-        console.log('onclick', this.currentDialog.body.data.record);
-        eventBus.$emit('tableActionExecuted', {
-          action: button,
-          data: this.currentDialog.body.data.record,
-          modal: this,
-        });
-      } else if (callback) {
+    buttonClick(event, button, callback) {
+      eventBus.$emit(`tableActionExecuted_${this.currentDialog.tableUuid}`, {
+        action: button,
+        data: this.currentDialog.body.data.record,
+        modal: this,
+        event,
+      });
+      if (callback) {
         callback(button.data_return);
         callback.df_called = true;
       }
@@ -157,7 +156,7 @@ export default {
       });
       this.show();
     },
-    showComponent(componentDef, whichTitle) {
+    showComponent(componentDef, whichTitle, tableUuid) {
       const actions = componentDef.data.dialog.actions;
       this.dialogs.push({
         title: componentDef.data.titles[whichTitle || 'new'],
@@ -171,15 +170,16 @@ export default {
         ),
         callback: null,
         size: componentDef.data.dialog.size,
+        tableUuid,
       });
       this.show();
     },
-    fromURL(url, whichTitle) {
+    fromURL(url, whichTitle, tableUuid) {
       this.loading = true;
       apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
           .then((res) => { // call api and set data as response, when data is
             // set component is re-rendered
-            this.showComponent(res.data, whichTitle);
+            this.showComponent(res.data, whichTitle, tableUuid);
           }).catch((err) => {
             console.error(err);
           }).finally(() => {

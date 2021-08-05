@@ -1,5 +1,5 @@
 <template>
-  <div v-html="displayValue"/>
+  <div v-html="displayValue" style="display: inline-block"/>
 </template>
 
 <script>

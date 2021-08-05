@@ -46,4 +46,13 @@ examples = {
 
     dynamicforms.showModalDialog('Test dialog', '<p>Modal dialog content</p>', buttons);
   },
+
+  showAlertDialog: function(payload) {
+    // This is also reactive. If you do
+    // payload.context.rows = {};
+    // All rows will be gone for example.
+
+    console.log('Show alert dialog', this, payload);
+    alert('Page: ' + this.page + '; Field: ' + this.field);
+  }
 };

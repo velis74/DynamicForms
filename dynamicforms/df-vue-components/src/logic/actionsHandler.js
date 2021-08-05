@@ -2,9 +2,10 @@
 import eventBus from './eventBus';
 
 class ActionsHandler {
-  constructor(actions, showModal) {
+  constructor(actions, showModal, tableUuid) {
     this.actions = actions;
     this.showModal = showModal; // method to call for showing medal dialog with item editor
+    this.tableUuid = tableUuid;
     this.filterCache = {}; // contains cached .filter results
   }
 
@@ -19,29 +20,29 @@ class ActionsHandler {
   /**
    * filters actions to include only those rendering at given position
    * @param position
+   * @param fieldName
    * @returns {ActionsHandler}
    */
-  filter(position) {
-    if (this.filterCache[position] === undefined) {
-      this.filterCache[position] = new ActionsHandler(
+  filter(position, fieldName) {
+    const cacheKey = position + (fieldName ? `|${fieldName}` : '');
+    if (this.filterCache[cacheKey] === undefined) {
+      // noinspection JSUnresolvedVariable
+      this.filterCache[cacheKey] = new ActionsHandler(
         Object.values(this.actions)
-            .filter((action) => action.position === position)
+            .filter((action) => action.position === position && (
+              action.field_name === null || action.field_name === fieldName))
             .reduce((obj, item) => {
               obj[item.name] = this.actions[item.name];
               return obj;
-            }, {}), this.showModal,
+            }, {}), this.showModal, this.tableUuid,
       );
     }
-    return this.filterCache[position];
+    return this.filterCache[cacheKey];
   }
 
   // eslint-disable-next-line class-methods-use-this
-  exec(action, row) {
-    console.log(action, action.name);
-    if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(action.name)) {
-      eventBus.$emit('tableActionExecuted', { action, data: row });
-    }
-    // TODO: Kako se izvajajo custom akcije???
+  exec(event, action, row) {
+    eventBus.$emit(`tableActionExecuted_${this.tableUuid}`, { event, action, data: row });
   }
 }
 

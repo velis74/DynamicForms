@@ -19,6 +19,10 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     actions = Actions(
         TableAction(TablePosition.HEADER, _('Modal dialog'), title=_('Dialog test'), name='modal_dialog',
                     action_js="examples.testModalDialog();"),
+        TableAction(TablePosition.FIELD_END, label='field_end', title='field_end', name='field_end',
+                    icon='search-outline', field_name='char_field',
+                    action=dict(func_name='examples.showAlertDialog', params=dict(page='Basic fields', field='char')),
+                    action_js=''),
         add_default_crud=True,
         add_form_buttons=True
     )

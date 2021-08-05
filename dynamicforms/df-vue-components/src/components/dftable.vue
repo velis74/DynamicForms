@@ -13,6 +13,7 @@ import apiClient from '@/apiClient';
 import _ from 'lodash';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
+import dynamicforms from '../dynamicforms';
 
 export default {
   name: 'dftable',
@@ -43,7 +44,7 @@ export default {
     };
   },
   beforeDestroy() {
-    eventBus.$off('tableActionExecuted');
+    eventBus.$off(`tableActionExecuted_${this.uuid}`);
   },
   mounted() {
     let bodyColumnCss = '';
@@ -57,8 +58,22 @@ export default {
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
 
-    eventBus.$on('tableActionExecuted', (payload) => {
-      this.executeTableAction(payload.action, payload.data, payload.modal);
+    eventBus.$on(`tableActionExecuted_${this.uuid}`, (payload) => {
+      if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
+        this.executeTableAction(payload.action, payload.data, payload.modal);
+      } else {
+        const func = dynamicforms.getObjectFromPath(payload.action.action.func_name);
+        if (func) {
+          let params = {};
+          try {
+            params = payload.action.action.params;
+            // eslint-disable-next-line no-empty
+          } catch (e) {}
+          const data = { context: this, ...payload };
+          if (params) func.apply(params, [data]);
+          else func(data);
+        }
+      }
     });
   },
   computed: {
@@ -66,7 +81,7 @@ export default {
       return {
         rows: this.loadableRows(this.rows),
         columns: this.columns.map((c) => new TableColumn(c)),
-        actions: new ActionsHandler(this.actions, this.showModal),
+        actions: new ActionsHandler(this.actions, this.showModal, this.uuid),
         rowProperties: this['row-properties'],
         loading: this.loading,
         noDataString: 'No data',
@@ -186,14 +201,14 @@ export default {
         this.editingRowURL = this.detail_url
             .replace('--record_id--', row.id)
             .replace('.json', '.component');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
+        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.add;
         this.editingRowURL = this.detail_url
             .replace('--record_id--', 'new')
             .replace('.json', '.component');
         console.log(this.editingRowURL, 'add -url');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name);
+        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';

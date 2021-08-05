@@ -3,9 +3,10 @@
   <tr v-for="row in rows" :key="row.id"
       :style="row.df_control_data.row_css_style"
       v-observe-visibility="rows.getVisibilityHandler(row.id)"
-      @click="rowClick('ROW_CLICK', row)" @mouseup.right="rowClick('ROW_RIGHTCLICK')"
+      @click="rowClick($event,'ROW_CLICK', row)" @mouseup.right="rowClick($event,'ROW_RIGHTCLICK')"
   >
     <td v-for="col in columns" :key="col.name">
+      <Actions :row="row" :actions="actions.filter('FIELD_START', col.name)"></Actions>
       <component v-if="col.renderDecoratorComponentName"
                  :is="col.renderDecoratorComponentName"
                  :row="row" :column="col"
@@ -15,7 +16,8 @@
                :actions="actions.filter(col.name.substr(9).toUpperCase())"
       >
       </Actions>
-      <div v-else v-html="col.renderDecoratorFunction(row, col, row[col.name])"/>
+      <div v-else v-html="col.renderDecoratorFunction(row, col, row[col.name])" style="display: inline-block"/>
+      <Actions :row="row" :actions="actions.filter('FIELD_END', col.name)"></Actions>
     </td>
   </tr>
   </tbody>
@@ -39,10 +41,10 @@ export default {
     };
   },
   methods: {
-    rowClick(position, row) {
+    rowClick(event, position, row) {
       const actions = this.actions.filter(position);
       actions.list.forEach((action) => {
-        actions.exec(action, row);
+        actions.exec(event, action, row);
       });
     },
   },

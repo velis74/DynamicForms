@@ -10,7 +10,7 @@ from .settings import DYNAMICFORMS
 
 class ActionBase(object):
 
-    def __init__(self, action_js: Union[str, bool], name: str, serializer: Serializer = None):
+    def __init__(self, action_js: Union[str, bool], name: str, serializer: Serializer = None, action=None):
         """
         :param action_js: JavaScript to execute when action is run
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
@@ -19,6 +19,7 @@ class ActionBase(object):
         assert name is not None, 'Action name must not be None'
         self.name = name
         self.action_js = action_js
+        self.action = action
         assert self.action_js is not None, 'When declaring action, it must declare action JavaScript to execute'
         # serializer will be set when obtaining a resolved copy
         self.serializer = serializer
@@ -53,7 +54,7 @@ class ActionBase(object):
         return string
 
     def as_component_def(self):
-        return {k: getattr(self, k) for k in ('name', 'action_js')}
+        return {k: getattr(self, k) for k in ('name', 'action_js', 'action')}
 
 
 class RenderableActionMixin(object):
@@ -98,15 +99,15 @@ class TableAction(ActionBase, RenderableActionMixin):
     def __init__(self, position: TablePosition, label: str, action_js: str,
                  title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
                  name: Union[str, None] = None, serializer: Serializer = None,
-                 btn_classes: Union[str, dict, None] = None):
-        ActionBase.__init__(self, action_js, name, serializer)
+                 btn_classes: Union[str, dict, None] = None, action=None):
+        ActionBase.__init__(self, action_js, name, serializer, action=action)
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
         self.position = position
         self.field_name = field_name
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
-                           serializer, self.btn_classes)
+                           serializer, self.btn_classes, action=self.action)
 
     def to_component_params(self, row_data, serializer):
         """
@@ -197,8 +198,8 @@ class TableAction(ActionBase, RenderableActionMixin):
 class FieldChangeAction(ActionBase):
 
     def __init__(self, tracked_fields: Iterable[str], action_js: str, name: Union[str, None] = None,
-                 serializer: Serializer = None):
-        super().__init__(action_js, name, serializer)
+                 serializer: Serializer = None, action=None):
+        super().__init__(action_js, name, serializer, action=action)
         self.tracked_fields = tracked_fields
         assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         if serializer:
@@ -243,7 +244,7 @@ class FieldChangeAction(ActionBase):
 class FormInitAction(ActionBase):
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return FormInitAction(self.action_js, self.name, serializer)
+        return FormInitAction(self.action_js, self.name, serializer, action=self.action)
 
     def render(self, serializer: Serializer, **kwds):
         # we need window.setTimeout because at the time of form generation, the initial fields value collection
@@ -277,8 +278,9 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
 
     def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
                  button_is_primary: bool = None, positions: List[str] = None,
-                 name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None):
-        ActionBase.__init__(self, action_js or False, name, serializer)
+                 name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None,
+                 action=None):
+        ActionBase.__init__(self, action_js or False, name, serializer, action=action)
         title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
