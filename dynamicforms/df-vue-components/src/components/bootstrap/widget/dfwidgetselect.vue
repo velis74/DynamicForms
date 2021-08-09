@@ -54,7 +54,7 @@ export default {
         placeholder: this.placeholder,
         ...this.settings,
         data: val,
-        dropdownParent: $('#df-modal-handler'),
+        dropdownParent: $('.df-modal-handler'),
         tags: true,
       });
       this.setValue(this.modelValue);
@@ -84,7 +84,7 @@ export default {
           ...this.settings,
           data: this.options,
           tags: true,
-          dropdownParent: $('#df-modal-handler'),
+          dropdownParent: $('.df-modal-handler'),
         }).on('select2:select select2:unselect', (ev) => {
           this.$emit('update:modelValue', this.select2.val());
           this.$emit('select', ev.params.data);

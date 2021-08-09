@@ -10,6 +10,7 @@ class PageLoadSerializer(serializers.ModelSerializer):
         'new': 'New object',
         'edit': 'Editing object',
     }
+    """
     actions = Actions(
         TableAction(TablePosition.FIELD_START, label='field_start', title='field_start',
                     name='field_start',
@@ -23,6 +24,7 @@ class PageLoadSerializer(serializers.ModelSerializer):
                                 params=dict(page='Page load', field='choice')),
                     action_js=''),
         add_default_crud=True, add_default_filter=True)
+    """
     show_filter = True
 
     def get_row_css_style(self, obj):

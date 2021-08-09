@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="df-modal-handler" tabindex="-1" role="dialog" aria-hidden="true">
+  <div :class="'modal fade ' + className" :id="uuid" tabindex="-1" role="dialog" aria-hidden="true">
     <div :class="'modal-dialog ' + sizeClass" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -46,8 +46,9 @@ export default {
     };
   },
   computed: {
+    className() { return 'df-modal-handler'; },
     bootstrapDialog() {
-      return '#df-modal-handler';
+      return '.df-modal-handler';
     },
     currentDialog() {
       const res = this.dialogs.length ? this.dialogs[this.dialogs.length - 1] : null;
@@ -77,6 +78,9 @@ export default {
     isComponent() {
       return this.currentDialog ? this.currentDialog.body.component
           && this.currentDialog.body.data : false;
+    },
+    uuid() {
+      return this.currentDialog && this.currentDialog.uuid ? `dialog-${this.currentDialog.uuid}` : 'df-modal-handler';
     },
     buttons() {
       const cdb = this.currentDialog ? this.currentDialog.buttons : null;
@@ -159,6 +163,7 @@ export default {
     showComponent(componentDef, whichTitle, tableUuid) {
       const actions = componentDef.data.dialog.actions;
       this.dialogs.push({
+        uuid: componentDef.data.uuid,
         title: componentDef.data.titles[whichTitle || 'new'],
         body: componentDef,
         buttons: Object.keys(actions).reduce(
