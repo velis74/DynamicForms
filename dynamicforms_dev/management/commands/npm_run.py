@@ -1,6 +1,6 @@
-import atexit
-import subprocess
 import os
+import subprocess
+from argparse import ArgumentParser
 
 from django.core.management.base import BaseCommand
 
@@ -8,8 +8,8 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     help = 'Generate Field classes from DRF with applied DynamicForms mixins'
 
-    def add_arguments(self, parser):
-        parser.add_argument('-command', dest='command', type=str, default='serve', action='store',
+    def add_arguments(self, parser: ArgumentParser):
+        parser.add_argument('command', type=str, default='serve', action='store',
                             help='command to run, e.g. "build" or "serve". default: "serve"')
 
     def handle(self, *args, **options):
