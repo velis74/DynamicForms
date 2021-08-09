@@ -1,6 +1,6 @@
 <template>
   <dfwidgetbase :def="def" :data="data" :errors="errors">
-    <select slot="input" class="form-control" :id="id" :name="name"
+    <select slot="input" class="form-control" :id="def.uuid" :name="name"
             :disabled="disabled" :required="required">
       <option selected="selected">orange</option>
       <option>white</option>

@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Generate Field classes from DRF with applied DynamicForms mixins'
 
     def add_arguments(self, parser: ArgumentParser):
-        parser.add_argument('command', type=str, default='serve', action='store',
+        parser.add_argument('command', type=str, default='serve', action='store', nargs='?',
                             help='command to run, e.g. "build" or "serve". default: "serve"')
 
     def handle(self, *args, **options):

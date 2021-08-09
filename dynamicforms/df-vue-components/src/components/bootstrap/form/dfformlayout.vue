@@ -1,5 +1,5 @@
 <template>
-  <form :id="'form-' + formUUID">
+  <form :id="formUUID">
     <slot name="form-error"><div v-if="getErrorText"><small :id="'form-' + formUUID + '-err'"
                                    class="form-text text-danger">{{ getErrorText }}</small><hr></div></slot>
 
