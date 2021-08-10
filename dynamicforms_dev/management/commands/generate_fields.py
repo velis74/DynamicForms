@@ -111,12 +111,11 @@ class Command(BaseCommand):
                 [''] + textwrap.wrap(
                     ', '.join(sorted(
                         ('DFField, ActionMixin, RenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
-                         'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' +
-                         ', '.join(field_mixins)).split(', '))),
-                    115)
+                         'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, ' +
+                         ', '.join(field_mixins)).split(', '), key=str.casefold)),
+                    116)
             ), file=output)
             print(')', file=output)
-            print('from .mixins import FieldAlignment', file=output)
             print('\nassert DFField  # So that the linter does not complain', file=output)
 
             for field in field_list:
@@ -241,7 +240,7 @@ class Command(BaseCommand):
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, '
+                    additional_mixin += 'ChoiceMixin, EnableCopyMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):

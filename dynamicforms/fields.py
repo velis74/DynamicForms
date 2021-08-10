@@ -6,11 +6,10 @@ from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (
-    ActionMixin, ChoiceMixin, DFField, DateFieldMixin, DateTimeFieldMixin, DisplayMode, EnableCopyMixin,
-    FieldHelpTextMixin, FileFieldMixin, HiddenFieldMixin, NullValueMixin, PasswordFieldMixin,
-    RTFFieldMixin, RelatedFieldAJAXMixin, RenderMixin, TimeFieldMixin
+    ActionMixin, ChoiceMixin, DateFieldMixin, DateTimeFieldMixin, DFField, DisplayMode, EnableCopyMixin, FieldAlignment,
+    FieldHelpTextMixin, FileFieldMixin, HiddenFieldMixin, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
+    RenderMixin, RTFFieldMixin, TimeFieldMixin
 )
-from .mixins import FieldAlignment
 
 assert DFField  # So that the linter does not complain
 
@@ -301,14 +300,14 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         super().__init__(**kwargs)
 
 
-class ChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
-                  FieldHelpTextMixin, fields.ChoiceField):
+class ChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ChoiceField):
+
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
+                 render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
@@ -319,14 +318,14 @@ class ChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
         super().__init__(**kwargs)
 
 
-class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
-                          FieldHelpTextMixin, fields.MultipleChoiceField):
+class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+                          fields.MultipleChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
+                 render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
@@ -337,15 +336,14 @@ class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin
         super().__init__(**kwargs)
 
 
-class FilePathField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
-                    FieldHelpTextMixin, fields.FilePathField):
+class FilePathField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FilePathField):
+
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
                  label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
-                 allow_tags=False, single_choice_hide=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
-                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
-                 render_params: Optional[Dict] = None, **kw):
+                 allow_tags=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}

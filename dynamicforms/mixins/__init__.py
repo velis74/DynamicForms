@@ -1,6 +1,8 @@
 # flake8: noqa
 import abc
 
+from rest_framework.fields import Field as DRFField
+
 from .action import ActionMixin
 from .choice import ChoiceMixin
 from .enable_copy import EnableCopyMixin
@@ -13,7 +15,6 @@ from .password_field import PasswordFieldMixin
 from .related_field_ajax import RelatedFieldAJAXMixin
 from .render import DisplayMode, FieldAlignment, RenderMixin
 from .rtf_field import RTFFieldMixin
-from rest_framework.fields import Field as DRFField
 
 
 class DFField(RenderMixin, ActionMixin, FieldHelpTextMixin, DRFField, abc.ABC):
