@@ -20,6 +20,7 @@
     "popper.js": "^1.16.1",
     "select2": "^4.1.0-rc.0",
     "vue": "^2.6.11",
+    "vue-multiselect": "^2.1.6",
     "vue-observe-visibility": "^1.0.0",
     "webpack": "^4.46.0"
   },
@@ -33,15 +34,19 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-es": "^4.1.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-vue": "^7.13.0",
-    "eslint-plugin-es": "^4.1.0",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,
-    "env": { "node": true },
-    "plugins": ["es"],
+    "env": {
+      "node": true
+    },
+    "plugins": [
+      "es"
+    ],
     "extends": [
       "plugin:vue/essential",
       "@vue/airbnb"
@@ -50,19 +55,50 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "max-len": ["error", { "code": 120 }],
+      "max-len": [
+        "error",
+        {
+          "code": 120
+        }
+      ],
       "no-console": 0,
       "no-plusplus": "off",
-      "indent": ["error", 2, { "MemberExpression": 2 }],
-      "es/no-destructuring": "error",
-      "no-param-reassign": ["error", { "props": false }],
-      "prefer-destructuring": [
-        "warn", {
-          "VariableDeclarator": { "array": false, "object": false },
-          "AssignmentExpression": { "array": false, "object": false }
-        }, { "enforceForRenamedProperties": false }
+      "indent": [
+        "error",
+        2,
+        {
+          "MemberExpression": 2
+        }
       ],
-      "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+      "es/no-destructuring": "error",
+      "no-param-reassign": [
+        "error",
+        {
+          "props": false
+        }
+      ],
+      "prefer-destructuring": [
+        "warn",
+        {
+          "VariableDeclarator": {
+            "array": false,
+            "object": false
+          },
+          "AssignmentExpression": {
+            "array": false,
+            "object": false
+          }
+        },
+        {
+          "enforceForRenamedProperties": false
+        }
+      ],
+      "no-underscore-dangle": [
+        "error",
+        {
+          "allowAfterThis": true
+        }
+      ]
     },
     "overrides": [
       {

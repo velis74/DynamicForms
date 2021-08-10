@@ -1,7 +1,7 @@
 <template>
   <dfwidgetbase :def="def" :data="data" :errors="errors">
     <input slot="input" :id="def.uuid" :type="def.render_params.input_type"
-           :class="def.render_params.field_class"
+           :class="def.render_params.class"
            :name="def.field_name"
            :aria-describedby="def.help_text ? def.field_name + '-help' : null"
            :placeholder="def.placeholder" v-model="

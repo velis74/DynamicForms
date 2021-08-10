@@ -1,3 +1,4 @@
+import typing
 import uuid as uuid_module
 from enum import IntEnum
 from typing import Dict, Hashable, Optional
@@ -8,6 +9,9 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
 from dynamicforms.settings import DYNAMICFORMS
+
+if typing.TYPE_CHECKING:
+    from dynamicforms.mixins import DFField
 
 
 class DisplayMode(IntEnum):
@@ -74,8 +78,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+                display_table or display
+                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -248,3 +252,13 @@ class RenderMixin(object):
         else:
             direction_class = 'unsorted'
         return 'ordering ' + direction_class
+
+    def as_component_def(self: 'DFField') -> dict:
+        try:
+            res = super().as_component_def()  # noqa
+        except AttributeError:
+            res = dict()
+        res.update(dict(
+            uuid=self.uuid, display=self.display_form, alignment=self.alignment.name.lower(),
+            render_params=self.render_params, label=self.label))
+        return res

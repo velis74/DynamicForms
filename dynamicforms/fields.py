@@ -6,11 +6,13 @@ from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (
-    ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, DateTimeFieldMixin, DateFieldMixin,
-    TimeFieldMixin, FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
+    ActionMixin, ChoiceMixin, DFField, DateFieldMixin, DateTimeFieldMixin, DisplayMode, EnableCopyMixin,
+    FieldHelpTextMixin, FileFieldMixin, HiddenFieldMixin, NullValueMixin, PasswordFieldMixin,
+    RTFFieldMixin, RelatedFieldAJAXMixin, RenderMixin, TimeFieldMixin
 )
 from .mixins import FieldAlignment
+
+assert DFField  # So that the linter does not complain
 
 
 class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
@@ -299,7 +301,7 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         super().__init__(**kwargs)
 
 
-class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
+class ChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
                   FieldHelpTextMixin, fields.ChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -317,7 +319,7 @@ class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoice
         super().__init__(**kwargs)
 
 
-class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
+class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
                           FieldHelpTextMixin, fields.MultipleChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -335,7 +337,7 @@ class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, Sing
         super().__init__(**kwargs)
 
 
-class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
+class FilePathField(ChoiceMixin, EnableCopyMixin, RenderMixin, ActionMixin,
                     FieldHelpTextMixin, fields.FilePathField):
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,

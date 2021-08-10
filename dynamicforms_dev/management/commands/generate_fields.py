@@ -77,8 +77,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from dynamicforms import action, mixins
         from dynamicforms.mixins import (
-            ActionMixin, AllowTagsMixin, FieldAlignment, NullChoiceMixin, NullValueMixin, PasswordFieldMixin,
-            RelatedFieldAJAXMixin, RenderMixin, SingleChoiceMixin
+            ActionMixin, ChoiceMixin, FieldAlignment, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
+            RenderMixin
         )
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -86,13 +86,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                    obj.__name__.endswith('Field'):
+                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                        obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -108,14 +108,16 @@ class Command(BaseCommand):
 
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
-                [''] +
-                textwrap.wrap(
-                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, ' +
-                    ', '.join(field_mixins), 115)
+                [''] + textwrap.wrap(
+                    ', '.join(sorted(
+                        ('DFField, ActionMixin, RenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
+                         'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' +
+                         ', '.join(field_mixins)).split(', '))),
+                    115)
             ), file=output)
             print(')', file=output)
             print('from .mixins import FieldAlignment', file=output)
+            print('\nassert DFField  # So that the linter does not complain', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -126,9 +128,7 @@ class Command(BaseCommand):
                     if cls[1] == fields.Field:
                         break
                 if issubclass(field, fields.ChoiceField):
-                    param_classes.append((0, AllowTagsMixin))
-                    param_classes.append((0, NullChoiceMixin))
-                    param_classes.append((0, SingleChoiceMixin))
+                    param_classes.append((0, ChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
@@ -159,9 +159,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                (parm.kind == parm.POSITIONAL_ONLY or
-                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                ):
+                                    (parm.kind == parm.POSITIONAL_ONLY or
+                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                    ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 
@@ -233,8 +233,8 @@ class Command(BaseCommand):
                 # Add additional_inspects and new line
                 if additional_inspects:
                     print(textwrap.dedent(f"""
-
-                        {additional_inspects}"""), file=output)
+    
+                            {additional_inspects}"""), file=output)
                 else:
                     print(textwrap.dedent('\n'), file=output)
 
