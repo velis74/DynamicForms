@@ -13,6 +13,9 @@ import IonIcon from '@/components/bootstrap/ionicon.vue';
 
 export default {
   name: 'actions',
+  mounted() {
+    console.log(this.actions.list);
+  },
   props: ['row', 'actions'],
   components: {
     IonIcon,

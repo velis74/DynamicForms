@@ -16,53 +16,6 @@ class SerializerRenderFields(object):
     def fields(self):
         raise NotImplementedError('You must implement the fields property in your serializer render_fields method')
 
-    def as_field_def(self):
-        res = [dict(name=str(field.field_name), label=str(field.label),
-                    align='right' if field.alignment == FieldAlignment.DECIMAL else field.alignment.name.lower(),
-                    table_classes=field.table_classes, ordering=field.ordering(), visibility=field.display_table.name,
-                    render_params=field.render_params
-                    )
-               for field in self.fields]
-        return res
-
-    def as_name(self):
-        res = [field.field_name for field in self.fields]
-        return res
-
-    @property
-    def columns(self) -> 'SerializerRenderFields':
-        """
-        Returns fields that need to be rendered as columns in table, either fully visible or hidden
-        This is as opposed to rendering the fields into data-field_name properties for the HIDDEN fields(see properties)
-        """
-        this = self
-
-        class BoundVisibleSerializerRenderFields(SerializerRenderFields):
-            @property
-            def fields(self):
-                for fld in this.fields:
-                    if fld.display_table in (DisplayMode.INVISIBLE, DisplayMode.FULL):
-                        yield fld
-
-        return BoundVisibleSerializerRenderFields()
-
-    @property
-    def properties(self) -> 'SerializerRenderFields':
-        """
-        Returns fields that need to be rendered as data-field_name properties in tr
-        This is as opposed to rendering the table columns
-        """
-        this = self
-
-        class BoundVisibleSerializerRenderFields(SerializerRenderFields):
-            @property
-            def fields(self):
-                for fld in this.fields:
-                    if fld.display_table == DisplayMode.HIDDEN:
-                        yield fld
-
-        return BoundVisibleSerializerRenderFields()
-
     def __aiter__(self):
         return self.fields
 
@@ -84,3 +37,10 @@ class SerializerRenderFields(object):
         # noinspection PyMethodMayBeStatic
         def ordering(self):
             return ''
+
+        def as_component_def(self: 'ActionField') -> dict:
+            return dict(name=str(self.field_name), label=str(self.label),
+                        align='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
+                        table_classes=self.table_classes, ordering=self.ordering(), visibility=self.display_table.name,
+                        render_params=self.render_params
+                        )

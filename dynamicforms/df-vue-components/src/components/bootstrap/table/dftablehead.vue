@@ -10,13 +10,16 @@
             </span>
     </th>
   </tr>
+  <dftablefilterrow :configuration="filter"></dftablefilterrow>
   </thead>
 </template>
 
 <script>
+import dftablefilterrow from '@/components/bootstrap/table/dftablefilterrow.vue';
+
 export default {
   name: 'dftablehead',
-  props: ['columns'],
+  props: ['columns', 'filter'],
   computed: {
     numSortedCols() {
       return this.columns.filter((col) => col.ordering.includes('seg-')).length;
@@ -48,6 +51,9 @@ export default {
         this.$parent.$parent.changeOrder(colIdx, oDir, oSeq, !event.shiftKey);
       }
     },
+  },
+  components: {
+    dftablefilterrow,
   },
 };
 </script>

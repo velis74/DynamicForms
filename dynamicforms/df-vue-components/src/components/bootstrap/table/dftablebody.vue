@@ -29,16 +29,9 @@ import Actions from '@/components/bootstrap/actions.vue';
 
 export default {
   name: 'dftablebody',
-  props: ['columns', 'rowProperties', 'rows', 'loading', 'actions'],
+  props: ['columns', 'rows', 'loading', 'actions'],
   data() {
-    return {
-      // rowProps: this.rowProperties.reduce((obj, val) => {
-      //   if (!['row_css_style', 'df_control_data', 'df_prev_id'].includes(val)) {
-      //     obj[`data-${val}`] = row[val];
-      //   }
-      //   return obj;
-      // }, {}),
-    };
+    return {};
   },
   methods: {
     rowClick(event, position, row) {

@@ -2,11 +2,11 @@
   <dfwidgetbase :def="def" :data="data" :errors="errors">
     <input slot="input" :id="def.uuid" :type="def.render_params.input_type"
            :class="def.render_params.class"
-           :name="def.field_name"
-           :aria-describedby="def.help_text ? def.field_name + '-help' : null"
+           :name="def.name"
+           :aria-describedby="def.help_text ? def.name + '-help' : null"
            :placeholder="def.placeholder" v-model="
 /* eslint-disable */
-data[def.field_name]"
+data[def.name]"
            :pattern="def.render_params.pattern"
            :min="def.render_params.min" :max="def.render_params.max" :step="def.render_params.step"
            :minlength="def.render_params.minlength" :maxlength="def.render_params.maxlength"

@@ -1,5 +1,6 @@
+import json
 from enum import auto
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from django.template import loader
 from rest_framework.reverse import reverse
@@ -7,11 +8,12 @@ from rest_framework.serializers import ListSerializer, Serializer, SerializerMet
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition
-from dynamicforms.mixins import ActionMixin, DisplayMode, RenderMixin
+from dynamicforms.mixins import ActionMixin, DisplayMode, FieldRenderMixin
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from .serializer_render_actions import SerializerRenderActions
 from .serializer_render_fields import SerializerRenderFields
+from .serializer_filter import SerializerFilter
 from .util import convert_to_json_if
 
 # noinspection PyUnreachableCode
@@ -19,7 +21,7 @@ if False:
     from .listserializer import ViewModeListSerializer
 
 
-class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
+class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMetaclass):
     """
     This one is actually a mixin, not a monkey-patch like the other two
     """
@@ -115,12 +117,12 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
         params = {
             'uuid': self.uuid,
             'titles': self.form_titles,
-            'columns': self.render_fields.columns.as_field_def(),  # todo: we need a self.setviewmode(header_row)
+            'columns': [c.as_component_def() for c in self.render_fields.fields],
             'actions': self.render_actions.table.as_action_def(),
-            'row-properties': self.render_fields.properties.as_name(),
             'record': None if self.parent else self.data,
+            'filter': self.filter_serializer_component_params(),
             'dialog': self.get_dialog_def(),
-            'detail_url': self.reverse_url,
+            'detail_url': self.reverse_url if not self.is_filter else None,
         }
         if not getattr(self, 'parent', None):
             params['record_data'] = self.data
@@ -219,7 +221,7 @@ class ViewModeSerializer(ViewModeBase, metaclass=SerializerMetaclass):
 
 
 # noinspection PyAbstractClass
-class _ViewModeBoundSerializer(ViewModeSerializer, RenderMixin, ActionMixin, Serializer):
+class _ViewModeBoundSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin, Serializer):
     """
     Dummy class just for type hinting
     """

@@ -78,7 +78,7 @@ class Command(BaseCommand):
         from dynamicforms import action, mixins
         from dynamicforms.mixins import (
             ActionMixin, ChoiceMixin, FieldAlignment, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
-            RenderMixin
+            FieldRenderMixin
         )
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -110,7 +110,7 @@ class Command(BaseCommand):
             print('\n    '.join(
                 [''] + textwrap.wrap(
                     ', '.join(sorted(
-                        ('DFField, ActionMixin, RenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
+                        ('DFField, ActionMixin, FieldRenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
                          'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, ' +
                          ', '.join(field_mixins)).split(', '), key=str.casefold)),
                     116)
@@ -136,7 +136,7 @@ class Command(BaseCommand):
                     param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
-                param_classes.append((0, RenderMixin))
+                param_classes.append((0, FieldRenderMixin))
 
                 skip_depth = 0
                 for depth, cls in param_classes:
@@ -262,7 +262,7 @@ class Command(BaseCommand):
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
+                            f'FieldRenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),

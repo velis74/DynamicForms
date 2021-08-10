@@ -6,8 +6,8 @@
         :hide-selected="false" :preserve-search="true" :preselect-first="false"
         label="text" track-by="id"
 
-        :id="def.uuid" :name="def.field_name" :disabled="disabled"
-        :aria-describedby="def.help_text ? def.field_name + '-help' : null" :placeholder="def.placeholder"
+        :id="def.uuid" :name="def.name" :disabled="disabled"
+        :aria-describedby="def.help_text ? def.name + '-help' : null" :placeholder="def.placeholder"
         @select="onSelect" @input="onInput"
     />
   </dfwidgetbase>

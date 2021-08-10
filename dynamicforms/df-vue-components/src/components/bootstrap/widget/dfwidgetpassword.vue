@@ -3,9 +3,9 @@
     <div slot="input" class="input-group">
       <input :id="def.uuid" :type="passwordFieldType" v-model='password'
              :class="def.render_params.class"
-             :name="def.field_name"
-             :aria-describedby="def.help_text ? def.field_name + '-help' : null"
-             :placeholder="def.placeholder" :value="data[def.field_name]"
+             :name="def.name"
+             :aria-describedby="def.help_text ? def.name + '-help' : null"
+             :placeholder="def.placeholder" :value="data[def.name]"
              :pattern="def.render_params.pattern">
       <span @click="toggle_password"
             :class="isPassword ? 'password-field' : 'password-field-slash'"

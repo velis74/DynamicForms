@@ -13,11 +13,11 @@ from .implicit_natural_date import DateFieldMixin, DateTimeFieldMixin, TimeField
 from .null_value import NullValueMixin
 from .password_field import PasswordFieldMixin
 from .related_field_ajax import RelatedFieldAJAXMixin
-from .render import DisplayMode, FieldAlignment, RenderMixin
+from .field_render import DisplayMode, FieldAlignment, FieldRenderMixin
 from .rtf_field import RTFFieldMixin
 
 
-class DFField(RenderMixin, ActionMixin, FieldHelpTextMixin, DRFField, abc.ABC):
+class DFField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, DRFField, abc.ABC):
     """
     Class only for type hinting
     """

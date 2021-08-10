@@ -40,7 +40,7 @@ class FieldAlignment(IntEnum):
     DECIMAL = 2  # Aligned on the decimal separator
 
 
-class RenderMixin(object):
+class FieldRenderMixin(object):
     """
     Is used in fields and serializers, so every field and serializer gets its unique id. Also to specify where and how
     fields should render.
@@ -78,8 +78,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+                display_table or display
+                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -261,4 +261,12 @@ class RenderMixin(object):
         res.update(dict(
             uuid=self.uuid, display=self.display_form, alignment=self.alignment.name.lower(),
             render_params=self.render_params, label=self.label))
+
+        res.update(dict(name=str(self.field_name), label=str(self.label),
+                        align='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
+                        table_classes=self.table_classes, ordering=self.ordering(),
+                        visibility=dict(table=self.display_table.value, form=self.display_form.value),
+                        render_params=self.render_params, vvvvv=77777,
+                        ))
+
         return res

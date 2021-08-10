@@ -21,7 +21,7 @@ class Field(object):
     def as_component_def(self):
         fdef = self.field_def  # type: DFField
         res = fdef.as_component_def()
-        res.update(dict(field_name=self.field_name))
+        res.update(dict(name=self.field_name))
         if self.render_format:
             res['render_format'] = self.render_format
         return res

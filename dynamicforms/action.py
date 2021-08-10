@@ -123,7 +123,7 @@ class TableAction(ActionBase, RenderableActionMixin):
         return self.name, {}
 
     def as_component_def(self):
-        res = dict(position=self.position.name, field_name=self.field_name)
+        res = dict(position=self.position.name, name=self.name)
         res.update(ActionBase.as_component_def(self))
         res.update(RenderableActionMixin.as_component_def(self))
         return res
@@ -211,11 +211,11 @@ class FieldChangeAction(ActionBase):
         return res
 
     def _resolve_reference(self, ref):
-        from .mixins import RenderMixin
+        from .mixins import FieldRenderMixin
 
         if isinstance(ref, uuid_module.UUID):
             return str(ref)
-        elif isinstance(ref, RenderMixin):
+        elif isinstance(ref, FieldRenderMixin):
             # TODO unit tests!!!
             # TODO test what happens if the Field instance given is from another serializer
             # TODO test what happens when Field instance is actually a Serializer (when should onchange trigger for it?)

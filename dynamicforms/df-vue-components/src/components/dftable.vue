@@ -11,6 +11,7 @@ import ActionsHandler from '@/logic/actionsHandler';
 import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
+import DisplayMode from '@/logic/displayMode';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
@@ -19,20 +20,10 @@ export default {
   name: 'dftable',
   mixins: [tableActionHandlerMixin],
   data() {
-    // I have to add property 'loading' to data for this property to be reactive.
-    // Tried with following code, but it just didnt work.
-    //
-    // const ret = { loading: true };
-    // _.each(_.keys(this.$parent), (key) => {
-    //   ret[`${key}`] = this.$parent[`${key}`];
-    // });
-    //
-    // So I had to insert all this.$parent attributes manually.
-
     return {
       loading: false,
       rows: this.$parent.rows,
-      columns: this.$parent.columns,
+      columns: _.filter(this.$parent.columns, (c) => DisplayMode.FULL === c.visibility.table),
       titles: this.$parent.titles,
       actions: this.$parent.actions,
       uuid: this.$parent.uuid,
@@ -40,13 +31,14 @@ export default {
       detail_url: this.$parent.detail_url,
       editingRowURL: this.$parent.editingRowURL,
       editDialogTitle: this.$parent.editDialogTitle,
-      'row-properties': this.$parent['row-properties'],
+      filter: this.$parent.filter,
     };
   },
   beforeDestroy() {
     eventBus.$off(`tableActionExecuted_${this.uuid}`);
   },
   mounted() {
+    console.log(this.actions, 88888);
     let bodyColumnCss = '';
     this.columns.forEach((column, idx) => {
       bodyColumnCss += `#list-${this.uuid} tbody tr td:nth-child(${idx + 1}) {
@@ -82,12 +74,12 @@ export default {
         rows: this.loadableRows(this.rows),
         columns: this.columns.map((c) => new TableColumn(c)),
         actions: new ActionsHandler(this.actions, this.showModal, this.uuid),
-        rowProperties: this['row-properties'],
         loading: this.loading,
         noDataString: 'No data',
         editDialogTitle: 'Test dialog',
         editingRowURL: '',
         titles: this.titles,
+        filter: this.filter,
       };
     },
     component() {
