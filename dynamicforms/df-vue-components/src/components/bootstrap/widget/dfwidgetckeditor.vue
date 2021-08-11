@@ -1,5 +1,5 @@
 <template>
-  <dfwidgetbase :def="def" :data="data" :errors="errors">
+  <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
     <ckeditor slot="input" :editor="editor" v-model="editorData" :config="editorConfig">
     </ckeditor>
   </dfwidgetbase>
@@ -12,7 +12,24 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
   name: 'dfwidgetckeditor',
-  props: ['def', 'data', 'errors'],
+  props: {
+    def: {
+      type: Object,
+      required: true,
+    },
+    data: {
+      type: Object,
+      required: true,
+    },
+    errors: {
+      type: Object,
+      required: true,
+    },
+    showLabelOrHelpText: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       editor: ClassicEditor,

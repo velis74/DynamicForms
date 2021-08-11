@@ -6,7 +6,7 @@
       </div>
       <div class="card-body">
         <component :is="def.field.render_params.form.replace(/-/g, '')"
-                   :def="def.field" :data="data" :errors="errors"/>
+                   :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
       </div>
       <div class="card-footer" v-if="def.footer">
         {{ def.footer }}
@@ -15,10 +15,10 @@
   </div>
   <component v-else-if="isHidden"
              :is="def.field.render_params.form.replace(/-/g, '')"
-             :def="def.field" :data="data" :errors="errors"/>
+             :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
   <div :class="'col' + columnClasses" v-else>
-    <component :is="def.field.render_params.form.replace(/-/g, '')"
-               :def="def.field" :data="data" :errors="errors"/>
+    <component :is="def.field.render_params.form.replace(/-/g, '')" v-on:onValueConfirmed="onValueConfirmed"
+               :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
   </div>
 </template>
 
@@ -37,13 +37,35 @@ import dfwidgetselect from '@/components/bootstrap/widget/dfwidgetselect.vue';
 
 export default {
   name: 'dfformcolumn',
-  props: ['def', 'data', 'errors'],
+  props: {
+    def: {
+      type: Object,
+      required: true,
+    },
+    data: {
+      type: Object,
+      required: true,
+    },
+    errors: {
+      type: Object,
+      required: true,
+    },
+    showLabelOrHelpText: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     isGroup() { return this.def.type === 'group'; },
     isHidden() {
       return this.def.field.visibility.form === DisplayMode.HIDDEN;
     },
     columnClasses() { return this.def.width_classes ? ` ${this.def.width_classes}` : ''; },
+  },
+  methods: {
+    onValueConfirmed(e) {
+      this.$emit('onValueConfirmed', e);
+    },
   },
   components: {
     dfwidgetinput,

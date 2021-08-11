@@ -1,27 +1,48 @@
 <template>
   <tr>
-<!--    <th v-for="(column, idx) in columns" :key="idx">-->
-<!--      <dfformcolumn :key="idx" :def="column" :data="null" :errors="null"/>-->
-<!--    </th>-->
+    {{ filter }}
+    <th v-for="(column, idx) in columns" :key="idx">
+      <dfformcolumn :key="idx" :def="{ field: column }" :data="filter" v-on:onValueConfirmed="onValueConfirmed"
+                    :errors="{}" :showLabelOrHelpText="false"/>
+    </th>
+    {{ queryParams }}
   </tr>
 </template>
 
 <script>
 import _ from 'lodash';
-// import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
+import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
+import DisplayMode from '@/logic/displayMode';
 
 export default {
   name: 'dftablefilterrow',
   props: ['configuration'],
+  mounted() {
+    console.log(this.configuration);
+  },
+  data() {
+    return {
+      filter: {},
+      queryParams: {},
+    };
+  },
   computed: {
     columns() {
-      return _.map(this.configuration.columns, (c) => ({ field: c }));
+      // todo: which columns are in filter needs to be configured in serializer......
+      return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL
+          && c.visibility.form === DisplayMode.FULL);
     },
   },
   methods: {
+    onValueConfirmed(v) {
+      console.log('value confirmed - TRigger FILTER');
+      _.each(_.keys(v), (k) => {
+        this.queryParams[k] = v[k];
+      });
+    },
   },
   components: {
-    // dfformcolumn,
+    dfformcolumn,
   },
 };
 </script>

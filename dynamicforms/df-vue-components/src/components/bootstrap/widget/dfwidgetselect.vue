@@ -1,5 +1,5 @@
 <template>
-  <dfwidgetbase :def="def" :data="data" :errors="errors">
+  <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
     <div slot="input" class="df-select-class" :id="def.uuid" :key="def.uuid" :name="def.name"
          :data-value="selenium ? result : null">
       <multiselect
@@ -8,7 +8,8 @@
           label="text" track-by="id"
 
           :disabled="disabled" :multiple="multiple"
-          :aria-describedby="def.help_text ? def.field_name + '-help' : null" :placeholder="def.placeholder"
+          :aria-describedby="def.help_text && showLabelOrHelpText ? def.field_name + '-help' : null"
+          :placeholder="def.placeholder"
           @select="onSelect" @input="onInput"
       />
     </div>
@@ -66,6 +67,10 @@ export default {
       type: Object,
       required: true,
     },
+    showLabelOrHelpText: {
+      type: Boolean,
+      default: true,
+    },
   },
   mounted: function mounted() {
     if (this.selenium) {
@@ -83,12 +88,14 @@ export default {
   },
   methods: {
     onSelect(v) {
-      this.data[this.def.field_name] = this.result; // eslint-disable-line vue/no-mutating-props
+      this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
       this.$emit('itemSelected', v);
+      console.log(v);
+      this.$emit('onValueConfirmed', { [this.def.name]: this.result });
     },
     onInput(inp) {
       if (inp === null) {
-        this.data[this.def.field_name] = this.result; // eslint-disable-line vue/no-mutating-props
+        this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
         this.$emit('itemSelected', inp);
       }
     },

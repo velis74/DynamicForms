@@ -1,10 +1,10 @@
 <template>
-  <dfwidgetbase :def="def" :data="data" :errors="errors">
+  <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
     <div slot="input" class="input-group">
       <input :id="def.uuid" :type="passwordFieldType" v-model='password'
              :class="def.render_params.class"
              :name="def.name"
-             :aria-describedby="def.help_text ? def.name + '-help' : null"
+             :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
              :placeholder="def.placeholder" :value="data[def.name]"
              :pattern="def.render_params.pattern">
       <span @click="toggle_password"
@@ -19,7 +19,24 @@ import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
 
 export default {
   name: 'dfwidgetpassword',
-  props: ['def', 'data', 'errors'],
+  props: {
+    def: {
+      type: Object,
+      required: true,
+    },
+    data: {
+      type: Object,
+      required: true,
+    },
+    errors: {
+      type: Object,
+      required: true,
+    },
+    showLabelOrHelpText: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       password: '',
