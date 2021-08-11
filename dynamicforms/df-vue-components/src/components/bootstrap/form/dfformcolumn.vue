@@ -40,7 +40,9 @@ export default {
   props: ['def', 'data', 'errors'],
   computed: {
     isGroup() { return this.def.type === 'group'; },
-    isHidden() { return this.def.field.display === DisplayMode.HIDDEN; },
+    isHidden() {
+      return this.def.field.visibility.form === DisplayMode.HIDDEN;
+    },
     columnClasses() { return this.def.width_classes ? ` ${this.def.width_classes}` : ''; },
   },
   components: {

@@ -13,9 +13,6 @@ import _ from 'lodash';
 export default {
   name: 'dftablefilterrow',
   props: ['configuration'],
-  mounted() {
-    console.log(this.configuration, 999);
-  },
   computed: {
     columns() {
       return _.map(this.configuration.columns, (c) => ({ field: c }));

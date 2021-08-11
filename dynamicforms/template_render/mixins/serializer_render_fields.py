@@ -8,6 +8,7 @@ from typing import Iterable
 from django.utils.translation import ugettext_lazy as _
 
 from dynamicforms.action import TableAction, TablePosition
+from dynamicforms.field_component_definition import FieldComponentDefinition
 from dynamicforms.mixins import DisplayMode, FieldAlignment
 
 
@@ -39,8 +40,8 @@ class SerializerRenderFields(object):
             return ''
 
         def as_component_def(self: 'ActionField') -> dict:
-            return dict(name=str(self.field_name), label=str(self.label),
-                        align='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
-                        table_classes=self.table_classes, ordering=self.ordering(), visibility=self.display_table.name,
-                        render_params=self.render_params
-                        )
+            return FieldComponentDefinition(uuid='', name=str(self.field_name), label=str(self.label),
+                                       alignment='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
+                                       table_classes=self.table_classes, ordering=self.ordering(),
+                                       visibility=dict(table=self.display_table.value),
+                                       render_params=self.render_params, help_text='')

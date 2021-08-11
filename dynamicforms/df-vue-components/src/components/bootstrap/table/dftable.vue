@@ -35,9 +35,6 @@ import Actions from '@/components/bootstrap/actions.vue';
 export default {
   name: 'dftable',
   props: ['configuration'],
-  mounted() {
-    console.log(this.configuration.actions);
-  },
   components: {
     dftablefoot, dftablehead, dftablebody, Actions,
   },

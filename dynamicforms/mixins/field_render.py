@@ -8,6 +8,7 @@ from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedFiel
 from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
+from dynamicforms.field_component_definition import FieldComponentDefinition
 from dynamicforms.settings import DYNAMICFORMS
 
 if typing.TYPE_CHECKING:
@@ -258,15 +259,8 @@ class FieldRenderMixin(object):
             res = super().as_component_def()  # noqa
         except AttributeError:
             res = dict()
-        res.update(dict(
-            uuid=self.uuid, display=self.display_form, alignment=self.alignment.name.lower(),
-            render_params=self.render_params, label=self.label))
-
-        res.update(dict(name=str(self.field_name), label=str(self.label),
-                        align='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
-                        table_classes=self.table_classes, ordering=self.ordering(),
-                        visibility=dict(table=self.display_table.value, form=self.display_form.value),
-                        render_params=self.render_params, vvvvv=77777,
-                        ))
-
-        return res
+        return FieldComponentDefinition(uuid=str(self.uuid), name=str(self.field_name), label=str(self.label),
+                                   alignment=self.alignment.name.lower(),
+                                   table_classes=self.table_classes, ordering=self.ordering(),
+                                   visibility=dict(table=self.display_table.value, form=self.display_form.value),
+                                   render_params=self.render_params, help_text=res.get('help_text', ''))

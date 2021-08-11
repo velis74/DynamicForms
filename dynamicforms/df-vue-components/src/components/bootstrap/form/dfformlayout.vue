@@ -2,7 +2,6 @@
   <form :id="formUUID">
     <slot name="form-error"><div v-if="getErrorText"><small :id="'form-' + formUUID + '-err'"
                                    class="form-text text-danger">{{ getErrorText }}</small><hr></div></slot>
-
     <dfformrow v-for="(row, idx) in definition.rows" :key="idx" :columns="row" :data="record_data" :errors="errors"/>
   </form>
 </template>
@@ -14,6 +13,13 @@ import eventBus from '../../../logic/eventBus';
 export default {
   name: 'formlayout',
   props: ['data', 'def', 'uuid', 'url'],
+  mounted() {
+    eventBus.$on(`formEvents_${this.formUUID}`, (payload) => {
+      if (payload.type === 'submitErrors') {
+        this.errors = payload.data;
+      }
+    });
+  },
   data() {
     const definition = this.data.dialog || this.def;
     const formUUID = this.data.uuid || this.uuid;
@@ -40,15 +46,6 @@ export default {
   beforeDestroy() {
     eventBus.$off(`formEvents_${this.formUUID}`);
   },
-  mounted() {
-    eventBus.$on(`formEvents_${this.formUUID}`, (payload) => {
-      console.log(payload);
-      if (payload.type === 'submitErrors') {
-        this.errors = payload.data;
-      }
-    });
-  },
-
 };
 </script>
 

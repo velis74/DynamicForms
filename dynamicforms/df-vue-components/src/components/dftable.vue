@@ -38,11 +38,10 @@ export default {
     eventBus.$off(`tableActionExecuted_${this.uuid}`);
   },
   mounted() {
-    console.log(this.actions, 88888);
     let bodyColumnCss = '';
     this.columns.forEach((column, idx) => {
       bodyColumnCss += `#list-${this.uuid} tbody tr td:nth-child(${idx + 1}) {
-            text-align: ${column.align};
+            text-align: ${column.alignment};
           }
           `;
     });

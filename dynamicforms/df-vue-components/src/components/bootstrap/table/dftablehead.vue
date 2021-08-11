@@ -1,7 +1,7 @@
 <template>
   <thead>
   <tr>
-    <th v-for="(col, idx) in columns" :key="col.name" :style="`text-align: ${col.align}`"
+    <th v-for="(col, idx) in columns" :key="col.name" :style="`text-align: ${col.alignment}`"
         :class="col.th_classes" @click="colClicked($event, col, idx)">
             {{ col.label }}
             <span v-if="col.isOrdered" class="ordering">
