@@ -198,8 +198,7 @@ export default {
         this.editingRowURL = this.detail_url
             .replace('--record_id--', 'new')
             .replace('.json', '.component');
-        console.log(this.editingRowURL, 'add -url');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
+        window.dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';
