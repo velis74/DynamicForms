@@ -123,7 +123,7 @@ class TableAction(ActionBase, RenderableActionMixin):
         return self.name, {}
 
     def as_component_def(self):
-        res = dict(position=self.position.name, name=self.name)
+        res = dict(position=self.position.name, id=self.field_name)
         res.update(ActionBase.as_component_def(self))
         res.update(RenderableActionMixin.as_component_def(self))
         return res
