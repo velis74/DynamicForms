@@ -22,7 +22,8 @@ export default {
   props: ['def', 'data', 'errors'],
   computed: {
     isHidden() {
-      return this.def.display === DisplayMode.HIDDEN;
+      console.log(this.def);
+      return this.def.visibility.form === DisplayMode.HIDDEN;
     },
     labelAfterElement() {
       return this.def.render_params.label_after_element;
