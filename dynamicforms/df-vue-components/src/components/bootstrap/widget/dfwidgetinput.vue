@@ -1,8 +1,9 @@
 <template>
   <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
     <input slot="input" :id="def.uuid" :type="def.render_params.input_type"
-           v-on:keyup.enter="onValueConfirmed"
-           v-on:change="onValueConfirmed"
+           v-on:keyup.enter="onValueConfirmed(true)"
+           v-on:input="onValueConfirmed(false)"
+           v-on:change="onValueConfirmed(false)"
            :class="def.render_params.class"
            :name="def.name"
            :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
@@ -40,8 +41,8 @@ export default {
     },
   },
   methods: {
-    onValueConfirmed() {
-      this.$emit('onValueConfirmed');
+    onValueConfirmed(doFilter) {
+      this.$emit('onValueConfirmed', doFilter);
     },
   },
   components: {

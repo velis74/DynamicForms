@@ -12,5 +12,6 @@ class SerializerFilter(object):
         params: Optional[dict] = json.loads(filter_serializer.component_params()) if filter_serializer else None
         if not params:
             return None
+        params['uuid'] = self.uuid
         return params
 

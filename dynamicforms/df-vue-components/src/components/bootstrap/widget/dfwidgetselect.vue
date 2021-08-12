@@ -4,7 +4,7 @@
          :data-value="selenium ? result : null">
       <multiselect
           v-model="selected" :options="options" :close-on-select="true" :clear-on-select="true"
-          :hide-selected="false" :preserve-search="true" :preselect-first="true"
+          :hide-selected="false" :preserve-search="true" :preselect-first="false"
           label="text" track-by="id"
 
           :disabled="disabled" :multiple="multiple"
@@ -90,7 +90,7 @@ export default {
     onSelect(v) {
       this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
       this.$emit('itemSelected', v);
-      this.$emit('onValueConfirmed');
+      this.$emit('onValueConfirmed', true);
     },
     onInput(inp) {
       if (inp === null) {

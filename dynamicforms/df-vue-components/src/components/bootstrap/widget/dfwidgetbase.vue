@@ -52,11 +52,6 @@ export default {
       return '';
     },
   },
-  methods: {
-    onEnter(e) {
-      console.log(e, 111);
-    },
-  },
   components: {
     dfwidgetbaselabel,
   },

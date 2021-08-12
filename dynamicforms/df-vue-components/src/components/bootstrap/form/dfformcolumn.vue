@@ -67,8 +67,8 @@ export default {
     columnClasses() { return this.def.width_classes ? ` ${this.def.width_classes}` : ''; },
   },
   methods: {
-    onValueConfirmed() {
-      this.$emit('onValueConfirmed');
+    onValueConfirmed(doFilter) {
+      this.$emit('onValueConfirmed', doFilter);
     },
   },
   components: {

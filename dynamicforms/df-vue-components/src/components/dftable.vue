@@ -55,7 +55,6 @@ export default {
     const styleTag = document.createElement('style');
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
-
     eventBus.$on(`tableActionExecuted_${this.uuid}`, (payload) => {
       if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
         this.executeTableAction(payload.action, payload.data, payload.modal);
@@ -216,8 +215,13 @@ export default {
       }
     },
     setTableFilter(filter) {
-      this.filterQueryString = $.param(_.pickBy(_.clone(filter), (v) => !!v));
-      this.loadData();
+      console.log(filter);
+      this.filterQueryString = $.param(_.pickBy(
+        _.clone(filter.filter), (v) => (_.isString(v) ? _.size(v) : v !== null && v !== undefined),
+      ));
+      if (filter.doFilter) {
+        this.loadData();
+      }
     },
   },
   watch: {

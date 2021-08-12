@@ -1,6 +1,6 @@
 <template>
   <tbody>
-  <tr v-for="row in rows" :key="row.id"
+  <tr v-for="row in rows" :key="row.id" :data-id="row.id"
       :style="row.df_control_data.row_css_style"
       v-observe-visibility="rows.getVisibilityHandler(row.id)"
       @click="rowClick($event,'ROW_CLICK', row)" @mouseup.right="rowClick($event,'ROW_RIGHTCLICK')"

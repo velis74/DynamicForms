@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr class="dynamicforms-filterrow">
     <th v-if="actionsRowStart.list.length" class="tr-th-action">
       <Actions :row="null" :actions="actionsRowStart"></Actions>
     </th>
@@ -41,8 +41,8 @@ export default {
     },
   },
   methods: {
-    onValueConfirmed() {
-      this.$emit('setTableFilter', this.filter);
+    onValueConfirmed(doFilter) {
+      this.$emit('setTableFilter', { filter: this.filter, doFilter });
     },
   },
   components: {
