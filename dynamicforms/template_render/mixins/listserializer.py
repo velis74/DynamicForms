@@ -75,6 +75,13 @@ class ViewModeListSerializer(ViewModeBase):
             base_url = paginator.base_url.split('?', 1)
             paginator.base_url = self.reverse_url + (('?' + base_url[1]) if len(base_url) == 2 else '')
 
+    @property
+    def request(self: '_ViewModeBoundListSerializer'):
+        if self.context and 'view' in self.context and self.context['view'].request:
+            return self.context['view'].request
+        elif self.child:
+            return self.child.request
+        return None
 
 # noinspection PyAbstractClass
 class _ViewModeBoundListSerializer(ViewModeListSerializer, ListSerializer):

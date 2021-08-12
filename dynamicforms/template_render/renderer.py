@@ -23,6 +23,9 @@ class ComponentHTMLRenderer(TemplateHTMLRenderer):
         elif render_type == 'dialog':
             response['Content-Type'] = 'application/json'  # response.accepted_media_type and .content_type don't work
             return ['template_render/render_dialog.json']
+        elif render_type == 'component-def':
+            response['Content-Type'] = 'application/json'  # response.accepted_media_type and .content_type don't work
+            return ['template_render/render_component_def.json']
         else:
             raise NotImplementedError(f'ComponentHTMLRenderer doesn\'t know how to render {render_type}')
         # return super().get_template_names(response, view)

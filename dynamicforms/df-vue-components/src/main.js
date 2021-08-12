@@ -4,10 +4,12 @@ import ModalHandler from '@/components/bootstrap/modalhandler.vue';
 import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
+import example from '@/examples/example.vue';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
 Vue.component('dftable', dftable);
+Vue.component('example', example);
 
 // const createTable = (elementId, configuration) => new Vue({
 //   render: (h) => h(Table, {
@@ -44,7 +46,7 @@ const createApp = (elementId, template, props, modalId = null) => {
     data() {
       return props;
     },
-    components: { dftable },
+    components: { dftable, example },
   });
 };
 

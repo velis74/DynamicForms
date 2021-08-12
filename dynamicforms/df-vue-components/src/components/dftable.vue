@@ -18,6 +18,9 @@ import dynamicforms from '../dynamicforms';
 export default {
   name: 'dftable',
   mixins: [tableActionHandlerMixin],
+  props: {
+    config: { type: Object, required: false },
+  },
   data() {
     // I have to add property 'loading' to data for this property to be reactive.
     // Tried with following code, but it just didnt work.
@@ -28,19 +31,20 @@ export default {
     // });
     //
     // So I had to insert all this.$parent attributes manually.
+    const cfg = this.config || this.$parent;
 
     return {
       loading: false,
-      rows: this.$parent.rows,
-      columns: this.$parent.columns,
-      titles: this.$parent.titles,
-      actions: this.$parent.actions,
-      uuid: this.$parent.uuid,
-      list_url: this.$parent.list_url,
-      detail_url: this.$parent.detail_url,
-      editingRowURL: this.$parent.editingRowURL,
-      editDialogTitle: this.$parent.editDialogTitle,
-      'row-properties': this.$parent['row-properties'],
+      rows: cfg.rows,
+      columns: cfg.columns,
+      titles: cfg.titles,
+      actions: cfg.actions,
+      uuid: cfg.uuid,
+      list_url: cfg.list_url,
+      detail_url: cfg.detail_url,
+      editingRowURL: cfg.editingRowURL,
+      editDialogTitle: cfg.editDialogTitle,
+      'row-properties': cfg['row-properties'],
     };
   },
   beforeDestroy() {

@@ -299,7 +299,7 @@ class Command(BaseCommand):
                     params = render_params[field]
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     for key, value in params.items():
-                        print(indt(8) + f"kwargs['render_params'].setdefault('{key}', '{value}')", file=output)
+                        print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {repr(value)})", file=output)
                 except:
                     pass
 

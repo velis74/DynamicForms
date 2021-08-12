@@ -332,20 +332,19 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 return cursor_url
 
             def get_paginated_response(self, data):
-                try:
-                    serializer = data.serializer
-                    request = serializer.context['request']
-                    if isinstance(request.accepted_renderer, JSONRenderer) and \
-                            BooleanField().to_internal_value(request.META.get('HTTP_X_DF_COMPONENT_DEF', False)):
-                        # if component definition was requested, let's return that and not just the data
-                        serializer.apply_component_context(request, self)
-                        return Response(serializer.component_params(
-                            output_json=False, data=dict(
-                                next=self.get_next_link(), previous=self.get_previous_link(), results=data
-                            )
-                        ))
-                except KeyError:  # request missing in serializer.context
-                    pass
+                # TODO: this is to be removed - we're getting component definitions through
+                #  ComponentHTMLRenderer.render_type=component-def
+                serializer = data.serializer
+                request = serializer.request
+                if request and isinstance(request.accepted_renderer, JSONRenderer) and \
+                        BooleanField().to_internal_value(request.META.get('HTTP_X_DF_COMPONENT_DEF', False)):
+                    # if component definition was requested, let's return that and not just the data
+                    serializer.apply_component_context(request, self)
+                    return Response(serializer.component_params(
+                        output_json=False, data=dict(
+                            next=self.get_next_link(), previous=self.get_previous_link(), results=data
+                        )
+                    ))
                 return super().get_paginated_response(data)
 
         return MyCursorPagination
