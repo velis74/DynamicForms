@@ -10,7 +10,8 @@
             </span>
     </th>
   </tr>
-  <dftablefilterrow v-if="filter" :configuration="filter" v-on:setTableFilter="setTableFilter"></dftablefilterrow>
+  <dftablefilterrow v-if="filter" :configuration="filter"
+                    v-on:setTableFilter="setTableFilter"></dftablefilterrow>
   </thead>
 </template>
 
@@ -26,7 +27,6 @@ export default {
     },
     filter: {
       type: Object,
-      required: true,
     },
   },
   methods: {

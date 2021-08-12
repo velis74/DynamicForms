@@ -1,5 +1,5 @@
 <template>
-  <div class="col" v-if="isGroup">
+  <div :class="cssClasses" v-if="isGroup">
     <div class="card">
       <div class="card-header">
         {{ def.title }}
@@ -16,7 +16,7 @@
   <component v-else-if="isHidden"
              :is="def.field.render_params.form.replace(/-/g, '')"
              :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
-  <div :class="'col' + columnClasses" v-else>
+  <div :class="cssClasses + columnClasses" v-else>
     <component :is="def.field.render_params.form.replace(/-/g, '')" v-on:onValueConfirmed="onValueConfirmed"
                :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
   </div>
@@ -53,6 +53,10 @@ export default {
     showLabelOrHelpText: {
       type: Boolean,
       default: true,
+    },
+    cssClasses: {
+      type: String,
+      default: 'col',
     },
   },
   computed: {

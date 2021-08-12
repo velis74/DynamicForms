@@ -6,7 +6,7 @@
     <th v-for="(column, idx) in columns" :key="idx">
       <!--  todo: { field: column } must be removed, unify incoming data    -->
       <dfformcolumn :key="idx" :def="{ field: column }" :data="filter" v-on:onValueConfirmed="onValueConfirmed"
-                    :errors="{}" :showLabelOrHelpText="false"/>
+                    :errors="{}" :showLabelOrHelpText="false" :cssClasses="''"/>
     </th>
     <th v-if="actionsRowEnd.list.length" class="tr-th-action">
       <Actions :row="null" :actions="actionsRowEnd"></Actions>

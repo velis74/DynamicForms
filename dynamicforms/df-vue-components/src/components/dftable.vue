@@ -13,6 +13,7 @@ import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
 import $ from 'jquery';
+import DisplayMode from '@/logic/displayMode';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
@@ -28,7 +29,7 @@ export default {
     return {
       loading: false,
       rows: cfg.rows,
-      columns: cfg.columns,
+      columns: _.filter(cfg.columns, (c) => DisplayMode.FULL === c.visibility.table),
       titles: cfg.titles,
       actions: cfg.actions,
       uuid: cfg.uuid,
