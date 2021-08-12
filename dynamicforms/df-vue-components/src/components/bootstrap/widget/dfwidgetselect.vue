@@ -26,13 +26,13 @@ export default {
     return {
       selected: null,
       disabled: false,
-      multiple: true,
       required: false,
       selenium: true, // todo: this should be set globally, not per-component. and declared at top of html itself
     };
   },
   computed: {
     options() { return this.def.choices; },
+    multiple() { return this.def.render_params.multiple; },
     result: {
       get() {
         if (this.selected) {

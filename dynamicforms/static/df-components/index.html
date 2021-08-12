@@ -1,5 +1,8 @@
 <!DOCTYPE html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><script src="http://localhost:8000/static/examples/examples.js"></script><link href="/css/df-components-vendor.css" rel="preload" as="style"><link href="/css/df-components.css" rel="preload" as="style"><link href="/js/df-components-vendors.js" rel="preload" as="script"><link href="/js/df-components.js" rel="preload" as="script"><link href="/css/df-components-vendor.css" rel="stylesheet"><link href="/css/df-components.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but dynamicformscomponents doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><div id="modal-app"></div><script src="/js/df-components-vendors.js"></script><script src="/js/df-components.js"></script></body><script>window.dynamicformsUi = 'bootstrap';
   // window.dynamicformsUi = 'Jqueryui';
-  getComponentDef('http://localhost:8000/page-load.json', (data) => {
-    createApp('app', '<dftable/>', data, 'modal-app');
-  });</script></html>
+  createApp('app', '<example/>', { }, 'modal-app');
+  /**
+   * getComponentDef('http://localhost:8000/page-load.json', (data) => {
+   *   createApp('app', '<dftable/>', data, 'modal-app');
+   * });
+  **/</script></html>

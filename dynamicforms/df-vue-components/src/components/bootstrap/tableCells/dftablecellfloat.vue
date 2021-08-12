@@ -10,6 +10,9 @@ export default {
   props: ['row', 'column', 'value', 'bodyId'],
   computed: {
     displayValue() {
+      if (this.value == null) {
+        return '';
+      }
       // First, ensure we have the namespace ready
       // eslint-disable-next-line no-return-assign
       ['dynamicforms', 'df-tablecell-float-configs'].reduce((res, val) => (res[val] || (res[val] = {})), window);

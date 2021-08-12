@@ -12,7 +12,6 @@ import ActionsHandler from '@/logic/actionsHandler';
 import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
-import DisplayMode from '@/logic/displayMode';
 import $ from 'jquery';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
@@ -21,19 +20,23 @@ import dynamicforms from '../dynamicforms';
 export default {
   name: 'dftable',
   mixins: [tableActionHandlerMixin],
+  props: {
+    config: { type: Object, required: false },
+  },
   data() {
+    const cfg = this.config || this.$parent;
     return {
       loading: false,
-      rows: this.$parent.rows,
-      columns: _.filter(this.$parent.columns, (c) => DisplayMode.FULL === c.visibility.table),
-      titles: this.$parent.titles,
-      actions: this.$parent.actions,
-      uuid: this.$parent.uuid,
-      list_url: this.$parent.list_url,
-      detail_url: this.$parent.detail_url,
-      editingRowURL: this.$parent.editingRowURL,
-      editDialogTitle: this.$parent.editDialogTitle,
-      filter: this.$parent.filter,
+      rows: cfg.rows,
+      columns: cfg.columns,
+      titles: cfg.titles,
+      actions: cfg.actions,
+      uuid: cfg.uuid,
+      list_url: cfg.list_url,
+      detail_url: cfg.detail_url,
+      editingRowURL: cfg.editingRowURL,
+      editDialogTitle: cfg.editDialogTitle,
+      filter: cfg.filter,
       filterQueryString: '',
     };
   },

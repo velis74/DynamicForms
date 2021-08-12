@@ -27,7 +27,7 @@ class BooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Boo
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
-        kwargs['render_params'].setdefault('label_after_element', 'True')
+        kwargs['render_params'].setdefault('label_after_element', True)
         kwargs['render_params'].setdefault('field_class', 'form-check-input')
         kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
@@ -46,7 +46,7 @@ class NullBooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
-        kwargs['render_params'].setdefault('label_after_element', 'True')
+        kwargs['render_params'].setdefault('label_after_element', True)
         kwargs['render_params'].setdefault('field_class', 'form-check-input')
         kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
@@ -168,9 +168,9 @@ class IPAddressField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHel
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-ipaddr')
-        kwargs['render_params'].setdefault('minlength', '7')
-        kwargs['render_params'].setdefault('maxlength', '15')
-        kwargs['render_params'].setdefault('size', '15')
+        kwargs['render_params'].setdefault('minlength', 7)
+        kwargs['render_params'].setdefault('maxlength', 15)
+        kwargs['render_params'].setdefault('size', 15)
         super().__init__(**kwargs)
 
 
@@ -203,7 +203,7 @@ class FloatField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Float
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
@@ -223,7 +223,7 @@ class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Dec
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
@@ -314,7 +314,7 @@ class ChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin, F
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -332,7 +332,7 @@ class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, Action
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'True')
+        kwargs['render_params'].setdefault('multiple', True)
         super().__init__(**kwargs)
 
 
@@ -350,7 +350,7 @@ class FilePathField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin,
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -542,7 +542,7 @@ class StringRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, F
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -561,7 +561,7 @@ class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixi
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -580,7 +580,7 @@ class HyperlinkedRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMix
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -599,7 +599,7 @@ class HyperlinkedIdentityField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMi
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -618,7 +618,7 @@ class SlugRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, Fie
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
@@ -636,7 +636,7 @@ class ManyRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, Fie
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'True')
+        kwargs['render_params'].setdefault('multiple', True)
         super().__init__(**kwargs)
 
 

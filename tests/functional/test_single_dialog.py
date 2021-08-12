@@ -66,7 +66,6 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
                             self.assertEqual(self.get_tag_name(field), "select")
                             select.select_by_index(1)
 
-
         try:
             dialog.find_element_by_class_name("btn-primary").click()
         except NoSuchElementException:
