@@ -77,7 +77,7 @@ export default {
     },
     isComponent() {
       return this.currentDialog ? this.currentDialog.body.component
-          && this.currentDialog.body.data : false;
+        && this.currentDialog.body.data : false;
     },
     uuid() {
       return this.currentDialog && this.currentDialog.uuid ? `dialog-${this.currentDialog.uuid}` : 'df-modal-handler';
@@ -182,14 +182,14 @@ export default {
     fromURL(url, whichTitle, tableUuid) {
       this.loading = true;
       apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
-          .then((res) => { // call api and set data as response, when data is
-            // set component is re-rendered
-            this.showComponent(res.data, whichTitle, tableUuid);
-          }).catch((err) => {
-            console.error(err);
-          }).finally(() => {
-            this.loading = false;
-          });
+        .then((res) => { // call api and set data as response, when data is
+          // set component is re-rendered
+          this.showComponent(res.data, whichTitle, tableUuid);
+        }).catch((err) => {
+        console.error(err);
+      }).finally(() => {
+        this.loading = false;
+      });
     },
   },
   components: {
