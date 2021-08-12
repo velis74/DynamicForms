@@ -120,7 +120,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'columns': [c.as_component_def() for c in self.render_fields.fields],
             'actions': self.render_actions.table.as_action_def(),
             'record': None if self.parent else self.data,
-            'filter': self.filter_serializer_component_params(),
+            'filter': self.filter_serializer_component_params() if self.show_filter else None,
             'dialog': self.get_dialog_def(),
             'detail_url': self.reverse_url if not self.is_filter else None,
         }

@@ -90,8 +90,7 @@ export default {
     onSelect(v) {
       this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
       this.$emit('itemSelected', v);
-      console.log(v);
-      this.$emit('onValueConfirmed', { [this.def.name]: this.result });
+      this.$emit('onValueConfirmed');
     },
     onInput(inp) {
       if (inp === null) {

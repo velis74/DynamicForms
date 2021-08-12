@@ -63,8 +63,8 @@ export default {
     columnClasses() { return this.def.width_classes ? ` ${this.def.width_classes}` : ''; },
   },
   methods: {
-    onValueConfirmed(e) {
-      this.$emit('onValueConfirmed', e);
+    onValueConfirmed() {
+      this.$emit('onValueConfirmed');
     },
   },
   components: {

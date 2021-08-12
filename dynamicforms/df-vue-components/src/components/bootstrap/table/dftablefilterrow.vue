@@ -1,11 +1,16 @@
 <template>
   <tr>
-    {{ filter }}
+    <th v-if="actionsRowStart.list.length" class="tr-th-action">
+      <Actions :row="null" :actions="actionsRowStart"></Actions>
+    </th>
     <th v-for="(column, idx) in columns" :key="idx">
+      <!--  todo: { field: column } must be removed, unify incoming data    -->
       <dfformcolumn :key="idx" :def="{ field: column }" :data="filter" v-on:onValueConfirmed="onValueConfirmed"
                     :errors="{}" :showLabelOrHelpText="false"/>
     </th>
-    {{ queryParams }}
+    <th v-if="actionsRowEnd.list.length" class="tr-th-action">
+      <Actions :row="null" :actions="actionsRowEnd"></Actions>
+    </th>
   </tr>
 </template>
 
@@ -13,17 +18,19 @@
 import _ from 'lodash';
 import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
 import DisplayMode from '@/logic/displayMode';
+import Actions from '@/components/bootstrap/actions.vue';
+import ActionsHandler from '@/logic/actionsHandler';
 
 export default {
   name: 'dftablefilterrow',
   props: ['configuration'],
-  mounted() {
-    console.log(this.configuration);
-  },
   data() {
     return {
       filter: {},
-      queryParams: {},
+      actionsRowEnd: new ActionsHandler(this.configuration.actions,
+        null, this.configuration.uuid).filter('FILTER_ROW_END'),
+      actionsRowStart: new ActionsHandler(this.configuration.actions,
+        null, this.configuration.uuid).filter('FILTER_ROW_START'),
     };
   },
   computed: {
@@ -34,28 +41,30 @@ export default {
     },
   },
   methods: {
-    onValueConfirmed(v) {
-      console.log('value confirmed - TRigger FILTER');
-      _.each(_.keys(v), (k) => {
-        this.queryParams[k] = v[k];
-      });
+    onValueConfirmed() {
+      this.$emit('setTableFilter', this.filter);
     },
   },
   components: {
     dfformcolumn,
+    Actions,
   },
 };
 </script>
 
 <style scoped>
 th.ordering {
-  cursor:      pointer;
+  cursor: pointer;
   user-select: none;
 }
 
 th.ordering > span.ordering > div.ordering-arrow {
-  font-size:   125%;
+  font-size: 125%;
   line-height: .8em; /* increase font size for the arrow */
-  display:     inline-block; /* but do not allow it to affect line size */
+  display: inline-block; /* but do not allow it to affect line size */
+}
+
+.tr-th-action {
+  vertical-align: top;
 }
 </style>

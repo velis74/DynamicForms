@@ -53,6 +53,8 @@ const tableActionHandlerMixin = {
             });
       } else if (action.name === 'cancel') {
         if (modal) modal.hide();
+      } else if (action.name === 'filter') {
+        this.loadData();
       }
     },
   },

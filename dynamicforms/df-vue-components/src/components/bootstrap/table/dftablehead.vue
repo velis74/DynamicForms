@@ -10,7 +10,7 @@
             </span>
     </th>
   </tr>
-  <dftablefilterrow :configuration="filter"></dftablefilterrow>
+  <dftablefilterrow v-if="filter" :configuration="filter" v-on:setTableFilter="setTableFilter"></dftablefilterrow>
   </thead>
 </template>
 
@@ -19,37 +19,19 @@ import dftablefilterrow from '@/components/bootstrap/table/dftablefilterrow.vue'
 
 export default {
   name: 'dftablehead',
-  props: ['columns', 'filter'],
-  computed: {
-    numSortedCols() {
-      return this.columns.filter((col) => col.ordering.includes('seg-')).length;
+  props: {
+    columns: {
+      type: Array,
+      required: true,
+    },
+    filter: {
+      type: Object,
+      required: true,
     },
   },
   methods: {
-    colClicked(event, column, colIdx) {
-      if (!column.isOrdered) {
-        // don't do anything if this column is not sortable
-        return;
-      }
-      if (event.altKey) {
-        // Show dialog with sort order options
-      } else if (event.ctrlKey && event.shiftKey) {
-        // remove column from ordering
-        column.setSorted('unsorted');
-      } else if (event.ctrlKey) {
-        // set column as first sorted column
-        this.$parent.$parent.changeOrder(colIdx, column.isDescending ? 'desc' : 'asc', 1);
-      } else {
-        // Change segment sort direction (and add it to sort segments list if not already there)
-        // if shift is pressed add segment to existing ones. if not, set this column as
-        // the only segment of sort
-        const ordrIdx = column.orderIndex;
-        // eslint-disable-next-line no-nested-ternary
-        const oSeq = event.shiftKey ? (ordrIdx === 0 ? this.numSortedCols + 1 : ordrIdx) : 1;
-        // eslint-disable-next-line no-nested-ternary
-        const oDir = event.shiftKey ? (this.column.isAscending ? 'desc' : 'asc') : column.cycleOrdering;
-        this.$parent.$parent.changeOrder(colIdx, oDir, oSeq, !event.shiftKey);
-      }
+    setTableFilter(filter) {
+      this.$emit('setTableFilter', filter);
     },
   },
   components: {

@@ -8,7 +8,8 @@
       </div>
       <div class="card-body">
         <table class="table">
-          <dftablehead :columns="configuration.columns" :filter="configuration.filter"></dftablehead>
+          <dftablehead :columns="configuration.columns" v-on:setTableFilter="setTableFilter"
+                       :filter="configuration.filter"></dftablehead>
           <dftablebody :columns="configuration.columns"
                      :rows="configuration.rows"
                      :loading="configuration.loading"
@@ -35,6 +36,11 @@ import Actions from '@/components/bootstrap/actions.vue';
 export default {
   name: 'dftable',
   props: ['configuration'],
+  methods: {
+    setTableFilter(filter) {
+      this.$emit('setTableFilter', filter);
+    },
+  },
   components: {
     dftablefoot, dftablehead, dftablebody, Actions,
   },

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <component :is="component + 'table'" :configuration="processedConfiguration"></component>
+    <component :is="component + 'table'" v-on:setTableFilter="setTableFilter"
+               :configuration="processedConfiguration"></component>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
 import DisplayMode from '@/logic/displayMode';
+import $ from 'jquery';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
@@ -32,6 +34,7 @@ export default {
       editingRowURL: this.$parent.editingRowURL,
       editDialogTitle: this.$parent.editDialogTitle,
       filter: this.$parent.filter,
+      filterQueryString: '',
     };
   },
   beforeDestroy() {
@@ -117,7 +120,11 @@ export default {
         // existing rows,
         // we're making a full refresh
       }, 250);
-      apiClient.get(`${this.list_url}?ordering=${this.orderingParam}`, {
+      let url = `${this.list_url}?ordering=${this.orderingParam}`;
+      if (_.size(this.filterQueryString)) {
+        url += `&${this.filterQueryString}`;
+      }
+      apiClient.get(url, {
         headers: {
           'x-viewmode': 'TABLE_ROW',
           'x-pagination': 1,
@@ -203,6 +210,10 @@ export default {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';
       }
+    },
+    setTableFilter(filter) {
+      this.filterQueryString = $.param(_.pickBy(_.clone(filter), (v) => !!v));
+      this.loadData();
     },
   },
   watch: {
