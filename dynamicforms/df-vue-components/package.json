@@ -55,7 +55,7 @@
       "max-len": ["error", { "code": 120 }],
       "no-console": 0,
       "no-plusplus": "off",
-      "indent": ["error", 2, { "MemberExpression": 2 }],
+      "indent": ["error", 2],
       "es/no-destructuring": "error",
       "no-param-reassign": ["error", { "props": false }],
       "prefer-destructuring": [

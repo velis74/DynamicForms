@@ -21,12 +21,18 @@ export default {
     $route(to) {
       this.url = `http://localhost:8000${to.path}.component`;
       axios
-          .get(this.url, {
-            headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-render-type': 'component-def' },
-          })
-          .then((res) => { this.config = res.data; this.$emit('title-change', res.data.titles.table); })
-          // eslint-disable-next-line no-alert
-          .catch((err) => { console.log(err); alert(`Error retrieving component def:\n${err.data}`); });
+        .get(this.url, {
+          headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-render-type': 'component-def' },
+        })
+        .then((res) => {
+          this.config = res.data;
+          this.$emit('title-change', res.data.titles.table);
+        })
+        // eslint-disable-next-line no-alert
+        .catch((err) => {
+          console.log(err);
+          alert(`Error retrieving component def:\n${err.data}`);
+        });
     },
   },
 };

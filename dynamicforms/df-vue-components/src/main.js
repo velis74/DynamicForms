@@ -27,10 +27,10 @@ const createModal = (elementId) => new Vue({
 
 const getComponentDef = (url, callback) => {
   axios
-      .get(url, { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true } })
-      .then((res) => { callback(res.data); })
-      // eslint-disable-next-line no-alert
-      .catch((err) => { alert(err.data); });
+    .get(url, { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true } })
+    .then((res) => { callback(res.data); })
+    // eslint-disable-next-line no-alert
+    .catch((err) => { alert(err.data); });
 };
 
 const createApp = (elementId, template, props, modalId = null) => {
