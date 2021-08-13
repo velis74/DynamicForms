@@ -22,6 +22,12 @@ import Multiselect from 'vue-multiselect';
 
 export default {
   name: 'dfwidgetselect',
+  props: {
+    def: { type: Object, required: true },
+    data: { type: Object, required: true },
+    errors: { type: Object, required: true },
+    showLabelOrHelpText: { type: Boolean, default: true },
+  },
   data() {
     return {
       selected: null,
@@ -54,24 +60,6 @@ export default {
     },
   },
   emits: ['update:modelValue'],
-  props: {
-    def: {
-      type: Object,
-      required: true,
-    },
-    data: {
-      type: Object,
-      required: true,
-    },
-    errors: {
-      type: Object,
-      required: true,
-    },
-    showLabelOrHelpText: {
-      type: Boolean,
-      default: true,
-    },
-  },
   mounted: function mounted() {
     if (this.selenium) {
       console.log(`setSelectValue ${this.def.uuid}`);
@@ -97,6 +85,11 @@ export default {
         this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
         this.$emit('itemSelected', inp);
       }
+    },
+  },
+  watch: {
+    selected: function selectedChanged() {
+      this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
     },
   },
   components: {
