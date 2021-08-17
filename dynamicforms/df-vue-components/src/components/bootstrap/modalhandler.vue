@@ -10,7 +10,7 @@
         </div>
         <transition name="flip" mode="out-in">
           <div class="modal-body" v-if="isComponent" :key="uniqId">
-            <div :is="body.component.replace(/-/g, '')" :data="body.data"/>
+            <div :is="body.component.replace(/-/g, '')" v-bind="body"/>
           </div>
           <div class="modal-body" v-else :key="uniqId" v-html="body"/>
         </transition>
@@ -29,20 +29,25 @@
 
 import apiClient from '@/apiClient';
 import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
+import dfloadingindicator from '@/components/bootstrap/loadingindicator.vue';
 import * as $ from 'jquery';
 import 'bootstrap';
-import eventBus from '../../logic/eventBus';
+import eventBus from '@/logic/eventBus';
 
 export default {
   name: 'modalhandler',
+  components: {
+    dfformlayout, dfloadingindicator,
+  },
   data() {
     return {
       dialogs: [],
-      initialEventAssignDone: false, // unfortunately, created() is too soon to attach
-      // event listener to the dialog
-      uniqIdCounter: 0, // only for giving a truly unique key to dialogs so that we can
-      // do proper reactivity
-      loading: false, // loading dialog. show progress indicator
+      // initialEventAssignDone: unfortunately, created() is too soon to attach event listener to the dialog, so we
+      // attach the onclose event handler upon first dialog show
+      initialEventAssignDone: false,
+      // uniqIdCounter: only for giving a truly unique key to dialogs so that we can do proper reactivity
+      uniqIdCounter: 0,
+      inFlightRequests: {}, // we track currently active requests this way
     };
   },
   computed: {
@@ -54,7 +59,7 @@ export default {
       const res = this.dialogs.length ? this.dialogs[this.dialogs.length - 1] : null;
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       if (res) res.uniqId = res.uniqId || this.uniqIdCounter++;
-      return res;
+      return res; // type: Object
     },
     sizeClass() {
       const dlg = this.currentDialog;
@@ -76,12 +81,12 @@ export default {
       return this.currentDialog ? this.currentDialog.uniqId : null;
     },
     isComponent() {
-      return this.currentDialog ? this.currentDialog.body.component
-        && this.currentDialog.body.data : false;
+      return this.currentDialog ? this.currentDialog.body.component && this.currentDialog.body.data : false;
     },
     uuid() {
       return this.currentDialog && this.currentDialog.uuid ? `dialog-${this.currentDialog.uuid}` : 'df-modal-handler';
     },
+    isShowingProgress() { return this.currentDialog && this.currentDialog.isProgress === true; },
     buttons() {
       const cdb = this.currentDialog ? this.currentDialog.buttons : null;
       const res = this.currentDialog && cdb ? cdb : [{ close: 'default' }];
@@ -121,6 +126,7 @@ export default {
     // make our API available
     if (!window.dynamicforms.dialog) {
       window.dynamicforms.dialog = this;
+      window.setInterval(() => { this.progressDialogCheck(); }, 250);
     }
   },
   methods: {
@@ -154,11 +160,81 @@ export default {
         callback.df_called = true;
       }
     },
+    message(title, message, callback) {
+      this.dialogs.push({
+        title, body: message, buttons: [{ close: 'default' }], callback,
+      });
+      this.show();
+    },
     yesNo(title, question, callback) {
       this.dialogs.push({
         title, body: question, buttons: [{ yes: 'default' }, { no: 'default' }], callback,
       });
       this.show();
+    },
+    loading() { return Object.keys(this.inFlightRequests).length; },
+    oldestInFlight() {
+      /**
+       * Reports the oldest active request's properties. All properties are null if there is no active request.
+       */
+      const inFlightReq = this.inFlightRequests;
+      const inFlightKeys = Object.keys(inFlightReq);
+      if (inFlightKeys.length === 0) return { requestId: null, timestamp: null, age: null };
+      return {
+        requestId: inFlightKeys[0],
+        timestamp: inFlightReq[inFlightKeys[0]],
+        age: new Date().getTime() - inFlightReq[inFlightKeys[0]],
+      };
+    },
+    progressDialogCheck() {
+      /**
+       * checks if there are any ongoing requests that are running for 250ms or more. If that's the case, show progress
+       */
+      if (this.oldestInFlight().age >= 250 && !this.isShowingProgress) {
+        this.showProgress();
+      } else if (this.oldestInFlight().age >= 250 && this.isShowingProgress) {
+        apiClient.get('http://localhost:8000/dynamicforms/progress/',
+          { headers: { 'x-df-timestamp': this.oldestInFlight().timestamp } })
+          .then((res) => { // call api and set data as response, when data is
+            this.currentDialog.body.progress = res.data.value;
+            this.currentDialog.body.label = res.data.comment;
+          })
+          .catch((err) => { console.error(err); });
+      } else if (this.loading() === 0 && this.isShowingProgress) {
+        this.hide();
+      }
+    },
+    showProgress() {
+      console.log(
+        `Showing progress: We have ${this.loading()} active requests to server oldest is ` +
+        `${this.oldestInFlight().age}ms old with timestamp ${this.oldestInFlight().timestamp}.`,
+      );
+      const title = 'Performing operation';
+      this.dialogs.push({
+        title,
+        body: {
+          component: 'dfloadingindicator', loading: true, label: null, progress: null, data: true,
+        },
+        buttons: [],
+        callback: null,
+        isProgress: true,
+      });
+      this.show();
+    },
+    addRequest(requestId) {
+      /**
+       * Adds a new active request to track. If the request does not complete in 250ms, progress dialog will be shown
+       */
+      this.inFlightRequests[requestId] = new Date().getTime();
+      return { sequence: requestId, timestamp: this.inFlightRequests[requestId] };
+    },
+    removeRequest(requestId) {
+      /**
+       * Removes (no longer) active request from tracking. Any open progress dialogs will be hidden
+       */
+      if (!requestId) return; // this will be true for progress requests made by progressDialogCheck function
+      delete this.inFlightRequests[requestId];
+      this.progressDialogCheck(); // first we remove the progress dialog when all requests are done
     },
     showComponent(componentDef, whichTitle, tableUuid) {
       const actions = componentDef.data.dialog.actions;
@@ -180,20 +256,13 @@ export default {
       this.show();
     },
     fromURL(url, whichTitle, tableUuid) {
-      this.loading = true;
       apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
         .then((res) => { // call api and set data as response, when data is
           // set component is re-rendered
           this.showComponent(res.data, whichTitle, tableUuid);
-        }).catch((err) => {
-        console.error(err);
-      }).finally(() => {
-        this.loading = false;
-      });
+        })
+        .catch((err) => { console.error(err); });
     },
-  },
-  components: {
-    dfformlayout,
   },
 };
 </script>

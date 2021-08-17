@@ -1,6 +1,6 @@
 import apiClient from '@/apiClient';
 import _ from 'lodash';
-import eventBus from '../logic/eventBus';
+import eventBus from '@/logic/eventBus';
 
 const tableActionHandlerMixin = {
   methods: {
@@ -39,18 +39,18 @@ const tableActionHandlerMixin = {
               this.rows.results.push(res.data);
             }
           }).catch((reason) => {
-            const dfErrors = {};
-            const eventName = `formEvents_${modal.currentDialog.body.data.uuid}`;
-            if (reason.response.status === 400) {
-              _.forOwn(reason.response.data, (value, key) => {
-                dfErrors[`${key}`] = _.join(value, '\n');
-              });
-            } else {
-              dfErrors.non_field_errors = reason.response.data.detail;
-            }
+          const dfErrors = {};
+          const eventName = `formEvents_${modal.currentDialog.body.data.uuid}`;
+          if (reason.response.status === 400) {
+            _.forOwn(reason.response.data, (value, key) => {
+              dfErrors[`${key}`] = _.join(value, '\n');
+            });
+          } else {
+            dfErrors.non_field_errors = reason.response.data.detail;
+          }
 
-            eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
-          });
+          eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
+        });
       } else if (action.name === 'cancel') {
         if (modal) modal.hide();
       } else if (action.name === 'filter') {

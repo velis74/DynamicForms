@@ -8,7 +8,7 @@
 
 <script>
 import dfformrow from '@/components/bootstrap/form/dfformrow.vue';
-import eventBus from '../../../logic/eventBus';
+import eventBus from '@/logic/eventBus';
 
 export default {
   name: 'formlayout',

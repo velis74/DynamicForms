@@ -6,7 +6,7 @@
       </div>
     </div>
     <transition name="fade">
-      <div v-if="menuShown">
+      <div class="sidenav-group" v-if="menuShown">
         <div id="sidenav-overlay" @click.stop="menuShown = !menuShown"></div>
         <div id="side-nav" class="sidenav">
           <router-link to="/validated">Validated</router-link>
@@ -15,7 +15,7 @@
           <router-link to="/advanced-fields">Advanced fields</router-link>
           <router-link to="/page-load">Page loading</router-link>
           <router-link to="/filter">Filter</router-link>
-          <a href="#" onclick="singleDialog()">Pop-up dialog</a>
+          <a href="#" @click.stop="showSingleDialog">Pop-up dialog</a>
           <a href="#" onclick="singleDialog()">Choice allow tags dialog</a>
           <router-link to="/refresh-types">Refresh types</router-link>
           <router-link to="/calculated-css-class-for-table-row">Row css style</router-link>
@@ -32,9 +32,12 @@
 import VueRouter from 'vue-router';
 import Vue from 'vue';
 import pageloader from '@/examples/pageloader.vue';
+import eventBus from '@/logic/eventBus';
+import apiClient from '@/apiClient';
 
 Vue.use(VueRouter);
 
+const singleDlgFakeUUID = 'fake-uuid-654654-634565';
 const routes = [
   { path: '/validated', component: pageloader },
   { path: '/hidden-fields', component: pageloader },
@@ -44,8 +47,8 @@ const routes = [
   { path: '/filter', component: pageloader },
   { path: '/refresh-types', component: pageloader },
   { path: '/calculated-css-class-for-table-row', component: pageloader },
+  { path: '/single-dialog/:id', component: pageloader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
 ];
-
 const router = new VueRouter({ routes });
 
 export default {
@@ -58,21 +61,75 @@ export default {
       title: '',
     };
   },
-  methods: {},
+  mounted() {
+    eventBus.$on(`tableActionExecuted_${singleDlgFakeUUID}`, this.singleDialogBtnClick);
+  },
+  beforeDestroy() {
+    eventBus.$off(`tableActionExecuted_${singleDlgFakeUUID}`);
+  },
+  methods: {
+    showSingleDialog() {
+      this.menuShown = !this.menuShown;
+      window.dynamicforms.dialog.fromURL('http://localhost:8000/single-dialog/new.component', 'new', singleDlgFakeUUID);
+    },
+    singleDialogBtnClick(payload) {
+      if (payload.action.name === 'say_it') {
+        apiClient
+          .post('http://localhost:8000/single-dialog.json', payload.data)
+          .then((res) => {
+            alert(res.data.test); // eslint-disable-line no-alert
+            payload.modal.hide();
+          });
+      } else if (payload.action.name === 'download') {
+        payload.data.download = '1';
+        apiClient
+          .post('http://localhost:8000/single-dialog.json', payload.data)
+          .then((res) => {
+            // get the filename from content-disposition
+            let filename = '';
+            const disposition = res.headers['Content-Disposition'];
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+              const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+              const matches = filenameRegex.exec(disposition);
+              if (matches != null && matches[1]) {
+                filename = matches[1].replace(/['"]/g, '');
+              }
+            }
+
+            // create a local download link
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // or any other extension
+            link.innerHTML = filename;
+            document.body.appendChild(link);
+            link.click();
+
+            // close the dialog
+            payload.modal.hide();
+          });
+      }
+    },
+  },
 };
+
 </script>
 
 <style scoped>
+.sidenav-group {
+  position: relative;
+  z-index:  100;
+}
+
 .sidenav {
   height:           100%;
   width:            20em;
   position:         fixed;
   z-index:          2;
-  top:              0;
+  top:              3.5em;
   left:             0;
   background-color: #111;
   overflow-x:       hidden;
-  padding-top:      4.5em;
 }
 
 .sidenav a {
@@ -122,10 +179,11 @@ export default {
   color:        white;
 }
 
-.fade-enter-active , .fade-leave-active {
+.fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease;
 }
+
 .fade-enter, .fade-leave-to {
-  opacity:    0;
+  opacity: 0;
 }
 </style>

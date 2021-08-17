@@ -14,9 +14,9 @@ import apiClient from '@/apiClient';
 import _ from 'lodash';
 import $ from 'jquery';
 import DisplayMode from '@/logic/displayMode';
-import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
-import eventBus from '../logic/eventBus';
-import dynamicforms from '../dynamicforms';
+import tableActionHandlerMixin from '@/mixins/tableActionHandlerMixin';
+import eventBus from '@/logic/eventBus';
+import dynamicforms from '@/dynamicforms';
 
 export default {
   name: 'dftable',
@@ -55,23 +55,7 @@ export default {
     const styleTag = document.createElement('style');
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
-    eventBus.$on(`tableActionExecuted_${this.uuid}`, (payload) => {
-      if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
-        this.executeTableAction(payload.action, payload.data, payload.modal);
-      } else {
-        const func = dynamicforms.getObjectFromPath(payload.action.action.func_name);
-        if (func) {
-          let params = {};
-          try {
-            params = payload.action.action.params;
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-          const data = { context: this, ...payload };
-          if (params) func.apply(params, [data]);
-          else func(data);
-        }
-      }
-    });
+    eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
   },
   computed: {
     processedConfiguration() {
@@ -92,8 +76,8 @@ export default {
     },
     sortedColumns() {
       return this.processedConfiguration.columns.filter((col) => col.isOrdered && !col.isUnsorted)
-          .map((col) => ({ fieldName: col.name, direction: col.isAscending, index: col.orderIndex }))
-          .sort((a, b) => a.index - b.index);
+        .map((col) => ({ fieldName: col.name, direction: col.isAscending, index: col.orderIndex }))
+        .sort((a, b) => a.index - b.index);
     },
     orderingParam() {
       return this.sortedColumns.map((o) => (o.direction === true ? '' : '-') + o.fieldName);
@@ -199,15 +183,11 @@ export default {
     showModal(action, row) {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
-        this.editingRowURL = this.detail_url
-            .replace('--record_id--', row.id)
-            .replace('.json', '.component');
+        this.editingRowURL = this.detail_url.replace('--record_id--', row.id).replace('.json', '.component');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.add;
-        this.editingRowURL = this.detail_url
-            .replace('--record_id--', 'new')
-            .replace('.json', '.component');
+        this.editingRowURL = this.detail_url.replace('--record_id--', 'new').replace('.json', '.component');
         window.dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
@@ -221,6 +201,23 @@ export default {
       ));
       if (filter.doFilter) {
         this.loadData();
+      }
+    },
+    tableAction(payload) {
+      if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
+        this.executeTableAction(payload.action, payload.data, payload.modal);
+      } else {
+        const func = dynamicforms.getObjectFromPath(payload.action.action.func_name);
+        if (func) {
+          let params = {};
+          try {
+            params = payload.action.action.params;
+            // eslint-disable-next-line no-empty
+          } catch (e) {}
+          const data = { context: this, ...payload };
+          if (params) func.apply(params, [data]);
+          else func(data);
+        }
       }
     },
   },

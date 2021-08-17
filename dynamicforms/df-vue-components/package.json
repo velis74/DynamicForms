@@ -55,7 +55,7 @@
       "max-len": ["error", { "code": 120 }],
       "no-console": 0,
       "no-plusplus": "off",
-      "indent": ["error", 2],
+      "indent": ["error", 2, { "MemberExpression": 1 }],
       "es/no-destructuring": "error",
       "no-param-reassign": ["error", { "props": false }],
       "prefer-destructuring": [
@@ -65,6 +65,7 @@
         }, { "enforceForRenamedProperties": false }
       ],
       "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+      "operator-linebreak": ["error", "after"],
       "linebreak-style": ["off"]
     },
     "overrides": [
