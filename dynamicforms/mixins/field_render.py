@@ -1,3 +1,4 @@
+import typing
 import uuid as uuid_module
 from enum import IntEnum
 from typing import Dict, Hashable, Optional
@@ -7,7 +8,11 @@ from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedFiel
 from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
+from dynamicforms.field_component_definition import FieldComponentDefinition
 from dynamicforms.settings import DYNAMICFORMS
+
+if typing.TYPE_CHECKING:
+    from dynamicforms.mixins import DFField
 
 
 class DisplayMode(IntEnum):
@@ -36,7 +41,7 @@ class FieldAlignment(IntEnum):
     DECIMAL = 2  # Aligned on the decimal separator
 
 
-class RenderMixin(object):
+class FieldRenderMixin(object):
     """
     Is used in fields and serializers, so every field and serializer gets its unique id. Also to specify where and how
     fields should render.
@@ -74,8 +79,8 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+                display_table or display
+                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -248,3 +253,14 @@ class RenderMixin(object):
         else:
             direction_class = 'unsorted'
         return 'ordering ' + direction_class
+
+    def as_component_def(self: 'DFField') -> dict:
+        try:
+            res = super().as_component_def()  # noqa
+        except AttributeError:
+            res = dict()
+        return FieldComponentDefinition(uuid=str(self.uuid), name=str(self.field_name), label=str(self.label),
+                                   alignment=self.alignment.name.lower(),
+                                   table_classes=self.table_classes, ordering=self.ordering(),
+                                   visibility=dict(table=self.display_table.value, form=self.display_form.value),
+                                   render_params=self.render_params, help_text=res.get('help_text', ''))

@@ -1,5 +1,4 @@
-from rest_framework.fields import Field
-
+from dynamicforms.fields import DFField
 from .render_mode_enum import ViewModeEnum
 
 
@@ -31,7 +30,7 @@ class ViewModeBase(object):
 
 
 # noinspection PyAbstractClass
-class _ViewModeBoundField(ViewModeBase, Field):
+class _ViewModeBoundField(ViewModeBase, DFField):
     """
     Dummy class just for type hinting
     """

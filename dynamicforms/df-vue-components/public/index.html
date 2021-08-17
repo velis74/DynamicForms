@@ -24,8 +24,11 @@
 <script>
   window.dynamicformsUi = 'bootstrap';
   // window.dynamicformsUi = 'Jqueryui';
-  getComponentDef('http://localhost:8000/page-load.json', (data) => {
-    createApp('app', '<dftable/>', data, 'modal-app');
-  });
+  createApp('app', '<example/>', { }, 'modal-app');
+  /**
+   * getComponentDef('http://localhost:8000/page-load.json', (data) => {
+   *   createApp('app', '<dftable/>', data, 'modal-app');
+   * });
+  **/
 </script>
 </html>

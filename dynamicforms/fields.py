@@ -6,33 +6,15 @@ from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (
-    ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
-    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, DateTimeFieldMixin, DateFieldMixin,
-    TimeFieldMixin, FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
+    ActionMixin, ChoiceMixin, DateFieldMixin, DateTimeFieldMixin, DFField, DisplayMode, EnableCopyMixin, FieldAlignment,
+    FieldHelpTextMixin, FieldRenderMixin, FileFieldMixin, HiddenFieldMixin, NullValueMixin, PasswordFieldMixin,
+    RelatedFieldAJAXMixin, RTFFieldMixin, TimeFieldMixin
 )
-from .mixins import FieldAlignment
+
+assert DFField  # So that the linter does not complain
 
 
-class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
-
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
-                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'df-widget-input')
-        kwargs['render_params'].setdefault('input_type', 'checkbox')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
-        kwargs['render_params'].setdefault('label_after_element', 'True')
-        kwargs['render_params'].setdefault('field_class', 'form-check-input')
-        kwargs['render_params'].setdefault('container_class', 'form-check form-group')
-        super().__init__(**kwargs)
-
-
-class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
+class BooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -45,13 +27,32 @@ class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Null
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
-        kwargs['render_params'].setdefault('label_after_element', 'True')
+        kwargs['render_params'].setdefault('label_after_element', True)
         kwargs['render_params'].setdefault('field_class', 'form-check-input')
         kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
 
 
-class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
+class NullBooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
+
+    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
+                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
+                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-input')
+        kwargs['render_params'].setdefault('input_type', 'checkbox')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
+        kwargs['render_params'].setdefault('label_after_element', True)
+        kwargs['render_params'].setdefault('field_class', 'form-check-input')
+        kwargs['render_params'].setdefault('container_class', 'form-check form-group')
+        super().__init__(**kwargs)
+
+
+class CharField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -68,7 +69,7 @@ class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         super().__init__(**kwargs)
 
 
-class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField):
+class EmailField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.EmailField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -85,7 +86,7 @@ class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         super().__init__(**kwargs)
 
 
-class RegexField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField):
+class RegexField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.RegexField):
 
     def __init__(self, regex, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -102,7 +103,7 @@ class RegexField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         super().__init__(**kwargs)
 
 
-class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
+class SlugField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.SlugField):
 
     def __init__(self, allow_unicode=False, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -119,7 +120,7 @@ class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         super().__init__(**kwargs)
 
 
-class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
+class URLField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.URLField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -137,7 +138,7 @@ class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         super().__init__(**kwargs)
 
 
-class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
+class UUIDField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -153,7 +154,7 @@ class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
         super().__init__(**kwargs)
 
 
-class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddressField):
+class IPAddressField(PasswordFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.IPAddressField):
 
     def __init__(self, protocol='both', read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -167,13 +168,13 @@ class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpText
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-ipaddr')
-        kwargs['render_params'].setdefault('minlength', '7')
-        kwargs['render_params'].setdefault('maxlength', '15')
-        kwargs['render_params'].setdefault('size', '15')
+        kwargs['render_params'].setdefault('minlength', 7)
+        kwargs['render_params'].setdefault('maxlength', 15)
+        kwargs['render_params'].setdefault('size', 15)
         super().__init__(**kwargs)
 
 
-class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
+class IntegerField(NullValueMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.IntegerField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -189,7 +190,7 @@ class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         super().__init__(**kwargs)
 
 
-class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField):
+class FloatField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -202,12 +203,12 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
 
-class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalField):
+class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalField):
 
     def __init__(self, max_digits, decimal_places, coerce_to_string=None, max_value=None, min_value=None,
                  localize=False, rounding=None, read_only=False, write_only=False, required=None, default=fields.empty,
@@ -222,13 +223,13 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
         kwargs['render_params'].setdefault('form', 'df-widget-input')
         kwargs['render_params'].setdefault('input_type', 'number')
         kwargs['render_params'].setdefault('table', '#df-tablecell-float')
-        kwargs['render_params'].setdefault('table_show_zeroes', 'True')
+        kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
 
 
 # noinspection PyShadowingBuiltins
-class DateTimeField(DateTimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+class DateTimeField(DateTimeFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                     fields.DateTimeField):
     def __init__(self, format=fields.empty, input_formats=None, default_timezone=None, read_only=False,
                  write_only=False, required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
@@ -246,7 +247,7 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin
 
 
 # noinspection PyShadowingBuiltins
-class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateField):
+class DateField(DateFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DateField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -265,7 +266,7 @@ class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
 
 
 # noinspection PyShadowingBuiltins
-class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.TimeField):
+class TimeField(TimeFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.TimeField):
 
     def __init__(self, format=fields.empty, input_formats=None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
@@ -283,7 +284,7 @@ class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         super().__init__(**kwargs)
 
 
-class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DurationField):
+class DurationField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DurationField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -299,48 +300,11 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         super().__init__(**kwargs)
 
 
-class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
-                  FieldHelpTextMixin, fields.ChoiceField):
+class ChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ChoiceField):
+
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'df-widget-select')
-        kwargs['render_params'].setdefault('input_type', 'text')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
-        super().__init__(**kwargs)
-
-
-class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
-                          FieldHelpTextMixin, fields.MultipleChoiceField):
-    def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
-                 initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'df-widget-select')
-        kwargs['render_params'].setdefault('input_type', 'text')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'True')
-        super().__init__(**kwargs)
-
-
-class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, RenderMixin, ActionMixin,
-                    FieldHelpTextMixin, fields.FilePathField):
-    def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
-                 read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
-                 label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
-                 allow_tags=False, single_choice_hide=False, actions: Actions = None, uuid: UUID = None,
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
                  table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
                  render_params: Optional[Dict] = None, **kw):
@@ -350,11 +314,47 @@ class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoi
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class FileField(FileFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
+class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
+                          fields.MultipleChoiceField):
+    def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
+                 initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
+                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
+                 render_params: Optional[Dict] = None, **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', True)
+        super().__init__(**kwargs)
+
+
+class FilePathField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
+                    fields.FilePathField):
+    def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
+                 read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
+                 label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
+                 allow_tags=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
+                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
+        kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
+        kwargs['render_params'].setdefault('form', 'df-widget-select')
+        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('multiple', False)
+        super().__init__(**kwargs)
+
+
+class FileField(FileFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.FileField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -370,7 +370,7 @@ class FileField(FileFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
         super().__init__(**kwargs)
 
 
-class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField):
+class ImageField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -386,7 +386,7 @@ class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField
         super().__init__(**kwargs)
 
 
-class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
+class ListField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -402,7 +402,7 @@ class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
         super().__init__(**kwargs)
 
 
-class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
+class DictField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -419,7 +419,7 @@ class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
 
 
 if hasattr(fields, 'HStoreField'):
-    class HStoreField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.HStoreField):
+    class HStoreField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.HStoreField):
 
         def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty,
                      initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -436,7 +436,7 @@ if hasattr(fields, 'HStoreField'):
             super().__init__(**kwargs)
 
 
-class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
+class JSONField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -453,7 +453,7 @@ class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
 
 
 # noinspection PyAbstractClass
-class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnlyField):
+class ReadOnlyField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnlyField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -473,7 +473,7 @@ class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnl
 
 
 # noinspection PyAbstractClass
-class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.HiddenField):
+class HiddenField(HiddenFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.HiddenField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -493,7 +493,7 @@ class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
 
 
 # noinspection PyAbstractClass
-class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.SerializerMethodField):
+class SerializerMethodField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.SerializerMethodField):
 
     def __init__(self, method_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -510,7 +510,7 @@ class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields
         super().__init__(**kwargs)
 
 
-class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField):
+class ModelField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField):
 
     def __init__(self, model_field, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -527,7 +527,7 @@ class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField
         super().__init__(**kwargs)
 
 
-class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+class StringRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                          relations.StringRelatedField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -542,11 +542,11 @@ class StringRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldH
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                              relations.PrimaryKeyRelatedField):
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
@@ -561,11 +561,11 @@ class PrimaryKeyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, Fi
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+class HyperlinkedRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                               relations.HyperlinkedRelatedField):
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -580,11 +580,11 @@ class HyperlinkedRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, F
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
+class HyperlinkedIdentityField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                                relations.HyperlinkedIdentityField):
     def __init__(self, view_name=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
@@ -599,12 +599,12 @@ class HyperlinkedIdentityField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, 
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, relations.SlugRelatedField):
-
+class SlugRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
+                       relations.SlugRelatedField):
     def __init__(self, slug_field=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
                  validators=None, allow_null=False, url_reverse: Optional[str] = None,
@@ -618,12 +618,12 @@ class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'False')
+        kwargs['render_params'].setdefault('multiple', False)
         super().__init__(**kwargs)
 
 
-class ManyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, relations.ManyRelatedField):
-
+class ManyRelatedField(RelatedFieldAJAXMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
+                       relations.ManyRelatedField):
     def __init__(self, child_relation=None, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
                  validators=None, allow_null=True, actions: Actions = None, uuid: UUID = None,
@@ -636,11 +636,11 @@ class ManyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
         kwargs['render_params'].setdefault('form', 'df-widget-select')
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
-        kwargs['render_params'].setdefault('multiple', 'True')
+        kwargs['render_params'].setdefault('multiple', True)
         super().__init__(**kwargs)
 
 
-class RTFField(RTFFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
+class RTFField(RTFFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
 
     def __init__(self, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
                  display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',

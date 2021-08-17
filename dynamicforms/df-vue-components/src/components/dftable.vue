@@ -1,6 +1,7 @@
 <template>
   <div>
-    <component :is="component + 'table'" :configuration="processedConfiguration"></component>
+    <component :is="component + 'table'" v-on:setTableFilter="setTableFilter"
+               :configuration="processedConfiguration"></component>
   </div>
 </template>
 
@@ -11,6 +12,8 @@ import ActionsHandler from '@/logic/actionsHandler';
 import TableColumn from '@/logic/tableColumn';
 import apiClient from '@/apiClient';
 import _ from 'lodash';
+import $ from 'jquery';
+import DisplayMode from '@/logic/displayMode';
 import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
@@ -18,29 +21,24 @@ import dynamicforms from '../dynamicforms';
 export default {
   name: 'dftable',
   mixins: [tableActionHandlerMixin],
+  props: {
+    config: { type: Object, required: false },
+  },
   data() {
-    // I have to add property 'loading' to data for this property to be reactive.
-    // Tried with following code, but it just didnt work.
-    //
-    // const ret = { loading: true };
-    // _.each(_.keys(this.$parent), (key) => {
-    //   ret[`${key}`] = this.$parent[`${key}`];
-    // });
-    //
-    // So I had to insert all this.$parent attributes manually.
-
+    const cfg = this.config || this.$parent;
     return {
       loading: false,
-      rows: this.$parent.rows,
-      columns: this.$parent.columns,
-      titles: this.$parent.titles,
-      actions: this.$parent.actions,
-      uuid: this.$parent.uuid,
-      list_url: this.$parent.list_url,
-      detail_url: this.$parent.detail_url,
-      editingRowURL: this.$parent.editingRowURL,
-      editDialogTitle: this.$parent.editDialogTitle,
-      'row-properties': this.$parent['row-properties'],
+      rows: cfg.rows,
+      columns: _.filter(cfg.columns, (c) => DisplayMode.FULL === c.visibility.table),
+      titles: cfg.titles,
+      actions: cfg.actions,
+      uuid: cfg.uuid,
+      list_url: cfg.list_url,
+      detail_url: cfg.detail_url,
+      editingRowURL: cfg.editingRowURL,
+      editDialogTitle: cfg.editDialogTitle,
+      filter: cfg.filter,
+      filterQueryString: '',
     };
   },
   beforeDestroy() {
@@ -50,14 +48,13 @@ export default {
     let bodyColumnCss = '';
     this.columns.forEach((column, idx) => {
       bodyColumnCss += `#list-${this.uuid} tbody tr td:nth-child(${idx + 1}) {
-            text-align: ${column.align};
+            text-align: ${column.alignment};
           }
           `;
     });
     const styleTag = document.createElement('style');
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
-
     eventBus.$on(`tableActionExecuted_${this.uuid}`, (payload) => {
       if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
         this.executeTableAction(payload.action, payload.data, payload.modal);
@@ -82,12 +79,12 @@ export default {
         rows: this.loadableRows(this.rows),
         columns: this.columns.map((c) => new TableColumn(c)),
         actions: new ActionsHandler(this.actions, this.showModal, this.uuid),
-        rowProperties: this['row-properties'],
         loading: this.loading,
         noDataString: 'No data',
         editDialogTitle: 'Test dialog',
         editingRowURL: '',
         titles: this.titles,
+        filter: this.filter,
       };
     },
     component() {
@@ -126,7 +123,11 @@ export default {
         // existing rows,
         // we're making a full refresh
       }, 250);
-      apiClient.get(`${this.list_url}?ordering=${this.orderingParam}`, {
+      let url = `${this.list_url}?ordering=${this.orderingParam}`;
+      if (_.size(this.filterQueryString)) {
+        url += `&${this.filterQueryString}`;
+      }
+      apiClient.get(url, {
         headers: {
           'x-viewmode': 'TABLE_ROW',
           'x-pagination': 1,
@@ -207,11 +208,19 @@ export default {
         this.editingRowURL = this.detail_url
             .replace('--record_id--', 'new')
             .replace('.json', '.component');
-        console.log(this.editingRowURL, 'add -url');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
+        window.dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';
+      }
+    },
+    setTableFilter(filter) {
+      console.log(filter);
+      this.filterQueryString = $.param(_.pickBy(
+        _.clone(filter.filter), (v) => (_.isString(v) ? _.size(v) : v !== null && v !== undefined),
+      ));
+      if (filter.doFilter) {
+        this.loadData();
       }
     },
   },

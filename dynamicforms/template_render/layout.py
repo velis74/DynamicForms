@@ -1,15 +1,13 @@
 from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
-from rest_framework.fields import Field as DRFField
-
-from dynamicforms.mixins.render import DisplayMode
+from dynamicforms.fields import DFField, DisplayMode
 
 if TYPE_CHECKING:
     from dynamicforms.serializers import Serializer
 
 
 class Field(object):
-    def __init__(self, field_name: str, field_def: Optional[DRFField] = None, render_format: Optional[str] = None):
+    def __init__(self, field_name: str, field_def: Optional[DFField] = None, render_format: Optional[str] = None):
         self.field_name = field_name
         self.field_def = field_def
         self.render_format = render_format
@@ -21,19 +19,16 @@ class Field(object):
         return res
 
     def as_component_def(self):
-        fdef = self.field_def
-        res = dict(
-            field_name=self.field_name, uuid=fdef.uuid, display=fdef.display_form,
-            alignment=fdef.alignment.name.lower(), render_params=fdef.render_params, help_text=fdef.help_text,
-            label=fdef.label,
-        )
+        fdef = self.field_def  # type: DFField
+        res = fdef.as_component_def()
+        res.update(dict(name=self.field_name))
         if self.render_format:
             res['render_format'] = self.render_format
         return res
 
 
 class Column(object):
-    def __init__(self, field: Union[Tuple[str, DRFField], Field, str, None], width_classes: Optional[str] = None):
+    def __init__(self, field: Union[Tuple[str, DFField], Field, str, None], width_classes: Optional[str] = None):
         if isinstance(field, tuple):
             self.field = Field(field[0], field[1])
         elif isinstance(field, str):

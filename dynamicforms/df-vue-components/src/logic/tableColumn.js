@@ -14,7 +14,7 @@ class TableColumn {
   }
 
   get align() {
-    return this._columnDef.align;
+    return this._columnDef.alignment;
   }
 
   // eslint-disable-next-line camelcase

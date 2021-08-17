@@ -4,10 +4,12 @@ import ModalHandler from '@/components/bootstrap/modalhandler.vue';
 import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
+import example from '@/examples/example.vue';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
 Vue.component('dftable', dftable);
+Vue.component('example', example);
 
 // const createTable = (elementId, configuration) => new Vue({
 //   render: (h) => h(Table, {
@@ -25,10 +27,10 @@ const createModal = (elementId) => new Vue({
 
 const getComponentDef = (url, callback) => {
   axios
-      .get(url, { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true } })
-      .then((res) => { callback(res.data); })
-      // eslint-disable-next-line no-alert
-      .catch((err) => { alert(err.data); });
+    .get(url, { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true } })
+    .then((res) => { callback(res.data); })
+    // eslint-disable-next-line no-alert
+    .catch((err) => { alert(err.data); });
 };
 
 const createApp = (elementId, template, props, modalId = null) => {
@@ -44,7 +46,7 @@ const createApp = (elementId, template, props, modalId = null) => {
     data() {
       return props;
     },
-    components: { dftable },
+    components: { dftable, example },
   });
 };
 

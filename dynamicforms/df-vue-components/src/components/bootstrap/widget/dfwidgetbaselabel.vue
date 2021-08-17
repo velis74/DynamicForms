@@ -1,5 +1,5 @@
 <template>
-  <label :for="def.uuid" :def="def" :data="data" v-if="def.label">{{ def.label }}</label>
+  <label :id="`label-${def.uuid}`" :for="def.uuid" :def="def" :data="data" v-if="def.label">{{ def.label }}</label>
 </template>
 
 <script>

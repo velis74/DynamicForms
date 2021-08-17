@@ -1,14 +1,14 @@
 <template>
-  <input v-if="isHidden" type="hidden" :name="def.field_name" :value="data[def.field_name]"/>
+  <input v-if="isHidden" type="hidden" :name="def.name" :value="data[def.name]"/>
   <div v-else :id="'container-' + def.uuid" :class="def.render_params.container_class">
-    <slot name="error"><small v-if="getErrorText" :id="def.field_name + '-err'"
+    <slot name="error"><small v-if="getErrorText" :id="def.name + '-err'"
                              class="form-text text-danger">{{ getErrorText }}</small></slot>
-    <dfwidgetbaselabel v-if="labelAfterElement === false" v-bind:data="data" v-bind:def="def">
+    <dfwidgetbaselabel v-if="labelAfterElement === false && showLabelOrHelpText" v-bind:data="data" v-bind:def="def">
     </dfwidgetbaselabel>
     <slot name="input"></slot>
-    <dfwidgetbaselabel v-if="labelAfterElement" v-bind:data="data" v-bind:def="def">
+    <dfwidgetbaselabel v-if="labelAfterElement && showLabelOrHelpText" v-bind:data="data" v-bind:def="def">
     </dfwidgetbaselabel>
-    <slot name="help"><small v-if="def.help_text" :id="def.field_name + '-help'"
+    <slot name="help"><small v-if="def.help_text && showLabelOrHelpText" :id="def.name + '-help'"
                              class="form-text text-muted">{{ def.help_text }}</small></slot>
   </div>
 </template>
@@ -19,17 +19,34 @@ import dfwidgetbaselabel from '@/components/bootstrap/widget/dfwidgetbaselabel.v
 
 export default {
   name: 'dfwidgetbase',
-  props: ['def', 'data', 'errors'],
+  props: {
+    def: {
+      type: Object,
+      required: true,
+    },
+    data: {
+      type: Object,
+      required: true,
+    },
+    errors: {
+      type: Object,
+      required: true,
+    },
+    showLabelOrHelpText: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     isHidden() {
-      return this.def.display === DisplayMode.HIDDEN;
+      return this.def.visibility.form === DisplayMode.HIDDEN;
     },
     labelAfterElement() {
       return this.def.render_params.label_after_element;
     },
     getErrorText() {
       try {
-        if (this.errors && this.errors[this.def.field_name]) return this.errors[this.def.field_name];
+        if (this.errors && this.errors[this.def.name]) return this.errors[this.def.name];
         // eslint-disable-next-line no-empty
       } catch (e) {}
       return '';

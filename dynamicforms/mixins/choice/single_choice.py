@@ -1,4 +1,4 @@
-from .render import DisplayMode
+from ..field_render import DisplayMode
 
 
 class SingleChoiceMixin():

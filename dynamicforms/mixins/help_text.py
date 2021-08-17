@@ -35,3 +35,11 @@ class FieldHelpTextMixin(object):
 
     help_text = property(get_help_text, set_help_text)
     help_text_form = property(get_help_text_form, set_help_text_form)
+
+    def as_component_def(self) -> dict:
+        try:
+            res = super().as_component_def()  # noqa
+        except AttributeError:
+            res = dict()
+        res.update(dict(help_text=self.help_text))
+        return res

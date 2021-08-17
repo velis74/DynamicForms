@@ -1,6 +1,6 @@
 <template>
   <tbody>
-  <tr v-for="row in rows" :key="row.id"
+  <tr v-for="row in rows" :key="row.id" :data-id="row.id"
       :style="row.df_control_data.row_css_style"
       v-observe-visibility="rows.getVisibilityHandler(row.id)"
       @click="rowClick($event,'ROW_CLICK', row)" @mouseup.right="rowClick($event,'ROW_RIGHTCLICK')"
@@ -29,16 +29,9 @@ import Actions from '@/components/bootstrap/actions.vue';
 
 export default {
   name: 'dftablebody',
-  props: ['columns', 'rowProperties', 'rows', 'loading', 'actions'],
+  props: ['columns', 'rows', 'loading', 'actions'],
   data() {
-    return {
-      // rowProps: this.rowProperties.reduce((obj, val) => {
-      //   if (!['row_css_style', 'df_control_data', 'df_prev_id'].includes(val)) {
-      //     obj[`data-${val}`] = row[val];
-      //   }
-      //   return obj;
-      // }, {}),
-    };
+    return {};
   },
   methods: {
     rowClick(event, position, row) {

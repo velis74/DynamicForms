@@ -77,8 +77,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from dynamicforms import action, mixins
         from dynamicforms.mixins import (
-            ActionMixin, AllowTagsMixin, FieldAlignment, NullChoiceMixin, NullValueMixin, PasswordFieldMixin,
-            RelatedFieldAJAXMixin, RenderMixin, SingleChoiceMixin
+            ActionMixin, ChoiceMixin, FieldAlignment, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
+            FieldRenderMixin
         )
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -86,13 +86,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                    obj.__name__.endswith('Field'):
+                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                        obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -108,14 +108,15 @@ class Command(BaseCommand):
 
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
-                [''] +
-                textwrap.wrap(
-                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, ' +
-                    ', '.join(field_mixins), 115)
+                [''] + textwrap.wrap(
+                    ', '.join(sorted(
+                        ('DFField, ActionMixin, FieldRenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
+                         'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, ' +
+                         ', '.join(field_mixins)).split(', '), key=str.casefold)),
+                    116)
             ), file=output)
             print(')', file=output)
-            print('from .mixins import FieldAlignment', file=output)
+            print('\nassert DFField  # So that the linter does not complain', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -126,9 +127,7 @@ class Command(BaseCommand):
                     if cls[1] == fields.Field:
                         break
                 if issubclass(field, fields.ChoiceField):
-                    param_classes.append((0, AllowTagsMixin))
-                    param_classes.append((0, NullChoiceMixin))
-                    param_classes.append((0, SingleChoiceMixin))
+                    param_classes.append((0, ChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
@@ -137,7 +136,7 @@ class Command(BaseCommand):
                     param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
-                param_classes.append((0, RenderMixin))
+                param_classes.append((0, FieldRenderMixin))
 
                 skip_depth = 0
                 for depth, cls in param_classes:
@@ -159,9 +158,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                (parm.kind == parm.POSITIONAL_ONLY or
-                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                ):
+                                    (parm.kind == parm.POSITIONAL_ONLY or
+                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                    ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 
@@ -233,15 +232,15 @@ class Command(BaseCommand):
                 # Add additional_inspects and new line
                 if additional_inspects:
                     print(textwrap.dedent(f"""
-
-                        {additional_inspects}"""), file=output)
+    
+                            {additional_inspects}"""), file=output)
                 else:
                     print(textwrap.dedent('\n'), file=output)
 
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, '
+                    additional_mixin += 'ChoiceMixin, EnableCopyMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):
@@ -263,7 +262,7 @@ class Command(BaseCommand):
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
+                            f'FieldRenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),
@@ -300,7 +299,7 @@ class Command(BaseCommand):
                     params = render_params[field]
                     print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
                     for key, value in params.items():
-                        print(indt(8) + f"kwargs['render_params'].setdefault('{key}', '{value}')", file=output)
+                        print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {repr(value)})", file=output)
                 except:
                     pass
 

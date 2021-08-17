@@ -1,7 +1,7 @@
 <template>
   <thead>
   <tr>
-    <th v-for="(col, idx) in columns" :key="col.name" :style="`text-align: ${col.align}`"
+    <th v-for="(col, idx) in columns" :key="col.name" :style="`text-align: ${col.alignment}`"
         :class="col.th_classes" @click="colClicked($event, col, idx)">
             {{ col.label }}
             <span v-if="col.isOrdered" class="ordering">
@@ -10,19 +10,34 @@
             </span>
     </th>
   </tr>
+  <dftablefilterrow v-if="filter" :configuration="filter"
+                    v-on:setTableFilter="setTableFilter"></dftablefilterrow>
   </thead>
 </template>
 
 <script>
+import dftablefilterrow from '@/components/bootstrap/table/dftablefilterrow.vue';
+
 export default {
   name: 'dftablehead',
-  props: ['columns'],
+  props: {
+    columns: {
+      type: Array,
+      required: true,
+    },
+    filter: {
+      type: Object,
+    },
+  },
   computed: {
     numSortedCols() {
       return this.columns.filter((col) => col.ordering.includes('seg-')).length;
     },
   },
   methods: {
+    setTableFilter(filter) {
+      this.$emit('setTableFilter', filter);
+    },
     colClicked(event, column, colIdx) {
       if (!column.isOrdered) {
         // don't do anything if this column is not sortable
@@ -48,6 +63,9 @@ export default {
         this.$parent.$parent.changeOrder(colIdx, oDir, oSeq, !event.shiftKey);
       }
     },
+  },
+  components: {
+    dftablefilterrow,
   },
 };
 </script>

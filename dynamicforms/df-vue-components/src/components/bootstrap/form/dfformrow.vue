@@ -14,7 +14,7 @@ export default {
   props: ['columns', 'data', 'errors'],
   computed: {
     isHiddenSingle() {
-      return this.columns.length === 1 && this.columns[0].field.display === DisplayMode.HIDDEN;
+      return this.columns.length === 1 && this.columns[0].field.visibility.form === DisplayMode.HIDDEN;
     },
   },
   components: {

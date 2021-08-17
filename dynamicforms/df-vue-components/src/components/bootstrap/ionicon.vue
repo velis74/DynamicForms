@@ -2,13 +2,6 @@
   <div :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg"></div>
 </template>
 
-<style>
-.ionicon {
-  display: inline-block;
-  height:  1.5em;
-}
-</style>
-
 <script>
 import apiClient from '@/apiClient';
 import { noop } from 'lodash';
@@ -48,7 +41,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .ionicon {
   display: inline-block;
   height:  1.5em;

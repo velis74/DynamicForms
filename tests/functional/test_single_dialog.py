@@ -38,10 +38,7 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
                     # Check if choice_field field is select2 element
                     try:
                         select2 = container.find_element_by_class_name("select2-field")
-                    except NoSuchElementException:
-                        select2 = None
 
-                    if select2:
                         initial_choice = container.find_element_by_class_name("select2-selection__rendered")
                         self.assertEqual(self.get_element_text(initial_choice), "Today is sunny")
 
@@ -50,15 +47,24 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
                         self.assertEqual(select2.get_attribute("name"), "test")
                         self.assertEqual(self.get_tag_name(select2), "select")
                         self.select_option_for_select2(container, field_id, text="Never-ending rain")
-                    else:
-                        select = Select(field)
-                        selected_options = select.all_selected_options
-                        self.assertEqual(len(selected_options), 1)
-                        self.assertEqual(selected_options[0].get_attribute("index"), "0")
-                        self.assertEqual(self.get_element_text(selected_options[0]), "Today is sunny")
-                        self.assertEqual(field.get_attribute("name"), "test")
-                        self.assertEqual(self.get_tag_name(field), "select")
-                        select.select_by_index(1)
+                    except NoSuchElementException:
+                        try:
+                            select2 = container.find_element_by_class_name("df-select-class")
+                            selected_options = select2.get_attribute('data-value').split(',')
+                            self.assertEqual(len(selected_options), 1)
+                            self.assertEqual(selected_options[0], "Today is sunny")
+                            self.assertEqual(field.get_attribute("name"), "test")
+                            self.assertEqual(self.get_tag_name(field), "div")
+                            self.browser.execute_script(f"window['setSelectValue {field_id}']('Never-ending rain');")
+                        except NoSuchElementException:
+                            select = Select(field)
+                            selected_options = select.all_selected_options
+                            self.assertEqual(len(selected_options), 1)
+                            self.assertEqual(selected_options[0].get_attribute("index"), "0")
+                            self.assertEqual(self.get_element_text(selected_options[0]), "Today is sunny")
+                            self.assertEqual(field.get_attribute("name"), "test")
+                            self.assertEqual(self.get_tag_name(field), "select")
+                            select.select_by_index(1)
 
         try:
             dialog.find_element_by_class_name("btn-primary").click()

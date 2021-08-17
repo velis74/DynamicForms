@@ -9,11 +9,11 @@ from dynamicforms.action import Actions
 from dynamicforms.settings import DYNAMICFORMS
 from dynamicforms.template_render import ViewModeSerializer
 from . import fields
-from .mixins import ActionMixin, DisplayMode, RenderMixin
+from .mixins import ActionMixin, DisplayMode, FieldRenderMixin
 from .struct import StructDefault
 
 
-class DynamicFormsSerializer(ViewModeSerializer, RenderMixin, ActionMixin):
+class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
     template_context = {}  # see ViewSet.template_context
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     actions = Actions(add_default_crud=True, add_form_buttons=True)
@@ -168,7 +168,7 @@ class DynamicFormsSerializer(ViewModeSerializer, RenderMixin, ActionMixin):
         for field in self._readable_fields:
             try:
                 attribute = field.get_attribute(instance)
-                if not isinstance(field, RenderMixin):
+                if not isinstance(field, FieldRenderMixin):
                     ret[field.field_name] = field.to_representation(attribute)
                 else:
                     try:
