@@ -32,7 +32,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         TABLE_ROW = auto()  # Render to table tr
         TABLE_HEAD = auto()  # Render to table header
 
-    df_control_data = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
+    df_control_data = fields.SerializerMethodField(display=DisplayMode.HIDDEN, read_only=True)
 
     """
     we're currently using two additional headers for axios:

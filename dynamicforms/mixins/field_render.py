@@ -8,7 +8,6 @@ from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedFiel
 from rest_framework.serializers import ListSerializer
 from rest_framework.templatetags import rest_framework as drftt
 
-from dynamicforms.field_component_definition import FieldComponentDefinition
 from dynamicforms.settings import DYNAMICFORMS
 
 if typing.TYPE_CHECKING:
@@ -79,8 +78,8 @@ class FieldRenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-                display_table or display
-                or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            display_table or display
+            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -259,8 +258,9 @@ class FieldRenderMixin(object):
             res = super().as_component_def()  # noqa
         except AttributeError:
             res = dict()
-        return FieldComponentDefinition(uuid=str(self.uuid), name=str(self.field_name), label=str(self.label),
-                                   alignment=self.alignment.name.lower(),
-                                   table_classes=self.table_classes, ordering=self.ordering(),
-                                   visibility=dict(table=self.display_table.value, form=self.display_form.value),
-                                   render_params=self.render_params, help_text=res.get('help_text', ''))
+        return dict(
+            uuid=str(self.uuid), name=str(self.field_name), label=str(self.label), read_only=self.read_only,
+            table_classes=self.table_classes, ordering=self.ordering(), alignment=self.alignment.name.lower(),
+            visibility=dict(table=self.display_table.value, form=self.display_form.value),
+            render_params=self.render_params, help_text=res.get('help_text', '')
+        )

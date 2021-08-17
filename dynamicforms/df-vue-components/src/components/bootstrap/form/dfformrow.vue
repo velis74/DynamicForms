@@ -1,7 +1,7 @@
 <template>
-  <dfformcolumn v-if="isHiddenSingle" :def="columns[0]" :data="data" :errors="errors"/>
+  <dfformcolumn v-if="isHiddenSingle" :def="writableColumns[0]" :data="data" :errors="errors"/>
   <div class="row align-items-end" v-else>
-    <dfformcolumn v-for="(column, idx) in columns" :key="idx" :def="column" :data="data" :errors="errors"/>
+    <dfformcolumn v-for="(column, idx) in writableColumns" :key="idx" :def="column" :data="data" :errors="errors"/>
   </div>
 </template>
 
@@ -13,8 +13,11 @@ export default {
   name: 'formrow',
   props: ['columns', 'data', 'errors'],
   computed: {
+    writableColumns() {
+      return this.columns.filter((col) => col.field.read_only !== true);
+    },
     isHiddenSingle() {
-      return this.columns.length === 1 && this.columns[0].field.visibility.form === DisplayMode.HIDDEN;
+      return this.writableColumns.length === 1 && this.columns[0].field.visibility.form === DisplayMode.HIDDEN;
     },
   },
   components: {

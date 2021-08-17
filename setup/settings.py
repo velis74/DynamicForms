@@ -37,6 +37,7 @@ CORS_ALLOW_HEADERS = [
     'accept-encoding',
     'authorization',
     'content-type',
+    'content-disposition',
     'dnt',
     'origin',
     'user-agent',
@@ -46,6 +47,7 @@ CORS_ALLOW_HEADERS = [
     'x-viewmode',
     'x-df-render-type',
     'x-df-component-def',
+    'x-df-timestamp',
 ]
 
 # Application definition
