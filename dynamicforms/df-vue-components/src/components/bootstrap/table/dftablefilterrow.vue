@@ -36,8 +36,8 @@ export default {
   computed: {
     columns() {
       // todo: which columns are in filter needs to be configured in serializer......
-      return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL
-          && c.visibility.form === DisplayMode.FULL);
+      return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL &&
+          c.visibility.form === DisplayMode.FULL);
     },
   },
   methods: {

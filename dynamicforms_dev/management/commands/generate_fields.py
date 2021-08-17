@@ -77,8 +77,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from dynamicforms import action, mixins
         from dynamicforms.mixins import (
-            ActionMixin, ChoiceMixin, FieldAlignment, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
-            FieldRenderMixin
+            ActionMixin, ChoiceMixin, FieldAlignment, FieldRenderMixin, NullValueMixin, PasswordFieldMixin,
+            RelatedFieldAJAXMixin
         )
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -86,13 +86,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                        obj.__name__.endswith('Field'):
+                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                    obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -158,9 +158,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                    (parm.kind == parm.POSITIONAL_ONLY or
-                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                    ):
+                                (parm.kind == parm.POSITIONAL_ONLY or
+                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 

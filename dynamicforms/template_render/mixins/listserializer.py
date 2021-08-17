@@ -83,6 +83,7 @@ class ViewModeListSerializer(ViewModeBase):
             return self.child.request
         return None
 
+
 # noinspection PyAbstractClass
 class _ViewModeBoundListSerializer(ViewModeListSerializer, ListSerializer):
     """

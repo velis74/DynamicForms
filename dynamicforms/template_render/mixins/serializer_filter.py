@@ -1,5 +1,8 @@
 import json
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from dynamicforms.serializers import DynamicFormsSerializer
 
 
 class SerializerFilter(object):
@@ -14,4 +17,3 @@ class SerializerFilter(object):
             return None
         params['uuid'] = self.uuid
         return params
-

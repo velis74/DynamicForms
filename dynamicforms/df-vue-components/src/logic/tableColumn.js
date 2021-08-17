@@ -37,8 +37,8 @@ class TableColumn {
     case 10:
       return DisplayMode.FULL;
     default:
-      console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know`
-        + ' that constant');
+      console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know` +
+        ' that constant');
       return DisplayMode.FULL;
     }
   }

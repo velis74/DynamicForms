@@ -2,7 +2,6 @@
 Class that contains renderable fields for the templates.
 The class provides transformation functionality
 """
-
 from typing import Iterable
 
 from django.utils.translation import ugettext_lazy as _
@@ -38,10 +37,10 @@ class SerializerRenderFields(object):
         def ordering(self):
             return ''
 
-        def as_component_def(self: 'ActionField') -> dict:
+        def as_component_def(self) -> dict:
             return dict(
                 uuid='', name=str(self.field_name), label=str(self.label), read_only=False,
                 alignment='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
                 table_classes=self.table_classes, ordering=self.ordering(), render_params=self.render_params,
-                help_text='', visibility = dict(table=self.display_table.value)
+                help_text='', visibility=dict(table=self.display_table.value)
             )

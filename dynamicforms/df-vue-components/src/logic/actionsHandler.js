@@ -29,12 +29,12 @@ class ActionsHandler {
       // noinspection JSUnresolvedVariable
       this.filterCache[cacheKey] = new ActionsHandler(
         Object.values(this.actions)
-            .filter((action) => action.position === position && (
-              action.id === null || action.name === fieldName))
-            .reduce((obj, item) => {
-              obj[item.name] = this.actions[item.name];
-              return obj;
-            }, {}), this.showModal, this.tableUuid,
+          .filter((action) => action.position === position && (
+            action.id === null || action.name === fieldName))
+          .reduce((obj, item) => {
+            obj[item.name] = this.actions[item.name];
+            return obj;
+          }, {}), this.showModal, this.tableUuid,
       );
     }
     return this.filterCache[cacheKey];

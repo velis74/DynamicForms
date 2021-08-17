@@ -1,6 +1,5 @@
-import json
 from enum import auto
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from django.template import loader
 from rest_framework.reverse import reverse
@@ -11,9 +10,9 @@ from dynamicforms.action import TablePosition
 from dynamicforms.mixins import ActionMixin, DisplayMode, FieldRenderMixin
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
+from .serializer_filter import SerializerFilter
 from .serializer_render_actions import SerializerRenderActions
 from .serializer_render_fields import SerializerRenderFields
-from .serializer_filter import SerializerFilter
 from .util import convert_to_json_if
 
 # noinspection PyUnreachableCode
@@ -39,6 +38,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
     'x-viewmode': 'TABLE_ROW' - tells DF what viewMode to use for rendering the response
     'x-pagination': 1 - tells DRF to paginate (or not) the result
     """
+
     def __init__(self, *args, view_mode: 'ViewModeSerializer.ViewMode' = None,
                  view_mode_list: 'ViewModeListSerializer.ViewMode' = None,
                  **kwds
