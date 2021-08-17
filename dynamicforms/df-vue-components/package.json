@@ -64,7 +64,8 @@
           "AssignmentExpression": { "array": false, "object": false }
         }, { "enforceForRenamedProperties": false }
       ],
-      "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+      "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+      "linebreak-style": ["off"]
     },
     "overrides": [
       {
