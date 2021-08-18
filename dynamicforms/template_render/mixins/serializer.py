@@ -123,8 +123,8 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'filter': self.filter_serializer_component_params() if self.show_filter else None,
             'dialog': self.get_dialog_def(),
             'detail_url': self.reverse_url if not self.is_filter else None,
-            'ordering_parameter': self.context['view'].ordering_parameter,
-            'ordering_style': self.context['view'].ordering_style
+            'ordering_parameter': getattr(self.context['view'], 'ordering_parameter', 'ordering'),
+            'ordering_style': getattr(self.context['view'], 'ordering_style', None)
         }
         if not getattr(self, 'parent', None):
             params['record_data'] = self.data
