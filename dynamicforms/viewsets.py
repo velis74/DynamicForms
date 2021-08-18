@@ -206,6 +206,8 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
        * To render an existing record (for editing) use pk={record_id}.
 
     """
+    ordering_parameter = 'ordering'
+    ordering_style = None
 
     def paginate_queryset(self, queryset):
         """

@@ -27,6 +27,8 @@ class PageLoadSerializer(serializers.ModelSerializer):
 class PageLoadViewSet(viewsets.ModelViewSet):
     template_context = dict(url_reverse='page-load')
     pagination_class = viewsets.ModelViewSet.generate_paged_loader(30)  # enables pagination
+    ordering_parameter = 'sorting'
+    ordering_style = 'examples.pageLoadOrdering'
 
     queryset = PageLoad.objects.all()
     serializer_class = PageLoadSerializer

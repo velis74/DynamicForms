@@ -39,6 +39,8 @@ export default {
       editDialogTitle: cfg.editDialogTitle,
       filter: cfg.filter,
       filterQueryString: '',
+      ordering_parameter: cfg.ordering_parameter,
+      ordering_style: cfg.ordering_style,
     };
   },
   beforeDestroy() {
@@ -80,6 +82,10 @@ export default {
         .sort((a, b) => a.index - b.index);
     },
     orderingParam() {
+      const orderingStyle = dynamicforms.getObjectFromPath(this.ordering_style);
+      if (orderingStyle) {
+        return orderingStyle(this.sortedColumns);
+      }
       return this.sortedColumns.map((o) => (o.direction === true ? '' : '-') + o.fieldName);
     },
   },
@@ -107,7 +113,7 @@ export default {
         // existing rows,
         // we're making a full refresh
       }, 250);
-      let url = `${this.list_url}?ordering=${this.orderingParam}`;
+      let url = `${this.list_url}?${this.ordering_parameter}=${this.orderingParam}`;
       if (_.size(this.filterQueryString)) {
         url += `&${this.filterQueryString}`;
       }

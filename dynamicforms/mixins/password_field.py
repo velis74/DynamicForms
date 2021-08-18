@@ -5,16 +5,17 @@ class PasswordFieldMixin(object):
         self.password_field = password_field
 
     def set_password_field(self, value):
+        from dynamicforms.mixins import DisplayMode
         self._password_field = value
         if value:
-            self.display_table = 'DisplayMode.SUPRESS'
+            self.display_table = DisplayMode.SUPPRESS
             self.style.update(input_type='password')
             self.render_params['form'] = 'df-widget-password'
         else:
             try:
                 self.style['input_type']
                 self.style.update(input_type='text')
-                self.display_table = 'DisplayMode.FULL'
+                self.display_table = DisplayMode.FULL
             except:
                 pass
 
