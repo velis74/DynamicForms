@@ -111,6 +111,8 @@ export default {
             // close the dialog
             payload.modal.hide();
           });
+      } else if (payload.action.name === 'cancel') {
+        payload.modal.hide();
       }
     },
   },

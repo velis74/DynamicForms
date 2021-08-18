@@ -61,10 +61,10 @@ export default {
   },
   emits: ['update:modelValue'],
   mounted: function mounted() {
+    this.result = this.data[this.def.name];
     if (this.selenium) {
       console.log(`setSelectValue ${this.def.uuid}`);
       window[`setSelectValue ${this.def.uuid}`] = (value) => {
-        console.log([this.result, value]);
         this.result = value;
       };
     }
