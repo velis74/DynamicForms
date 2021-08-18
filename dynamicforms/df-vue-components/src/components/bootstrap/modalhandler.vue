@@ -196,7 +196,7 @@ export default {
         apiClient.get('http://localhost:8000/dynamicforms/progress/',
           { headers: { 'x-df-timestamp': this.oldestInFlight().timestamp } })
           .then((res) => { // call api and set data as response, when data is
-            this.currentDialog.body.progress = res.data.value;
+            this.currentDialog.body.progress = Number(res.data.value);
             this.currentDialog.body.label = res.data.comment;
           })
           .catch((err) => { console.error(err); });

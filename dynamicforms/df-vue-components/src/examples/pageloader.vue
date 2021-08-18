@@ -19,8 +19,12 @@ export default {
       config: null,
     };
   },
-  watch: {
-    $route(to) {
+  mounted() {
+    this.goToRoute(this.$route);
+  },
+  methods: {
+    goToRoute(to) {
+      console.log(to);
       this.url = `http://localhost:8000${to.path}.component`;
       this.component = to.meta.component || 'dftable';
       axios
@@ -37,6 +41,9 @@ export default {
           alert(`Error retrieving component def:\n${err.data}`);
         });
     },
+  },
+  watch: {
+    $route(to) { this.goToRoute(to); },
   },
 };
 </script>

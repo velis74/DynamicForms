@@ -38,19 +38,20 @@ const tableActionHandlerMixin = {
               //  It should be dependent on ordering, etc.
               this.rows.results.push(res.data);
             }
-          }).catch((reason) => {
-          const dfErrors = {};
-          const eventName = `formEvents_${modal.currentDialog.body.data.uuid}`;
-          if (reason.response.status === 400) {
-            _.forOwn(reason.response.data, (value, key) => {
-              dfErrors[`${key}`] = _.join(value, '\n');
-            });
-          } else {
-            dfErrors.non_field_errors = reason.response.data.detail;
-          }
+          })
+          .catch((reason) => {
+            const dfErrors = {};
+            const eventName = `formEvents_${modal.currentDialog.body.data.uuid}`;
+            if (reason.response.status === 400) {
+              _.forOwn(reason.response.data, (value, key) => {
+                dfErrors[`${key}`] = _.join(value, '\n');
+              });
+            } else {
+              dfErrors.non_field_errors = reason.response.data.detail;
+            }
 
-          eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
-        });
+            eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
+          });
       } else if (action.name === 'cancel') {
         if (modal) modal.hide();
       } else if (action.name === 'filter') {

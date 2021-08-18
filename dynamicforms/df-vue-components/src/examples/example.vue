@@ -50,6 +50,9 @@ const routes = [
   { path: '/single-dialog/:id', component: pageloader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
 ];
 const router = new VueRouter({ routes });
+if (router.history.current.path === '/') {
+  router.push('/validated');
+}
 
 export default {
   name: 'example',
