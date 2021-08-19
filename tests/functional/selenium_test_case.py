@@ -165,11 +165,17 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         self.browser.quit()
 
     def wait_for_new_element(self, element_id):
+        if not callable(element_id):
+            elid = element_id
+
+            def element_id():
+                return self.browser.find_element_by_id(elid)
+
         start_time = time.time()
         while True:
             try:
                 time.sleep(0.01)
-                element = self.browser.find_element_by_id(element_id)
+                element = element_id()
                 self.assertIsNotNone(element)
                 return
             except (AssertionError, WebDriverException) as e:

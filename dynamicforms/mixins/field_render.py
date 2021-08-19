@@ -262,5 +262,5 @@ class FieldRenderMixin(object):
             uuid=str(self.uuid), name=str(self.field_name), label=str(self.label), read_only=self.read_only,
             table_classes=self.table_classes, ordering=self.ordering(), alignment=self.alignment.name.lower(),
             visibility=dict(table=self.display_table.value, form=self.display_form.value),
-            render_params=self.render_params, help_text=res.get('help_text', '')
+            render_params=self.render_params, help_text=res.get('help_text', ''), allow_null=self.allow_null
         )

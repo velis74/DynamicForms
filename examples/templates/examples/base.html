@@ -140,7 +140,6 @@
 
   function singleDialog() {
     togglemenu();
-    let format = window.singleDialogFormat || 'html';
     {% if page_format == 'html' %}
     dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
     {% else %}

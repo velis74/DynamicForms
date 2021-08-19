@@ -42,5 +42,5 @@ class SerializerRenderFields(object):
                 uuid='', name=str(self.field_name), label=str(self.label), read_only=False,
                 alignment='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
                 table_classes=self.table_classes, ordering=self.ordering(), render_params=self.render_params,
-                help_text='', visibility=dict(table=self.display_table.value)
+                help_text='', visibility=dict(table=self.display_table.value), allow_null=False
             )

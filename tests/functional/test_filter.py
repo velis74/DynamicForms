@@ -11,7 +11,6 @@ from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
 
 
 class FilterFormTest(WaitingStaticLiveServerTestCase):
-
     reset_sequences = True
 
     # noinspection PyMethodMayBeStatic
@@ -38,7 +37,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
         filter_btn = None
         for button in self.browser.find_elements_by_css_selector(
-                '.dynamicforms-actioncontrol button' if not is_component_renderer else '.dynamicforms-actioncontrol.button'):
+                '.dynamicforms-actioncontrol' + (' button' if not is_component_renderer else '.button')):
             if button.text == 'Filter':
                 filter_btn = button
                 break

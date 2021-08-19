@@ -193,7 +193,7 @@ export default {
       if (this.oldestInFlight().age >= 250 && !this.isShowingProgress) {
         this.showProgress();
       } else if (this.oldestInFlight().age >= 250 && this.isShowingProgress) {
-        apiClient.get('http://localhost:8000/dynamicforms/progress/',
+        apiClient.get('/dynamicforms/progress/',
           { headers: { 'x-df-timestamp': this.oldestInFlight().timestamp } })
           .then((res) => { // call api and set data as response, when data is
             this.currentDialog.body.progress = Number(res.data.value);

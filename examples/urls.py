@@ -4,10 +4,11 @@ from django.views.i18n import JavaScriptCatalog
 from rest_framework.documentation import include_docs_urls
 
 from examples.rest import router
-from .views import index
+from .views import component_index, index
 
 urlpatterns = [
     url(r'^$', index, name='index'),
+    url(r'^component$', component_index, name='component_index'),
     url(r'^', include(router.urls)),
     url(r'^dynamicforms/', include('dynamicforms.urls')),
     url(r'^api-docs/', include_docs_urls(title='Example API documentation')),

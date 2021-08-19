@@ -9,12 +9,15 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
 
     @parameterized.expand(['html', 'component'])
     def test_single_dialog(self, renderer):
-        self.browser.get(self.live_server_url + '/refresh-types.' + renderer)
+        if renderer == 'component':
+            self.browser.get(self.live_server_url + '/component')
+        else:
+            self.browser.get(self.live_server_url + '/refresh-types.' + renderer)
 
         hamburger = self.browser.find_element_by_id('hamburger')
         hamburger.click()
 
-        self.browser.execute_script(f'window.singleDialogFormat = "{renderer}";')
+        self.wait_for_new_element(lambda: self.browser.find_element_by_link_text('Pop-up dialog'))
         pop_up_dialog = self.browser.find_element_by_link_text('Pop-up dialog')
         pop_up_dialog.click()
 

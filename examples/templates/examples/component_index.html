@@ -1,0 +1,18 @@
+{% load static dynamicforms %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  {% include DYNAMICFORMS.page_includes %}
+  <title>{% block title %}{% endblock %}</title>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div id="app"></div>
+  <div id="modal-app"></div>
+
+  <script>
+    window.dynamicformsUi = 'bootstrap';
+    createApp('app', '<example/>', { }, 'modal-app');
+  </script>
+</body>
+</html>

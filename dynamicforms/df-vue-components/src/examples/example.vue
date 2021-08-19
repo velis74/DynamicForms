@@ -50,9 +50,6 @@ const routes = [
   { path: '/single-dialog/:id', component: pageloader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
 ];
 const router = new VueRouter({ routes });
-if (router.history.current.path === '/') {
-  router.push('/validated');
-}
 
 export default {
   name: 'example',
@@ -65,6 +62,9 @@ export default {
     };
   },
   mounted() {
+    if (router.history.current.path === '/') {
+      router.push('/validated');
+    }
     eventBus.$on(`tableActionExecuted_${singleDlgFakeUUID}`, this.singleDialogBtnClick);
   },
   beforeDestroy() {
@@ -73,12 +73,12 @@ export default {
   methods: {
     showSingleDialog() {
       this.menuShown = !this.menuShown;
-      window.dynamicforms.dialog.fromURL('http://localhost:8000/single-dialog/new.component', 'new', singleDlgFakeUUID);
+      window.dynamicforms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
     },
     singleDialogBtnClick(payload) {
       if (payload.action.name === 'say_it') {
         apiClient
-          .post('http://localhost:8000/single-dialog.json', payload.data)
+          .post('/single-dialog.json', payload.data)
           .then((res) => {
             alert(res.data.test); // eslint-disable-line no-alert
             payload.modal.hide();
@@ -86,7 +86,7 @@ export default {
       } else if (payload.action.name === 'download') {
         payload.data.download = '1';
         apiClient
-          .post('http://localhost:8000/single-dialog.json', payload.data)
+          .post('/single-dialog.json', payload.data)
           .then((res) => {
             // get the filename from content-disposition
             let filename = '';
