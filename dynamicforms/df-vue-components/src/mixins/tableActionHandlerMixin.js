@@ -11,7 +11,7 @@ const tableActionHandlerMixin = {
       if (action.name === 'delete') {
         apiClient.delete(this.detail_url.replace('--record_id--', data.id))
           .then(() => {
-            this.rows.results.splice(_.indexOf(this.rows.results, data), 1);
+            this.processedConfiguration.rows.deleteRow(data.id);
           });
       } else if (['edit', 'add'].includes(action.name)) {
         this.showModal(action, data);
@@ -30,14 +30,7 @@ const tableActionHandlerMixin = {
           { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true } })
           .then((res) => {
             if (modal) modal.hide();
-            const rowIndex = _.indexOf(_.map(this.rows.results, 'id'), res.data.id.toString());
-            if (rowIndex >= 0) {
-              this.rows.results.splice(rowIndex, 1, res.data);
-            } else {
-              // TODO: Currently all added records shows on current last table row.
-              //  It should be dependent on ordering, etc.
-              this.rows.results.push(res.data);
-            }
+            this.processedConfiguration.rows.updateRows([res.data]);
           })
           .catch((reason) => {
             const dfErrors = {};

@@ -19,6 +19,7 @@
           <a href="#" onclick="singleDialog()">Choice allow tags dialog</a>
           <router-link to="/refresh-types">Refresh types</router-link>
           <router-link to="/calculated-css-class-for-table-row">Row css style</router-link>
+          <router-link to="/choice-allow-tags-fields">Tag select fields</router-link>
         </div>
       </div>
     </transition>
@@ -48,6 +49,7 @@ const routes = [
   { path: '/refresh-types', component: pageloader },
   { path: '/calculated-css-class-for-table-row', component: pageloader },
   { path: '/single-dialog/:id', component: pageloader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
+  { path: '/choice-allow-tags-fields', component: pageloader },
 ];
 const router = new VueRouter({ routes });
 

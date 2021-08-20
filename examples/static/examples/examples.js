@@ -59,7 +59,6 @@ examples = {
   pageLoadOrdering: function (sortedColumns) {
     // In this example function returns same as default.
     // But you could set whatever response you like.
-    console.log(sortedColumns);
     return sortedColumns.map((o) => (o.direction === false ? '-' : '') + o.fieldName)
   }
 };

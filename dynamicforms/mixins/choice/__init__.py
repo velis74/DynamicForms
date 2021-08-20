@@ -11,7 +11,7 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
         except AttributeError:
             res = dict()
 
-        res.update(dict(choices=self.__to_list_of_dicts(self.choices)))  # noqa - choices is a member of DRF ChoiceField
+        res.update(dict(choices=self.__to_list_of_dicts(self.choices), allow_tags=self.allow_tags))  # noqa
         return res
 
     def __to_list_of_dicts(self, choices_dict: dict) -> list:

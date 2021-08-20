@@ -2,6 +2,7 @@ import json
 import os
 import time
 from enum import Enum
+from typing import Iterable
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -341,3 +342,10 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while len(element.get_attribute('value')):
             element.send_keys(Keys.BACKSPACE)
         element.clear()
+
+    def find_element_by_classes(self, classes: Iterable):
+        for cls in classes:
+            try:
+                return self.browser.find_element_by_class_name(cls)
+            except NoSuchElementException:
+                pass

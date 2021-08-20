@@ -315,6 +315,7 @@ class ChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin, F
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         kwargs['render_params'].setdefault('multiple', False)
+        kwargs['render_params'].setdefault('allow_tags', allow_tags)
         super().__init__(**kwargs)
 
 
@@ -333,6 +334,7 @@ class MultipleChoiceField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, Action
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         kwargs['render_params'].setdefault('multiple', True)
+        kwargs['render_params'].setdefault('allow_tags', allow_tags)
         super().__init__(**kwargs)
 
 
@@ -351,6 +353,7 @@ class FilePathField(ChoiceMixin, EnableCopyMixin, FieldRenderMixin, ActionMixin,
         kwargs['render_params'].setdefault('input_type', 'text')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
         kwargs['render_params'].setdefault('multiple', False)
+        kwargs['render_params'].setdefault('allow_tags', allow_tags)
         super().__init__(**kwargs)
 
 
@@ -647,4 +650,5 @@ class RTFField(RTFFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin,
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        kwargs['render_params'] = kwargs.get('render_params', None) or {}
         super().__init__(**kwargs)

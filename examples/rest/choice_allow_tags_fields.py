@@ -12,32 +12,22 @@ class ChoiceAllowTagsFieldsSerializer(serializers.ModelSerializer):
         'edit': 'Editing Choices allow tags fields object',
     }
 
-    choice_field = fields.ChoiceField(label='Choice', display=DisplayMode.FULL,
-                                      choices=(
-                                          ('0', 'Choice 1'),
-                                          ('1', 'Choice 2'),
-                                          ('2', 'Choice 3'),
-                                          ('3', 'Choice 4'),
-                                      ),
-                                      allow_tags=True
-                                      )
+    choice_field = fields.ChoiceField(
+        label='Choice', display=DisplayMode.FULL, allow_tags=True,
+        choices=(('0', 'Choice 1'), ('1', 'Choice 2'), ('2', 'Choice 3'), ('3', 'Choice 4'))
+    )
 
-    multiplechoice_field = fields.MultipleChoiceField(label='Multiple choice', display=DisplayMode.FULL,
-                                                      choices=(
-                                                          ('0', 'Multiple choice 1'),
-                                                          ('1', 'Multiple choice 2'),
-                                                          ('2', 'Multiple choice 3'),
-                                                          ('3', 'Multiple choice 4'),
-                                                      ),
-                                                      allow_tags=True
-                                                      )
+    multiplechoice_field = fields.MultipleChoiceField(
+        label='Multiple choice', display=DisplayMode.FULL, allow_tags=True,
+        choices=(
+            ('0', 'Multiple choice 1'), ('1', 'Multiple choice 2'),
+            ('2', 'Multiple choice 3'), ('3', 'Multiple choice 4'),
+        )
+    )
 
     class Meta:
         model = AdvancedFields
-        fields = ('id',
-                  'choice_field',
-                  'multiplechoice_field'
-                  )
+        fields = ('id', 'choice_field', 'multiplechoice_field')
 
 
 class ChoiceAllowTagsFieldsViewSet(ModelViewSet):

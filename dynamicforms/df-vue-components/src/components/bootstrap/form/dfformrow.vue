@@ -17,7 +17,7 @@ export default {
       return this.columns.filter((col) => col.field.read_only !== true);
     },
     isHiddenSingle() {
-      return this.writableColumns.length === 1 && this.columns[0].field.visibility.form === DisplayMode.HIDDEN;
+      return this.writableColumns.length === 1 && this.writableColumns[0].field.visibility.form === DisplayMode.HIDDEN;
     },
   },
   components: {

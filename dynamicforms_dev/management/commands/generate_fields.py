@@ -27,9 +27,9 @@ class ClassAssemblyDict:
         for cls in reversed(inspect.getmro(base_class)):
             if cls in self.mapping:
                 res.update(self.mapping[cls])
-        if res:
-            return res
-        raise KeyError('Class %s not found in lookup.' % base_class.__name__)
+        if not res:
+            print('Class %s not found in lookup.' % base_class.__name__)
+        return res
 
     def __setitem__(self, key, value):
         self.mapping[key] = value
@@ -49,7 +49,7 @@ render_params = ClassAssemblyDict({
     fields.BooleanField: dict(table='df-tablecell-bool', input_type='checkbox', label_after_element=True,
                               field_class='form-check-input', container_class='form-check form-group'),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
-    fields.ChoiceField: dict(form='df-widget-select', multiple=False),
+    fields.ChoiceField: dict(form='df-widget-select', multiple=False, allow_tags='%allow_tags'),
     fields.MultipleChoiceField: dict(multiple=True),
     relations.RelatedField: dict(form='df-widget-select', multiple=False),
     relations.ManyRelatedField: dict(form='df-widget-select', multiple=True),
@@ -65,6 +65,12 @@ render_params = ClassAssemblyDict({
 
 class RTFField(object):
     pass
+
+
+def arepr(value):
+    if isinstance(value, str) and value.startswith('%'):
+        return value[1:]
+    return repr(value)
 
 
 class Command(BaseCommand):
@@ -295,13 +301,10 @@ class Command(BaseCommand):
                     file=output)
                 print(indt(8) + 'kwargs.update(kw)', file=output)
 
-                try:
-                    params = render_params[field]
-                    print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
-                    for key, value in params.items():
-                        print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {repr(value)})", file=output)
-                except:
-                    pass
+                params = render_params[field]
+                print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                for key, value in params.items():
+                    print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {arepr(value)})", file=output)
 
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 

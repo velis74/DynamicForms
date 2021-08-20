@@ -17,6 +17,7 @@ import DisplayMode from '@/logic/displayMode';
 import tableActionHandlerMixin from '@/mixins/tableActionHandlerMixin';
 import eventBus from '@/logic/eventBus';
 import dynamicforms from '@/dynamicforms';
+import LoadableTableRows from '@/logic/loadableTableRows';
 
 export default {
   name: 'dftable',
@@ -117,75 +118,12 @@ export default {
       if (_.size(this.filterQueryString)) {
         url += `&${this.filterQueryString}`;
       }
-      apiClient.get(url, {
-        headers: {
-          'x-viewmode': 'TABLE_ROW',
-          'x-pagination': 1,
-        },
-      }).then((res) => {
-        // call api and set data as response, when data is set component is re-rendered
-        this.rows = res.data;
-        // this.rows = this.loadableRows(res.data);
-      }).catch((err) => {
-        console.error(err);
-      }).finally(() => {
-        this.loading = false;
-      });
+      apiClient.get(url, { headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 } })
+        .then((res) => { this.rows = res.data; })
+        .catch((err) => { console.error(err); })
+        .finally(() => { this.loading = false; });
     },
-    loadableRows(rowsData) {
-      let res = [];
-      let next = null;
-      if (rowsData && rowsData.results && rowsData.results.constructor === Array) {
-        res = rowsData.results;
-        next = rowsData.next;
-      }
-      const decorate = (rows) => {
-        let triggerRow1 = null;
-        let triggerRow2 = null;
-        if (rows && rows.length) {
-          triggerRow1 = rows[0].id;
-          triggerRow2 = rows[rows.length - 1].id;
-        }
-        res.getVisibilityHandler = (rowId) => (triggerRow1 === rowId || triggerRow2 === rowId ? {
-          callback: res.loadMoreRows, once: true,
-        } : false);
-      };
-      decorate(res.length && next ? res : null);
-      res.loadMoreRows = (isVisible) => {
-        if (!isVisible) return;
-        this.loading = true;
-        apiClient.get(this.rows.next, {
-          headers: {
-            'x-viewmode': 'TABLE_ROW',
-            'x-pagination': 1,
-          },
-          // eslint-disable-next-line no-shadow
-        }).then((res) => {
-          // first we map existing row ids to respective array indexes
-          const idIndices = this.rows.results.reduce((ind, item, idx) => {
-            ind[item.id] = idx;
-            return ind;
-          }, {});
-          // eslint-disable-next-line array-callback-return
-          res.data.results.map((item) => {
-            // then we iterate through results updating any existing entries and adding new ones
-            const idIdx = idIndices[item.id];
-            if (idIdx) {
-              this.rows.results[idIdx] = item;
-            } else {
-              this.rows.results.push(item);
-            }
-          });
-          this.rows.next = res.data.next; // replace next so we can load another set of rows
-          // finally create a new loadableRows so that it will load new
-          // rows based on this result set
-          decorate(res.data.results.length && res.data.next ? res.data.results : null);
-        }).catch((err) => {
-          console.log(err);
-        }).finally(() => { this.loading = false; });
-      };
-      return res;
-    },
+    loadableRows(rowsData) { return LoadableTableRows(this, rowsData); },
     showModal(action, row) {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
@@ -221,8 +159,11 @@ export default {
             // eslint-disable-next-line no-empty
           } catch (e) {}
           const data = { context: this, ...payload };
-          if (params) func.apply(params, [data]);
-          else func(data);
+          if (params) {
+            func.apply(params, [data]);
+          } else {
+            func(data);
+          }
         }
       }
     },

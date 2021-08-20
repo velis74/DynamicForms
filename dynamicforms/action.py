@@ -146,8 +146,6 @@ class TableAction(ActionBase, RenderableActionMixin):
         elif self.position == TablePosition.ROW_RIGHTCLICK:
             rowrclick = action_action
         else:
-            from uuid import uuid1
-
             def get_btn_class(default_class, additional_class):
                 classes = default_class.split(' ')
                 if additional_class:
@@ -163,7 +161,7 @@ class TableAction(ActionBase, RenderableActionMixin):
             button_name = (' name="btn-%s" ' % self.name) if self.name else ''
             btn_class = get_btn_class("btn btn-info", self.btn_classes)
 
-            btnid = uuid1()
+            btnid = uuid_module.uuid1()
             ret += '<button id="df-action-btn-{btnid}" type="button" class="{btn_class}" title="{title}"{button_name}' \
                    'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'. \
                 format(btnid=btnid, stop_propagation=stop_propagation, action=action_action,
@@ -300,7 +298,8 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         )
 
     def as_component_def(self):
-        res = dict(uuid=str(self.uuid), type=self.btn_type.name, positions=list(self.positions))
+        res = dict(uuid=str(self.uuid), element_id=f'{self.name}-{self.serializer.uuid}', type=self.btn_type.name,
+                   positions=list(self.positions))
         res.update(ActionBase.as_component_def(self))
         res.update(RenderableActionMixin.as_component_def(self))
         return res

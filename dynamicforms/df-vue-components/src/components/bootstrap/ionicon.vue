@@ -33,7 +33,7 @@ export default {
       window.cache_ionicon[name] = apiClient.get(`https://unpkg.com/ionicons@5.5.1/dist/svg/${name}.svg`);
       window.cache_ionicon[name].then((res) => {
         // eslint-disable-next-line no-multi-assign
-        self.loaded_svg = window.cache_ionicon[name] = res.data;
+        self.loaded_svg = window.cache_ionicon[name] = res.data.replace(/<title>.*<\/title>/i, '');
       });
     }
   },

@@ -15,7 +15,7 @@
           <div class="modal-body" v-else :key="uniqId" v-html="body"/>
         </transition>
         <div class="modal-footer">
-          <button :id="button.uuid" type="button" v-for="button in buttons" :key="button.uuid"
+          <button :id="button.element_id || button.uuid" type="button" v-for="button in buttons" :key="button.uuid"
                   :class="button.classes" v-bind="button.arias"
                   @click.stop="buttonClick($event, button, callback)">{{ button.label }}
           </button>
@@ -114,7 +114,6 @@ export default {
           };
         }
         value.arias = value.arias || {};
-        value.guid = value.guid || '';
         const clss = (value.classes || '').split(' ');
         if (clss.indexOf('btn') === -1) clss.push('btn');
         value.classes = clss.join(' ');
