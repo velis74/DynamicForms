@@ -138,3 +138,6 @@ class Select:
             if v == txt:
                 return k
         return None
+
+    def is_displayed(self):
+        return self.element.is_displayed()
