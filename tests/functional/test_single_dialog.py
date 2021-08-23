@@ -27,6 +27,13 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
         field_count = 0
 
         form = dialog.find_element_by_id(modal_serializer_id)
+        children = form.find_elements_by_xpath("*")
+        custom_paragraph = next((el for el in children if el.tag_name == 'p'), None)
+        self.assertIsNotNone(custom_paragraph, "Custom paragraph not rendered")
+        custom_list = next((el for el in children if el.tag_name == 'ul'), None)
+        self.assertIsNotNone(custom_list, "Custom list not rendered")
+        custom_list_items = custom_list.find_elements_by_tag_name("li")
+        self.assertEqual(len(custom_list_items), 2, msg="Custom list items not rendered correctly")
         containers = form.find_elements_by_tag_name("div")
         for container in containers:
             container_id = container.get_attribute("id")
