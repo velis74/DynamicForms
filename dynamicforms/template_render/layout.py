@@ -73,16 +73,18 @@ class Row(object):
 
 
 class Layout(object):
-    def __init__(self, *rows: Row, columns: int = 1, size: str = ''):
+    def __init__(self, *rows: Row, columns: int = 1, size: str = '', header_classes: str = ''):
         """
         Creates layout definition
         :param rows: layout rows containing columns & fields
         :param columns: for all fields not added in layout manually, add them in n-column layout
         :param size: 'small', 'large' or ''
+        :param header_classes: 'bg-info', ..., or ''
         """
         self.rows = rows or []
         self.columns = columns
         self.size = size
+        self.header_classes = header_classes
 
     def bind_field(self, field_name: str, field_def) -> bool:
         # list() is necessary so that all rows evaluate
@@ -96,6 +98,8 @@ class Layout(object):
         res = dict(rows=[row.as_component_def() for row in self.rows])
         if self.size:
             res['size'] = self.size
+        if self.header_classes:
+            res['header_classes'] = self.header_classes
 
         if serializer:
             default_layout = Layout()
