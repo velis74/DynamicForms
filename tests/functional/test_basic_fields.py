@@ -16,7 +16,10 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btn = header.find_element_by_name("btn-add")
         md_btn = header.find_element_by_name("btn-modal_dialog")
-        self.assertEqual(self.get_element_text(add_btn), "+ Add")
+        if renderer == 'component':
+            self.assertEqual(self.get_element_text(add_btn), "…+ Add")
+        else:
+            self.assertEqual(self.get_element_text(add_btn), "+ Add")
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
@@ -56,10 +59,12 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
                 if label_text == 'Boolean field':
                     self.initial_check(field, '', 'boolean_field', 'checkbox')
+                    self.assertEqual(field.get_attribute('class'), 'form-check-input')
                     field.click()
                 elif label_text == 'Nullboolean field':
                     field_type = self.initial_check(field, '', 'nullboolean_field', ('text', 'checkbox'))
                     if field_type == 'checkbox':
+                        self.assertEqual(field.get_attribute('class'), 'form-check-input')
                         field.click()
                     else:
                         field.send_keys('True')
