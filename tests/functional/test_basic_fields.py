@@ -30,13 +30,15 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        md_btn.click()
-        dialog, modal_serializer_id = self.wait_for_modal_dialog()
-        dialog.find_element_by_id("dlg-btn-ok").click()
-        alert = self.browser.switch_to.alert
-        self.assertEqual(alert.text, 'Clicked OK button')
-        alert.accept()
-        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+        # TODO: Currently there is no modal dialog for .component, skipping test
+        if renderer == 'html':
+            md_btn.click()
+            dialog, modal_serializer_id = self.wait_for_modal_dialog()
+            dialog.find_element_by_id("dlg-btn-ok").click()
+            alert = self.browser.switch_to.alert
+            self.assertEqual(alert.text, 'Clicked OK button')
+            alert.accept()
+            self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()
@@ -145,7 +147,9 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                     field_count -= 1
 
         self.assertEqual(field_count, 16)
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+
+        save_button_prefix = "save-" if renderer == 'html' else 'submit-'
+        dialog.find_element_by_id(save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
         time.sleep(1)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body()
@@ -180,7 +184,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             dialog.find_element_by_name("time_field").send_keys("Test error")
 
         # Submit
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        dialog.find_element_by_id(save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # Check for errors

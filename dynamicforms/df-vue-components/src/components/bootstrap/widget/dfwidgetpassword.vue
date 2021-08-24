@@ -8,6 +8,7 @@
              :placeholder="def.placeholder" :value="data[def.name]"
              :pattern="def.render_params.pattern">
       <span @click="toggle_password"
+            :id="spanPrefix + def.uuid"
             :class="isPassword ? 'password-field' : 'password-field-slash'"
             class="input-group-text"></span>
     </div>
@@ -42,6 +43,7 @@ export default {
       password: '',
       passwordFieldType: 'password',
       isPassword: true,
+      spanPrefix: 'pwf-',
     };
   },
   methods: {
