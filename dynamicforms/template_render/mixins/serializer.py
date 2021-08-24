@@ -1,3 +1,4 @@
+import re
 from enum import auto
 from typing import Any, Dict
 
@@ -149,10 +150,21 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         )
 
     def get_dialog_def(self):
+        template_context = getattr(self, 'template_context', {})
+
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'layout'):
-            return self.Meta.layout.as_component_def(self)
-        from dynamicforms.template_render.layout import Layout
-        return Layout().as_component_def(self)
+            res = self.Meta.layout.as_component_def(self)
+        else:
+            from dynamicforms.template_render.layout import Layout
+            res = Layout(
+                size=template_context.get('dialog_classes', ''),
+                header_classes=template_context.get('dialog_header_classes', '')
+            ).as_component_def(self)
+
+        # mangle the old-style template filename such that it only contains allowed characters
+        res['component_name'] = re.sub(r'[^a-zA-Z0-9._-]', '-', getattr(self, 'form_template', 'FormLayout'))
+
+        return res
 
     @classmethod
     def get_reverse_url(cls, view_name, request, kwargs=None):

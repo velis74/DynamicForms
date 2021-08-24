@@ -2,7 +2,7 @@
   <div :class="'modal fade ' + className" :id="uuid" tabindex="-1" role="dialog" aria-hidden="true">
     <div :class="'modal-dialog ' + sizeClass" role="document">
       <div class="modal-content">
-        <div class="modal-header">
+        <div :class="'modal-header ' + headerClasses">
           <h5 class="modal-title">{{ title }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -10,7 +10,7 @@
         </div>
         <transition name="flip" mode="out-in">
           <div class="modal-body" v-if="isComponent" :key="uniqId">
-            <div :is="body.component.replace(/-/g, '')" v-bind="body"/>
+            <div :is="body.component" v-bind="body"/>
           </div>
           <div class="modal-body" v-else :key="uniqId" v-html="body"/>
         </transition>
@@ -33,6 +33,7 @@ import dfloadingindicator from '@/components/bootstrap/loadingindicator.vue';
 import * as $ from 'jquery';
 import 'bootstrap';
 import eventBus from '@/logic/eventBus';
+import dynamicforms from '@/dynamicforms';
 
 export default {
   name: 'modalhandler',
@@ -68,6 +69,11 @@ export default {
       if (dlg.small || ['small', 'sm', 'modal-sm'].includes(dlg.size)) return 'modal-sm';
       return '';
     },
+    headerClasses() {
+      const dlg = this.currentDialog;
+      if (!dlg) return '';
+      return dlg.header_classes || '';
+    },
     title() {
       return this.currentDialog ? this.currentDialog.title : 'No dialogs to show!';
     },
@@ -81,7 +87,7 @@ export default {
       return this.currentDialog ? this.currentDialog.uniqId : null;
     },
     isComponent() {
-      return this.currentDialog ? this.currentDialog.body.component && this.currentDialog.body.data : false;
+      return Boolean(this.currentDialog && this.currentDialog.body && this.currentDialog.body.component);
     },
     uuid() {
       return this.currentDialog && this.currentDialog.uuid ? `dialog-${this.currentDialog.uuid}` : 'df-modal-handler';
@@ -123,8 +129,8 @@ export default {
   },
   created() {
     // make our API available
-    if (!window.dynamicforms.dialog) {
-      window.dynamicforms.dialog = this;
+    if (!dynamicforms.dialog) {
+      dynamicforms.dialog = this;
       window.setInterval(() => { this.progressDialogCheck(); }, 250);
     }
   },
@@ -150,7 +156,7 @@ export default {
     buttonClick(event, button, callback) {
       eventBus.$emit(`tableActionExecuted_${this.currentDialog.tableUuid}`, {
         action: button,
-        data: this.currentDialog.body.data.record,
+        data: this.currentDialog.body.record,
         modal: this,
         event,
       });
@@ -240,7 +246,12 @@ export default {
       this.dialogs.push({
         uuid: componentDef.data.uuid,
         title: componentDef.data.titles[whichTitle || 'new'],
-        body: componentDef,
+        body: {
+          uuid: componentDef.data.uuid,
+          rows: componentDef.data.dialog.rows,
+          record: componentDef.data.record,
+          component: componentDef.data.dialog.component_name,
+        },
         buttons: Object.keys(actions).reduce(
           (res, key) => {
             actions[key].data_return = { dialog_id: componentDef.data.uuid, button: actions[key] };
@@ -250,6 +261,7 @@ export default {
         ),
         callback: null,
         size: componentDef.data.dialog.size,
+        header_classes: componentDef.data.dialog.header_classes,
         tableUuid,
       });
       this.show();

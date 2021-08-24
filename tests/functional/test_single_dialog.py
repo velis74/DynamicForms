@@ -23,14 +23,18 @@ class SingleDialogTest(WaitingStaticLiveServerTestCase):
 
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
+        # we verify that the dialog is set to large size and that dialog's title bar is set to info
+        # both tests are really crude: we just look for ANY child with the class. They should suffice though except
+        # if someone decides to hack some stuff of his own in there using these classes
+        dialog.find_elements_by_class_name('modal-lg')
+        dialog.find_elements_by_class_name('bg-info')
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0
 
         form = dialog.find_element_by_id(modal_serializer_id)
-        children = form.find_elements_by_xpath("*")
-        custom_paragraph = next((el for el in children if el.tag_name == 'p'), None)
+        custom_paragraph = dialog.find_element_by_id('single_dialog_instructions')
         self.assertIsNotNone(custom_paragraph, "Custom paragraph not rendered")
-        custom_list = next((el for el in children if el.tag_name == 'ul'), None)
+        custom_list = dialog.find_element_by_id('single_dialog_instructions_list')
         self.assertIsNotNone(custom_list, "Custom list not rendered")
         custom_list_items = custom_list.find_elements_by_tag_name("li")
         self.assertEqual(len(custom_list_items), 2, msg="Custom list items not rendered correctly")

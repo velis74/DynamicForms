@@ -4,13 +4,13 @@
 
 <script>
 import dftable from '@/components/dftable.vue';
-import formlayout from '@/components/bootstrap/form/dfformlayout.vue';
+import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
 import axios from 'axios';
 
 export default {
   name: 'pageloader',
   components: {
-    dftable, formlayout,
+    dftable, dfformlayout,
   },
   data() {
     return {

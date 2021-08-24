@@ -2,7 +2,7 @@
 <div class="card">
     <div class="card-header">{{ data.titles.edit }}</div>
     <div class="card-body">
-      <dfformlayout :def="data.dialog" :uuid="data.uuid" :url="data.detail_url"/>
+      <dfformlayout :rows="data.dialog.rows" :uuid="data.uuid"/>
     </div>
   </div>
 </template>

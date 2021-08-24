@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import dynamicforms from '@/dynamicforms';
 
 const MAX_GET_REQUEST_LENGHT = 2083;
 
@@ -15,7 +16,7 @@ apiClient.interceptors.request.use((config) => {
   if (!config.url.includes('/dynamicforms/progress')) {
     // we don't include the progress requests themselves into the progress tracking.
     // They were too messy and caused recursion that resulted in way too many requests.
-    const reqParams = window.dynamicforms.dialog.addRequest(++requestSeq);
+    const reqParams = dynamicforms.dialog.addRequest(++requestSeq);
     config.sequence = reqParams.sequence;
     config.headers['x-df-timestamp'] = config.headers['x-df-timestamp'] || reqParams.timestamp;
   }
@@ -30,11 +31,11 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (response) => {
-    window.dynamicforms.dialog.removeRequest(response.config.sequence);
+    dynamicforms.dialog.removeRequest(response.config.sequence);
     return response;
   },
   (error) => {
-    window.dynamicforms.dialog.removeRequest(error.config.sequence);
+    dynamicforms.dialog.removeRequest(error.config.sequence);
     return error;
   },
 );

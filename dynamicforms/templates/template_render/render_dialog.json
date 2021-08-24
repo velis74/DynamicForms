@@ -1,4 +1,4 @@
 {
-  "component": "df-form-layout",
+  "component": "dfformlayout",
   "data": {{ serializer.component_params|safe }}
 }

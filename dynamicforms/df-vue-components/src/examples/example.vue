@@ -35,8 +35,11 @@ import Vue from 'vue';
 import pageloader from '@/examples/pageloader.vue';
 import eventBus from '@/logic/eventBus';
 import apiClient from '@/apiClient';
+import SingleDialog from '@/examples/single_dialog.vue';
+import dynamicforms from '@/dynamicforms';
 
 Vue.use(VueRouter);
+Vue.component(SingleDialog.name, SingleDialog); // we must register the custom component or it won't show
 
 const singleDlgFakeUUID = 'fake-uuid-654654-634565';
 const routes = [
@@ -55,7 +58,7 @@ const router = new VueRouter({ routes });
 
 export default {
   name: 'example',
-  components: {},
+  components: { },
   router,
   data() {
     return {
@@ -75,7 +78,7 @@ export default {
   methods: {
     showSingleDialog() {
       this.menuShown = !this.menuShown;
-      window.dynamicforms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
+      dynamicforms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
     },
     singleDialogBtnClick(payload) {
       if (payload.action.name === 'say_it') {

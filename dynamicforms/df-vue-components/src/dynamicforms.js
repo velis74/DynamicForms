@@ -11,3 +11,5 @@ const dynamicforms = {
 };
 
 export default dynamicforms;
+
+window.dynamicforms = dynamicforms;

@@ -1,8 +1,8 @@
 <template>
-  <form :id="formUUID">
-    <slot name="form-error"><div v-if="getErrorText"><small :id="'form-' + formUUID + '-err'"
+  <form :id="uuid">
+    <slot name="form-error"><div v-if="getErrorText"><small :id="'form-' + uuid + '-err'"
                                    class="form-text text-danger">{{ getErrorText }}</small><hr></div></slot>
-    <dfformrow v-for="(row, idx) in definition.rows" :key="idx" :columns="row" :data="record_data" :errors="errors"/>
+    <dfformrow v-for="(row, idx) in rows" :key="idx" :columns="row" :data="record" :errors="errors"/>
   </form>
 </template>
 
@@ -12,21 +12,16 @@ import eventBus from '@/logic/eventBus';
 
 export default {
   name: 'dfformlayout',
-  props: ['data', 'def', 'uuid', 'url'],
+  props: { rows: {}, uuid: {}, record: { default: null } },
   mounted() {
-    eventBus.$on(`formEvents_${this.formUUID}`, (payload) => {
+    eventBus.$on(`formEvents_${this.uuid}`, (payload) => {
       if (payload.type === 'submitErrors') {
         this.errors = payload.data;
       }
     });
   },
   data() {
-    const definition = this.data.dialog || this.def;
-    const formUUID = this.data.uuid || this.uuid;
     return {
-      definition,
-      formUUID,
-      record_data: this.data.record || {},
       errors: {},
     };
   },
@@ -44,7 +39,7 @@ export default {
     dfformrow,
   },
   beforeDestroy() {
-    eventBus.$off(`formEvents_${this.formUUID}`);
+    eventBus.$off(`formEvents_${this.uuid}`);
   },
 };
 </script>
