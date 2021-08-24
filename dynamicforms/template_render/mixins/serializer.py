@@ -162,7 +162,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             ).as_component_def(self)
 
         # mangle the old-style template filename such that it only contains allowed characters
-        res['component_name'] = re.sub(r'[^a-zA-Z0-9._-]', '-', getattr(self, 'form_template', 'FormLayout'))
+        res['component_name'] = re.sub(r'[^a-zA-Z0-9._-]', '-', getattr(self, 'form_template', 'dfformlayout'))
 
         return res
 

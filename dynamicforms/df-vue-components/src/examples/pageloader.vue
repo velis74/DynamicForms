@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     goToRoute(to) {
-      console.log(to);
+      // console.log(to);
       this.url = `${to.path}.component`;
       this.component = to.meta.component || 'dftable';
       axios

@@ -23,7 +23,7 @@ apiClient.interceptors.request.use((config) => {
   if (_.toLower(config.method) === 'get' && _.size(config.url) > MAX_GET_REQUEST_LENGHT &&
     _.includes(_.map(_.keys(config.headers), (v) => _.toLower(v)), 'x-viewmode')) {
     const errMsg = 'Your request exceeds maximum length';
-    window.dynamicforms.dialog.message('error', errMsg);
+    dynamicforms.dialog.message('error', errMsg);
     throw new axios.Cancel(errMsg);
   }
   return config;
