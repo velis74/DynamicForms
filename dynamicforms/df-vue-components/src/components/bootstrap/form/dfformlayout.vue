@@ -11,7 +11,7 @@ import dfformrow from '@/components/bootstrap/form/dfformrow.vue';
 import eventBus from '@/logic/eventBus';
 
 export default {
-  name: 'formlayout',
+  name: 'dfformlayout',
   props: ['data', 'def', 'uuid', 'url'],
   mounted() {
     eventBus.$on(`formEvents_${this.formUUID}`, (payload) => {

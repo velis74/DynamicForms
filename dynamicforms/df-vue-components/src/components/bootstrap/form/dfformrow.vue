@@ -10,7 +10,7 @@ import DisplayMode from '@/logic/displayMode';
 import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
 
 export default {
-  name: 'formrow',
+  name: 'dfformrow',
   props: ['columns', 'data', 'errors'],
   computed: {
     writableColumns() {
