@@ -4,7 +4,7 @@
            v-on:keyup.enter="onValueConfirmed(true)"
            v-on:input="onValueConfirmed(false)"
            v-on:change="onValueConfirmed(false)"
-           :class="def.render_params.class"
+           :class="def.render_params.field_class"
            :name="def.name"
            :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
            :placeholder="def.placeholder" v-model="
