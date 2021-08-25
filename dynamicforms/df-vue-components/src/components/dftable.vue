@@ -1,7 +1,7 @@
 <template>
   <div>
     <component :is="component + 'table'" v-on:setTableFilter="setTableFilter"
-               :configuration="processedConfiguration"></component>
+               :configuration="processedConfiguration"/>
   </div>
 </template>
 
@@ -128,11 +128,11 @@ export default {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
         this.editingRowURL = this.detail_url.replace('--record_id--', row.id).replace('.json', '.component');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
+        dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.add;
         this.editingRowURL = this.detail_url.replace('--record_id--', 'new').replace('.json', '.component');
-        window.dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
+        dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';

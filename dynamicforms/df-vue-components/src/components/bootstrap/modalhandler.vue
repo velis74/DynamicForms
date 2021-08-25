@@ -201,8 +201,11 @@ export default {
         apiClient.get('/dynamicforms/progress/',
           { headers: { 'x-df-timestamp': this.oldestInFlight().timestamp } })
           .then((res) => { // call api and set data as response, when data is
-            this.currentDialog.body.progress = Number(res.data.value);
-            this.currentDialog.body.label = res.data.comment;
+            // we need to recheck because after the request, the dialog might no longer show
+            if (this.isShowingProgress) {
+              this.currentDialog.body.progress = Number(res.data.value);
+              this.currentDialog.body.label = res.data.comment;
+            }
           })
           .catch((err) => { console.error(err); });
       } else if (this.loading() === 0 && this.isShowingProgress) {

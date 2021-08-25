@@ -5,6 +5,7 @@ import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
 import example from '@/examples/example.vue';
+import dynamicforms from '@/dynamicforms';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
@@ -37,7 +38,7 @@ const createApp = (elementId, template, props, modalId = null) => {
   if (typeof window.dynamicforms === 'undefined') {
     window.dynamicforms = {};
   }
-  if (!window.dynamicforms.dialog && modalId) {
+  if (!dynamicforms.dialog && modalId) {
     createModal(modalId);
   }
   return new Vue({
