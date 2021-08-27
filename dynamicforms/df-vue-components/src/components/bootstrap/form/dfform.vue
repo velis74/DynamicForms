@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
+import dfformlayout from './dfformlayout.vue';
 
 export default {
   name: 'dfform',

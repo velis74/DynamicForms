@@ -1,6 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
-import dynamicforms from '@/dynamicforms';
+import dynamicforms from './dynamicforms';
 
 const MAX_GET_REQUEST_LENGHT = 2083;
 

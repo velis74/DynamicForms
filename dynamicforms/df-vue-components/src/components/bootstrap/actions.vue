@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import IonIcon from '@/components/bootstrap/ionicon.vue';
+import IonIcon from './ionicon.vue';
 
 export default {
   name: 'actions',

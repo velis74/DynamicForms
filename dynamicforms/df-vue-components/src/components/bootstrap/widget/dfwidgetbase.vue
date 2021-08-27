@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import DisplayMode from '@/logic/displayMode';
-import dfwidgetbaselabel from '@/components/bootstrap/widget/dfwidgetbaselabel.vue';
+import DisplayMode from '../../../logic/displayMode';
+import dfwidgetbaselabel from './dfwidgetbaselabel.vue';
 
 export default {
   name: 'dfwidgetbase',

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Dfloadingindicator from '@/components/bootstrap/loadingindicator.vue';
+import Dfloadingindicator from '../loadingindicator.vue';
 
 export default {
   name: 'dftableloadingindicator',

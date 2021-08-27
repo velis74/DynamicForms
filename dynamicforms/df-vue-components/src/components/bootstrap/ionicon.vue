@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import apiClient from '@/apiClient';
 import { noop } from 'lodash';
+import apiClient from '../../apiClient';
 
 export default {
   name: 'ionicon',

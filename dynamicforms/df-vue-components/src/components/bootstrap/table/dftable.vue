@@ -28,10 +28,10 @@
 </template>
 
 <script>
-import dftablehead from '@/components/bootstrap/table/dftablehead.vue';
-import dftablebody from '@/components/bootstrap/table/dftablebody.vue';
-import dftablefoot from '@/components/bootstrap/table/dftablefoot.vue';
-import Actions from '@/components/bootstrap/actions.vue';
+import dftablehead from './dftablehead.vue';
+import dftablebody from './dftablebody.vue';
+import dftablefoot from './dftablefoot.vue';
+import Actions from '../actions.vue';
 
 export default {
   name: 'dftable',

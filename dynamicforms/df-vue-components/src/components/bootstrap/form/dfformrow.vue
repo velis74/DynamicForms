@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import DisplayMode from '@/logic/displayMode';
-import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
+import DisplayMode from '../../../logic/displayMode';
+import dfformcolumn from './dfformcolumn.vue';
 
 export default {
   name: 'dfformrow',

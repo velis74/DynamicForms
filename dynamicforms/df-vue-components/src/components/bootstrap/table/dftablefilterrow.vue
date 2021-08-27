@@ -16,10 +16,10 @@
 
 <script>
 import _ from 'lodash';
-import dfformcolumn from '@/components/bootstrap/form/dfformcolumn.vue';
-import DisplayMode from '@/logic/displayMode';
-import Actions from '@/components/bootstrap/actions.vue';
-import ActionsHandler from '@/logic/actionsHandler';
+import dfformcolumn from '../form/dfformcolumn.vue';
+import DisplayMode from '../../../logic/displayMode';
+import Actions from '../actions.vue';
+import ActionsHandler from '../../../logic/actionsHandler';
 
 export default {
   name: 'dftablefilterrow',

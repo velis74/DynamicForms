@@ -29,11 +29,11 @@
 </style>
 
 <script>
-import DisplayMode from '@/logic/displayMode';
-import dfwidgetinput from '@/components/bootstrap/widget/dfwidgetinput.vue';
-import dfwidgetpassword from '@/components/bootstrap/widget/dfwidgetpassword.vue';
-import dfwidgetckeditor from '@/components/bootstrap/widget/dfwidgetckeditor.vue';
-import dfwidgetselect from '@/components/bootstrap/widget/dfwidgetselect.vue';
+import DisplayMode from '../../../logic/displayMode';
+import dfwidgetinput from '../widget/dfwidgetinput.vue';
+import dfwidgetpassword from '../widget/dfwidgetpassword.vue';
+import dfwidgetckeditor from '../widget/dfwidgetckeditor.vue';
+import dfwidgetselect from '../widget/dfwidgetselect.vue';
 
 export default {
   name: 'dfformcolumn',

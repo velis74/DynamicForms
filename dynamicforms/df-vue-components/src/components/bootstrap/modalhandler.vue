@@ -27,13 +27,13 @@
 
 <script>
 
-import apiClient from '@/apiClient';
-import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
-import dfloadingindicator from '@/components/bootstrap/loadingindicator.vue';
 import * as $ from 'jquery';
+import apiClient from '../../apiClient';
+import dfformlayout from './form/dfformlayout.vue';
+import dfloadingindicator from './loadingindicator.vue';
 import 'bootstrap';
-import eventBus from '@/logic/eventBus';
-import dynamicforms from '@/dynamicforms';
+import eventBus from '../../logic/eventBus';
+import dynamicforms from '../../dynamicforms';
 
 export default {
   name: 'modalhandler',

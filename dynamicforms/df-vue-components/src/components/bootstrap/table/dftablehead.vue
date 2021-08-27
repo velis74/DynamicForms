@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import dftablefilterrow from '@/components/bootstrap/table/dftablefilterrow.vue';
+import dftablefilterrow from './dftablefilterrow.vue';
 
 export default {
   name: 'dftablehead',

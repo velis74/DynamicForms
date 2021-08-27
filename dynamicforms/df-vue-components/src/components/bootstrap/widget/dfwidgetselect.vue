@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
 import Multiselect from 'vue-multiselect';
+import dfwidgetbase from './dfwidgetbase.vue';
 
 export default {
   name: 'dfwidgetselect',

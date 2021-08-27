@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import dftable from '@/components/dftable.vue';
-import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
 import axios from 'axios';
+import dftable from '../components/dftable.vue';
+import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
 
 export default {
   name: 'pageloader',

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
+import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
 
 export default {
   name: 'examples-single_dialog.html',

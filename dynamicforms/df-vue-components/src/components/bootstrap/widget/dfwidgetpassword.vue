@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
+import dfwidgetbase from './dfwidgetbase.vue';
 
 export default {
   name: 'dfwidgetpassword',

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import dftableloadingindicator from '@/components/bootstrap/table/dftableloadingindicator.vue';
+import dftableloadingindicator from './dftableloadingindicator.vue';
 
 export default {
   name: 'dftablefoot',

@@ -6,18 +6,18 @@
 </template>
 
 <script>
-import bootstraptable from '@/components/bootstrap/table/dftable.vue';
-// import JqueryuiTable from '@/components/jqueryui/Table.vue';
-import ActionsHandler from '@/logic/actionsHandler';
-import TableColumn from '@/logic/tableColumn';
-import apiClient from '@/apiClient';
 import _ from 'lodash';
 import $ from 'jquery';
-import DisplayMode from '@/logic/displayMode';
-import tableActionHandlerMixin from '@/mixins/tableActionHandlerMixin';
-import eventBus from '@/logic/eventBus';
-import dynamicforms from '@/dynamicforms';
-import LoadableTableRows from '@/logic/loadableTableRows';
+import bootstraptable from './bootstrap/table/dftable.vue';
+// import JqueryuiTable from './jqueryui/Table.vue';
+import ActionsHandler from '../logic/actionsHandler';
+import TableColumn from '../logic/tableColumn';
+import apiClient from '../apiClient';
+import DisplayMode from '../logic/displayMode';
+import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
+import eventBus from '../logic/eventBus';
+import dynamicforms from '../dynamicforms';
+import LoadableTableRows from '../logic/loadableTableRows';
 
 export default {
   name: 'dftable',

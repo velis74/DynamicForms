@@ -6,9 +6,9 @@
 </template>
 
 <script>
-import dfwidgetbase from '@/components/bootstrap/widget/dfwidgetbase.vue';
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import dfwidgetbase from './dfwidgetbase.vue';
 
 export default {
   name: 'dfwidgetckeditor',

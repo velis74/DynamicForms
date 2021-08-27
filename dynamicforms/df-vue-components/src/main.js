@@ -1,11 +1,11 @@
 import Vue from 'vue';
-import dftable from '@/components/dftable.vue';
-import ModalHandler from '@/components/bootstrap/modalhandler.vue';
 import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
-import example from '@/examples/example.vue';
-import dynamicforms from '@/dynamicforms';
+import ModalHandler from './components/bootstrap/modalhandler.vue';
+import dftable from './components/dftable.vue';
+import example from './examples/example.vue';
+import dynamicforms from './dynamicforms';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);

@@ -1,6 +1,6 @@
-import apiClient from '@/apiClient';
 import _ from 'lodash';
-import eventBus from '@/logic/eventBus';
+import apiClient from '../apiClient';
+import eventBus from '../logic/eventBus';
 
 const tableActionHandlerMixin = {
   methods: {

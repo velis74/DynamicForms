@@ -32,11 +32,11 @@
 <script>
 import VueRouter from 'vue-router';
 import Vue from 'vue';
-import pageloader from '@/examples/pageloader.vue';
-import eventBus from '@/logic/eventBus';
-import apiClient from '@/apiClient';
-import SingleDialog from '@/examples/single_dialog.vue';
-import dynamicforms from '@/dynamicforms';
+import pageloader from './pageloader.vue';
+import eventBus from '../logic/eventBus';
+import apiClient from '../apiClient';
+import SingleDialog from './single_dialog.vue';
+import dynamicforms from '../dynamicforms';
 
 Vue.use(VueRouter);
 Vue.component(SingleDialog.name, SingleDialog); // we must register the custom component or it won't show

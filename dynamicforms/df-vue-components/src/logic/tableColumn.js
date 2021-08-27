@@ -1,4 +1,4 @@
-import DisplayMode from '@/logic/displayMode';
+import DisplayMode from './displayMode';
 
 class TableColumn {
   constructor(columnDef) {
