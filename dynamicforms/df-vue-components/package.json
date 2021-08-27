@@ -46,6 +46,8 @@
     "plugins": ["es"],
     "extends": [
       "plugin:vue/essential",
+      "plugin:vue/strongly-recommended",
+      "plugin:vue/recommended",
       "@vue/airbnb"
     ],
     "parserOptions": {
