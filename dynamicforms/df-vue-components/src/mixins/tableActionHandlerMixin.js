@@ -34,7 +34,7 @@ const tableActionHandlerMixin = {
           })
           .catch((reason) => {
             const dfErrors = {};
-            const eventName = `formEvents_${modal.currentDialog.body.data.uuid}`;
+            const eventName = `formEvents_${modal.currentDialog.body.uuid}`;
             if (reason.response.status === 400) {
               _.forOwn(reason.response.data, (value, key) => {
                 dfErrors[`${key}`] = _.join(value, '\n');

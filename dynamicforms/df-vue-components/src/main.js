@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
-import ModalHandler from './components/bootstrap/modalhandler.vue';
+import ModalHandler from './components/modalhandler.vue';
 import dftable from './components/dftable.vue';
 import example from './examples/example.vue';
 import dynamicforms from './dynamicforms';
