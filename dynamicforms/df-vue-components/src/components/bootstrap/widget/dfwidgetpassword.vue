@@ -1,7 +1,9 @@
 <template>
   <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
     <div slot="input" class="input-group">
-      <input :id="def.uuid" :type="passwordFieldType" v-model='password'
+      <input :id="def.uuid" :type="passwordFieldType" v-model="
+/* eslint-disable */
+data[def.name]"
              :class="def.render_params.class"
              :name="def.name"
              :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
@@ -40,7 +42,6 @@ export default {
   },
   data() {
     return {
-      password: '',
       passwordFieldType: 'password',
       isPassword: true,
     };
