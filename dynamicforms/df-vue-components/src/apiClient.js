@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     dynamicforms.dialog.removeRequest(error.config.sequence);
-    return error;
+    return Promise.reject(error);
   },
 );
 export default apiClient;
