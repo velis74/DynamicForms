@@ -37,9 +37,10 @@ const actionHandlerMixin = {
         callDbFunction({
           method: 'delete',
           url,
-          then: () => {
-            if (this && this.processedConfiguration) this.processedConfiguration.rows.deleteRow(data.id);
-          },
+          then: params.then ||
+            (() => {
+              if (this && this.processedConfiguration) this.processedConfiguration.rows.deleteRow(data.id);
+            }),
         });
       } else if (['edit', 'add'].includes(action.name)) {
         this.showModal(action, data);
@@ -53,6 +54,7 @@ const actionHandlerMixin = {
           dataId = 'new';
           submitMethod = 'post';
         }
+        submitMethod = params.submitMethod || submitMethod;
 
         // noinspection JSUnresolvedVariable
         const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', dataId);
@@ -64,23 +66,25 @@ const actionHandlerMixin = {
           url,
           data,
           config: { headers },
-          then: (res) => {
-            if (modal) modal.hide();
-            if (this && this.processedConfiguration) this.processedConfiguration.rows.updateRows([res.data]);
-          },
-          catch: (reason) => {
-            const dfErrors = {};
-            const eventName = `formEvents_${modal.currentDialog.body.uuid}`;
-            if (reason.response.status === 400) {
-              _.forOwn(reason.response.data, (value, key) => {
-                dfErrors[`${key}`] = _.join(value, '\n');
-              });
-            } else {
-              dfErrors.non_field_errors = reason.response.data.detail;
-            }
+          then: params.then ||
+            ((res) => {
+              if (modal) modal.hide();
+              if (this && this.processedConfiguration) this.processedConfiguration.rows.updateRows([res.data]);
+            }),
+          catch: params.catch ||
+            ((reason) => {
+              const dfErrors = {};
+              const eventName = `formEvents_${modal.currentDialog.body.uuid}`;
+              if (reason.response.status === 400) {
+                _.forOwn(reason.response.data, (value, key) => {
+                  dfErrors[`${key}`] = _.join(value, '\n');
+                });
+              } else {
+                dfErrors.non_field_errors = reason.response.data.detail;
+              }
 
-            eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
-          },
+              eventBus.$emit(eventName, { type: 'submitErrors', data: dfErrors });
+            }),
         });
       } else if (action.name === 'cancel') {
         if (modal) modal.hide();
