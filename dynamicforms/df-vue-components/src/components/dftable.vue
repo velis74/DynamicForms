@@ -14,14 +14,14 @@ import ActionsHandler from '../logic/actionsHandler';
 import TableColumn from '../logic/tableColumn';
 import apiClient from '../apiClient';
 import DisplayMode from '../logic/displayMode';
-import tableActionHandlerMixin from '../mixins/tableActionHandlerMixin';
+import actionHandlerMixin from '../mixins/actionHandlerMixinnew';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
 import LoadableTableRows from '../logic/loadableTableRows';
 
 export default {
   name: 'dftable',
-  mixins: [tableActionHandlerMixin],
+  mixins: [actionHandlerMixin],
   props: {
     config: { type: Object, required: false },
   },
