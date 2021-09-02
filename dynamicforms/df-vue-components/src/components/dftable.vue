@@ -14,7 +14,7 @@ import ActionsHandler from '../logic/actionsHandler';
 import TableColumn from '../logic/tableColumn';
 import apiClient from '../apiClient';
 import DisplayMode from '../logic/displayMode';
-import actionHandlerMixin from '../mixins/actionHandlerMixinnew';
+import actionHandlerMixin from '../mixins/actionHandlerMixin';
 import eventBus from '../logic/eventBus';
 import dynamicforms from '../dynamicforms';
 import LoadableTableRows from '../logic/loadableTableRows';
