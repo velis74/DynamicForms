@@ -43,11 +43,11 @@ const createApp = (elementId, template, props, modalId = null) => {
   }
   return new Vue({
     el: `#${elementId}`,
-    template,
+    components: { dftable, example },
     data() {
       return props;
     },
-    components: { dftable, example },
+    template,
   });
 };
 

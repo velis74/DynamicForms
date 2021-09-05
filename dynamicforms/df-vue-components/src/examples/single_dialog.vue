@@ -1,8 +1,10 @@
 <template>
   <div>
-    <p id="single_dialog_instructions">This dialog's form is pre-populated with data of your (the programmer) choosing.
+    <p id="single_dialog_instructions">
+      This dialog's form is pre-populated with data of your (the programmer) choosing.
       When you make your choice and send it back to the server, the server will process the result and return it back to
-      the client.</p>
+      the client.
+    </p>
     <ul id="single_dialog_instructions_list">
       It is up to you to choose how the data is going to be returned:
 
@@ -18,7 +20,7 @@ import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
 
 export default {
   name: 'examples-single_dialog.html',
-  props: ['rows', 'uuid', 'record'],
   components: { dfformlayout },
+  props: ['rows', 'uuid', 'record'],
 };
 </script>

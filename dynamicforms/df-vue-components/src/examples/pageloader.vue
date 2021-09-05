@@ -3,21 +3,25 @@
 </template>
 
 <script>
-import axios from 'axios';
-import dftable from '../components/dftable.vue';
+import apiClient from '../apiClient';
 import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
+import dftable from '../components/dftable.vue';
 
 export default {
-  name: 'pageloader',
+  name: 'PageLoader',
   components: {
     dftable, dfformlayout,
   },
+  emits: ['title-change', 'load-route'],
   data() {
     return {
       url: null,
       component: 'dftable',
       config: null,
     };
+  },
+  watch: {
+    $route(to) { this.goToRoute(to); },
   },
   mounted() {
     this.goToRoute(this.$route);
@@ -27,13 +31,14 @@ export default {
       // console.log(to);
       this.url = `${to.path}.component`;
       this.component = to.meta.component || 'dftable';
-      axios
+      apiClient
         .get(this.url, {
           headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-render-type': 'component-def' },
         })
         .then((res) => {
           this.config = res.data;
           this.$emit('title-change', res.data.titles.table);
+          this.$emit('load-route', to.path, res.data.uuid);
         })
         .catch((err) => {
           console.log(err);
@@ -41,9 +46,6 @@ export default {
           alert(`Error retrieving component def:\n${err.data}`);
         });
     },
-  },
-  watch: {
-    $route(to) { this.goToRoute(to); },
   },
 };
 </script>

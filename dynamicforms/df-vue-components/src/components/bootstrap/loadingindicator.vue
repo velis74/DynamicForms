@@ -3,17 +3,20 @@
     <div v-if="progress">
       <h3>{{ label }}</h3>
       <div class="progress progress-striped progress-bar-animated">
-        <div class="progress-bar" :style="`width: ${progress}%`" role="progressbar"
-             aria-valuemax="100" aria-valuemin="0" aria-valuenow="progress">
+        <div
+          class="progress-bar"
+          :style="`width: ${progress}%`"
+          role="progressbar"
+          aria-valuemax="100"
+          aria-valuemin="0"
+          aria-valuenow="progress"
+        >
           {{ progress }}%
         </div>
       </div>
     </div>
     <div v-else class="lds-ellipsis">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div/><div/><div/><div/>
     </div>
   </div>
 </template>
@@ -23,8 +26,8 @@ export default {
   name: 'dfloadingindicator',
   props: {
     loading: { type: Boolean, required: true },
-    label: { type: String, required: false },
-    progress: { type: Number, required: false },
+    label: { type: String, required: false, default: null },
+    progress: { type: Number, required: false, default: null },
   },
 };
 </script>

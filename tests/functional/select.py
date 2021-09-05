@@ -73,7 +73,8 @@ class Select:
 
     def select_by_value(self, value: Union[str, List[str]]):
         if self.select_type == SelectType.COMPONENT:
-            self._browser.execute_script(f"window['setSelectValue {self.id}']({repr(value)});")
+            value = repr(value) if value is not None else 'null'
+            self._browser.execute_script(f"window['setSelectValue {self.id}']({value});")
         elif self.select_type == SelectType.SELECT2:
             element = self.element.parent.find_element_by_xpath(f"//*[@id='{self.id}']/following-sibling::*[1]")
             element.click()

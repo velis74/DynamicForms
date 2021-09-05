@@ -34,6 +34,21 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
 
     df_control_data = fields.SerializerMethodField(display=DisplayMode.HIDDEN, read_only=True)
 
+    @property
+    def component_name(self):
+        """
+        component_name returns name of Vue component to use for rendering this serializer's form
+        by default it will take the HTML template's form_template parameter and replace all non-compliant
+        characters with '-'.
+
+        Usually, though, you will replace this property with one of your own declaring your Vue component name to
+        instantiate. The component is expected to behave like DFFormLayout does
+        :return: name of component to use when rendering the layout in VDOM
+        """
+        res = getattr(self, 'form_template', 'dfformlayout')
+        res = re.sub(r'[^a-zA-Z0-9._-]', '-', res)
+        return res
+
     """
     we're currently using two additional headers for axios:
     'x-viewmode': 'TABLE_ROW' - tells DF what viewMode to use for rendering the response
@@ -162,7 +177,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             ).as_component_def(self)
 
         # mangle the old-style template filename such that it only contains allowed characters
-        res['component_name'] = re.sub(r'[^a-zA-Z0-9._-]', '-', getattr(self, 'form_template', 'dfformlayout'))
+        res['component_name'] = self.component_name
 
         return res
 

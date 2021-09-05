@@ -49,7 +49,7 @@ class HiddenFields(models.Model):
     ), null=True, blank=True)
     int_fld = models.IntegerField(verbose_name='Quantity', null=True, blank=True)
     qty_fld = models.FloatField(verbose_name='Weight', null=True, blank=True,
-                                help_text='Fell free to use a decimal point / comma')
+                                help_text='Feel free to use a decimal point / comma')
     cst_fld = models.CharField(max_length=80, verbose_name='Comment', null=True, blank=True,
                                help_text='Enter additional info here')
     additional_text = models.CharField(max_length=80, null=True, blank=True,

@@ -1,5 +1,5 @@
 <template>
-  <div :class="'modal fade ' + className" :id="uuid" tabindex="-1" role="dialog" aria-hidden="true">
+  <div :id="uuid" :class="'modal fade ' + className" tabindex="-1" role="dialog" aria-hidden="true">
     <div :class="'modal-dialog ' + sizeClass" role="document">
       <div class="modal-content">
         <div :class="'modal-header ' + headerClasses">
@@ -9,15 +9,22 @@
           </button>
         </div>
         <transition name="flip" mode="out-in">
-          <div class="modal-body" v-if="isComponent" :key="uniqId">
+          <div v-if="isComponent" :key="uniqId" class="modal-body">
             <div :is="body.component" v-bind="body"/>
           </div>
-          <div class="modal-body" v-else :key="uniqId" v-html="body"/>
+          <div v-else :key="uniqId" class="modal-body" v-html="body"/>
         </transition>
         <div class="modal-footer">
-          <button :id="button.element_id || button.uuid" type="button" v-for="button in buttons" :key="button.uuid"
-                  :class="button.classes" v-bind="button.arias"
-                  @click.stop="buttonClick($event, button, callback)">{{ button.label }}
+          <button
+            v-for="button in buttons"
+            :id="button.element_id || button.uuid"
+            :key="button.uuid"
+            type="button"
+            :class="button.classes"
+            v-bind="button.arias"
+            @click.stop="buttonClick($event, button, callback)"
+          >
+            {{ button.label }}
           </button>
         </div>
       </div>
@@ -27,16 +34,16 @@
 
 <script>
 
+import 'bootstrap';
 import * as $ from 'jquery';
 import apiClient from '../../apiClient';
 import dfformlayout from './form/dfformlayout.vue';
 import dfloadingindicator from './loadingindicator.vue';
-import 'bootstrap';
-import eventBus from '../../logic/eventBus';
 import dynamicforms from '../../dynamicforms';
+import eventBus from '../../logic/eventBus';
 
 export default {
-  name: 'modalhandler',
+  name: 'Modalhandler',
   components: {
     dfformlayout, dfloadingindicator,
   },
@@ -273,6 +280,7 @@ export default {
       apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
         .then((res) => { // call api and set data as response, when data is
           // set component is re-rendered
+          eventBus.$emit('showingRESTForm', { tableUUID: tableUuid, formUUID: res.data.data.uuid });
           this.showComponent(res.data, whichTitle, tableUuid);
         })
         .catch((err) => { console.error(err); });

@@ -6,6 +6,7 @@ from ..models import HiddenFields
 
 class HiddenFieldsSerializer(serializers.ModelSerializer):
     template_context = dict(url_reverse='hidden-fields')
+    component_name = 'ExampleHiddenLayout'
     form_titles = {
         'table': 'Hidden fields list',
         'new': 'New hidden fields object',

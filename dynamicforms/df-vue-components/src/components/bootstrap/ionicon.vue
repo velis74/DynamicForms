@@ -1,5 +1,5 @@
 <template>
-  <div :key="loaded_svg" v-if="loaded_svg" v-html="loaded_svg"></div>
+  <div v-if="loaded_svg" :key="loaded_svg" v-html="loaded_svg"/>
 </template>
 
 <script>
@@ -7,8 +7,8 @@ import { noop } from 'lodash';
 import apiClient from '../../apiClient';
 
 export default {
-  name: 'ionicon',
-  props: ['name'],
+  name: 'IonIcon',
+  props: { name: { type: String, required: false, default: null } },
   data() {
     return {
       loaded_svg: '',
@@ -42,6 +42,8 @@ export default {
 </script>
 
 <style>
+/* this selector is actually used within the SVG returned from the server */
+/*noinspection CssUnusedSymbol,SpellCheckingInspection*/
 .ionicon {
   display: inline-block;
   height:  1.5em;

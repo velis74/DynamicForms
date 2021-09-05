@@ -1,7 +1,6 @@
 <template>
   <div>
-    <component :is="component + 'table'" v-on:setTableFilter="setTableFilter"
-               :configuration="processedConfiguration"/>
+    <component :is="component + 'table'" :configuration="processedConfiguration" @setTableFilter="setTableFilter"/>
   </div>
 </template>
 

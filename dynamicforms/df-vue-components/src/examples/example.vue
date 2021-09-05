@@ -6,8 +6,8 @@
       </div>
     </div>
     <transition name="fade">
-      <div class="sidenav-group" v-if="menuShown">
-        <div id="sidenav-overlay" @click.stop="menuShown = !menuShown"></div>
+      <div v-if="menuShown" class="sidenav-group">
+        <div id="sidenav-overlay" @click.stop="menuShown = !menuShown"/>
         <div id="side-nav" class="sidenav">
           <router-link to="/validated">Validated</router-link>
           <router-link to="/hidden-fields">Hidden fields</router-link>
@@ -24,46 +24,49 @@
       </div>
     </transition>
     <div id="main">
-      <router-view @title-change="(val) => { title = val; }"/>
+      <router-view @title-change="(val) => { title = val; }" @load-route="loadRoute"/>
     </div>
   </div>
 </template>
 
 <script>
-import VueRouter from 'vue-router';
-import Vue from 'vue';
-import pageloader from './pageloader.vue';
-import eventBus from '../logic/eventBus';
 import apiClient from '../apiClient';
-import SingleDialog from './single_dialog.vue';
 import dynamicforms from '../dynamicforms';
+import eventBus from '../logic/eventBus';
+import ExampleHiddenLayout from './example_hidden_layout.vue';
+import PageLoader from './pageloader.vue';
+import SingleDialog from './single_dialog.vue';
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 Vue.component(SingleDialog.name, SingleDialog); // we must register the custom component or it won't show
+Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout); // we must register the custom component or it won't show
 
 const singleDlgFakeUUID = 'fake-uuid-654654-634565';
 const routes = [
-  { path: '/validated', component: pageloader },
-  { path: '/hidden-fields', component: pageloader },
-  { path: '/basic-fields', component: pageloader },
-  { path: '/advanced-fields', component: pageloader },
-  { path: '/page-load', component: pageloader },
-  { path: '/filter', component: pageloader },
-  { path: '/refresh-types', component: pageloader },
-  { path: '/calculated-css-class-for-table-row', component: pageloader },
-  { path: '/single-dialog/:id', component: pageloader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
-  { path: '/choice-allow-tags-fields', component: pageloader },
+  { path: '/validated', component: PageLoader },
+  { path: '/hidden-fields', component: PageLoader },
+  { path: '/basic-fields', component: PageLoader },
+  { path: '/advanced-fields', component: PageLoader },
+  { path: '/page-load', component: PageLoader },
+  { path: '/filter', component: PageLoader },
+  { path: '/refresh-types', component: PageLoader },
+  { path: '/calculated-css-class-for-table-row', component: PageLoader },
+  { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
+  { path: '/choice-allow-tags-fields', component: PageLoader },
 ];
 const router = new VueRouter({ routes });
 
 export default {
-  name: 'example',
-  components: { },
+  name: 'Example',
+  components: {},
   router,
   data() {
     return {
       menuShown: false,
       title: '',
+      currentFormUUID: null,
     };
   },
   mounted() {
@@ -71,14 +74,21 @@ export default {
       router.push('/validated');
     }
     eventBus.$on(`tableActionExecuted_${singleDlgFakeUUID}`, this.singleDialogBtnClick);
+    eventBus.$on('showingRESTForm', this.showingRESTForm);
   },
   beforeDestroy() {
+    eventBus.$off('showingRESTForm');
     eventBus.$off(`tableActionExecuted_${singleDlgFakeUUID}`);
   },
   methods: {
     showSingleDialog() {
       this.menuShown = !this.menuShown;
       dynamicforms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
+    },
+    loadRoute(path, uuid) {
+      eventBus.$off(`fieldValueChanged${this.currentFormUUID}`);
+      this.currentFormUUID = uuid;
+      eventBus.$on(`fieldValueChanged${this.currentFormUUID}`, this.fieldValueChanged);
     },
     singleDialogBtnClick(payload) {
       if (payload.action.name === 'say_it') {
@@ -118,6 +128,14 @@ export default {
           });
       } else if (payload.action.name === 'cancel') {
         payload.modal.hide();
+      }
+    },
+    fieldValueChanged(payload) {
+      console.log('FieldValueChanged', payload);
+    },
+    showingRESTForm(payload) {
+      if (payload.tableUUID === this.currentFormUUID) {
+        eventBus.$on(`fieldValueChanged${payload.formUUID}`, this.fieldValueChanged);
       }
     },
   },
@@ -189,10 +207,13 @@ export default {
   color:        white;
 }
 
+/* these selectors are used in the transition */
+/*noinspection CssUnusedSymbol*/
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease;
 }
 
+/*noinspection CssUnusedSymbol*/
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }

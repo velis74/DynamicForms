@@ -12,16 +12,19 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
     def test_hidden_fields(self, renderer):
 
         def _check_shown(show_note, show_unit, show_int, show_qty, show_cst, show_add):
+            unit = Select(form.find_element_by_css_selector('[name="unit"]'))
+            int_fld = form.find_element_by_css_selector('input[name="int_fld"]')
+            qty_fld = form.find_element_by_css_selector('input[name="qty_fld"]')
+            cst_fld = form.find_element_by_css_selector('input[name="cst_fld"]')
+            add_text = form.find_element_by_css_selector('input[name="additional_text"]')
+            add_container = form.find_element_by_id(f'container-{add_text.get_attribute("id")}')
+
             self.assertEqual(note.is_displayed(), show_note)
             self.assertEqual(note_container.is_displayed(), show_note)
             self.assertEqual(unit.is_displayed(), show_unit)
-            self.assertEqual(unit_container.is_displayed(), show_unit)
             self.assertEqual(int_fld.is_displayed(), show_int)
-            self.assertEqual(int_container.is_displayed(), show_int)
             self.assertEqual(qty_fld.is_displayed(), show_qty)
-            self.assertEqual(qty_container.is_displayed(), show_qty)
             self.assertEqual(cst_fld.is_displayed(), show_cst)
-            self.assertEqual(cst_container.is_displayed(), show_cst)
             self.assertEqual(add_text.is_displayed(), show_add)
             self.assertEqual(add_container.is_displayed(), show_add)
 
@@ -41,16 +44,6 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
         form = dialog.find_element_by_id(modal_serializer_id)
         note = form.find_element_by_css_selector('input[name="note"]')
         note_container = form.find_element_by_id(f'container-{note.get_attribute("id")}')
-        unit = Select(form.find_element_by_css_selector('[name="unit"]'))
-        unit_container = form.find_element_by_id(f'container-{unit.id}')
-        int_fld = form.find_element_by_css_selector('input[name="int_fld"]')
-        int_container = form.find_element_by_id(f'container-{int_fld.get_attribute("id")}')
-        qty_fld = form.find_element_by_css_selector('input[name="qty_fld"]')
-        qty_container = form.find_element_by_id(f'container-{qty_fld.get_attribute("id")}')
-        cst_fld = form.find_element_by_css_selector('input[name="cst_fld"]')
-        cst_container = form.find_element_by_id(f'container-{cst_fld.get_attribute("id")}')
-        add_text = form.find_element_by_css_selector('input[name="additional_text"]')
-        add_container = form.find_element_by_id(f'container-{add_text.get_attribute("id")}')
 
         _check_shown(True, True, False, False, False, True)
         # If we enter "abc" unit field should be hidden
@@ -64,6 +57,7 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
         _check_shown(True, True, False, False, False, True)
 
         # Select first option. No additional fields should be shown
+        unit = Select(form.find_element_by_css_selector('[name="unit"]'))
         unit.select_by_index(0)
         _check_shown(True, True, False, False, False, True)
 

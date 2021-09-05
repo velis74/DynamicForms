@@ -3,13 +3,14 @@ const dynamicforms = {
     if (path) {
       try {
         return path.split('.').reduce((res, val) => res[val] || {}, window);
-        // eslint-disable-next-line
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     }
     return undefined;
   },
 };
 
-export default dynamicforms;
-
 window.dynamicforms = dynamicforms;
+
+export default dynamicforms;
