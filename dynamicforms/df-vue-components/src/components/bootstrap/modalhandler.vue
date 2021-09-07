@@ -36,16 +36,18 @@
 
 import 'bootstrap';
 import * as $ from 'jquery';
+
 import apiClient from '../../apiClient';
-import dfformlayout from './form/dfformlayout.vue';
-import dfloadingindicator from './loadingindicator.vue';
-import dynamicforms from '../../dynamicforms';
+import DynamicForms from '../../dynamicforms';
 import eventBus from '../../logic/eventBus';
 
+import DFFormLayout from './form/dfformlayout.vue';
+import DFLoadingIndicator from './loadingindicator.vue';
+
 export default {
-  name: 'Modalhandler',
+  name: 'ModalHandler',
   components: {
-    dfformlayout, dfloadingindicator,
+    DFFormLayout, DFLoadingIndicator,
   },
   data() {
     return {
@@ -136,8 +138,8 @@ export default {
   },
   created() {
     // make our API available
-    if (!dynamicforms.dialog) {
-      dynamicforms.dialog = this;
+    if (!DynamicForms.dialog) {
+      DynamicForms.dialog = this;
       window.setInterval(() => { this.progressDialogCheck(); }, 250);
     }
   },
@@ -228,7 +230,7 @@ export default {
       this.dialogs.push({
         title,
         body: {
-          component: 'dfloadingindicator', loading: true, label: null, progress: null, data: true,
+          component: 'DFLoadingIndicator', loading: true, label: null, progress: null, data: true,
         },
         buttons: [],
         callback: null,

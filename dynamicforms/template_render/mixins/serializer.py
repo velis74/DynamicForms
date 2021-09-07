@@ -45,7 +45,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         instantiate. The component is expected to behave like DFFormLayout does
         :return: name of component to use when rendering the layout in VDOM
         """
-        res = getattr(self, 'form_template', 'dfformlayout')
+        res = getattr(self, 'form_template', 'DFFormLayout')
         res = re.sub(r'[^a-zA-Z0-9._-]', '-', res)
         return res
 

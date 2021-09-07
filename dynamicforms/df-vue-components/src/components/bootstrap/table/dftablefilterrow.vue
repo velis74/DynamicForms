@@ -1,36 +1,48 @@
 <template>
   <tr class="dynamicforms-filterrow">
     <th v-if="actionsRowStart.list.length" class="tr-th-action">
-      <Actions :row="null" :actions="actionsRowStart"></Actions>
+      <Actions :row="null" :actions="actionsRowStart"/>
     </th>
     <th v-for="(column, idx) in columns" :key="idx">
       <!--  todo: { field: column } must be removed, unify incoming data    -->
-      <dfformcolumn :key="idx" :def="{ field: column }" :data="filter" v-on:onValueConfirmed="onValueConfirmed"
-                    :errors="{}" :showLabelOrHelpText="false" :cssClasses="''"/>
+      <DFFormColumn
+        :key="idx"
+        :def="{ field: column }"
+        :data="filter"
+        :errors="{}"
+        :show-label-or-help-text="false"
+        :css-classes="''"
+        @onValueConfirmed="onValueConfirmed"
+      />
     </th>
     <th v-if="actionsRowEnd.list.length" class="tr-th-action">
-      <Actions :row="null" :actions="actionsRowEnd"></Actions>
+      <Actions :row="null" :actions="actionsRowEnd"/>
     </th>
   </tr>
 </template>
 
 <script>
 import _ from 'lodash';
-import dfformcolumn from '../form/dfformcolumn.vue';
+
+import ActionsHandler from '../../../logic/actionsHandler';
 import DisplayMode from '../../../logic/displayMode';
 import Actions from '../actions.vue';
-import ActionsHandler from '../../../logic/actionsHandler';
+import DFFormColumn from '../form/dfformcolumn.vue';
 
 export default {
-  name: 'dftablefilterrow',
-  props: ['configuration'],
+  name: 'DFTableFilterRow',
+  components: {
+    DFFormColumn, Actions,
+  },
+  props: {
+    configuration: { type: Object, required: true },
+  },
   data() {
+    const cfg = this.configuration;
     return {
       filter: {},
-      actionsRowEnd: new ActionsHandler(this.configuration.actions,
-        null, this.configuration.uuid).filter('FILTER_ROW_END'),
-      actionsRowStart: new ActionsHandler(this.configuration.actions,
-        null, this.configuration.uuid).filter('FILTER_ROW_START'),
+      actionsRowEnd: new ActionsHandler(cfg.actions, null, cfg.uuid).filter('FILTER_ROW_END'),
+      actionsRowStart: new ActionsHandler(cfg.actions, null, cfg.uuid).filter('FILTER_ROW_START'),
     };
   },
   computed: {
@@ -44,10 +56,6 @@ export default {
     onValueConfirmed(doFilter) {
       this.$emit('setTableFilter', { filter: this.filter, doFilter });
     },
-  },
-  components: {
-    dfformcolumn,
-    Actions,
   },
 };
 </script>

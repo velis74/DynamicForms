@@ -1,7 +1,8 @@
+const path = require('path');
+
 const webpack = require('webpack');
 
 const libraryFileName = 'df-components';
-const path = require('path');
 
 module.exports = {
   outputDir: path.resolve(__dirname, `../static/${libraryFileName}/`),

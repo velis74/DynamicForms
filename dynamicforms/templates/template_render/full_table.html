@@ -1,8 +1,7 @@
 {% load dynamicforms %}
 <script>
-  window.dynamicformsUi = 'bootstrap';
   const tableParams = {{ serializer.component_params | safe }};
   document.title = tableParams.titles.table;
-  createApp('app', '<dftable/>', tableParams, 'modal-app');
+  createApp('app', '<DFTable/>', tableParams, 'modal-app');
 </script>
 {# <df-table id="list-{{ serializer.uuid }}" :data="{{ serializer.component_params }}"></df-table>#}

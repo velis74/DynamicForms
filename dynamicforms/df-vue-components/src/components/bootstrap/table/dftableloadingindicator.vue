@@ -1,17 +1,17 @@
 <template>
   <tr v-if="rows.length > 0 && loading" class="loading-indicator">
     <td :colspan="columns.length">
-      <dfloadingindicator loading="loading"/>
+      <DFLoadingIndicator loading="loading"/>
     </td>
   </tr>
 </template>
 
 <script>
-import Dfloadingindicator from '../loadingindicator.vue';
+import DFLoadingIndicator from '../loadingindicator.vue';
 
 export default {
-  name: 'dftableloadingindicator',
-  components: { Dfloadingindicator },
+  name: 'DFTableLoadingIndicator',
+  components: { DFLoadingIndicator },
   props: {
     loading: { type: Boolean, required: true },
     columns: { type: Array, required: true },

@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: 'dfloadingindicator',
+  name: 'DFLoadingIndicator',
   props: {
     loading: { type: Boolean, required: true },
     label: { type: String, required: false, default: null },

@@ -1,32 +1,37 @@
 <template>
   <form :id="uuid">
     <slot name="form-error">
-      <div v-if="getErrorText">
-        <small :id="'form-' + uuid + '-err'" class="form-text text-danger">{{ getErrorText }}</small>
+      <div v-if="errorText">
+        <small :id="'form-' + uuid + '-err'" class="form-text text-danger">{{ errorText }}</small>
         <hr>
       </div>
     </slot>
-    <dfformrow v-for="(row, idx) in rows" :key="idx" :columns="row" :data="record" :errors="errors"/>
+    <DFFormRow v-for="(row, idx) in rows" :key="idx" :columns="row" :data="record" :errors="errors"/>
   </form>
 </template>
 
 <script>
-import dfformrow from './dfformrow.vue';
 import eventBus from '../../../logic/eventBus';
 import formFieldChangeMixin from '../../../logic/formFieldChangeMixin';
 
+import DFFormRow from './dfformrow.vue';
+
 export default {
-  name: 'dfformlayout',
-  components: { dfformrow },
+  name: 'DFFormLayout',
+  components: { DFFormRow },
   mixins: [formFieldChangeMixin],
-  props: { rows: {}, uuid: {}, record: { default: null } },
+  props: {
+    rows: { type: Array, required: true },
+    uuid: { type: String, required: true },
+    record: { type: Object, default: null },
+  },
   data() {
     return {
       errors: {},
     };
   },
   computed: {
-    getErrorText() {
+    errorText() {
       const nonFieldError = 'non_field_errors';
       try {
         if (this.errors && this.errors[nonFieldError]) return this.errors[nonFieldError];

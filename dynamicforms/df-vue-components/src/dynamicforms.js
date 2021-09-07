@@ -1,4 +1,5 @@
-const dynamicforms = {
+const DynamicForms = {
+  UI: 'Bootstrap',
   getObjectFromPath: (path) => {
     if (path) {
       try {
@@ -11,6 +12,6 @@ const dynamicforms = {
   },
 };
 
-window.dynamicforms = dynamicforms;
+window.dynamicforms = DynamicForms;
 
-export default dynamicforms;
+export default DynamicForms;

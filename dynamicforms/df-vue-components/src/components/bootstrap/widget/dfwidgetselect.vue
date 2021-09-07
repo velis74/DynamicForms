@@ -1,33 +1,55 @@
 <template>
-  <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
-    <div slot="input" class="df-select-class" :id="def.uuid" :key="def.uuid" :name="def.name"
-         :data-value="selenium ? result : null" :data-options="selenium ? options_json : null">
-      <multiselect
-          v-model="selected" :options="options" :close-on-select="true" :clear-on-select="true"
-          :hide-selected="false" :preserve-search="true" :preselect-first="false"
-          label="text" track-by="id"
+  <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
+    <div
+      :id="def.uuid"
+      slot="input"
+      :key="def.uuid"
+      class="df-select-class"
+      :name="def.name"
+      :data-value="selenium ? result : null"
+      :data-options="selenium ? options_json : null"
+    >
+      <AMultiselect
+        v-model="selected"
+        :options="options"
+        :close-on-select="true"
+        :clear-on-select="true"
+        :hide-selected="false"
+        :preserve-search="true"
+        :preselect-first="false"
+        label="text"
+        track-by="id"
 
-          :disabled="disabled" :multiple="multiple" :taggable="taggable"
-          :aria-describedby="def.help_text && showLabelOrHelpText ? def.field_name + '-help' : null"
-          :placeholder="def.placeholder"
-          @select="onSelect" @input="onInput" @tag="onTag"
+        :disabled="disabled"
+        :multiple="multiple"
+        :taggable="taggable"
+        :aria-describedby="def.help_text && showLabelOrHelpText ? def.field_name + '-help' : null"
+        :placeholder="def.placeholder"
+        @select="onSelect"
+        @input="onInput"
+        @tag="onTag"
       />
     </div>
-  </dfwidgetbase>
+  </DFWidgetBase>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
-import dfwidgetbase from './dfwidgetbase.vue';
+import AMultiselect from 'vue-multiselect';
+
+import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
-  name: 'dfwidgetselect',
+  name: 'DFWidgetSelect',
+  components: {
+    DFWidgetBase, AMultiselect,
+  },
   props: {
     def: { type: Object, required: true },
     data: { type: Object, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
   },
+  emits: ['update:modelValue'],
   data() {
     return {
       selected: null,
@@ -62,7 +84,11 @@ export default {
       },
     },
   },
-  emits: ['update:modelValue'],
+  watch: {
+    selected: function selectedChanged() {
+      this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
+    },
+  },
   mounted: function mounted() {
     if (!this.multiple && !this.def.allow_null && !this.data[this.def.name] && this.options) {
       this.result = this.options[0].id;
@@ -101,14 +127,6 @@ export default {
         this.selected = newTagObj;
       }
     },
-  },
-  watch: {
-    selected: function selectedChanged() {
-      this.data[this.def.name] = this.result; // eslint-disable-line vue/no-mutating-props
-    },
-  },
-  components: {
-    dfwidgetbase, Multiselect,
   },
 };
 </script>

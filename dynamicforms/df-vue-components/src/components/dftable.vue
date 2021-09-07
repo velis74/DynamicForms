@@ -1,28 +1,33 @@
 <template>
   <div>
-    <component :is="component + 'table'" :configuration="processedConfiguration" @setTableFilter="setTableFilter"/>
+    <component :is="component" :configuration="processedConfiguration" @setTableFilter="setTableFilter"/>
   </div>
 </template>
 
 <script>
-import _ from 'lodash';
 import $ from 'jquery';
-import bootstraptable from './bootstrap/table/dftable.vue';
-// import JqueryuiTable from './jqueryui/Table.vue';
-import ActionsHandler from '../logic/actionsHandler';
-import TableColumn from '../logic/tableColumn';
+import _ from 'lodash';
+
+// import JQueryUITable from './jqueryui/Table.vue';
 import apiClient from '../apiClient';
+import DynamicForms from '../dynamicforms';
+import ActionsHandler from '../logic/actionsHandler';
 import DisplayMode from '../logic/displayMode';
-import actionHandlerMixin from '../mixins/actionHandlerMixin';
 import eventBus from '../logic/eventBus';
-import dynamicforms from '../dynamicforms';
 import LoadableTableRows from '../logic/loadableTableRows';
+import TableColumn from '../logic/tableColumn';
+import actionHandlerMixin from '../mixins/actionHandlerMixin';
+
+import BootstrapTable from './bootstrap/table/dftable.vue';
 
 export default {
-  name: 'dftable',
+  name: 'DFTable',
+  components: {
+    BootstrapTable, // JQueryUITable,
+  },
   mixins: [actionHandlerMixin],
   props: {
-    config: { type: Object, required: false },
+    config: { type: Object, required: true },
   },
   data() {
     const cfg = this.config || this.$parent;
@@ -43,22 +48,6 @@ export default {
       ordering_style: cfg.ordering_style,
     };
   },
-  beforeDestroy() {
-    eventBus.$off(`tableActionExecuted_${this.uuid}`);
-  },
-  mounted() {
-    let bodyColumnCss = '';
-    this.columns.forEach((column, idx) => {
-      bodyColumnCss += `#list-${this.uuid} tbody tr td:nth-child(${idx + 1}) {
-            text-align: ${column.alignment};
-          }
-          `;
-    });
-    const styleTag = document.createElement('style');
-    styleTag.appendChild(document.createTextNode(bodyColumnCss));
-    document.head.appendChild(styleTag);
-    eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
-  },
   computed: {
     processedConfiguration() {
       return {
@@ -74,7 +63,7 @@ export default {
       };
     },
     component() {
-      return window.dynamicformsUi;
+      return `${DynamicForms.UI}Table`;
     },
     sortedColumns() {
       return this.processedConfiguration.columns.filter((col) => col.isOrdered && !col.isUnsorted)
@@ -82,12 +71,35 @@ export default {
         .sort((a, b) => a.index - b.index);
     },
     orderingParam() {
-      const orderingStyle = dynamicforms.getObjectFromPath(this.ordering_style);
+      const orderingStyle = DynamicForms.getObjectFromPath(this.ordering_style);
       if (orderingStyle) {
         return orderingStyle(this.sortedColumns);
       }
       return this.sortedColumns.map((o) => (o.direction === true ? '' : '-') + o.fieldName);
     },
+  },
+  watch: {
+    orderingParam(_newVal, _oldVal) {
+      if (!_.isEqual(_newVal, _oldVal)) {
+        this.loadData();
+      }
+    },
+  },
+  beforeDestroy() {
+    eventBus.$off(`tableActionExecuted_${this.uuid}`);
+  },
+  mounted() {
+    let bodyColumnCss = '';
+    this.columns.forEach((column, idx) => {
+      bodyColumnCss += `#list-${this.uuid} tbody tr td:nth-child(${idx + 1}) {
+            text-align: ${column.alignment};
+          }
+          `;
+    });
+    const styleTag = document.createElement('style');
+    styleTag.appendChild(document.createTextNode(bodyColumnCss));
+    document.head.appendChild(styleTag);
+    eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
   },
   methods: {
     changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
@@ -127,11 +139,11 @@ export default {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
         this.editingRowURL = this.detail_url.replace('--record_id--', row.id).replace('.json', '.component');
-        dynamicforms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
+        DynamicForms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.add;
         this.editingRowURL = this.detail_url.replace('--record_id--', 'new').replace('.json', '.component');
-        dynamicforms.dialog.fromURL(this.editingRowURL, null, this.uuid);
+        DynamicForms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;
         this.editingRowURL = '';
@@ -150,7 +162,7 @@ export default {
       if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
         this.executeTableAction(payload.action, payload.data, payload.modal);
       } else {
-        const func = dynamicforms.getObjectFromPath(payload.action.action.func_name);
+        const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
         if (func) {
           let params = {};
           try {
@@ -166,17 +178,6 @@ export default {
         }
       }
     },
-  },
-  watch: {
-    orderingParam(_newVal, _oldVal) {
-      if (!_.isEqual(_newVal, _oldVal)) {
-        this.loadData();
-      }
-    },
-  },
-  components: {
-    bootstraptable,
-    // JqueryuiTable,
   },
 };
 </script>

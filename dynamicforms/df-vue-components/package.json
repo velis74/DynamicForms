@@ -57,11 +57,10 @@
       "max-len": ["error", { "code": 120 }],
       "no-console": 0,
       "no-plusplus": "off",
-      "sort-imports": ["error", {
-        "ignoreCase": true,
-        "ignoreDeclarationSort": false,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      "sort-imports": "off",
+      "import/order": ["error", {
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
       }],
       "indent": ["error", 2, { "MemberExpression": 1 }],
       "es/no-destructuring": "error",

@@ -1,85 +1,82 @@
 <template>
-  <div :class="cssClasses" v-if="isGroup">
+  <div v-if="isGroup" :class="cssClasses">
     <div class="card">
       <div class="card-header">
         {{ def.title }}
       </div>
       <div class="card-body">
-        <component :is="def.field.render_params.form.replace(/-/g, '')"
-                   :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
+        <component
+          :is="def.field.render_params.form"
+          :def="def.field"
+          :data="data"
+          :errors="errors"
+          :show-label-or-help-text="showLabelOrHelpText"
+        />
       </div>
-      <div class="card-footer" v-if="def.footer">
+      <div v-if="def.footer" class="card-footer">
         {{ def.footer }}
       </div>
     </div>
   </div>
-  <component v-else-if="isHidden"
-             :is="def.field.render_params.form.replace(/-/g, '')"
-             :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
-  <div :class="cssClasses + columnClasses" v-else>
-    <component :is="def.field.render_params.form.replace(/-/g, '')" v-on:onValueConfirmed="onValueConfirmed"
-               :def="def.field" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText"/>
+  <component
+    :is="def.field.render_params.form"
+    v-else-if="isHidden"
+    :def="def.field"
+    :data="data"
+    :errors="errors"
+    :show-label-or-help-text="showLabelOrHelpText"
+  />
+  <div v-else :class="cssClasses + columnClasses">
+    <component
+      :is="def.field.render_params.form"
+      :def="def.field"
+      :data="data"
+      :errors="errors"
+      :show-label-or-help-text="showLabelOrHelpText"
+      @onValueConfirmed="onValueConfirmed"
+    />
   </div>
 </template>
 
-<style>
-  label {
-    margin-inline-end: .5em;
-  }
-</style>
-
 <script>
 import DisplayMode from '../../../logic/displayMode';
-import dfwidgetinput from '../widget/dfwidgetinput.vue';
-import dfwidgetpassword from '../widget/dfwidgetpassword.vue';
-import dfwidgetckeditor from '../widget/dfwidgetckeditor.vue';
-import dfwidgetselect from '../widget/dfwidgetselect.vue';
+import DFWidgetCKEditor from '../widget/dfwidgetckeditor.vue';
+import DFWidgetInput from '../widget/dfwidgetinput.vue';
+import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
+import DFWidgetSelect from '../widget/dfwidgetselect.vue';
 
 export default {
-  name: 'dfformcolumn',
+  name: 'DFFormColumn',
+  components: {
+    DFWidgetInput, DFWidgetPassword, DFWidgetCKEditor, DFWidgetSelect,
+  },
   props: {
-    def: {
-      type: Object,
-      required: true,
-    },
-    data: {
-      type: Object,
-      required: true,
-    },
-    errors: {
-      type: Object,
-      required: true,
-    },
-    showLabelOrHelpText: {
-      type: Boolean,
-      default: true,
-    },
-    cssClasses: {
-      type: String,
-      default: 'col',
-    },
+    def: { type: Object, required: true },
+    data: { type: Object, required: true },
+    errors: { type: Object, required: true },
+    showLabelOrHelpText: { type: Boolean, default: true },
+    cssClasses: { type: String, default: 'col' },
   },
   computed: {
     isGroup() { return this.def.type === 'group'; },
     isHidden() {
       return this.def.field.visibility.form === DisplayMode.HIDDEN;
     },
-    columnClasses() { return this.def.width_classes ? ` ${this.def.width_classes}` : ''; },
+    columnClasses() {
+      const classes = this.def.width_classes;
+      return classes ? ` ${classes}` : '';
+    },
   },
   methods: {
     onValueConfirmed(doFilter) {
       this.$emit('onValueConfirmed', doFilter);
     },
   },
-  components: {
-    dfwidgetinput,
-    dfwidgetpassword,
-    dfwidgetckeditor,
-    dfwidgetselect,
-  },
 };
 </script>
 
-<style scoped>
-
+<style>
+  label {
+    margin-inline-end: .5em;
+  }
 </style>

@@ -1,13 +1,18 @@
 <template>
-  <div v-html="displayValue" style="display: inline-block"/>
+  <div style="display: inline-block" v-html="displayValue"/>
 </template>
 
 <script>
 import Vue from 'vue';
 
 export default {
-  name: 'dftablecellfloat',
-  props: ['row', 'column', 'value', 'bodyId'],
+  name: 'DFTableCellFloat',
+  props: {
+    row: { type: Object, required: true },
+    column: { type: Object, required: true },
+    value: { type: null, required: true },
+    bodyId: { type: String, required: true },
+  },
   computed: {
     displayValue() {
       if (this.value == null) {

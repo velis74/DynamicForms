@@ -1,17 +1,25 @@
 <template>
-  <dfformcolumn v-if="isHiddenSingle" :def="writableColumns[0]" :data="data" :errors="errors"/>
-  <div class="row align-items-end" v-else>
-    <dfformcolumn v-for="(column, idx) in writableColumns" :key="idx" :def="column" :data="data" :errors="errors"/>
+  <DFFormColumn v-if="isHiddenSingle" :def="writableColumns[0]" :data="data" :errors="errors"/>
+  <div v-else class="row align-items-end">
+    <DFFormColumn v-for="(column, idx) in writableColumns" :key="idx" :def="column" :data="data" :errors="errors"/>
   </div>
 </template>
 
 <script>
 import DisplayMode from '../../../logic/displayMode';
-import dfformcolumn from './dfformcolumn.vue';
+
+import DFFormColumn from './dfformcolumn.vue';
 
 export default {
-  name: 'dfformrow',
-  props: ['columns', 'data', 'errors'],
+  name: 'DFFormRow',
+  components: {
+    DFFormColumn,
+  },
+  props: {
+    columns: { type: Array, required: true },
+    data: { type: Object, required: true },
+    errors: { type: Array, default: () => [] },
+  },
   computed: {
     writableColumns() {
       return this.columns.filter((col) => col.field.read_only !== true);
@@ -19,9 +27,6 @@ export default {
     isHiddenSingle() {
       return this.writableColumns.length === 1 && this.writableColumns[0].field.visibility.form === DisplayMode.HIDDEN;
     },
-  },
-  components: {
-    dfformcolumn,
   },
 };
 </script>

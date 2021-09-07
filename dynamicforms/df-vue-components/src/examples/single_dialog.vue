@@ -11,16 +11,20 @@
       <li>Click "Say it" to have it returned as JSON and displayed in a dialog</li>
       <li>Click "Download it" to have it returned as a downloadable text file</li>
     </ul>
-    <dfformlayout :rows="rows" :uuid="uuid" :record="record"/>
+    <DFFormLayout :rows="rows" :uuid="uuid" :record="record"/>
   </div>
 </template>
 
 <script>
-import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
+import DFFormLayout from '../components/bootstrap/form/dfformlayout.vue';
 
 export default {
-  name: 'examples-single_dialog.html',
-  components: { dfformlayout },
-  props: ['rows', 'uuid', 'record'],
+  name: 'examples-single_dialog.html', // eslint-disable-line
+  components: { DFFormLayout },
+  props: {
+    rows: { type: Array, required: true },
+    uuid: { type: String, required: true },
+    record: { type: Object, required: true },
+  },
 };
 </script>

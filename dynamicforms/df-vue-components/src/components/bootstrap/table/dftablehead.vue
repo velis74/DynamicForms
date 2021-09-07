@@ -1,33 +1,37 @@
 <template>
   <thead>
-  <tr>
-    <th v-for="(col, idx) in columns" :key="col.name" :style="`text-align: ${col.alignment}`"
-        :class="col.th_classes" @click="colClicked($event, col, idx)">
-            {{ col.label }}
-            <span v-if="col.isOrdered" class="ordering">
-              <div class="ordering-arrow">{{ col.ascDescChar }}</div>
-              {{ col.orderIndexChar }}
-            </span>
-    </th>
-  </tr>
-  <dftablefilterrow v-if="filter" :configuration="filter"
-                    v-on:setTableFilter="setTableFilter"></dftablefilterrow>
+    <tr>
+      <th
+        v-for="(col, idx) in columns"
+        :key="col.name"
+        :style="`text-align: ${col.alignment}`"
+        :class="col.th_classes"
+        @click="colClicked($event, col, idx)"
+      >
+        {{ col.label }}
+        <span v-if="col.isOrdered" class="ordering">
+          <span class="ordering-arrow">{{ col.ascDescChar }}</span>
+          {{ col.orderIndexChar }}
+        </span>
+      </th>
+    </tr>
+    <DFTableFilterRow
+      v-if="filter"
+      :configuration="filter"
+      @setTableFilter="setTableFilter"
+    />
   </thead>
 </template>
 
 <script>
-import dftablefilterrow from './dftablefilterrow.vue';
+import DFTableFilterRow from './dftablefilterrow.vue';
 
 export default {
-  name: 'dftablehead',
+  name: 'DFTableHead',
+  components: { DFTableFilterRow },
   props: {
-    columns: {
-      type: Array,
-      required: true,
-    },
-    filter: {
-      type: Object,
-    },
+    columns: { type: Array, required: true },
+    filter: { type: Object, default: () => {} },
   },
   computed: {
     numSortedCols() {
@@ -64,9 +68,6 @@ export default {
       }
     },
   },
-  components: {
-    dftablefilterrow,
-  },
 };
 </script>
 
@@ -76,7 +77,7 @@ th.ordering {
   user-select: none;
 }
 
-th.ordering > span.ordering > div.ordering-arrow {
+th.ordering > span.ordering > span.ordering-arrow {
   font-size:   125%;
   line-height: .8em; /* increase font size for the arrow */
   display:     inline-block; /* but do not allow it to affect line size */

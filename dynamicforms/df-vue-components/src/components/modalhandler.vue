@@ -1,23 +1,23 @@
 <template>
   <div>
-  <component :is="component + 'modal'"/>
+    <component :is="component + 'Modal'"/>
   </div>
 </template>
 
 <script>
-import bootstrapmodal from './bootstrap/modalhandler.vue';
-// import JqueryuiTable from './jqueryui/Table.vue';
+import DynamicForms from '../dynamicforms';
+
+import BootstrapModal from './bootstrap/modalhandler.vue';
 
 export default {
-  name: 'modalhandler',
+  name: 'ModalHandler',
+  components: {
+    BootstrapModal, // JQueryUIModal
+  },
   computed: {
     component() {
-      return window.dynamicformsUi;
+      return DynamicForms.UI;
     },
-  },
-  components: {
-    bootstrapmodal,
-    // JqueryuiTable,
   },
 };
 </script>

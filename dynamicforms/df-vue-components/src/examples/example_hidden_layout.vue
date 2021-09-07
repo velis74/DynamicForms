@@ -1,17 +1,21 @@
 <template>
   <div>
-    <dfformlayout :rows="rows" :uuid="uuid" :record="record" @unit-changed="unitChanged" @note-changed="noteChanged"/>
+    <DFFormLayout :rows="rows" :uuid="uuid" :record="record" @unit-changed="unitChanged" @note-changed="noteChanged"/>
   </div>
 </template>
 
 <script>
-import dfformlayout from '@/components/bootstrap/form/dfformlayout.vue';
+import DFFormLayout from '@/components/bootstrap/form/dfformlayout.vue';
 import DisplayMode from '@/logic/displayMode';
 
 export default {
   name: 'ExampleHiddenLayout',
-  components: { dfformlayout },
-  props: ['rows', 'uuid', 'record'],
+  components: { DFFormLayout },
+  props: {
+    rows: { type: Array, required: true },
+    uuid: { type: String, required: true },
+    record: { type: Object, required: true },
+  },
   computed: {
     fields() {
       const res = {};

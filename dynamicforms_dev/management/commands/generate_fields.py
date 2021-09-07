@@ -36,7 +36,7 @@ class ClassAssemblyDict:
 
 
 render_params = ClassAssemblyDict({
-    fields.Field: dict(form='df-widget-input', input_type='text', table='df-tablecell-plaintext'),
+    fields.Field: dict(form='DFWidgetInput', input_type='text', table='df-tablecell-plaintext'),
     fields.EmailField: dict(input_type='email', table='df-tablecell-email'),
     fields.URLField: dict(input_type='url', table='df-tablecell-link', pattern='https?://.*'),
     fields.IntegerField: dict(input_type='number'),
@@ -49,17 +49,17 @@ render_params = ClassAssemblyDict({
     fields.BooleanField: dict(table='df-tablecell-bool', input_type='checkbox', label_after_element=True,
                               field_class='form-check-input', container_class='form-check form-group'),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
-    fields.ChoiceField: dict(form='df-widget-select', multiple=False, allow_tags='%allow_tags'),
+    fields.ChoiceField: dict(form='DFWidgetSelect', multiple=False, allow_tags='%allow_tags'),
     fields.MultipleChoiceField: dict(multiple=True),
-    relations.RelatedField: dict(form='df-widget-select', multiple=False),
-    relations.ManyRelatedField: dict(form='df-widget-select', multiple=True),
+    relations.RelatedField: dict(form='DFWidgetSelect', multiple=False),
+    relations.ManyRelatedField: dict(form='DFWidgetSelect', multiple=True),
     # TODO: The following two aren't taken care of yet for rendering in components
-    serializers.Serializer: dict(form='df-widget-fieldset'),
-    serializers.ListSerializer: dict(form='df-widget-list-fieldset'),
-    fields.ListField: dict(form='df-widget-list-field'),
-    fields.DictField: dict(form='df-widget-dict-field'),
-    fields.FilePathField: dict(form='df-widget-select', multiple=False),
-    fields.JSONField: dict(form='df-widget-textarea'),
+    serializers.Serializer: dict(form='DFWidgetFieldset'),
+    serializers.ListSerializer: dict(form='DFWidgetListFieldset'),
+    fields.ListField: dict(form='DFWidgetListField'),
+    fields.DictField: dict(form='DFWidgetDictField'),
+    fields.FilePathField: dict(form='DFWidgetSelect', multiple=False),
+    fields.JSONField: dict(form='DFWidgetTextarea'),
 })
 
 

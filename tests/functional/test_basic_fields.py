@@ -14,17 +14,17 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # Go to basic-fields html and check if there's a "+ Add" button
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btn = header.find_element_by_name("btn-add")
-        md_btn = header.find_element_by_name("btn-modal_dialog")
+        add_btn = header.find_element_by_name('btn-add')
+        md_btn = header.find_element_by_name('btn-modal_dialog')
         if renderer == 'component':
-            self.assertEqual(self.get_element_text(add_btn), "…+ Add")
+            self.assertEqual(self.get_element_text(add_btn), '…+ Add')
         else:
-            self.assertEqual(self.get_element_text(add_btn), "+ Add")
+            self.assertEqual(self.get_element_text(add_btn), '+ Add')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name("td")), "No data")
+        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -34,7 +34,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         if renderer == 'html':
             md_btn.click()
             dialog, modal_serializer_id = self.wait_for_modal_dialog()
-            dialog.find_element_by_id("dlg-btn-ok").click()
+            dialog.find_element_by_id('dlg-btn-ok').click()
             alert = self.browser.switch_to.alert
             self.assertEqual(alert.text, 'Clicked OK button')
             alert.accept()

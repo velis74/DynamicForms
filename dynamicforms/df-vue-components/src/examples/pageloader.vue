@@ -4,19 +4,19 @@
 
 <script>
 import apiClient from '../apiClient';
-import dfformlayout from '../components/bootstrap/form/dfformlayout.vue';
-import dftable from '../components/dftable.vue';
+import DFFormLayout from '../components/bootstrap/form/dfformlayout.vue';
+import DFTable from '../components/dftable.vue';
 
 export default {
   name: 'PageLoader',
   components: {
-    dftable, dfformlayout,
+    DFTable, DFFormLayout,
   },
   emits: ['title-change', 'load-route'],
   data() {
     return {
       url: null,
-      component: 'dftable',
+      component: 'DFTable',
       config: null,
     };
   },
@@ -30,7 +30,7 @@ export default {
     goToRoute(to) {
       // console.log(to);
       this.url = `${to.path}.component`;
-      this.component = to.meta.component || 'dftable';
+      this.component = to.meta.component || 'DFTable';
       apiClient
         .get(this.url, {
           headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-render-type': 'component-def' },

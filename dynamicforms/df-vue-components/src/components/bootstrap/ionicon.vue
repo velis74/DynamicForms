@@ -4,6 +4,7 @@
 
 <script>
 import { noop } from 'lodash';
+
 import apiClient from '../../apiClient';
 
 export default {

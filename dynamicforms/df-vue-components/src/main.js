@@ -1,16 +1,17 @@
-import Vue from 'vue';
-import VueObserveVisibility from 'vue-observe-visibility';
 import axios from 'axios';
 import $ from 'jquery';
+import Vue from 'vue';
+import VueObserveVisibility from 'vue-observe-visibility';
+
+import DFTable from './components/dftable.vue';
 import ModalHandler from './components/modalhandler.vue';
-import dftable from './components/dftable.vue';
-import example from './examples/example.vue';
-import dynamicforms from './dynamicforms';
+import DynamicForms from './dynamicforms';
+import Example from './examples/example.vue';
 
 Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
-Vue.component('dftable', dftable);
-Vue.component('example', example);
+Vue.component(DFTable.name, DFTable);
+Vue.component(Example.name, Example);
 
 // const createTable = (elementId, configuration) => new Vue({
 //   render: (h) => h(Table, {
@@ -38,12 +39,12 @@ const createApp = (elementId, template, props, modalId = null) => {
   if (typeof window.dynamicforms === 'undefined') {
     window.dynamicforms = {};
   }
-  if (!dynamicforms.dialog && modalId) {
+  if (!DynamicForms.dialog && modalId) {
     createModal(modalId);
   }
   return new Vue({
     el: `#${elementId}`,
-    components: { dftable, example },
+    components: { DFTable, Example },
     data() {
       return props;
     },

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'jqueryuitable',
+  name: 'JQueryUITable',
   mounted() {
     console.log('mnt ui');
   },

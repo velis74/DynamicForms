@@ -30,14 +30,16 @@
 </template>
 
 <script>
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+
 import apiClient from '../apiClient';
-import dynamicforms from '../dynamicforms';
+import DynamicForms from '../dynamicforms';
 import eventBus from '../logic/eventBus';
+
 import ExampleHiddenLayout from './example_hidden_layout.vue';
 import PageLoader from './pageloader.vue';
 import SingleDialog from './single_dialog.vue';
-import Vue from 'vue';
-import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 Vue.component(SingleDialog.name, SingleDialog); // we must register the custom component or it won't show
@@ -83,7 +85,7 @@ export default {
   methods: {
     showSingleDialog() {
       this.menuShown = !this.menuShown;
-      dynamicforms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
+      DynamicForms.dialog.fromURL('/single-dialog/new.component', 'new', singleDlgFakeUUID);
     },
     loadRoute(path, uuid) {
       eventBus.$off(`fieldValueChanged${this.currentFormUUID}`);

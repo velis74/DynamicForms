@@ -1,44 +1,38 @@
 <template>
-  <dfwidgetbase :def="def" :data="data" :errors="errors" :showLabelOrHelpText="showLabelOrHelpText">
+  <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
     <div slot="input" class="input-group">
-      <input :id="def.uuid" :type="passwordFieldType" v-model="
-/* eslint-disable */
-data[def.name]"
-             :class="def.render_params.class"
-             :name="def.name"
-             :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
-             :placeholder="def.placeholder" :value="data[def.name]"
-             :pattern="def.render_params.pattern">
-      <span @click="toggle_password"
-            :id="'pwf-' + def.uuid"
-            :class="isPassword ? 'password-field' : 'password-field-slash'"
-            class="input-group-text"></span>
+      <input
+        :id="def.uuid"
+        v-model="value"
+        :type="passwordFieldType"
+        :class="def.render_params.class"
+        :name="def.name"
+        :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
+        :placeholder="def.placeholder"
+        :value="value"
+        :pattern="def.render_params.pattern"
+      >
+      <span
+        :id="'pwf-' + def.uuid"
+        :class="isPassword ? 'password-field' : 'password-field-slash'"
+        class="input-group-text"
+        @click="toggle_password"
+      />
     </div>
-  </dfwidgetbase>
+  </DFWidgetBase>
 </template>
 
 <script>
-import dfwidgetbase from './dfwidgetbase.vue';
+import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
-  name: 'dfwidgetpassword',
+  name: 'Dfwidgetpassword',
+  components: { DFWidgetBase },
   props: {
-    def: {
-      type: Object,
-      required: true,
-    },
-    data: {
-      type: Object,
-      required: true,
-    },
-    errors: {
-      type: Object,
-      required: true,
-    },
-    showLabelOrHelpText: {
-      type: Boolean,
-      default: true,
-    },
+    def: { type: Object, required: true },
+    data: { type: Object, required: true },
+    errors: { type: Object, required: true },
+    showLabelOrHelpText: { type: Boolean, default: true },
   },
   data() {
     return {
@@ -46,14 +40,19 @@ export default {
       isPassword: true,
     };
   },
+  computed: {
+    value: {
+      get: () => this.data[this.def.name],
+      set: (newVal) => {
+        this.data[this.def.name] = newVal; // eslint-disable-line
+      },
+    },
+  },
   methods: {
     toggle_password() {
       this.isPassword = !this.isPassword;
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
     },
-  },
-  components: {
-    dfwidgetbase,
   },
 };
 </script>

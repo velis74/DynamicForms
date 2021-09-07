@@ -4,9 +4,9 @@
     <slot name="error">
       <small v-if="getErrorText" :id="def.name + '-err'" class="form-text text-danger">{{ getErrorText }}</small>
     </slot>
-    <dfwidgetbaselabel v-if="labelAfterElement === false && showLabelOrHelpText" :data="data" :def="def"/>
+    <DFWidgetBaseLabel v-if="labelAfterElement === false && showLabelOrHelpText" :data="data" :def="def"/>
     <slot name="input"/>
-    <dfwidgetbaselabel v-if="labelAfterElement && showLabelOrHelpText" :data="data" :def="def"/>
+    <DFWidgetBaseLabel v-if="labelAfterElement && showLabelOrHelpText" :data="data" :def="def"/>
     <slot name="help">
       <small
         v-if="def.help_text && showLabelOrHelpText"
@@ -19,13 +19,12 @@
 
 <script>
 import DisplayMode from '../../../logic/displayMode';
-import dfwidgetbaselabel from './dfwidgetbaselabel.vue';
+
+import DFWidgetBaseLabel from './dfwidgetbaselabel.vue';
 
 export default {
-  name: 'dfwidgetbase',
-  components: {
-    dfwidgetbaselabel,
-  },
+  name: 'DFWidgetBase',
+  components: { DFWidgetBaseLabel },
   props: {
     def: { type: Object, required: true },
     data: { type: Object, required: true },

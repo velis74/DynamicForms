@@ -1,30 +1,33 @@
 <template>
   <tfoot>
-  <tr class="no-data-indicator" v-if="rows.length === 0 && !loading">
-    <td :colspan="columns.length">{{ noDataString }}</td>
-  </tr>
-  <tr class="no-data-indicator" v-if="rows.length === 0 && loading">
-    <td :colspan="columns.length">
-      <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </td>
-  </tr>
-  <dftableloadingindicator :loading="loading" :rows="rows" :columns="columns"></dftableloadingindicator>
+    <tr v-if="rows.length === 0 && !loading" class="no-data-indicator">
+      <td :colspan="columns.length">{{ noDataString }}</td>
+    </tr>
+    <tr v-if="rows.length === 0 && loading" class="no-data-indicator">
+      <td :colspan="columns.length">
+        <div class="lds-ellipsis">
+          <div/>
+          <div/>
+          <div/>
+          <div/>
+        </div>
+      </td>
+    </tr>
+    <DFTableLoadingIndicator :loading="loading" :rows="rows" :columns="columns"/>
   </tfoot>
 </template>
 
 <script>
-import dftableloadingindicator from './dftableloadingindicator.vue';
+import DFTableLoadingIndicator from './dftableloadingindicator.vue';
 
 export default {
-  name: 'dftablefoot',
-  props: ['columns', 'rows', 'loading', 'noDataString'],
-  components: {
-    dftableloadingindicator,
+  name: 'DFTableFoot',
+  components: { DFTableLoadingIndicator },
+  props: {
+    columns: { type: Array, required: true },
+    rows: { type: Array, required: true },
+    loading: { type: Boolean, required: true },
+    noDataString: { type: String, required: true },
   },
 };
 </script>
