@@ -26,7 +26,7 @@
 import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
-  name: 'Dfwidgetpassword',
+  name: 'DFWidgetPassword',
   components: { DFWidgetBase },
   props: {
     def: { type: Object, required: true },
@@ -42,8 +42,8 @@ export default {
   },
   computed: {
     value: {
-      get: () => this.data[this.def.name],
-      set: (newVal) => {
+      get: function get() { return this.data[this.def.name]; },
+      set: function set(newVal) {
         this.data[this.def.name] = newVal; // eslint-disable-line
       },
     },

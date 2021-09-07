@@ -15,6 +15,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
         'edit': 'Editing basic fields object',
     }
     form_template = 'examples/form_cols.html'
+    component_name = 'DFFormLayout'
 
     actions = Actions(
         TableAction(TablePosition.HEADER, _('Modal dialog'), title=_('Dialog test'), name='modal_dialog',

@@ -39,8 +39,8 @@ export default {
   },
   computed: {
     value: {
-      get: () => this.data[this.def.name],
-      set: (newVal) => {
+      get: function get() { return this.data[this.def.name]; },
+      set: function set(newVal) {
         this.data[this.def.name] = newVal; // eslint-disable-line
       },
     },

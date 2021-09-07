@@ -21,7 +21,7 @@ export default {
   components: { IonIcon },
   props: {
     row: { type: Object, default: () => null },
-    actions: { type: Array, required: true },
+    actions: { type: Object, required: true },
   },
 };
 </script>

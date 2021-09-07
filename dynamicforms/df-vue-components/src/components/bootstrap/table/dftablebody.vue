@@ -42,7 +42,7 @@ export default {
     columns: { type: Array, required: true },
     rows: { type: Array, required: true },
     loading: { type: Boolean, required: true },
-    actions: { type: Array, required: true },
+    actions: { type: Object, required: true },
   },
   data() {
     return {};

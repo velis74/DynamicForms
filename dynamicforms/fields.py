@@ -202,7 +202,7 @@ class FloatField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Float
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetInput')
         kwargs['render_params'].setdefault('input_type', 'number')
-        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
+        kwargs['render_params'].setdefault('table', '#DFTableCellFloat')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
@@ -222,7 +222,7 @@ class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Dec
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetInput')
         kwargs['render_params'].setdefault('input_type', 'text')
-        kwargs['render_params'].setdefault('table', '#df-tablecell-float')
+        kwargs['render_params'].setdefault('table', '#DFTableCellFloat')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)

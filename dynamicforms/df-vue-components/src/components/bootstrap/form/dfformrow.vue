@@ -18,7 +18,7 @@ export default {
   props: {
     columns: { type: Array, required: true },
     data: { type: Object, required: true },
-    errors: { type: Array, default: () => [] },
+    errors: { type: Object, default: () => {} },
   },
   computed: {
     writableColumns() {

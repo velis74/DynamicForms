@@ -11,7 +11,7 @@ export default {
     row: { type: Object, required: true },
     column: { type: Object, required: true },
     value: { type: null, required: true },
-    bodyId: { type: String, required: true },
+    bodyId: { type: Number, required: true },
   },
   computed: {
     displayValue() {

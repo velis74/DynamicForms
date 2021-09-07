@@ -117,8 +117,7 @@ class TableColumn {
   get renderDecoratorComponentName() {
     if (this.render_params.table) {
       const tableDecorator = this.render_params.table;
-      const name = tableDecorator.substr(0, 1) === '#' ? tableDecorator.substr(1) : '';
-      return name.replace(/-/g, '');
+      return tableDecorator.substr(0, 1) === '#' ? tableDecorator.substr(1) : '';
     }
     return null;
   }
