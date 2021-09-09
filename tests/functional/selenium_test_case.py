@@ -335,9 +335,10 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @staticmethod
     def get_element_text(el):
+        tim = time.time()
         while True:
             res = el.text.strip()
-            if '…' not in res:
+            if '…' not in res or time.time() > tim + MAX_WAIT:
                 break
             time.sleep(.01)
         return res

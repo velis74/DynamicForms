@@ -3,7 +3,7 @@ import time
 from parameterized import parameterized
 from selenium.webdriver.common.keys import Keys
 
-from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
+from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase, MAX_WAIT
 
 
 class BasicFieldsTest(WaitingStaticLiveServerTestCase):
@@ -16,10 +16,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btn = header.find_element_by_name('btn-add')
         md_btn = header.find_element_by_name('btn-modal_dialog')
-        if renderer == 'component':
-            self.assertEqual(self.get_element_text(add_btn), '…+ Add')
-        else:
-            self.assertEqual(self.get_element_text(add_btn), '+ Add')
+        self.assertEqual(self.get_element_text(add_btn), '+ Add')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
@@ -48,10 +45,10 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         field_count = 0
 
         form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
+        containers = form.find_elements_by_xpath('//div[starts-with(@id, "container-")]')
         for container in containers:
-            container_id = container.get_attribute("id")
-            if container_id.startswith("container-"):
+            container_id = container.get_attribute('id')
+            if container_id.startswith('container-'):
                 field_id = container_id.split('-', 1)[1]
                 label = container.find_element_by_id("label-" + field_id)
                 field = container.find_element_by_id(field_id)
@@ -185,19 +182,26 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
         # Submit
         dialog.find_element_by_id(save_button_prefix + modal_serializer_id).click()
-        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+        if renderer == 'html':
+            self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # Check for errors
-        dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
+            # Check for errors
+            dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
-        errors = dialog.find_elements_by_class_name("invalid-feedback")
-        # Bootstrap v3
-        if not errors:
-            errors = dialog.find_elements_by_class_name("help-block")
+        tim = time.time()
+        while True:
+            errors = dialog.find_elements_by_class_name("invalid-feedback")
+            # Bootstrap v3
+            if not errors:
+                errors = dialog.find_elements_by_class_name("help-block")
+            # jQueryUI
+            if not errors:
+                errors = dialog.find_elements_by_class_name("ui-error-span")
 
-        # jQueryUI
-        if not errors:
-            errors = dialog.find_elements_by_class_name("ui-error-span")
+            if errors or renderer != 'component' or time.time() > tim + MAX_WAIT:
+                break
+
+            time.sleep(0.01)
 
         self.assertEqual(len(errors), 7)
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")

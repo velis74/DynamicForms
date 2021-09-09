@@ -2,7 +2,7 @@
   <form :id="uuid">
     <slot name="form-error">
       <div v-if="errorText">
-        <small :id="'form-' + uuid + '-err'" class="form-text text-danger">{{ errorText }}</small>
+        <small :id="'form-' + uuid + '-err'" class="invalid-feedback">{{ errorText }}</small>
         <hr>
       </div>
     </slot>

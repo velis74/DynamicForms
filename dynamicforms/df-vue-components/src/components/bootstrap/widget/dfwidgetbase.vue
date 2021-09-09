@@ -1,9 +1,6 @@
 <template>
   <input v-if="isHidden" type="hidden" :name="def.name" :value="data[def.name]">
   <div v-else :id="'container-' + def.uuid" :class="def.render_params.container_class">
-    <slot name="error">
-      <small v-if="getErrorText" :id="def.name + '-err'" class="form-text text-danger">{{ getErrorText }}</small>
-    </slot>
     <DFWidgetBaseLabel v-if="labelAfterElement === false && showLabelOrHelpText" :data="data" :def="def"/>
     <slot name="input"/>
     <DFWidgetBaseLabel v-if="labelAfterElement && showLabelOrHelpText" :data="data" :def="def"/>
@@ -13,6 +10,9 @@
         :id="def.name + '-help'"
         class="form-text text-muted"
       >{{ def.help_text }}</small>
+    </slot>
+    <slot name="error">
+      <small v-if="getErrorText" :id="def.name + '-err'" class="invalid-feedback d-block">{{ getErrorText }}</small>
     </slot>
   </div>
 </template>
