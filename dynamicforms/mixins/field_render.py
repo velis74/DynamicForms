@@ -90,7 +90,7 @@ class FieldRenderMixin(object):
         render_params.setdefault('form', 'df-widget-input')
         render_params.setdefault('table', 'df-tablecell-plaintext')
         render_params.setdefault('input_type', 'text')
-        render_params.setdefault('class', 'form-control')
+        render_params.setdefault('field_class', 'form-control')
         render_params.setdefault('label_after_element', False)
         render_params.setdefault('container_class', 'form-group')
         self.render_params = render_params

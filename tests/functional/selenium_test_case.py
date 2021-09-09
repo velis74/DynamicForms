@@ -335,7 +335,12 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @staticmethod
     def get_element_text(el):
-        return el.text.strip()
+        while True:
+            res = el.text.strip()
+            if '…' not in res:
+                break
+            time.sleep(.01)
+        return res
 
     def clear_input(self, element):
         element.click()

@@ -15,30 +15,38 @@ export default {
       loaded_svg: '',
     };
   },
-  computed: {},
-  mounted() {
-    const self = this;
-    const name = self.name;
-    if (!window.cache_ionicon) { window.cache_ionicon = {}; }
-    if (!name) {
-      noop();
-    } else if (window.cache_ionicon[name]) {
-      if (typeof window.cache_ionicon[name].then === 'function') {
-        window.cache_ionicon[name].then((res) => { self.loaded_svg = res.data; });
-        self.loaded_svg = '&hellip;';
-        return;
-      }
-      self.loaded_svg = window.cache_ionicon[name];
-    } else {
-      self.loaded_svg = '&hellip;';
-      window.cache_ionicon[name] = apiClient.get(`https://unpkg.com/ionicons@5.5.1/dist/svg/${name}.svg`);
-      window.cache_ionicon[name].then((res) => {
-        // eslint-disable-next-line no-multi-assign
-        self.loaded_svg = window.cache_ionicon[name] = res.data.replace(/<title>.*<\/title>/i, '');
-      });
-    }
+  watch: {
+    name() {
+      this.loaded_svg = '';
+      this.loadSVG();
+    },
   },
-  methods: {},
+  mounted() {
+    this.loadSVG();
+  },
+  methods: {
+    loadSVG() {
+      const name = this.name;
+      if (!window.cache_ionicon) { window.cache_ionicon = {}; }
+      if (!name) {
+        noop();
+      } else if (window.cache_ionicon[name]) {
+        if (typeof window.cache_ionicon[name].then === 'function') {
+          window.cache_ionicon[name].then((res) => { this.loaded_svg = res.data; });
+          this.loaded_svg = '&hellip;';
+          return;
+        }
+        this.loaded_svg = window.cache_ionicon[name];
+      } else {
+        this.loaded_svg = '&hellip;';
+        window.cache_ionicon[name] = apiClient.get(`https://unpkg.com/ionicons@5.5.1/dist/svg/${name}.svg`);
+        window.cache_ionicon[name].then((res) => {
+          // eslint-disable-next-line no-multi-assign
+          this.loaded_svg = window.cache_ionicon[name] = res.data.replace(/<title>.*<\/title>/i, '');
+        });
+      }
+    },
+  },
 };
 </script>
 

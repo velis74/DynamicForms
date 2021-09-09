@@ -72,7 +72,7 @@ class WriteOnlyAndTaggingTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.check_row(
-            # Record ID's value does't matter
+            # Record ID's value doesn't matter
             rows[0], 4, [None, 'Custom text', 'Multiple choice 1, Custom text', 'Delete', None]
         )
         AdvancedFields.objects.all().delete()  # Clean up the created record so that the second pass of test may succeed

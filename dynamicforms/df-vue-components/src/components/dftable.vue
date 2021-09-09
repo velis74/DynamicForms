@@ -160,7 +160,7 @@ export default {
     },
     tableAction(payload) {
       if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
-        this.executeTableAction(payload.action, payload.data, payload.modal);
+        this.executeTableAction(payload.action, payload.data, payload.modal, {});
       } else {
         const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
         if (func) {

@@ -5,29 +5,28 @@
         :id="def.uuid"
         v-model="value"
         :type="passwordFieldType"
-        :class="def.render_params.class"
+        :class="def.render_params.field_class"
         :name="def.name"
         :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
         :placeholder="def.placeholder"
         :value="value"
         :pattern="def.render_params.pattern"
       >
-      <span
-        :id="'pwf-' + def.uuid"
-        :class="isPassword ? 'password-field' : 'password-field-slash'"
-        class="input-group-text"
-        @click="toggle_password"
-      />
+      <span :id="'pwf-' + def.uuid" class="input-group-text" @click.stop="toggle_password">
+        <IonIcon :name="isPassword ? 'eye-outline' : 'eye-off-outline'" class="pass-icon"/>
+      </span>
     </div>
   </DFWidgetBase>
 </template>
 
 <script>
+import IonIcon from '../ionicon.vue';
+
 import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
   name: 'DFWidgetPassword',
-  components: { DFWidgetBase },
+  components: { IonIcon, DFWidgetBase },
   props: {
     def: { type: Object, required: true },
     data: { type: Object, required: true },
@@ -58,5 +57,7 @@ export default {
 </script>
 
 <style scoped>
-
+.pass-icon {
+  margin: -.1em;
+}
 </style>
