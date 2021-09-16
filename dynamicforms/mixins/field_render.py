@@ -258,9 +258,15 @@ class FieldRenderMixin(object):
             res = super().as_component_def()  # noqa
         except AttributeError:
             res = dict()
-        return dict(
+        res.update(dict(
             uuid=str(self.uuid), name=str(self.field_name), label=str(self.label), read_only=self.read_only,
             table_classes=self.table_classes, ordering=self.ordering(), alignment=self.alignment.name.lower(),
             visibility=dict(table=self.display_table.value, form=self.display_form.value),
             render_params=self.render_params, help_text=res.get('help_text', ''), allow_null=self.allow_null
-        )
+        ))
+        res['textarea'] = 'base_template' in self.style and self.style['base_template'] == 'textarea.html'
+        if hasattr(self, 'max_length'):
+            res['render_params']['max_length'] = self.max_length
+        if hasattr(self, 'min_length'):
+            res['render_params']['min_length'] = self.min_length
+        return res

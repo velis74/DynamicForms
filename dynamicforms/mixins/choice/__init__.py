@@ -11,7 +11,10 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
         except AttributeError:
             res = dict()
 
-        res.update(dict(choices=self.__to_list_of_dicts(self.choices), allow_tags=self.allow_tags))  # noqa
+        res.update(dict(
+            choices=self.__to_list_of_dicts(self.choices), allow_tags=self.allow_tags,  # noqa
+            allow_null=self.allow_null or self.allow_blank or self.allow_tags  # noqa
+        ))
         return res
 
     def __to_list_of_dicts(self, choices_dict: dict) -> list:

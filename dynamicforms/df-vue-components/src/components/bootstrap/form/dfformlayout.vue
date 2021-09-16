@@ -1,9 +1,8 @@
 <template>
   <form :id="uuid">
     <slot name="form-error">
-      <div v-if="errorText">
-        <small :id="'form-' + uuid + '-err'" class="invalid-feedback">{{ errorText }}</small>
-        <hr>
+      <div v-if="errorText" class="alert alert-danger">
+        <small :id="'form-' + uuid + '-err'" class="text-danger">{{ errorText }}</small>
       </div>
     </slot>
     <DFFormRow v-for="(row, idx) in rows" :key="idx" :columns="row" :data="record" :errors="errors"/>

@@ -71,12 +71,12 @@ export default {
         return '';
       },
       set(value) {
-        if (value) {
+        if (value != null) {
           if (this.multiple) {
             const val = value.constructor === Array ? value : value.split(',');
-            this.selected = this.options.filter((o) => val.includes(`${o.id}`));
+            this.selected = this.options.filter((o) => val.includes(`String(${o.id})`));
           } else {
-            this.selected = this.options.find((o) => o.id === value);
+            this.selected = this.options.find((o) => String(o.id) === String(value));
           }
         } else {
           this.selected = null;

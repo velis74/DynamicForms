@@ -29,6 +29,9 @@ class SelectOptions(dict):
         assert len(self) == 1
         return SelectOption(*next(iter(self.items())))
 
+    @property
+    def empty(self):
+        return len(self) == 0 or self.single.value == ''
 
 class Select:
 
@@ -55,7 +58,7 @@ class Select:
     def current_selection(self):
         if self.select_type == SelectType.COMPONENT:
             return SelectOptions(
-                {k: v for k, v in self.options.items() if k in self.element.get_attribute('data-value').split(',')}
+                {k: v for k, v in self.options.items() if str(k) in self.element.get_attribute('data-value').split(',')}
             )
         select = SeleniumSelect(self.element)
         selected_options = select.all_selected_options

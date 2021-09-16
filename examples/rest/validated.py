@@ -15,7 +15,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
         'edit': 'Editing validated object',
     }
     actions = Actions(
-        TableAction(TablePosition.HEADER, label=_('+ Add (refresh record)'), title=_('Add new record'), name='add_rr',
+        TableAction(TablePosition.HEADER, label=_('+ Add (refresh record)'), title=_('Add new record'), name='add',
                     action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
                               ", 'record', __TABLEID__);"),
         TableAction(TablePosition.HEADER, label=_('+ Add (refresh table)'), title=_('Add new record'), name='add_rt',

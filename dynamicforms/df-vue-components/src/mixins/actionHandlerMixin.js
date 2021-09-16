@@ -61,6 +61,7 @@ const actionHandlerMixin = {
         const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', dataId);
         const headers = params && 'headers' in params ?
           params.headers : { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true };
+        const self = this;
 
         callDbFunction({
           method: submitMethod,
@@ -70,7 +71,7 @@ const actionHandlerMixin = {
           then: params.then ||
             ((res) => {
               if (modal) modal.hide();
-              if (this && this.processedConfiguration) this.processedConfiguration.rows.updateRows([res.data]);
+              if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRows([res.data]);
             }),
           catch: params.catch ||
             ((reason) => {

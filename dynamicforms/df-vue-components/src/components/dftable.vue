@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :is="component" :configuration="processedConfiguration" @setTableFilter="setTableFilter"/>
+    <component :is="component" :key="drawSeq" :configuration="processedConfiguration" @setTableFilter="setTableFilter"/>
   </div>
 </template>
 
@@ -32,6 +32,7 @@ export default {
   data() {
     const cfg = this.config || this.$parent;
     return {
+      drawSeq: 0,
       loading: false,
       rows: cfg.rows,
       columns: _.filter(cfg.columns, (c) => DisplayMode.FULL === c.visibility.table),

@@ -16,28 +16,32 @@ function getRowIndices(tableRows) {
   return tableRows.reduce((ind, item, idx) => { ind[item.id] = idx; return ind; }, {});
 }
 
-function updateRows(tableRows) {
+function updateRows(res, tableRows) {
   return (newRows, idIndices) => {
     const indices = idIndices || getRowIndices(tableRows);
+    let wasModified = false;
 
     newRows.map((item) => {
       // then we iterate through results updating any existing entries and adding new ones
       const idIdx = indices[item.id];
       if (idIdx != null) {
         tableRows[idIdx] = item;
+        wasModified = true;
       } else {
         // TODO: Currently all added records shows on current last table row. It should be dependent on ordering, etc.
         tableRows.push(item);
       }
       return null;
     });
+    if (wasModified) res.drawSeq++;
   };
 }
 
-function deleteRow(tableRows) {
+function deleteRow(res, tableRows) {
   return (rowId, idIndices) => {
     const indices = idIndices || getRowIndices(tableRows);
     tableRows.splice(indices[rowId], 1);
+    res.drawSeq++;
   };
 }
 
@@ -69,8 +73,8 @@ const LoadableTableRows = function LoadableTableRows(table, rowsData) {
   }
   decorate(res, res.length && next ? res : null);
   res.loadMoreRows = loadMoreRows(table, res);
-  res.updateRows = updateRows(table.rows.results);
-  res.deleteRow = deleteRow(table.rows.results);
+  res.updateRows = updateRows(table, table.rows.results);
+  res.deleteRow = deleteRow(table, table.rows.results);
   return res;
 };
 

@@ -198,6 +198,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
                     # The new dialog must not have same id as the old one
                     # if it does, this means that we're still looking at the old dialog - let's wait for it to go away
+                    if time.time() - start_time > MAX_WAIT:
+                        raise Exception('Timeout for old dialog to go away expired')
                     continue
                 self.assertTrue(element_id.startswith('dialog-'))
                 element_id = element_id.split('-', 1)[1]
@@ -311,7 +313,9 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         cells = row.find_elements_by_tag_name('td')
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
-            if cell_values[i] is not None:
+            if callable(cell_values[i]):
+                cell_values[i](self.get_element_text(cells[i]))
+            elif cell_values[i] is not None:
                 self.assertEqual(self.get_element_text(cells[i]), cell_values[i])
         return cells
 

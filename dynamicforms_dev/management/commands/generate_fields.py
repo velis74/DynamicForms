@@ -27,7 +27,7 @@ class ClassAssemblyDict:
         for cls in reversed(inspect.getmro(base_class)):
             if cls in self.mapping:
                 res.update(self.mapping[cls])
-        if not res:
+        if not res and base_class.__name__ != 'RTFField':
             print('Class %s not found in lookup.' % base_class.__name__)
         return res
 
@@ -214,6 +214,42 @@ class Command(BaseCommand):
 
                         if had_kwds:
                             skip_depth = depth + 1
+
+                    # Here we tackle parameter declarations that are handled in code instead of constructor prototypes
+                    if cls == fields.CharField:
+                        field_params.append('allow_blank: bool = False')
+                        field_params.append('trim_whitespace: bool = True')
+                        field_params.append('min_length: Optional[int] = None')
+                        field_params.append('max_length: Optional[int] = None')
+                    elif cls == fields.UUIDField:
+                        field_params.append('format: str = \'hex_verbose\'')
+                    elif cls in (fields.IntegerField, fields.FloatField, fields.DurationField):
+                        field_params.append('max_value: int = None')
+                        field_params.append('min_value: int = None')
+                    elif cls == fields.ChoiceField:
+                        field_params.append(f'html_cutoff: int = fields.ChoiceField.html_cutoff')
+                        field_params.append(f'html_cutoff_text: str = fields.ChoiceField.html_cutoff_text')
+                        field_params.append('allow_blank: bool = False')
+                    elif cls == fields.MultipleChoiceField:
+                        field_params.append('allow_empty: bool = True')
+                    elif cls == fields.FileField:
+                        field_params.append('max_length: Optional[int] = None')
+                        field_params.append('allow_empty_file: bool = False')
+                    elif cls == fields.ListField:
+                        field_params.append(f'child = fields.ListField.child')
+                        field_params.append('allow_empty: bool = True')
+                        field_params.append('max_length: Optional[int] = None')
+                        field_params.append('min_length: Optional[int] = None')
+                    elif cls in (fields.ListField, fields.DictField):
+                        field_params.append(f'child = fields.DictField.child')
+                        field_params.append('allow_empty: bool = True')
+                    elif cls == fields.JSONField:
+                        field_params.append('binary: bool = False')
+                        field_params.append('encoder = None')
+                        field_params.append('decoder = None')
+                    elif cls == fields.ModelField:
+                        field_params.append('max_length: Optional[int] = None')
+
 
                 field_params.insert(0, 'self')
                 field_params.append('**kw')
