@@ -62,7 +62,7 @@ export default {
   computed: {
     inputType() { return this.def.render_params.input_type; },
     maxLength() { return this.def.render_params.max_length || (1 << 24); }, // eslint-disable-line no-bitwise
-    isTextArea() { return this.def.render_params.textarea === true; },
+    isTextArea() { return this.def.textarea === true; },
     value: {
       get: function get() { return this.data[this.def.name]; },
       set: function set(newVal) {

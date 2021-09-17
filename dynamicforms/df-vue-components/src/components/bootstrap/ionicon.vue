@@ -32,7 +32,7 @@ export default {
         noop();
       } else if (window.cache_ionicon[name]) {
         if (typeof window.cache_ionicon[name].then === 'function') {
-          window.cache_ionicon[name].then((res) => { this.loaded_svg = res.data; });
+          window.cache_ionicon[name].then((res) => { this.loaded_svg = res.data.replace(/<title>.*<\/title>/i, ''); });
           this.loaded_svg = '&hellip;';
           return;
         }
