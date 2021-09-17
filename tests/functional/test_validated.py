@@ -65,7 +65,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         dialog.find_element_by_id("save-" + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-    # @parameterized.expand(['html', 'component'])
+    @parameterized.expand(['html', 'component'])
     def test_validated_list(self, renderer='component'):
         self.browser.get(self.live_server_url + '/validated.' + renderer)
         # Go to validated html and check if there's a "+ Add" button

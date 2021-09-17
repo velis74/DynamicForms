@@ -1,5 +1,7 @@
 <template>
-  <label v-if="def.label" :id="`label-${def.uuid}`" :for="def.uuid">{{ def.label }}</label>
+  <label v-if="def.label" :id="`label-${def.uuid}`" :for="def.name" :class="def.render_params.label_class">
+    {{ def.label }}
+  </label>
 </template>
 
 <script>

@@ -22,7 +22,9 @@ export default {
   },
   computed: {
     writableColumns() {
-      return this.columns.filter((col) => col.field.read_only !== true);
+      return this.columns;
+      // turns out we want to display read only columns, but they should be disabled. Displayed, but R/O
+      // return this.columns.filter((col) => col.field.read_only !== true);
     },
     isHiddenSingle() {
       return this.writableColumns.length === 1 && this.writableColumns[0].field.visibility.form === DisplayMode.HIDDEN;

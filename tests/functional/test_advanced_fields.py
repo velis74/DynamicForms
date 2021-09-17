@@ -95,11 +95,13 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
                     field_count -= 1
 
         self.assertEqual(field_count, 7)
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
-        self.browser.refresh()
+        if renderer == 'html':
+            self.browser.refresh()
+
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")

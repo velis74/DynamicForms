@@ -19,6 +19,9 @@
       :maxlength="maxLength"
       :size="def.render_params.size"
 
+      :readonly="def.read_only === true"
+      :disabled="def.read_only === true"
+
       @keyup.enter="onValueConfirmed(true)"
       @input="onValueConfirmed(false)"
       @change="onValueConfirmed(false)"
@@ -33,6 +36,10 @@
       :placeholder="def.placeholder"
       :maxlength="maxLength"
       rows="4"
+
+      :readonly="def.read_only === true"
+      :disabled="def.read_only === true"
+
       @keyup.enter="onValueConfirmed(true)"
       @input="onValueConfirmed(false)"
       @change="onValueConfirmed(false)"

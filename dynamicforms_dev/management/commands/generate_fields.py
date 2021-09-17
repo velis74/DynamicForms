@@ -46,8 +46,10 @@ render_params = ClassAssemblyDict({
     fields.DateField: dict(input_type='date'),
     fields.TimeField: dict(input_type='time'),
     serializers.FileField: dict(input_type='file'),
-    fields.BooleanField: dict(table='df-tablecell-bool', input_type='checkbox', label_after_element=True,
-                              field_class='form-check-input', container_class='form-check form-group'),
+    fields.BooleanField: dict(
+        table='df-tablecell-bool', input_type='checkbox', label_after_element=True,
+        field_class='form-check-input', label_class='form-check-label', container_class='form-check form-group'
+    ),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
     fields.ChoiceField: dict(form='DFWidgetSelect', multiple=False, allow_tags='%allow_tags'),
     fields.MultipleChoiceField: dict(multiple=True),
