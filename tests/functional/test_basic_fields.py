@@ -3,7 +3,7 @@ import time
 from parameterized import parameterized
 from selenium.webdriver.common.keys import Keys
 
-from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase, MAX_WAIT
+from .selenium_test_case import Browsers, MAX_WAIT, WaitingStaticLiveServerTestCase
 
 
 class BasicFieldsTest(WaitingStaticLiveServerTestCase):

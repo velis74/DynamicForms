@@ -238,17 +238,17 @@ class Command(BaseCommand):
                         field_params.append('max_length: Optional[int] = None')
                         field_params.append('allow_empty_file: bool = False')
                     elif cls == fields.ListField:
-                        field_params.append(f'child = fields.ListField.child')
+                        field_params.append('child=fields.ListField.child')
                         field_params.append('allow_empty: bool = True')
                         field_params.append('max_length: Optional[int] = None')
                         field_params.append('min_length: Optional[int] = None')
                     elif cls in (fields.ListField, fields.DictField):
-                        field_params.append(f'child = fields.DictField.child')
+                        field_params.append('child=fields.DictField.child')
                         field_params.append('allow_empty: bool = True')
                     elif cls == fields.JSONField:
                         field_params.append('binary: bool = False')
-                        field_params.append('encoder = None')
-                        field_params.append('decoder = None')
+                        field_params.append('encoder=None')
+                        field_params.append('decoder=None')
                     elif cls == fields.ModelField:
                         field_params.append('max_length: Optional[int] = None')
 

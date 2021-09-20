@@ -33,6 +33,7 @@ class SelectOptions(dict):
     def empty(self):
         return len(self) == 0 or self.single.value == ''
 
+
 class Select:
 
     def __init__(self, field: WebElement):

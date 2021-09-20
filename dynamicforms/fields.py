@@ -411,7 +411,7 @@ class ImageField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Image
 
 class ListField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
 
-    def __init__(self, child = fields.ListField.child, allow_empty: bool = True, max_length: Optional[int] = None,
+    def __init__(self, child=fields.ListField.child, allow_empty: bool = True, max_length: Optional[int] = None,
                  min_length: Optional[int] = None, read_only=False, write_only=False, required=None,
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
                  error_messages=None, validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
@@ -429,7 +429,7 @@ class ListField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListFi
 
 class DictField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
 
-    def __init__(self, child = fields.DictField.child, allow_empty: bool = True, read_only=False, write_only=False,
+    def __init__(self, child=fields.DictField.child, allow_empty: bool = True, read_only=False, write_only=False,
                  required=None, default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None,
                  style=None, error_messages=None, validators=None, allow_null=False, actions: Actions = None,
                  uuid: UUID = None, display: DisplayMode = None, display_table: DisplayMode = None,
@@ -447,7 +447,7 @@ class DictField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictFi
 if hasattr(fields, 'HStoreField'):
     class HStoreField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.HStoreField):
 
-        def __init__(self, child = fields.DictField.child, allow_empty: bool = True, read_only=False, write_only=False,
+        def __init__(self, child=fields.DictField.child, allow_empty: bool = True, read_only=False, write_only=False,
                      required=None, default=fields.empty, initial=fields.empty, source=None, label=None,
                      help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
                      actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
@@ -464,7 +464,7 @@ if hasattr(fields, 'HStoreField'):
 
 class JSONField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
 
-    def __init__(self, binary: bool = False, encoder = None, decoder = None, read_only=False, write_only=False,
+    def __init__(self, binary: bool = False, encoder=None, decoder=None, read_only=False, write_only=False,
                  required=None, default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None,
                  style=None, error_messages=None, validators=None, allow_null=False, actions: Actions = None,
                  uuid: UUID = None, display: DisplayMode = None, display_table: DisplayMode = None,

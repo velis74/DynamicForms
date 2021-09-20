@@ -56,8 +56,8 @@ class RelatedFieldAJAXMixin(object):
         if self.url_reverse:
             res.update(dict(ajax=dict(
                 url_reverse=reverse(self.url_reverse, kwargs=dict(format='json')),
-                placeholder=self.placeholder,additional_parameters=self.additional_parameters,
-                query_field = self.query_field
+                placeholder=self.placeholder, additional_parameters=self.additional_parameters,
+                query_field=self.query_field
             )))
         else:
             res.update(choices=map(lambda option: dict(id=option.value, text=option.display_text),
