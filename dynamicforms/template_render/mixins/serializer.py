@@ -71,6 +71,10 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         view_mode_list = kwargs.pop('view_mode_list', None)
         res = super().__new__(cls, *args, **kwargs)
         if isinstance(res, ListSerializer):
+
+            if not view_mode_list and res.child.view_mode == ViewModeSerializer.ViewMode.TABLE_ROW:
+                view_mode_list = ViewModeListSerializer.ViewMode.TABLE
+
             res = ViewModeListSerializer.mixin_to_serializer(view_mode_list, res)
         return res
 
@@ -239,7 +243,9 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         # this one will decorate existing instance with the appropriate values needed for rendering
         # in all other respects, they are the same
 
-        self.view_mode = ViewModeSerializer.ViewMode.FORM if not paginator else ViewModeSerializer.ViewMode.TABLE_ROW
+        if not self.view_mode:
+            self.view_mode = ViewModeSerializer.ViewMode.TABLE_ROW if paginator else ViewModeSerializer.ViewMode.FORM
+
         if not self.parent and 'id' not in self.data:
             self.reverse_url = self.get_reverse_url(self.template_context['url_reverse'], request, kwargs=dict(pk=None))
         else:

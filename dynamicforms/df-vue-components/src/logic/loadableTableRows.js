@@ -13,7 +13,10 @@ function decorate(res, rows) {
 }
 
 function getRowIndices(tableRows) {
-  return tableRows.reduce((ind, item, idx) => { ind[item.id] = idx; return ind; }, {});
+  return tableRows.reduce((ind, item, idx) => {
+    ind[item.id] = idx;
+    return ind;
+  }, {});
 }
 
 function updateRows(res, tableRows) {
@@ -34,6 +37,22 @@ function updateRows(res, tableRows) {
       return null;
     });
     if (wasModified) res.drawSeq++;
+  };
+}
+
+function updateRowFromForm(table, tableRows) {
+  return (rowData) => {
+    const rowId = rowData.id;
+    if (rowId) {
+      apiClient
+        .get(table.detail_url.replace('--record_id--', rowId), { headers: { 'x-viewmode': 'TABLE_ROW' } })
+        .then((response) => {
+          // first we map existing row ids to respective array indexes
+          tableRows.updateRows([response.data]);
+        })
+        .catch((err) => { console.error(err); })
+        .finally(() => { table.loading = false; });
+    }
   };
 }
 
@@ -74,6 +93,7 @@ const LoadableTableRows = function LoadableTableRows(table, rowsData) {
   decorate(res, res.length && next ? res : null);
   res.loadMoreRows = loadMoreRows(table, res);
   res.updateRows = updateRows(table, table.rows.results);
+  res.updateRowFromForm = updateRowFromForm(table, table.rows.results);
   res.deleteRow = deleteRow(table, table.rows.results);
   return res;
 };

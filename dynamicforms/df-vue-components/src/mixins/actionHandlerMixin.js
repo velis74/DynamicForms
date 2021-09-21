@@ -71,7 +71,7 @@ const actionHandlerMixin = {
           then: params.then ||
             ((res) => {
               if (modal) modal.hide();
-              if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRows([res.data]);
+              if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRowFromForm(res.data);
             }),
           catch: params.catch ||
             ((reason) => {

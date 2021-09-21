@@ -31,7 +31,7 @@ class ValidatedPageTest(TestCase):
                           'df_prev_id': '',
                           'row_css_style': '',
                           'df_control_data': {
-                              'actions': {'del 1': {}, 'del_nr': {}, 'del_rr': {}, 'del_rt': {}, 'edit': {}},
+                              'actions': {'del 1': {}, 'delete': {}, 'del_nr': {}, 'del_rt': {}, 'edit': {}},
                               'row_css_style': ''},
                           })
 

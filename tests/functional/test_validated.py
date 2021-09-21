@@ -8,12 +8,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from examples.models import Validated
 from .select import Select
-from .selenium_test_case import WaitingStaticLiveServerTestCase
+from .selenium_test_case import WaitingStaticLiveServerTestCase, MAX_WAIT
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
-    def add_validated_record(self, btn_position, amount, add_second_record=None):
+    def add_validated_record(self, btn_position, amount, add_second_record, save_btn_prefix):
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btns = header.find_elements_by_class_name('btn')
         add_btns[btn_position].click()
@@ -59,10 +59,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             )
 
         WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
-            (By.ID, "save-" + modal_serializer_id))
+            (By.ID, save_btn_prefix + modal_serializer_id))
         )
 
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        dialog.find_element_by_id(save_btn_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
     @parameterized.expand(['html', 'component'])
@@ -222,9 +222,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
-        cells = self.check_row(
-            rows[0], 8, [lambda x: int(x), '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None]
-        )
+        cells = self.check_row(rows[0], 8, [
+            lambda x: int(x), '123', lambda v: self.assertEqual('false', v.lower()), '8', 'Choice 3', 'C',
+            'Some comment', None
+        ])
 
         # Once more to editing and cancel it
         cells[0].click()
@@ -245,7 +246,10 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.check_row(rows[0], 8, ['1', '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None])
+        self.check_row(rows[0], 8, [
+            lambda x: int(x), '123', lambda v: self.assertEqual('false', v.lower()), '8', 'Choice 3', 'C',
+            'Some comment', None
+        ])
 
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -265,15 +269,27 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.browser.refresh()
 
         # Test Add action with refreshType='table'
-        self.add_validated_record(1, 5)
+        add_btn_pos = 1 if renderer == 'html' else 0
+        add_save_btn_prefix = 'save-' if renderer == 'html' else 'submit-'
+
+        self.add_validated_record(add_btn_pos, 5, False, add_save_btn_prefix)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 8)
 
-        self.add_validated_record(1, 7, add_second_record=True)
-        time.sleep(.2)
+        if renderer == 'component':
+            # components don't support refresh type other than "record", so we have to quit the unit test here
+            return
+
+        self.add_validated_record(add_btn_pos, 7, True, add_save_btn_prefix)
+
+        tim = time.time()
         rows = self.get_table_body()
+        while len(rows) < 3 and time.time() < tim + MAX_WAIT:
+            time.sleep(.2)
+            rows = self.get_table_body()
+
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='table'
@@ -299,7 +315,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
         # Test Add action with refreshType='no refresh'
-        self.add_validated_record(2, 5, add_second_record=True)
+        self.add_validated_record(2, 5, True, add_save_btn_prefix)
 
         self.browser.refresh()
 

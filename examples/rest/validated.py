@@ -28,7 +28,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
                     action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' format='html'"
                               " %}'.replace('__ROWID__', $(event.target.parentElement).closest('tr[class=\"df-table-"
                               "row\"]').attr('data-id')), 'record', __TABLEID__);"),
-        TableAction(TablePosition.ROW_END, label=_('Delete (refresh record)'), title=_('Delete record'), name='del_rr',
+        TableAction(TablePosition.ROW_END, label=_('Delete (refresh record)'), title=_('Delete record'), name='delete',
                     action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
                               + "{{row.id}}, 'record', __TABLEID__);"),
         TableAction(TablePosition.ROW_END, label=_('Delete (refresh table)'), title=_('Delete record'), name='del_rt',
