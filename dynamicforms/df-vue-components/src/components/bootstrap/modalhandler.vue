@@ -279,11 +279,11 @@ export default {
       this.show();
     },
     fromURL(url, whichTitle, tableUuid) {
-      apiClient.get(url, { headers: { 'x-viewmode': 'FORM', 'x-df-render-type': 'dialog' } })
+      apiClient.get(url, { headers: { 'x-viewmode': 'FORM' } })
         .then((res) => { // call api and set data as response, when data is
           // set component is re-rendered
-          eventBus.$emit('showingRESTForm', { tableUUID: tableUuid, formUUID: res.data.data.uuid });
-          this.showComponent(res.data, whichTitle, tableUuid);
+          eventBus.$emit('showingRESTForm', { tableUUID: tableUuid, formUUID: res.data.uuid });
+          this.showComponent({ component: 'DFFormLayout', data: res.data }, whichTitle, tableUuid);
         })
         .catch((err) => { console.error(err); });
     },

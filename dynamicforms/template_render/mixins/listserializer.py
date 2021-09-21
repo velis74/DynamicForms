@@ -63,10 +63,13 @@ class ViewModeListSerializer(ViewModeBase):
     def get_reverse_url(cls, view_name, request):
         return reverse(view_name + '-list', format='json', request=request)
 
-    def apply_component_context(self, request, paginator):
+    def apply_component_context(self, request=None, paginator=None):
         # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
         # this one will decorate existing instance with the appropriate values needed for rendering
         # in all other respects, they are the same
+        request = request or self.request
+        paginator = paginator or self.context.get('view', type('NoView', (object,), dict(paginator=None))).paginator
+
         self.child.apply_component_context(request, paginator)
         self.view_mode = ViewModeListSerializer.ViewMode.TABLE
         self.reverse_url = self.get_reverse_url(self.child.template_context['url_reverse'], request)

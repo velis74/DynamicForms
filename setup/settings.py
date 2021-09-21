@@ -45,7 +45,6 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'x-pagination',
     'x-viewmode',
-    'x-df-render-type',
     'x-df-component-def',
     'x-df-timestamp',
 ]
@@ -146,6 +145,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'dynamicforms.renderers.TemplateHTMLRenderer',
         'dynamicforms.renderers.ComponentHTMLRenderer',
+        'dynamicforms.renderers.ComponentDefRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'dynamicforms.filters.FilterBackend',

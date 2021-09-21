@@ -139,11 +139,11 @@ export default {
     showModal(action, row) {
       if (action.name === 'edit') {
         this.editDialogTitle = `${this.titles.edit} ${row.id}`;
-        this.editingRowURL = this.detail_url.replace('--record_id--', row.id).replace('.json', '.component');
+        this.editingRowURL = this.detail_url.replace('--record_id--', row.id).replace('.json', '.componentdef');
         DynamicForms.dialog.fromURL(this.editingRowURL, action.name, this.uuid);
       } else if (action.name === 'add') {
         this.editDialogTitle = this.titles.add;
-        this.editingRowURL = this.detail_url.replace('--record_id--', 'new').replace('.json', '.component');
+        this.editingRowURL = this.detail_url.replace('--record_id--', 'new').replace('.json', '.componentdef');
         DynamicForms.dialog.fromURL(this.editingRowURL, null, this.uuid);
       } else {
         this.editDialogTitle = `unknown action ${action.name}... so, a stupid title`;

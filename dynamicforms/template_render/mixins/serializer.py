@@ -238,10 +238,13 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         ser.paginator = paginator
         return ser
 
-    def apply_component_context(self, request, paginator):
+    def apply_component_context(self, request=None, paginator=None):
         # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
         # this one will decorate existing instance with the appropriate values needed for rendering
         # in all other respects, they are the same
+
+        request = request or self.request
+        paginator = paginator or self.context.get('view', type('NoView', (object,), dict(paginator=None))).paginator
 
         if not self.view_mode:
             self.view_mode = ViewModeSerializer.ViewMode.TABLE_ROW if paginator else ViewModeSerializer.ViewMode.FORM

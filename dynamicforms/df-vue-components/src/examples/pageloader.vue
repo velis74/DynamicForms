@@ -29,11 +29,11 @@ export default {
   methods: {
     goToRoute(to) {
       // console.log(to);
-      this.url = `${to.path}.component`;
+      this.url = `${to.path}.componentdef`;
       this.component = to.meta.component || 'DFTable';
       apiClient
         .get(this.url, {
-          headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-render-type': 'component-def' },
+          headers: { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 },
         })
         .then((res) => {
           this.config = res.data;

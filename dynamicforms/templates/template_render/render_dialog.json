@@ -1,4 +1,0 @@
-{
-  "component": "DFFormLayout",
-  "data": {{ serializer.component_params|safe }}
-}

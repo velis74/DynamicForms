@@ -1,1 +1,0 @@
-{{ serializer.component_params|safe }}
