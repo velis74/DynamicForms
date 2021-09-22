@@ -42,8 +42,12 @@
   },
   "eslintConfig": {
     "root": true,
-    "env": { "node": true },
-    "plugins": ["es"],
+    "env": {
+      "node": true
+    },
+    "plugins": [
+      "es"
+    ],
     "extends": [
       "plugin:vue/essential",
       "plugin:vue/strongly-recommended",
@@ -54,30 +58,88 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "max-len": ["error", { "code": 120 }],
+      "max-len": [
+        "error",
+        {
+          "code": 120
+        }
+      ],
       "no-console": 0,
       "no-plusplus": "off",
       "sort-imports": "off",
-      "import/order": ["error", {
-        "newlines-between": "always",
-        "alphabetize": { "order": "asc", "caseInsensitive": true }
-      }],
-      "indent": ["error", 2, { "MemberExpression": 1 }],
-      "es/no-destructuring": "error",
-      "no-param-reassign": ["error", { "props": false }],
-      "prefer-destructuring": [
-        "warn", {
-          "VariableDeclarator": { "array": false, "object": false },
-          "AssignmentExpression": { "array": false, "object": false }
-        }, { "enforceForRenamedProperties": false }
+      "import/order": [
+        "error",
+        {
+          "newlines-between": "always",
+          "alphabetize": {
+            "order": "asc",
+            "caseInsensitive": true
+          }
+        }
       ],
-      "no-underscore-dangle": ["error", { "allowAfterThis": true }],
-      "operator-linebreak": ["error", "after"],
-      "linebreak-style": ["off"],
-      "vue/html-closing-bracket-spacing": ["error", { "selfClosingTag": "never" }],
-      "vue/no-v-html": ["off"],
-      "vue/max-attributes-per-line": ["warn", { "singleline": { "max": 10 } }],
-      "vue/singleline-html-element-content-newline": ["off"]
+      "indent": [
+        "error",
+        2,
+        {
+          "MemberExpression": 1
+        }
+      ],
+      "es/no-destructuring": "error",
+      "no-param-reassign": [
+        "error",
+        {
+          "props": false
+        }
+      ],
+      "prefer-destructuring": [
+        "warn",
+        {
+          "VariableDeclarator": {
+            "array": false,
+            "object": false
+          },
+          "AssignmentExpression": {
+            "array": false,
+            "object": false
+          }
+        },
+        {
+          "enforceForRenamedProperties": false
+        }
+      ],
+      "no-underscore-dangle": [
+        "error",
+        {
+          "allowAfterThis": true
+        }
+      ],
+      "operator-linebreak": [
+        "error",
+        "after"
+      ],
+      "linebreak-style": [
+        "off"
+      ],
+      "vue/html-closing-bracket-spacing": [
+        "error",
+        {
+          "selfClosingTag": "never"
+        }
+      ],
+      "vue/no-v-html": [
+        "off"
+      ],
+      "vue/max-attributes-per-line": [
+        "warn",
+        {
+          "singleline": {
+            "max": 10
+          }
+        }
+      ],
+      "vue/singleline-html-element-content-newline": [
+        "off"
+      ]
     },
     "overrides": [
       {

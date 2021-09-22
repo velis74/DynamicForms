@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         cmd = options.get('command')
         pth = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..', '..', '..'))
-        pth = os.path.join(pth, 'dynamicforms', 'df-vue-components')
+        pth = os.path.join(pth, 'dynamicforms', 'vue')
         print(['npm', 'run', cmd] + options.get('cmd_params'))
         p = subprocess.Popen(['npm', 'run', cmd] + options.get('cmd_params'), cwd=pth)
         p.wait()

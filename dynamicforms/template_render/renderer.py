@@ -1,25 +1,34 @@
+from typing import Optional, Any
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.settings import DYNAMICFORMS
 
 
+def data_is_paginated(data):
+    return (isinstance(data, dict) and 'next' in data and 'results' in data and
+            isinstance(data['results'], (ReturnList, ReturnDict)))
+
+
+def get_serializer(data) -> Optional[Any]:
+    if data_is_paginated(data):
+        return data['results'].serializer
+    if isinstance(data, (ReturnList, ReturnDict)):
+        return data.serializer
+    return None
+
+
 class ComponentDefRenderer(JSONRenderer):
     format = 'componentdef'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        serializer = None
-
-        if isinstance(data, dict) and 'next' in data and 'results' in data and \
-            isinstance(data['results'], (ReturnList, ReturnDict)):
-            serializer = data['results'].serializer
-        if isinstance(data, (ReturnList, ReturnDict)):
-            serializer = data.serializer
-
+        serializer = get_serializer(data)
         assert serializer is not None
 
         serializer.apply_component_context()
-        return super().render(serializer.component_params(output_json=False), accepted_media_type, renderer_context)
+        component_params = serializer.component_params(output_json=False)
+
+        return super().render(component_params, accepted_media_type, renderer_context)
 
 
 class ComponentHTMLRenderer(TemplateHTMLRenderer):
@@ -37,9 +46,7 @@ class ComponentHTMLRenderer(TemplateHTMLRenderer):
         return [DYNAMICFORMS.page_template]
 
     def get_template_context(self, data, renderer_context):
-        if isinstance(data, dict) and 'next' in data and 'results' in data and \
-            isinstance(data['results'], (ReturnList, ReturnDict)):
-            return dict(serializer=data['results'].serializer)
-        if isinstance(data, (ReturnList, ReturnDict)):
-            return dict(serializer=data.serializer)
+        serializer = get_serializer(data)
+        if serializer:
+            return dict(serializer=serializer)
         return super().get_template_context(data, renderer_context)
