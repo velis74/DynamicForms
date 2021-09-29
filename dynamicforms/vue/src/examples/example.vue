@@ -20,6 +20,7 @@
           <router-link to="/refresh-types">Refresh types</router-link>
           <router-link to="/calculated-css-class-for-table-row">Row css style</router-link>
           <router-link to="/choice-allow-tags-fields">Tag select fields</router-link>
+          <router-link to="/documents">Documents</router-link>
         </div>
       </div>
     </transition>
@@ -57,6 +58,7 @@ const routes = [
   { path: '/calculated-css-class-for-table-row', component: PageLoader },
   { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
   { path: '/choice-allow-tags-fields', component: PageLoader },
+  { path: '/documents', component: PageLoader },
 ];
 const router = new VueRouter({ routes });
 
