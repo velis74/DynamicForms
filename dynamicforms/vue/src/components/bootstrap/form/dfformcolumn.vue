@@ -40,6 +40,7 @@
 
 <script>
 import DisplayMode from '../../../logic/displayMode';
+import DFWidgetCheckbox from '../widget/dfwidgetcheckbox.vue';
 import DFWidgetCKEditor from '../widget/dfwidgetckeditor.vue';
 import DFWidgetInput from '../widget/dfwidgetinput.vue';
 import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
@@ -48,7 +49,7 @@ import DFWidgetSelect from '../widget/dfwidgetselect.vue';
 export default {
   name: 'DFFormColumn',
   components: {
-    DFWidgetInput, DFWidgetPassword, DFWidgetCKEditor, DFWidgetSelect,
+    DFWidgetInput, DFWidgetPassword, DFWidgetCKEditor, DFWidgetSelect, DFWidgetCheckbox,
   },
   props: {
     def: { type: Object, required: true },

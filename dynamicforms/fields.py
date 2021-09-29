@@ -24,11 +24,11 @@ class BooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Boo
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'DFWidgetInput')
+        kwargs['render_params'].setdefault('form', 'DFWidgetCheckbox')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
         kwargs['render_params'].setdefault('label_after_element', True)
-        kwargs['render_params'].setdefault('field_class', 'form-check-input')
+        kwargs['render_params'].setdefault('field_class', 'form-check-input position-checkbox-static')
         kwargs['render_params'].setdefault('label_class', 'form-check-label')
         kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
@@ -44,11 +44,11 @@ class NullBooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'DFWidgetInput')
+        kwargs['render_params'].setdefault('form', 'DFWidgetCheckbox')
         kwargs['render_params'].setdefault('input_type', 'checkbox')
         kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
         kwargs['render_params'].setdefault('label_after_element', True)
-        kwargs['render_params'].setdefault('field_class', 'form-check-input')
+        kwargs['render_params'].setdefault('field_class', 'form-check-input position-checkbox-static')
         kwargs['render_params'].setdefault('label_class', 'form-check-label')
         kwargs['render_params'].setdefault('container_class', 'form-check form-group')
         super().__init__(**kwargs)
