@@ -119,13 +119,13 @@ export default {
     },
     loadData() {
       this.loading = true;
-      window.setTimeout(() => {
-        // if it takes more than 250ms to load the new records, clear existing ones.
-        // don't do it before to reduce flicker
-        // if (this.loading) this.rows = []; // clear
-        // existing rows,
-        // we're making a full refresh
-      }, 250);
+      // window.setTimeout(() => {
+      // if it takes more than 250ms to load the new records, clear existing ones.
+      // don't do it before to reduce flicker
+      // if (this.loading) this.rows = []; // clear
+      // existing rows,
+      // we're making a full refresh
+      // }, 250);
       let url = `${this.list_url}?${this.ordering_parameter}=${this.orderingParam}`;
       if (_.size(this.filterQueryString)) {
         url += `&${this.filterQueryString}`;
