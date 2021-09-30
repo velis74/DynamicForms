@@ -4,8 +4,6 @@ import os
 import sys
 
 import setuptools
-from versio.version import Version
-from versio.version_scheme import Simple3VersionScheme
 
 from dynamicforms import __version__
 
@@ -20,6 +18,8 @@ def write_ver_to_init(version="''"):
 
 
 def get_version(version_arg):
+    from versio.version import Version
+    from versio.version_scheme import Simple3VersionScheme
     try:
         if version_arg == 'publish':
             print('Missing version argument.')
