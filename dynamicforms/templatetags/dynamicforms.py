@@ -120,9 +120,9 @@ def table_columns_count(serializer):
     """
     actions = serializer.actions.renderable_actions(serializer)
 
-    return (len([f for f in serializer.fields.values() if f.display_table == DisplayMode.FULL])
-            + (1 if any(action.position == "rowend" for action in actions) else 0)
-            + (1 if any(action.position == "rowstart" for action in actions) else 0))
+    return (len([f for f in serializer.fields.values() if f.display_table == DisplayMode.FULL]) +
+            (1 if any(action.position == "rowend" for action in actions) else 0) +
+            (1 if any(action.position == "rowstart" for action in actions) else 0))
 
 
 @register.simple_tag(takes_context=True)

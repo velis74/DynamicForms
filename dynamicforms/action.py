@@ -290,11 +290,11 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
             button_is_primary = btn_type == FormButtonTypes.SUBMIT
         self.button_is_primary = button_is_primary
 
+        DF = DYNAMICFORMS
         self.btn_classes = btn_classes or (
-            DYNAMICFORMS.form_button_classes + ' '
-            + (DYNAMICFORMS.form_button_classes_primary if button_is_primary
-               else DYNAMICFORMS.form_button_classes_secondary) + ' '
-            + (DYNAMICFORMS.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
+            DF.form_button_classes + ' ' +
+            (DF.form_button_classes_primary if button_is_primary else DF.form_button_classes_secondary) + ' ' +
+            (DF.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
         )
 
     def as_component_def(self):

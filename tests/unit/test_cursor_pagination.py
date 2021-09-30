@@ -73,8 +73,8 @@ class CursorPaginationTest(TestCase):
 
     def fetch_first(self):
         segments = self.get_segments()
-        url = (reverse('basic-fields-list', args=['json'])
-               + '?ordering=' + ','.join(map(lambda x: x + '_field' if x not in ('id', 'pk') else x, segments)))
+        url = (reverse('basic-fields-list', args=['json']) +
+               '?ordering=' + ','.join(map(lambda x: x + '_field' if x not in ('id', 'pk') else x, segments)))
 
         def get_response(**kwargs):
             response = self.client.get(url, **kwargs)

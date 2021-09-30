@@ -8,7 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from examples.models import Validated
 from .select import Select
-from .selenium_test_case import WaitingStaticLiveServerTestCase, MAX_WAIT
+from .selenium_test_case import MAX_WAIT, WaitingStaticLiveServerTestCase
 
 
 class ValidatedFormTest(WaitingStaticLiveServerTestCase):

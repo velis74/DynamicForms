@@ -9,7 +9,7 @@ from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.fields import BooleanField
 from .settings import DYNAMICFORMS
-from .template_render import ComponentHTMLRenderer, ComponentDefRenderer  # noqal
+from .template_render import ComponentDefRenderer, ComponentHTMLRenderer  # noqal
 
 
 # noinspection PyRedeclaration
