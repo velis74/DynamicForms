@@ -58,12 +58,12 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
                 if label_text == 'Boolean field':
                     self.initial_check(field, '', 'boolean_field', 'checkbox')
-                    self.assertEqual(field.get_attribute('class'), 'form-check-input')
+                    self.assertTrue('form-check-input' in field.get_attribute('class'))
                     field.click()
                 elif label_text == 'Nullboolean field':
                     field_type = self.initial_check(field, '', 'nullboolean_field', ('text', 'checkbox'))
                     if field_type == 'checkbox':
-                        self.assertEqual(field.get_attribute('class'), 'form-check-input')
+                        self.assertTrue('form-check-input' in field.get_attribute('class'))
                         field.click()
                     else:
                         field.send_keys('True')

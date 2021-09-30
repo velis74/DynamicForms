@@ -15,7 +15,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from dynamicforms.migrations import add_filter, add_page_load, add_relation
 from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
@@ -82,14 +81,16 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # When running tests through github actions sometimes tables are empty, even though they are filled up in
         # migrations initialisation
         from examples.models import Filter, PageLoad, Relation
-        if Filter.objects.count() == 0:
-            add_filter(None, None)
+        from examples.migrations import add_filter, add_page_load, add_relation
 
-        if PageLoad.objects.count() == 0:
-            add_page_load(None, None)
+        if not Filter.objects.count():
+            add_filter(Filter)
 
-        if Relation.objects.count() == 0:
-            add_relation(None, None)
+        if not PageLoad.objects.count():
+            add_page_load(PageLoad)
+
+        if not Relation.objects.count():
+            add_relation(Relation)
 
         self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
 

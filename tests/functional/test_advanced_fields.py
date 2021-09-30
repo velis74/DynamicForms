@@ -17,8 +17,8 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         if os.path.exists(uploaded_file):
             os.remove(uploaded_file)
 
-    @parameterized.expand(['html', 'component'])
-    def test_advanced_fields(self, renderer):
+    # @parameterized.expand(['html', 'component'])
+    def test_advanced_fields(self, renderer='component'):
         self.browser.get(self.live_server_url + '/advanced-fields.' + renderer)
         # Go to advanced-fields html and check if there's a "+ Add" button
 
