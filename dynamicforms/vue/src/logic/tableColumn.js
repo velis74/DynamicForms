@@ -1,5 +1,7 @@
 import DisplayMode from './displayMode';
 
+import helperFunctions from '@/logic/helperFunctions';
+
 class TableColumn {
   constructor(columnDef) {
     this._columnDef = columnDef;
@@ -38,7 +40,7 @@ class TableColumn {
       return DisplayMode.FULL;
     default:
       console.warn(`Table column came with visibility set to ${this._columnDef.visibility}, but we don't know` +
-        ' that constant');
+          ' that constant');
       return DisplayMode.FULL;
     }
   }
@@ -128,6 +130,7 @@ class TableColumn {
       if (tableDecorator.substr(0, 13) === 'df-tablecell-') {
         // built-in decorator functions
         const decoratorFunction = tableDecorator.substr(13);
+        console.log(decoratorFunction);
         // eslint-disable-next-line default-case
         switch (decoratorFunction) {
         case 'bool':
@@ -138,6 +141,14 @@ class TableColumn {
           return (row, column, value) => {
             const nameOnly = value.includes('<') ? value.substr(0, value.indexOf('<')).trim() : value;
             return `<a href="mailto:${value}">${nameOnly}</a>`;
+          };
+        case 'file':
+          return (row, column, value) => {
+            if (value) {
+              // eslint-disable-next-line max-len
+              return `<a href="#" onclick='event.stopPropagation();window.open("${value}", "_blank")'>${helperFunctions.getFileNameFromPath(value)}</a>`;
+            }
+            return null;
           };
         case 'ipaddr':
           return (row, column, value) => {

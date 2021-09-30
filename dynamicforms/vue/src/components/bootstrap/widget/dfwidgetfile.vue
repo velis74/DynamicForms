@@ -1,26 +1,60 @@
 <template>
   <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
-    <input
+    <div
       :id="def.uuid"
       slot="input"
-      type="file"
-      :class="def.render_params.field_class"
-      :name="def.name"
-      :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
-      :readonly="def.read_only === true"
-      :disabled="def.read_only === true"
-      @change="change"
+      :key="def.uuid"
     >
+      <div class="input-group">
+        <input
+          ref="file"
+          :key="fileInputKey"
+          type="file"
+          :readonly="def.read_only === true"
+          :disabled="def.read_only === true"
+          :name="def.name"
+          @change="selectFile"
+        >
+      </div>
+      <div>
+        <div v-if="currentFile" class="progress" style="margin-top: 0.3em;">
+          <div
+            class="progress-bar progress-bar-info progress-bar-striped"
+            role="progressbar"
+            :aria-valuenow="progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :style="{ width: progress + '%' }"
+          >
+            {{ progress }}%
+          </div>
+        </div>
+        <div>
+          <div v-if="showFileOnServer">
+            {{ getFileName(this.data[this.def.name]) }}
+            <button
+              type="button"
+              class="close"
+              aria-label="Close"
+              style="color: red"
+              @click="removeFile"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </DFWidgetBase>
 </template>
 
 <script>
 import _ from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 
 import DFWidgetBase from './dfwidgetbase.vue';
 
 import apiClient from '@/apiClient';
+import helperFunctions from '@/logic/helperFunctions';
 
 export default {
   name: 'DFWidgetFile',
@@ -31,28 +65,51 @@ export default {
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
   },
+  data() {
+    return {
+      currentFile: undefined,
+      progress: 0,
+      showFileOnServer: false,
+      fileInputKey: Math.round(Math.random() * 1000),
+    };
+  },
+  mounted() {
+    this.showFileOnServer = !!_.clone(this.data[this.def.name]);
+  },
   methods: {
-    change(evt) {
-      console.log(evt.currentTarget.files);
-      const fileIdentifier = `fl_${uuidv4()}`;
+    getFileName(val) {
+      return helperFunctions.getFileNameFromPath(val);
+    },
+    selectFile() {
+      this.upload();
+    },
+    removeFile() {
+      console.log('removeFile');
+      this.data[this.def.name] = null;  // eslint-disable-line
+      this.progress = null;
+      this.fileInputKey = Math.round(Math.random() * 1000);
+      this.showFileOnServer = false;
+    },
+    upload() {
+      this.progress = 0;
+      this.currentFile = this.$refs.file.files.item(0);
 
       const formData = new FormData();
+      formData.append('file', this.currentFile, `${this.currentFile.name}`);
+      this.showFileOnServer = false;
 
-      if (!evt.currentTarget.files.length) return;
-
-      _.each(evt.currentTarget.files, (f) => {
-        formData.append('file', f, fileIdentifier);
-      });
-
-      // upload file
-      apiClient.post('/dynamicforms/preupload-file/', formData).then((res) => {
-        console.log(res);
+      this.progress = 0;
+      this.progress = 45;
+      // make this better
+      this.progress = 60;
+      apiClient.post('/dynamicforms/preupload-file/', formData, { showProgress: false }).then((res) => {
+        this.data[this.def.name] = res.data.identifier;  // eslint-disable-line
+        this.progress = 100;
       }).catch((err) => {
-        console.log(err);
+        this.progress = 0;
+        this.currentFile = undefined;
+        console.error(err);
       });
-
-      // this.data[this.def.name] = evt.currentTarget.files;  // eslint-disable-line
-      this.data[this.def.name] = fileIdentifier;   // eslint-disable-line
     },
   },
 };

@@ -388,7 +388,7 @@ class FileField(FileFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixi
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetFile')
         kwargs['render_params'].setdefault('input_type', 'file')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-file')
         super().__init__(**kwargs)
 
 
@@ -405,7 +405,7 @@ class ImageField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Image
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetFile')
         kwargs['render_params'].setdefault('input_type', 'file')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('table', 'df-tablecell-file')
         super().__init__(**kwargs)
 
 

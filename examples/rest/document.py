@@ -12,7 +12,7 @@ class DocumentsSerializer(serializers.ModelSerializer):
         'edit': 'Editing document object',
     }
 
-    file = DfPreloadedFileField(allow_empty_file=False, use_url=False)
+    file = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True)
 
     class Meta:
         model = Document
