@@ -1,13 +1,7 @@
 <template>
   <thead>
     <tr>
-      <th
-        v-for="(col, idx) in columns"
-        :key="col.name"
-        :style="`text-align: ${col.alignment}`"
-        :class="col.th_classes"
-        @click="colClicked($event, col, idx)"
-      >
+      <th v-for="(col, idx) in columns" :key="col.name" :class="col.th_classes" @click="colClicked($event, col, idx)">
         {{ col.label }}
         <span v-if="col.isOrdered" class="ordering">
           <span class="ordering-arrow">{{ col.ascDescChar }}</span>
@@ -15,11 +9,7 @@
         </span>
       </th>
     </tr>
-    <DFTableFilterRow
-      v-if="filter"
-      :configuration="filter"
-      @setTableFilter="setTableFilter"
-    />
+    <DFTableFilterRow v-if="filter" :configuration="filter" @setTableFilter="setTableFilter"/>
   </thead>
 </template>
 
@@ -32,15 +22,44 @@ export default {
   props: {
     columns: { type: Array, required: true },
     filter: { type: Object, default: () => {} },
+    tableId: { type: Number, required: true },
+  },
+  data() {
+    return {
+      style: null,
+    };
   },
   computed: {
     numSortedCols() {
       return this.columns.filter((col) => col.ordering.includes('seg-')).length;
     },
   },
+  mounted() {
+    this.globalStylesCreate();
+  },
+  beforeDestroy() {
+    this.globalStylesRemove();
+  },
   methods: {
     setTableFilter(filter) {
       this.$emit('setTableFilter', filter);
+    },
+    globalStylesCreate() {
+      // Here we create column styles with alignment for the entire table
+      this.style = document.createElement('style');
+      this.columns.forEach((col, idx) => {
+        this.style.appendChild(document.createTextNode(
+          `#DFTable${this.tableId} > thead > tr > th:nth-child(${idx + 1}),
+          #DFTable${this.tableId} > tbody > tr > td:nth-child(${idx + 1}) {
+            text-align: ${col.align};
+          }`,
+        ));
+      });
+      document.getElementsByTagName('head')[0].appendChild(this.style);
+    },
+    globalStylesRemove() {
+      // deleting the styles generated for table column alignment
+      document.getElementsByTagName('head')[0].removeChild(this.style);
     },
     colClicked(event, column, colIdx) {
       if (!column.isOrdered) {

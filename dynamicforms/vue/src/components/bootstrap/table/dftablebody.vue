@@ -7,10 +7,12 @@
       :data-id="row.id"
       :style="row.df_control_data.row_css_style"
       @click="rowClick($event,'ROW_CLICK', row)"
-      @mouseup.right="rowClick($event,'ROW_RIGHTCLICK')"
+      @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', row)"
     >
       <td v-for="col in columns" :key="col.name" :data-name="col.name">
+        <!-- first we render any field start actions -->
         <Actions :row="row" :actions="actions.filter('FIELD_START', col.name)"/>
+        <!-- then the field component itself -->
         <component
           :is="col.renderDecoratorComponentName"
           v-if="col.renderDecoratorComponentName"
@@ -19,12 +21,15 @@
           :value="row[col.name]"
           :body-id="$parent._uid"
         />
+        <!-- but maybe the field component is actually a row start / end actions field -->
         <Actions
           v-else-if="['#actions-row_start', '#actions-row_end'].includes(col.name)"
           :row="row"
           :actions="actions.filter(col.name.substr(9).toUpperCase())"
         />
+        <!-- or it's just a decorated text and not a component -->
         <div v-else style="display: inline-block" v-html="col.renderDecoratorFunction(row, col, row[col.name])"/>
+        <!-- we finish up with any field end actions -->
         <Actions :row="row" :actions="actions.filter('FIELD_END', col.name)"/>
       </td>
     </tr>
@@ -41,7 +46,6 @@ export default {
   props: {
     columns: { type: Array, required: true },
     rows: { type: Array, required: true },
-    loading: { type: Boolean, required: true },
     actions: { type: Object, required: true },
   },
   data() {

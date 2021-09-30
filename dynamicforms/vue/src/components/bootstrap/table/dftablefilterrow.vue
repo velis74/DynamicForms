@@ -38,18 +38,23 @@ export default {
     configuration: { type: Object, required: true },
   },
   data() {
-    const cfg = this.configuration;
     return {
       filter: {},
-      actionsRowEnd: new ActionsHandler(cfg.actions, null, cfg.uuid).filter('FILTER_ROW_END'),
-      actionsRowStart: new ActionsHandler(cfg.actions, null, cfg.uuid).filter('FILTER_ROW_START'),
     };
   },
   computed: {
+    uuid() { return this.configuration.uuid; },
+    actions() { return this.configuration.actions; },
+    actionsRowEnd() {
+      return new ActionsHandler(this.actions, null, this.uuid).filter('FILTER_ROW_END');
+    },
+    actionsRowStart() {
+      return new ActionsHandler(this.actions, null, this.uuid).filter('FILTER_ROW_START');
+    },
     columns() {
       // todo: which columns are in filter needs to be configured in serializer......
-      return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL &&
-          c.visibility.form === DisplayMode.FULL);
+      // we're currently matching DFTable's filtering to full visibility
+      return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL);
     },
   },
   methods: {

@@ -14,6 +14,7 @@ class TableColumn {
   }
 
   get align() {
+    if (this._columnDef.alignment === 'decimal') return 'right';
     return this._columnDef.alignment;
   }
 
@@ -149,7 +150,7 @@ class TableColumn {
                 return padding + x;
               }).join('.');
             }
-            return `<code>${value}</code>`;
+            return `<code class="text-nowrap">${value}</code>`;
           };
           // DRF also formats simple lists, complex dicts / lists
           // DRF also parses ordinary strings to check if they are valid URLs(link), emails(email) or contain \n (pre)

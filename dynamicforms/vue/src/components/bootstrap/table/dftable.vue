@@ -1,33 +1,17 @@
 <template>
-  <div>
-    <div class="card">
-      <div class="card-header">
-        {{ configuration.titles.table }}
-        <div class="float-right">
-          <Actions :actions="configuration.actions.filter('HEADER')"/>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      {{ configuration.tableLabel }}
+      <div class="float-right">
+        <Actions :actions="actions.filter('HEADER')"/>
       </div>
-      <div class="card-body">
-        <table class="table">
-          <DFTableHead
-            :columns="configuration.columns"
-            :filter="configuration.filter"
-            @setTableFilter="setTableFilter"
-          />
-          <DFTableBody
-            :columns="configuration.columns"
-            :rows="configuration.rows"
-            :loading="configuration.loading"
-            :actions="configuration.actions"
-          />
-          <DFTableFoot
-            :columns="configuration.columns"
-            :rows="configuration.rows"
-            :loading="configuration.loading"
-            :no-data-string="configuration.noDataString"
-          />
-        </table>
-      </div>
+    </div>
+    <div class="card-body">
+      <table :id="'DFTable' + tableID" class="table">
+        <DFTableHead :columns="columns" :filter="filter" :table-id="tableID" @setTableFilter="setTableFilter"/>
+        <DFTableBody :columns="columns" :rows="rows" :actions="actions"/>
+        <DFTableFoot :columns-length="colsLen" :rows-length="rowsLen" :loading="loading" :no-data-label="noDataLabel"/>
+      </table>
     </div>
   </div>
 </template>
@@ -39,13 +23,31 @@ import DFTableBody from './dftablebody.vue';
 import DFTableFoot from './dftablefoot.vue';
 import DFTableHead from './dftablehead.vue';
 
+let globalTableID = 0;
+
 export default {
-  name: 'DFTable',
+  name: 'BootstrapTable',
   components: {
     DFTableFoot, DFTableHead, DFTableBody, Actions,
   },
   props: {
     configuration: { type: Object, required: true },
+  },
+  data() {
+    return {
+      style: null,
+      tableID: globalTableID++,
+    };
+  },
+  computed: {
+    actions: function actions() { return this.configuration.actions; },
+    filter: function filter() { return this.configuration.filter; },
+    columns: function columns() { return this.configuration.columns; },
+    rows: function rows() { return this.configuration.rows; },
+    colsLen: function colsLen() { return this.configuration.columns.length; },
+    rowsLen: function rowsLen() { return this.configuration.rows.length; },
+    loading: function loading() { return this.configuration.loading; },
+    noDataLabel: function noDataLabel() { return this.configuration.noDataString; },
   },
   methods: {
     setTableFilter(filter) {

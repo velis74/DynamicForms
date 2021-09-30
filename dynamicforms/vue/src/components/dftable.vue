@@ -59,7 +59,7 @@ export default {
         noDataString: 'No data',
         editDialogTitle: 'Test dialog',
         editingRowURL: '',
-        titles: this.titles,
+        tableLabel: this.titles.table,
         filter: this.filter,
       };
     },
@@ -151,6 +151,7 @@ export default {
       }
     },
     setTableFilter(filter) {
+      // console.log(filter);
       this.filterQueryString = $.param(_.pickBy(
         _.clone(filter.filter), (v) => (_.isString(v) ? _.size(v) : v !== null && v !== undefined),
       ));
