@@ -93,12 +93,9 @@ export default {
     upload() {
       this.progress = 0;
       this.currentFile = this.$refs.file.files.item(0);
-
       const formData = new FormData();
       formData.append('file', this.currentFile, `${this.currentFile.name}`);
-
       this.showFileOnServer = true;
-
       this.progress = 0;
       this.progress = 45;
       // make this better, some timeout repeating function
@@ -108,9 +105,7 @@ export default {
         this.progress = 100;
       }).catch((err) => {
         this.progress = 0;
-        this.currentFile = undefined;
         this.showFileOnServer = false;
-        this.fileInputKey = Math.round(Math.random() * 1000);
         console.error(err);
       });
     },
