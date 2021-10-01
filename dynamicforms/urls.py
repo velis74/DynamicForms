@@ -1,8 +1,9 @@
 from django.conf.urls import url
 
-from dynamicforms import progress
+from dynamicforms import progress, preupload_files
 
 urlpatterns = [
     # Progress is used for checking on progress of operation on server
     url(r'^progress/$', progress.get_progress_value, name='progress'),
+    url(r'^preupload-file/$', preupload_files.preupload_file, name='preupload-file'),
 ]

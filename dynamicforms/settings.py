@@ -31,6 +31,10 @@ class Settings(Struct):
     # specifies text to be displayed in grid when field's value is null
     null_text_table = 'null'
 
+    preuploaded_file_margin_for_file_deletion_in_seconds: int = 86400  # 1 day
+
+    allow_anonymous_user_to_preupload_files = False
+
     def __init__(self, data=None, **kwds):
         kwds.setdefault('page_template', DYNAMICFORMS_ROOT + 'page.html')
         super().__init__(data, **kwds)

@@ -184,3 +184,9 @@ class RefreshType(models.Model):
     """
     description = models.CharField(max_length=20, help_text='Item description')
     rich_text_field = models.TextField(blank=True, null=True)
+
+
+class Document(models.Model):
+    description = models.CharField(max_length=30, help_text='Document description')
+    file = models.FileField(upload_to='documents/', blank=False)
+

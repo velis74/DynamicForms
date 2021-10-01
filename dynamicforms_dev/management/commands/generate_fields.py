@@ -45,7 +45,7 @@ render_params = ClassAssemblyDict({
     fields.DateTimeField: dict(input_type='datetime-local'),
     fields.DateField: dict(input_type='date'),
     fields.TimeField: dict(input_type='time'),
-    serializers.FileField: dict(input_type='file'),
+    serializers.FileField: dict(input_type='file', form='DFWidgetFile', table='df-tablecell-file'),
     fields.BooleanField: dict(
         table='df-tablecell-bool', input_type='checkbox', label_after_element=True, form='DFWidgetCheckbox',
         field_class='form-check-input position-checkbox-static', label_class='form-check-label',
