@@ -156,4 +156,5 @@ DYNAMICFORMS = {
     # 'template': 'dynamicforms/jquery_ui/',
     'page_template': 'examples/page.html',
     'testing': TESTING,
+    'allow_anonymous_user_to_preupload_files': True,
 }

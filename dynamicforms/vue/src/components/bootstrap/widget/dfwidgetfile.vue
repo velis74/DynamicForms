@@ -109,6 +109,8 @@ export default {
       }).catch((err) => {
         this.progress = 0;
         this.currentFile = undefined;
+        this.showFileOnServer = false;
+        this.fileInputKey = Math.round(Math.random() * 1000);
         console.error(err);
       });
     },
