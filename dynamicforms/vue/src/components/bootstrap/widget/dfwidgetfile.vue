@@ -31,7 +31,7 @@
         </div>
         <div>
           <div v-if="showFileOnServer">
-            {{ getFileName(this.data[this.def.name]) }}
+            {{ getFileName(currentFile ? currentFile.name : data[def.name]) }}
             <button
               type="button"
               class="close"
@@ -84,11 +84,11 @@ export default {
       this.upload();
     },
     removeFile() {
-      console.log('removeFile');
       this.data[this.def.name] = null;  // eslint-disable-line
-      this.progress = null;
+      this.progress = 0;
       this.fileInputKey = Math.round(Math.random() * 1000);
       this.showFileOnServer = false;
+      this.currentFile = undefined;
     },
     upload() {
       this.progress = 0;
@@ -96,11 +96,12 @@ export default {
 
       const formData = new FormData();
       formData.append('file', this.currentFile, `${this.currentFile.name}`);
-      this.showFileOnServer = false;
+
+      this.showFileOnServer = true;
 
       this.progress = 0;
       this.progress = 45;
-      // make this better
+      // make this better, some timeout repeating function
       this.progress = 60;
       apiClient.post('/dynamicforms/preupload-file/', formData, { showProgress: false }).then((res) => {
         this.data[this.def.name] = res.data.identifier;  // eslint-disable-line
