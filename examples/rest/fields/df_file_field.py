@@ -9,7 +9,8 @@ from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from dynamicforms.fields import FileField
-from dynamicforms.preupload_files import preuploaded_fs, UPLOADED_FILE_NAME_UUID_SEPARATOR
+from dynamicforms.preupload_files import preuploaded_fs, UPLOADED_FILE_NAME_UUID_SEPARATOR, \
+    UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR
 
 
 class DfFileField(FileField):
@@ -32,16 +33,17 @@ class DfPreloadedFileField(FileField):
             return getattr(value, 'url', None)
         return None
 
-
     def to_internal_value(self, data):
         if not isinstance(data, str):
             raise ValidationError(_('File identifier should be string'))
         file_size = len(data)
         if not self.allow_empty_file and not file_size:
             self.fail('empty')
-        file: Optional[str] = next(iter(glob.glob(f'{preuploaded_fs.location}/*{data}*')), None)
+        file: Optional[str] = next(iter(glob.glob(
+            f'{preuploaded_fs.location}/*{UPLOADED_FILE_NAME_UUID_SEPARATOR}*{data}*{UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR}*')),
+                                   None)
         if not file and self.parent.instance.file:
-            return data
+            return str(self.parent.instance.file)
         file_object = pathlib.Path(file)
         file_pointer = open(file, 'rb')
         return InMemoryUploadedFile(

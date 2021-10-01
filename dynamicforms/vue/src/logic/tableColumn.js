@@ -130,7 +130,6 @@ class TableColumn {
       if (tableDecorator.substr(0, 13) === 'df-tablecell-') {
         // built-in decorator functions
         const decoratorFunction = tableDecorator.substr(13);
-        console.log(decoratorFunction);
         // eslint-disable-next-line default-case
         switch (decoratorFunction) {
         case 'bool':
