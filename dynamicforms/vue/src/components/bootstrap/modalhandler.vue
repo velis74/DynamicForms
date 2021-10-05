@@ -254,26 +254,28 @@ export default {
       this.progressDialogCheck(); // first we remove the progress dialog when all requests are done
     },
     showComponent(componentDef, whichTitle, tableUuid) {
-      const actions = componentDef.data.dialog.actions;
+      const cDef = componentDef.data;
+      const actions = cDef.dialog.actions;
+
       this.dialogs.push({
-        uuid: componentDef.data.uuid,
-        title: componentDef.data.titles[whichTitle || 'new'],
+        uuid: cDef.uuid,
+        title: cDef.titles[whichTitle || 'new'],
         body: {
-          uuid: componentDef.data.uuid,
-          rows: componentDef.data.dialog.rows,
-          record: componentDef.data.record,
-          component: componentDef.data.dialog.component_name,
+          uuid: cDef.uuid,
+          rows: cDef.dialog.rows,
+          record: cDef.record,
+          component: cDef.dialog.component_name,
         },
         buttons: Object.keys(actions).reduce(
           (res, key) => {
-            actions[key].data_return = { dialog_id: componentDef.data.uuid, button: actions[key] };
+            actions[key].data_return = { dialog_id: cDef.uuid, button: actions[key] };
             res.push(actions[key]);
             return res;
           }, [],
         ),
         callback: null,
-        size: componentDef.data.dialog.size,
-        header_classes: componentDef.data.dialog.header_classes,
+        size: cDef.dialog.size,
+        header_classes: cDef.dialog.header_classes,
         tableUuid,
       });
       this.show();
