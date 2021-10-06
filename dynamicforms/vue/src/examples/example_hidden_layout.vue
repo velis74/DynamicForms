@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import DFFormLayout from '@/components/bootstrap/form/dfformlayout.vue';
-import DisplayMode from '@/logic/displayMode';
+import DFFormLayout from '../components/bootstrap/form/dfformlayout.vue';
+import DisplayMode from '../logic/displayMode';
 
 export default {
   name: 'ExampleHiddenLayout',

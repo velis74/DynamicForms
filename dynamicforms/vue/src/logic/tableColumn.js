@@ -1,6 +1,5 @@
 import DisplayMode from './displayMode';
-
-import helperFunctions from '@/logic/helperFunctions';
+import helperFunctions from './helperFunctions';
 
 class TableColumn {
   constructor(columnDef) {

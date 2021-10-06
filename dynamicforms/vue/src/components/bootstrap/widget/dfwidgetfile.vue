@@ -51,10 +51,10 @@
 <script>
 import _ from 'lodash';
 
-import DFWidgetBase from './dfwidgetbase.vue';
+import apiClient from '../../../apiClient';
+import helperFunctions from '../../../logic/helperFunctions';
 
-import apiClient from '@/apiClient';
-import helperFunctions from '@/logic/helperFunctions';
+import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
   name: 'DFWidgetFile',
