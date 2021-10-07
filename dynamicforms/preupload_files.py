@@ -21,7 +21,7 @@ preuploaded_fs = FileSystemStorage(location=f'{settings.MEDIA_ROOT}/{UPLOADED_FI
 
 
 def preupload_file(request):
-    if not DYNAMICFORMS.allow_anonymous_user_to_preupload_files and not request.user.is_authenticated():
+    if not DYNAMICFORMS.allow_anonymous_user_to_preupload_files and not request.user.is_authenticated:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     if request.method == 'POST':
         uploaded_file: Optional[InMemoryUploadedFile] = request.FILES.get('file', None)
