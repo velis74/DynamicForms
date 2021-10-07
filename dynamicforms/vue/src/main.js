@@ -59,3 +59,5 @@ window.jQuery = window.$;
 // Standard entry points to our Vue app. createApp initializes the Vue app and getComponentDef retrieves any definition
 window.createApp = createApp;
 window.getComponentDef = getComponentDef;
+
+export { createModal, createApp };
