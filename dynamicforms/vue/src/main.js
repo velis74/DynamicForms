@@ -12,6 +12,7 @@ Vue.config.productionTip = false;
 Vue.use(VueObserveVisibility);
 Vue.component(DFTable.name, DFTable);
 Vue.component(Example.name, Example);
+Vue.component(ModalHandler.name, ModalHandler);
 
 // const createTable = (elementId, configuration) => new Vue({
 //   render: (h) => h(Table, {
