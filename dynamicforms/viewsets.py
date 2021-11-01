@@ -209,15 +209,22 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
     ordering_parameter = 'ordering'
     ordering_style = None
 
+    @property
+    def paginator(self):
+        if self.request:
+            request = self.request
+            pagination_enabled = request.META.get('HTTP_X_PAGINATION', request.GET.get('x_df_pagination', False))
+            pagination_enabled = BooleanField().to_internal_value(pagination_enabled)
+            if isinstance(request.accepted_renderer, JSONRenderer) and not pagination_enabled:
+                # if pagination is disabled, we need to hide the paginator so that nothing breaks looking for it
+                return None
+        return super().paginator()
+
     def paginate_queryset(self, queryset):
         """
         Return a single page of results, or `None` if pagination is disabled.
         """
         if self.paginator is None:
-            return None
-        # determine request format and handle pagination for json format
-        if isinstance(self.request.accepted_renderer, JSONRenderer) and not BooleanField().to_internal_value(
-                self.request.META.get('HTTP_X_PAGINATION', self.request.GET.get('x_df_pagination', False))):
             return None
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
 

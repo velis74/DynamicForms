@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
 
 from dynamicforms.fields import DFField, DisplayMode
 
@@ -50,7 +50,8 @@ class Column(object):
 
 
 class Row(object):
-    def __init__(self, *columns):
+    def __init__(self, *columns, component: str=None):
+        self.component = component or 'DFFormRow'
         self.columns = []
         for column in columns:
             if isinstance(column, tuple):
@@ -68,8 +69,8 @@ class Row(object):
         # list() is necessary so that all rows evaluate
         return any(list(map(lambda column: column.bind_field(field_name, field), self.columns)))
 
-    def as_component_def(self) -> List[Dict]:
-        return [col.as_component_def() for col in self.columns]
+    def as_component_def(self) -> dict:
+        return dict(component=self.component, columns=[col.as_component_def() for col in self.columns])
 
 
 class Layout(object):

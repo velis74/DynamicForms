@@ -5,7 +5,14 @@
         <small :id="'form-' + uuid + '-err'" class="text-danger">{{ errorText }}</small>
       </div>
     </slot>
-    <DFFormRow v-for="(row, idx) in rows" :key="idx" :columns="row" :data="record" :errors="errors"/>
+    <DFFormRow
+      :is="row.component"
+      v-for="(row, idx) in rows"
+      :key="idx"
+      :columns="row.columns"
+      :data="record"
+      :errors="errors"
+    />
   </form>
 </template>
 

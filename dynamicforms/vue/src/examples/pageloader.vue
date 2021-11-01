@@ -29,7 +29,8 @@ export default {
   methods: {
     goToRoute(to) {
       // console.log(to);
-      this.url = `${to.path}.componentdef`;
+      const cDef = to.meta.componentDef ? to.meta.componentDef : to.path;
+      this.url = `${cDef}.componentdef`;
       this.component = to.meta.component || 'DFTable';
       apiClient
         .get(this.url, {

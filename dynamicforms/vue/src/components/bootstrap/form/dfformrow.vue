@@ -1,7 +1,9 @@
 <template>
   <DFFormColumn v-if="isHiddenSingle" :def="writableColumns[0]" :data="data" :errors="errors"/>
   <div v-else class="row align-items-end">
+    <slot name="before-columns"/>
     <DFFormColumn v-for="(column, idx) in writableColumns" :key="idx" :def="column" :data="data" :errors="errors"/>
+    <slot name="after-columns"/>
   </div>
 </template>
 
