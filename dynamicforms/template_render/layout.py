@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
 from dynamicforms.fields import DFField, DisplayMode
 
@@ -7,20 +7,15 @@ if TYPE_CHECKING:
 
 
 class Field(object):
-    def __init__(self, field_name: str, field_def: Optional[DFField] = None, render_format: Optional[str] = None):
+    def __init__(self, field_name: str, render_format: Optional[str] = None):
         self.field_name = field_name
-        self.field_def = field_def
         self.render_format = render_format
 
-    def bind_field(self, field_name: str, field) -> bool:
-        res = self.field_name == field_name
-        if res and not self.field_def:
-            self.field_def = field
-        return res
+    def field_def(self, serializer: 'Serializer') -> DFField:
+        return serializer.fields[self.field_name]
 
-    def as_component_def(self):
-        fdef = self.field_def  # type: DFField
-        res = fdef.as_component_def()
+    def as_component_def(self, serializer: 'Serializer'):
+        res = self.field_def(serializer).as_component_def()
         res.update(dict(name=self.field_name))
         if self.render_format:
             res['render_format'] = self.render_format
@@ -29,34 +24,30 @@ class Field(object):
 
 class Column(object):
     def __init__(self, field: Union[Tuple[str, DFField], Field, str, None], width_classes: Optional[str] = None):
-        if isinstance(field, tuple):
-            self.field = Field(field[0], field[1])
-        elif isinstance(field, str):
-            self.field = Field(field, None)
+        if isinstance(field, str):
+            self.field = Field(field)
         elif isinstance(field, Field):
             self.field = field
         else:
             raise NotImplementedError(f'Unknown field type {field.__class__.__name__}')
         self.width_classes = width_classes or ''
 
-    def bind_field(self, field_name: str, field) -> bool:
-        return self.field.bind_field(field_name, field)
+    def _get_laid_fields(self):
+        return {self.field.field_name}
 
-    def as_component_def(self) -> Dict:
-        res = dict(type='column', field=self.field.as_component_def())
+    def as_component_def(self, serializer: 'Serializer') -> Dict:
+        res = dict(type='column', field=self.field.as_component_def(serializer))
         if self.width_classes:
             res['width_classes'] = self.width_classes
         return res
 
 
 class Row(object):
-    def __init__(self, *columns, component: str=None):
+    def __init__(self, *columns, component: str = None):
         self.component = component or 'DFFormRow'
-        self.columns = []
+        self.columns = []  # type: List[Column]
         for column in columns:
-            if isinstance(column, tuple):
-                self.columns.append(Column(Field(*column)))
-            elif isinstance(column, str):
+            if isinstance(column, str):
                 self.columns.append(Column(Field(column)))
             elif isinstance(column, Field):
                 self.columns.append(Column(column))
@@ -65,12 +56,11 @@ class Row(object):
             else:
                 raise NotImplementedError(f'Unknown column type {column.__class__.__name__}')
 
-    def bind_field(self, field_name: str, field) -> bool:
-        # list() is necessary so that all rows evaluate
-        return any(list(map(lambda column: column.bind_field(field_name, field), self.columns)))
+    def _get_laid_fields(self):
+        return set().union(*(col._get_laid_fields() for col in self.columns))
 
-    def as_component_def(self) -> dict:
-        return dict(component=self.component, columns=[col.as_component_def() for col in self.columns])
+    def as_component_def(self, serializer: 'Serializer') -> dict:
+        return dict(component=self.component, columns=[col.as_component_def(serializer) for col in self.columns])
 
 
 class Layout(object):
@@ -82,42 +72,42 @@ class Layout(object):
         :param size: 'small', 'large' or ''
         :param header_classes: 'bg-info', ..., or ''
         """
-        self.rows = rows or []
+        self.rows = rows or []  # type: List[Row]
         self.columns = columns
         self.size = size
         self.header_classes = header_classes
 
-    def bind_field(self, field_name: str, field_def) -> bool:
-        # list() is necessary so that all rows evaluate
-        return any(list(map(lambda row: row.bind_field(field_name, field_def), self.rows)))
+    def _get_laid_fields(self):
+        return set().union(*(row._get_laid_fields() for row in self.rows))
 
-    def as_component_def(self, serializer: Optional['Serializer']) -> Dict:
-        if serializer:
-            for field_name, field in serializer.fields.items():
-                self.bind_field(field_name, field)
-
-        res = dict(rows=[row.as_component_def() for row in self.rows])
+    def as_component_def(self, serializer: 'Serializer') -> Dict:
+        assert serializer is not None
+        res = dict(rows=[row.as_component_def(serializer) for row in self.rows])
+        used_fields = self._get_laid_fields()
         if self.size:
             res['size'] = self.size
         if self.header_classes:
             res['header_classes'] = self.header_classes
 
-        if serializer:
-            default_layout = Layout()
-            row = []
-            row_num = 0
-            for field_name, field in serializer.fields.items():
-                if not self.bind_field(field_name, field) and field.display_form != DisplayMode.SUPPRESS:
-                    row.append((field_name, field))
-                    if field.display_form == DisplayMode.FULL:
-                        row_num += 1
-                    if row_num >= self.columns:
-                        default_layout.rows.append(Row(*row))
-                        row, row_num = [], 0
-            if row:
-                default_layout.rows.append(Row(*row))
-            res['rows'] += default_layout.as_component_def(None)['rows']
-            res['actions'] = serializer.render_actions.form.as_action_def()
+        # add any non-declared fields and append them to the end of the layout
+        # if no layout is specified in serializer Meta, this will generate default single-column layout
+        default_layout = Layout()
+        row = []
+        row_num = 0
+        for field_name, field in serializer.fields.items():
+            if field_name not in used_fields and field.display_form != DisplayMode.SUPPRESS:
+                used_fields.add(field_name)
+                row.append(field_name)
+                if field.display_form == DisplayMode.FULL:
+                    row_num += 1
+                if row_num >= self.columns:
+                    default_layout.rows.append(Row(*row))
+                    row, row_num = [], 0
+        if row:
+            default_layout.rows.append(Row(*row))
+        if default_layout.rows:
+            res['rows'] += default_layout.as_component_def(serializer)['rows']
+        res['actions'] = serializer.render_actions.form.as_action_def()
         return res
 
 
@@ -129,9 +119,12 @@ class Group(Column):
         self.layout = sub_layout
         self.footer = footer
 
-    def as_component_def(self) -> Dict:
-        res = super().as_component_def()
+    def _get_laid_fields(self):
+        return self.layout._get_laid_fields()
+
+    def as_component_def(self, serializer: 'Serializer') -> Dict:
+        res = super().as_component_def(serializer)
         res.update(
-            dict(type='group', title=self.title, footer=self.footer, layout=self.layout.as_component_def(None))
+            dict(type='group', title=self.title, footer=self.footer, layout=self.layout.as_component_def(serializer))
         )
         return res

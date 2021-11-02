@@ -218,7 +218,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             if isinstance(request.accepted_renderer, JSONRenderer) and not pagination_enabled:
                 # if pagination is disabled, we need to hide the paginator so that nothing breaks looking for it
                 return None
-        return super().paginator()
+        return super().paginator
 
     def paginate_queryset(self, queryset):
         """
