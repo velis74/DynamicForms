@@ -123,9 +123,6 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
         bool_field.click()
 
-        if is_component_renderer:
-            bool_field.click()
-
         time.sleep(0.2)
         filter_btn.click()
         self.wait_data_loading(loading_row, skip=is_component_renderer)
@@ -137,6 +134,9 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("10"), "Row 10 shouldn\'t be shown")
         self.assertFalse(self.check_data("16"), "Row 16 shouldn\'t be shown")
         self.assertFalse(self.check_data("20"), "Row 20 shouldn\'t be shown")
+
+        if is_component_renderer:
+            bool_field = filter_row.find_element_by_css_selector('input[name="bool_field"]')
 
         bool_field.click()
         time.sleep(0.2)
