@@ -1,7 +1,7 @@
 from dynamicforms import serializers
 from dynamicforms.viewsets import ModelViewSet
-from .fields.df_file_field import DfPreloadedFileField
 from ..models import Document
+from .fields.df_file_field import DfPreloadedFileField
 
 
 class DocumentsSerializer(serializers.ModelSerializer):
