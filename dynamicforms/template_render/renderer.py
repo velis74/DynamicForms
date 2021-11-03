@@ -3,7 +3,7 @@ from typing import Any, Optional
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
-from dynamicforms.settings import DYNAMICFORMS
+from dynamicforms.settings import DYNAMICFORMS, COMPONENT_DEF_RENDERER_FORMAT, COMPONENT_HTML_RENDERER_FORMAT
 
 
 def data_is_paginated(data):
@@ -20,7 +20,7 @@ def get_serializer(data) -> Optional[Any]:
 
 
 class ComponentDefRenderer(JSONRenderer):
-    format = 'componentdef'
+    format = COMPONENT_DEF_RENDERER_FORMAT
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         serializer = get_serializer(data)
@@ -34,7 +34,7 @@ class ComponentDefRenderer(JSONRenderer):
 
 class ComponentHTMLRenderer(TemplateHTMLRenderer):
     media_type = 'text/html'
-    format = 'component'
+    format = COMPONENT_HTML_RENDERER_FORMAT
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         DYNAMICFORMS.components = True

@@ -89,8 +89,10 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
                     self.assertEqual(field.get_attribute("name"), "slug_related_field")
                     select.select_by_value(select.value_from_text('Relation object 5'))
                 # StringRelatedField is read only with primary_key_related_field as source and is not shown in dialog
-                elif label_text == "File field":
+                elif label_text == "File field" and renderer == 'html':
                     container.find_element_by_name("file_field").send_keys(self.file_for_upload)
+                elif label_text == 'File field two' and renderer == 'component':
+                    container.find_element_by_name("file_field_two").send_keys(self.file_for_upload)
                 else:
                     field_count -= 1
 
@@ -123,7 +125,7 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         select.select_by_value(select.value_from_text('Relation object 9'))
 
         # Submit
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
@@ -148,9 +150,10 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         regex_field.send_keys("Test error")
 
         # Submit
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
-        self.wait_for_modal_dialog_disapear(modal_serializer_id)
+        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
 
+        if renderer == 'html':
+            self.wait_for_modal_dialog_disapear(modal_serializer_id)
         # Check for errors
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 

@@ -98,7 +98,7 @@ export default {
       this.showFileOnServer = true;
       this.progress = 0;
       this.progress = 45;
-      // make this better, some timeout repeating function
+      // todo: make this better, some timeout repeating function
       this.progress = 60;
       apiClient.post('/dynamicforms/preupload-file/', formData, { showProgress: false }).then((res) => {
         this.data[this.def.name] = res.data.identifier;  // eslint-disable-line

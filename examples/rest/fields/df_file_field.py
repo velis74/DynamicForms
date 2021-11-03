@@ -11,19 +11,24 @@ from django.utils.translation import ugettext_lazy as _
 from dynamicforms.fields import FileField
 from dynamicforms.preupload_files import preuploaded_fs, UPLOADED_FILE_NAME_UUID_SEPARATOR, \
     UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR
+from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
 
 
 class DfFileField(FileField):
     def to_representation(self, value, row_data=None):
+        empty_value: Optional[str] = ''
+        render_to_component_def_format: bool = self.context.get('format', '') == COMPONENT_DEF_RENDERER_FORMAT
+        if render_to_component_def_format:
+            empty_value = None
         if not value:
-            return ""
+            return empty_value
         link = mark_safe(
             '<a href="#" onclick=\'dynamicforms.stopEventPropagation(event); window.open("%s", "_blank")\'>%s</a>' % (
                 value.url, os.path.basename(value.url)))
         if self.is_rendering_to_list:
-            return link
+            return link if not render_to_component_def_format else value.url
         self.help_text = "Existing file: %s " % link
-        return ""
+        return empty_value
 
 
 class DfPreloadedFileField(FileField):
@@ -42,8 +47,8 @@ class DfPreloadedFileField(FileField):
         file: Optional[str] = next(iter(glob.glob(
             f'{preuploaded_fs.location}/*{UPLOADED_FILE_NAME_UUID_SEPARATOR}*{data}*{UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR}*')),
                                    None)
-        if not file and self.parent.instance.file:
-            return str(self.parent.instance.file)
+        if not file and self.parent.instance and getattr(self.parent.instance, self.field_name, None):
+            return str(getattr(self.parent.instance, self.field_name))
         file_object = pathlib.Path(file)
         file_pointer = open(file, 'rb')
         return InMemoryUploadedFile(
