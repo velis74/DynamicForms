@@ -13,6 +13,10 @@ DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + 'jquery_ui/'
 DYNAMICFORMS_VUE = DYNAMICFORMS_ROOT + 'vue/'
 
 
+COMPONENT_DEF_RENDERER_FORMAT = 'componentdef'
+COMPONENT_HTML_RENDERER_FORMAT = 'component'
+
+
 class Settings(Struct):
     # Support for jQueryUI (this will be queried in dynamicforms.js)
     jquery_ui = False
