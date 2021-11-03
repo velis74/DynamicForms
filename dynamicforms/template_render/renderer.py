@@ -3,7 +3,7 @@ from typing import Any, Optional
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
-from dynamicforms.settings import DYNAMICFORMS, COMPONENT_DEF_RENDERER_FORMAT, COMPONENT_HTML_RENDERER_FORMAT
+from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT, COMPONENT_HTML_RENDERER_FORMAT, DYNAMICFORMS
 
 
 def data_is_paginated(data):

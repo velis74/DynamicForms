@@ -5,12 +5,13 @@ from typing import Optional
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.safestring import mark_safe
-from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.exceptions import ValidationError
 
 from dynamicforms.fields import FileField
-from dynamicforms.preupload_files import preuploaded_fs, UPLOADED_FILE_NAME_UUID_SEPARATOR, \
-    UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR
+from dynamicforms.preupload_files import (
+    preuploaded_fs, UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR, UPLOADED_FILE_NAME_UUID_SEPARATOR
+)
 from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
 
 
@@ -46,7 +47,7 @@ class DfPreloadedFileField(FileField):
             self.fail('empty')
         file: Optional[str] = next(iter(glob.glob(
             f'{preuploaded_fs.location}/*{UPLOADED_FILE_NAME_UUID_SEPARATOR}*{data}*{UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR}*')),
-                                   None)
+            None)
         if not file and self.parent.instance and getattr(self.parent.instance, self.field_name, None):
             return str(getattr(self.parent.instance, self.field_name))
         file_object = pathlib.Path(file)

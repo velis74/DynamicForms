@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from dynamicforms import progress, preupload_files
+from dynamicforms import preupload_files, progress
 
 urlpatterns = [
     # Progress is used for checking on progress of operation on server
