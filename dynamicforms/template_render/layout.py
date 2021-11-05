@@ -80,10 +80,10 @@ class Layout(object):
     def _get_laid_fields(self):
         return set().union(*(row._get_laid_fields() for row in self.rows))
 
-    def as_component_def(self, serializer: 'Serializer') -> Dict:
+    def as_component_def(self, serializer: 'Serializer', used_fields: set=None) -> Dict:
         assert serializer is not None
         res = dict(rows=[row.as_component_def(serializer) for row in self.rows])
-        used_fields = self._get_laid_fields()
+        used_fields = (used_fields or set()).union(self._get_laid_fields())
         if self.size:
             res['size'] = self.size
         if self.header_classes:
