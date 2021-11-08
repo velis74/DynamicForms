@@ -77,7 +77,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: |
-          pip install versio
           pip install tox
 
       - name: Run Tox py-django22
