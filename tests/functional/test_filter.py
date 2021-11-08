@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import localize
 from parameterized import parameterized
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
@@ -25,7 +26,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
     def check_data(self, data_id):
         try:
-            self.browser.find_element_by_css_selector('tbody tr[data-id="%s"' % data_id)
+            self.browser.find_element(By.CSS_SELECTOR, 'tbody tr[data-id="%s"' % data_id)
             return True
         except:
             return False
@@ -37,7 +38,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
         filter_btn = None
         for button in self.browser.find_elements_by_css_selector(
-                '.dynamicforms-actioncontrol' + (' button' if not is_component_renderer else '.button')):
+            '.dynamicforms-actioncontrol' + (' button' if not is_component_renderer else '.button')):
             if button.text == 'Filter':
                 filter_btn = button
                 break
