@@ -27,7 +27,6 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        # TODO: Currently there is no modal dialog for .component, skipping test
         if renderer == 'html':
             md_btn.click()
             dialog, modal_serializer_id = self.wait_for_modal_dialog()
@@ -107,6 +106,10 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                         # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
                         # Workaround is to do this with javascript using execute_script method
                         self.update_edge_field(field_id, '2018-12-08T08:15')
+                    elif self.selected_browser == Browsers.FIREFOX:
+                        field.send_keys('08/12/2018')
+                        field.send_keys(Keys.TAB)
+                        field.send_keys('08:15')
                     else:
                         field.send_keys('2018-12-08 08:15:00')
                 elif label_text == 'Date field':
@@ -171,10 +174,22 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             self.update_edge_field(self.get_field_id_by_name(dialog, "datetime_field"), "1111111111")
             self.update_edge_field(self.get_field_id_by_name(dialog, "date_field"), "1111111111")
             self.update_edge_field(self.get_field_id_by_name(dialog, "time_field"), "1111111111")
-        elif self.selected_browser == Browsers.IE:
-            dialog.find_element_by_name("datetime_field").clear()
-            dialog.find_element_by_name("date_field").clear()
-            dialog.find_element_by_name("time_field").clear()
+        elif self.selected_browser in (Browsers.IE, Browsers.FIREFOX):
+            dt_field = dialog.find_element_by_name("datetime_field")
+            dt_field.send_keys('09/1/2017')
+            dt_field.send_keys(Keys.TAB)
+            dt_field.send_keys('07:14')
+            self.clear_input(dt_field)
+            dt_field.send_keys(Keys.TAB)
+            self.clear_input(dt_field)
+            dt_field.send_keys(Keys.TAB)
+            self.clear_input(dt_field)
+            dt_field.send_keys(Keys.TAB)
+            self.clear_input(dt_field)
+            dt_field.send_keys(Keys.TAB)
+            self.clear_input(dt_field)
+            self.clear_input(dialog.find_element_by_name("date_field"))
+            self.clear_input(dialog.find_element_by_name("time_field"))
         else:
             dialog.find_element_by_name("datetime_field").send_keys("Test error")
             dialog.find_element_by_name("date_field").send_keys("Test error")
