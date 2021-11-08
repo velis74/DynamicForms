@@ -5,6 +5,7 @@ from typing import List, Union
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -80,7 +81,7 @@ class Select:
             value = repr(value) if value is not None else 'null'
             self._browser.execute_script(f"window['setSelectValue {self.id}']({value});")
         elif self.select_type == SelectType.SELECT2:
-            element = self.element.parent.find_element_by_xpath(f"//*[@id='{self.id}']/following-sibling::*[1]")
+            element = self.element.parent.find_element(By.XPATH, f"//*[@id='{self.id}']/following-sibling::*[1]")
             element.click()
 
             if not isinstance(value, (list, tuple)):
@@ -114,7 +115,7 @@ class Select:
 
     def send_keys(self, txt, send_enter: bool = False):
         if self.select_type == SelectType.SELECT2:
-            element = self.element.parent.find_element_by_xpath(f"//*[@id='{self.id}']/following-sibling::*[1]")
+            element = self.element.parent.find_element(By.XPATH, f"//*[@id='{self.id}']/following-sibling::*[1]")
             element.click()
             element = element.parent.switch_to.active_element
             element.send_keys(txt)
@@ -129,7 +130,7 @@ class Select:
                     a.perform()
         elif self.select_type == SelectType.COMPONENT:
             self.element.click()  # get it into input mode
-            inp = self.element.find_element_by_tag_name('input')
+            inp = self.element.find_element(By.TAG_NAME, 'input')
             inp.send_keys(txt)
             if send_enter:
                 inp.send_keys(Keys.ENTER)

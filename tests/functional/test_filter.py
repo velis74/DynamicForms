@@ -37,25 +37,26 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + reverse('filter-list', args=[renderer]))
 
         filter_btn = None
-        for button in self.browser.find_elements_by_css_selector(
-            '.dynamicforms-actioncontrol' + (' button' if not is_component_renderer else '.button')):
+        for button in self.browser.find_elements(By.CSS_SELECTOR,
+                                                 '.dynamicforms-actioncontrol' + (
+                                                     ' button' if not is_component_renderer else '.button')):
             if button.text == 'Filter':
                 filter_btn = button
                 break
         self.assertIsNotNone(filter_btn, 'Page should contain filter button')
 
-        filter_row = self.browser.find_elements_by_class_name('dynamicforms-filterrow')
+        filter_row = self.browser.find_elements(By.CLASS_NAME, 'dynamicforms-filterrow')
         self.assertTrue(len(filter_row) > 0, 'Page should contain filter')
         filter_row = filter_row[0]
-        loading_row = self.browser.find_element_by_css_selector(
-            'tfoot tr[id*="loading-"') if not is_component_renderer else None
+        loading_row = self.browser.find_element(By.CSS_SELECTOR,
+                                                'tfoot tr[id*="loading-"') if not is_component_renderer else None
 
-        char_field = filter_row.find_element_by_css_selector('input[name="char_field"]')
-        datetime_field = filter_row.find_element_by_css_selector('input[name="datetime_field"]')
-        int_field = filter_row.find_element_by_css_selector('input[name="int_field"]')
+        char_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="char_field"]')
+        datetime_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="datetime_field"]')
+        int_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="int_field"]')
         if not is_component_renderer:
-            int_choices_field = filter_row.find_element_by_css_selector('select[name="int_choice_field"]')
-        bool_field = filter_row.find_element_by_css_selector('input[name="bool_field"]')
+            int_choices_field = filter_row.find_element(By.CSS_SELECTOR, 'select[name="int_choice_field"]')
+        bool_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="bool_field"]')
 
         self.wait_data_loading(loading_row, skip=is_component_renderer)
         char_field.send_keys("def")
@@ -87,12 +88,12 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
         filter_btn.click()
         self.wait_data_loading(loading_row, skip=is_component_renderer)
-        data_rows = self.browser.find_elements_by_css_selector('tbody tr')
+        data_rows = self.browser.find_elements(By.CSS_SELECTOR, 'tbody tr')
 
-        input_val = data_rows[0].find_element_by_css_selector('td[data-name="datetime_field"').text
+        input_val = data_rows[0].find_element(By.CSS_SELECTOR, 'td[data-name="datetime_field"').text
         self.assertTrue(input_val.startswith(tomorrow_check),
                         'First row date not matching [%s] != [%s]' % (input_val, tomorrow_check))
-        input_val = data_rows[-1].find_element_by_css_selector('td[data-name="datetime_field"').text
+        input_val = data_rows[-1].find_element(By.CSS_SELECTOR, 'td[data-name="datetime_field"').text
         self.assertTrue(input_val.startswith(tomorrow_check),
                         'Last row date not matching [%s] != [%s]' % (input_val, tomorrow_check))
 
@@ -141,7 +142,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("20"), "Row 20 shouldn\'t be shown")
 
         if is_component_renderer:
-            bool_field = filter_row.find_element_by_css_selector('input[name="bool_field"]')
+            bool_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="bool_field"]')
 
         bool_field.click()
         time.sleep(0.2)
@@ -166,6 +167,6 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
             return
         filter_btn.click()
         self.wait_data_loading(loading_row, skip=is_component_renderer)
-        data_rows = self.browser.find_elements_by_css_selector('tbody tr')
+        data_rows = self.browser.find_elements(By.CSS_SELECTOR, 'tbody tr')
         self.assertTrue(len(data_rows) == 1, 'There should be no data. Only one row (no data row) in table body')
-        self.assertTrue(data_rows[0].find_element_by_tag_name('td').text == 'No data', 'No "No data" row')
+        self.assertTrue(data_rows[0].find_element(By.TAG_NAME, 'td').text == 'No data', 'No "No data" row')

@@ -171,7 +171,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             elid = element_id
 
             def element_id():
-                return self.browser.find_element_by_id(elid)
+                return self.browser.find_element(By.ID, elid)
 
         start_time = time.time()
         while True:
@@ -190,7 +190,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             try:
                 time.sleep(0.01)
                 element = None
-                for el in self.browser.find_elements_by_class_name('modal'):
+                for el in self.browser.find_elements(By.CLASS_NAME, 'modal'):
                     if el.is_displayed():
                         element = el
                         break
@@ -226,7 +226,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.01)
-                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is None:
+                if self.browser.find_element(By.ID, 'dialog-{dialog_id}'.format(**locals())) is None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException:
@@ -243,7 +243,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def check_error_text(self, dialog):
         error_text = None
         try:
-            error = dialog.find_element_by_class_name('text-danger')
+            error = dialog.find_element(By.CLASS_NAME, 'text-danger')
             if error is not None:
                 error_text = error.get_attribute('innerHTML')
         except WebDriverException:
@@ -267,7 +267,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             for cls in ['card-body', 'panel-body', 'ui-accordion-content']:
                 try:
-                    body = self.browser.find_element_by_class_name(cls)
+                    body = self.browser.find_element(By.CLASS_NAME, cls)
                     if body:
                         break
                 except NoSuchElementException:
@@ -276,15 +276,15 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             if body:
                 break
 
-        table = body.find_element_by_tag_name('table')
+        table = body.find_element(By.TAG_NAME, 'table')
         if whole_table:
             return table
 
         while True:
-            rows = table.find_element_by_tag_name('tbody').find_elements_by_tag_name('tr')
+            rows = table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
             if not rows:
                 # component renders "no data" in tfoot
-                rows = table.find_element_by_tag_name('tfoot').find_elements_by_tag_name('tr')
+                rows = table.find_element(By.TAG_NAME, 'tfoot').find_elements(By.TAG_NAME, 'tr')
 
             if expected_rows is not None and len(rows) != expected_rows:
                 self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')
@@ -295,7 +295,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         return rows
 
     def select_option_for_select2(self, driver, element_id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
+        element = driver.find_element(By.XPATH, "//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
         element.click()
 
         if text:
@@ -311,7 +311,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             a.perform()
 
     def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name('td')
+        cells = row.find_elements(By.TAG_NAME, 'td')
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if callable(cell_values[i]):
@@ -332,7 +332,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @staticmethod
     def get_field_id_by_name(dialog, name):
-        return dialog.find_element_by_name(name).get_attribute('id')
+        return dialog.find_element(By.NAME, name).get_attribute('id')
 
     @staticmethod
     def get_tag_name(el):
@@ -357,6 +357,6 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def find_element_by_classes(self, classes: Iterable):
         for cls in classes:
             try:
-                return self.browser.find_element_by_class_name(cls)
+                return self.browser.find_element(By.CLASS_NAME, cls)
             except NoSuchElementException:
                 pass
