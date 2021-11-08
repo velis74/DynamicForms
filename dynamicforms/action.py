@@ -15,6 +15,11 @@ class ActionBase(object):
         :param action_js: JavaScript to execute when action is run
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
         :param serializer: bind to this serializer instance
+        :param action: this is a dict specifying how the vue renderer should render the action. several modes are
+           supported:
+           dict(func_name, params): calls window.func_name(params) (func_name can contain dots which will be resolved)
+           dict(href): action is actually a href - the browser will redirect to the given href
+           dict(href, router_name=True): action is a href to a Vue router named path. href will be resolved from name
         """
         assert name is not None, 'Action name must not be None'
         self.name = name

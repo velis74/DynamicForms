@@ -80,10 +80,10 @@ class Layout(object):
     def _get_laid_fields(self):
         return set().union(*(row._get_laid_fields() for row in self.rows))
 
-    def as_component_def(self, serializer: 'Serializer') -> Dict:
+    def as_component_def(self, serializer: 'Serializer', used_fields: set = None) -> Dict:
         assert serializer is not None
         res = dict(rows=[row.as_component_def(serializer) for row in self.rows])
-        used_fields = self._get_laid_fields()
+        used_fields = (used_fields or set()).union(self._get_laid_fields())
         if self.size:
             res['size'] = self.size
         if self.header_classes:
@@ -106,7 +106,7 @@ class Layout(object):
         if row:
             default_layout.rows.append(Row(*row))
         if default_layout.rows:
-            res['rows'] += default_layout.as_component_def(serializer)['rows']
+            res['rows'] += default_layout.as_component_def(serializer, used_fields)['rows']
         res['actions'] = serializer.render_actions.form.as_action_def()
         return res
 

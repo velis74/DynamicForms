@@ -46,10 +46,10 @@ export default {
     uuid() { return this.configuration.uuid; },
     actions() { return this.configuration.actions; },
     actionsRowEnd() {
-      return new ActionsHandler(this.actions, null, this.uuid).filter('FILTER_ROW_END');
+      return new ActionsHandler(this.actions, null, this.uuid, this).filter('FILTER_ROW_END');
     },
     actionsRowStart() {
-      return new ActionsHandler(this.actions, null, this.uuid).filter('FILTER_ROW_START');
+      return new ActionsHandler(this.actions, null, this.uuid, this).filter('FILTER_ROW_START');
     },
     columns() {
       // todo: which columns are in filter needs to be configured in serializer......

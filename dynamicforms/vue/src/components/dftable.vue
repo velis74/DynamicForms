@@ -54,7 +54,7 @@ export default {
       return {
         rows: this.loadableRows(this.rows),
         columns: this.columns.map((c) => new TableColumn(c)),
-        actions: new ActionsHandler(this.actions, this.showModal, this.uuid),
+        actions: new ActionsHandler(this.actions, this.showModal, this.uuid, this),
         loading: this.loading,
         noDataString: 'No data',
         editDialogTitle: 'Test dialog',
@@ -163,18 +163,27 @@ export default {
       if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
         this.executeTableAction(payload.action, payload.data, payload.modal, {});
       } else {
-        const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
-        if (func) {
-          let params = {};
-          try {
-            params = payload.action.action.params;
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-          const data = { context: this, ...payload };
-          if (params) {
-            func.apply(params, [data]);
-          } else {
-            func(data);
+        const action = payload.action ? payload.action.action : null;
+        if (action === null) return; // Action is empty or not there, nothing will be executed
+
+        if (action.href) {
+          // action is a link to a subpage or to a router path
+          // we will do nothing because the action was already rendered as a link
+        } else {
+          // Action is a call to a function with some parameters
+          const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
+          if (func) {
+            let params = {};
+            try {
+              params = payload.action.action.params;
+              // eslint-disable-next-line no-empty
+            } catch (e) {}
+            const data = { context: this, ...payload };
+            if (params) {
+              func.apply(params, [data]);
+            } else {
+              func(data);
+            }
           }
         }
       }
