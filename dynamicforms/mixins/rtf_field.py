@@ -12,7 +12,7 @@ class RTFFieldMixin(object):
 
     def to_representation(self, instance, row_data=None):
         self.style.update(input_type='input')
-        self.render_params['form'] = 'df-widget-ckeditor'
+        self.render_params['form'] = 'DFWidgetCKEditor'
         if not self.parent.is_filter:
             self.style.update({'base_template': 'rtf_field.html'})
         if self.is_rendering_to_list and not self.parent.is_filter and self.parse:

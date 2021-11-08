@@ -15,7 +15,7 @@ class ClassAssemblyDict:
     and assemble response from keys as defined in this dict. Any keys not found in higher MRO levels will be populated
     from lower ones.
     See e.g. EmailField and Field mappings below: EmailField will return a dict with three members,
-      two of them from Field mapping: dict(form='df-widget-input', input_type='email', table='df-tablecell-plaintext'),
+      two of them from Field mapping: dict(form='DFWidgetInput', input_type='email', table='df-tablecell-plaintext'),
     raises a KeyError if nothing matches
     """
 
