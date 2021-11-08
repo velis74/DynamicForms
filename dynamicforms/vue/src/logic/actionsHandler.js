@@ -2,11 +2,15 @@
 import eventBus from './eventBus';
 
 class ActionsHandler {
-  constructor(actions, showModal, tableUuid) {
+  constructor(actions, showModal, tableUuid, routerComponent) {
     this.actions = actions;
     this.showModal = showModal; // method to call for showing medal dialog with item editor
     this.tableUuid = tableUuid;
     this.filterCache = {}; // contains cached .filter results
+    let cpnt = routerComponent;
+    while (!cpnt.$router && cpnt.$parent) cpnt = cpnt.$parent;
+    this.$router = cpnt.$router;
+    this.decorateActions();
   }
 
   /**
@@ -15,6 +19,22 @@ class ActionsHandler {
    */
   get list() {
     return Object.values(this.actions);
+  }
+
+  decorateActions() {
+    Object.keys(this.actions).map((key) => {
+      const action = this.actions[key];
+      if (action.action && action.action.href) {
+        action.elementType = 'a';
+        let href = action.action.href;
+        if (action.action.router_name) href = this.$router.resolve({ name: action.action.href }).href;
+        action.bindAttrs = { href };
+      } else {
+        action.elementType = 'div';
+        action.bindAttrs = {};
+      }
+      return action;
+    });
   }
 
   /**
@@ -34,7 +54,7 @@ class ActionsHandler {
           .reduce((obj, item) => {
             obj[item.name] = this.actions[item.name];
             return obj;
-          }, {}), this.showModal, this.tableUuid,
+          }, {}), this.showModal, this.tableUuid, this,
       );
     }
     return this.filterCache[cacheKey];

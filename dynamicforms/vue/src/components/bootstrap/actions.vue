@@ -1,15 +1,17 @@
 <template>
   <div v-if="actions.list.length > 0" class="actions-holder">
-    <div
+    <component
+      :is="action.elementType"
       v-for="action in actions.list"
       :key="action.name + action.icon"
       class="btn btn-sm btn-info text-nowrap dynamicforms-actioncontrol button"
       :name="'btn-' + action.name"
+      v-bind="action.bindAttrs"
       @click.stop="actions.exec($event, action, row)"
     >
       <IonIcon class="d-inline-block" :name="action.icon"/>
       <span class="d-none d-md-inline-block">{{ action.label }}</span>
-    </div>
+    </component>
   </div>
 </template>
 

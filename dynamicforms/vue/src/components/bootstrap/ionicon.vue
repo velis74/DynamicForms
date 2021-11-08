@@ -39,8 +39,12 @@ export default {
         this.loaded_svg = window.cache_ionicon[name];
       } else {
         this.loaded_svg = '&hellip;';
-        window.cache_ionicon[name] = apiClient.get(`https://unpkg.com/ionicons@5.5.1/dist/svg/${name}.svg`);
+        // if icon name contains a '/' character, we assume it's a local resource, otherwise an ion icon
+        const url = name.indexOf('/') > -1 ? name : `https://unpkg.com/ionicons@5.5.1/dist/svg/${name}.svg`;
+        window.cache_ionicon[name] = apiClient.get(url);
         window.cache_ionicon[name].then((res) => {
+          // remove the title attribute because it's messing with selenium getting element text (title is included)
+          // this makes getting button text much harder, especially because this icon is lazy-loading
           // eslint-disable-next-line no-multi-assign
           this.loaded_svg = window.cache_ionicon[name] = res.data.replace(/<title>.*<\/title>/i, '');
         });
