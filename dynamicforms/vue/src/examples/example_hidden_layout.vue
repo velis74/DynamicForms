@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 import DFFormLayout from '../components/bootstrap/form/dfformlayout.vue';
 import DisplayMode from '../logic/displayMode';
 
@@ -20,7 +22,7 @@ export default {
     fields() {
       const res = {};
       this.rows.forEach((row) => {
-        row.forEach((column) => {
+        _.each(row.columns, (column) => {
           res[column.field.name] = column.field;
         });
       });

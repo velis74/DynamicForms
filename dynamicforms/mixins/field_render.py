@@ -87,7 +87,7 @@ class FieldRenderMixin(object):
 
         # render_params need not only include form renderer and table formatting function. add anything you need!
         render_params = render_params or {}
-        render_params.setdefault('form', 'df-widget-input')
+        render_params.setdefault('form', 'DFWidgetInput')
         render_params.setdefault('table', 'df-tablecell-plaintext')
         render_params.setdefault('input_type', 'text')
         render_params.setdefault('field_class', 'form-control')
