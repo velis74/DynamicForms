@@ -1,6 +1,7 @@
 import os
 
 from parameterized import parameterized
+from selenium.webdriver.common.by import By
 
 from setup.settings import BASE_DIR, MEDIA_ROOT
 from .select import Select
@@ -23,9 +24,9 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         # Go to advanced-fields html and check if there's a "+ Add" button
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btn = header.find_element_by_class_name("btn")
+        add_btn = header.find_element(By.CLASS_NAME, "btn")
         if add_btn.tag_name == 'div':
-            btn_text = self.get_element_text(add_btn.find_element_by_tag_name('span'))
+            btn_text = self.get_element_text(add_btn.find_element(By.TAG_NAME, 'span'))
         else:
             btn_text = self.get_element_text(add_btn)
         self.assertEqual(btn_text, "+ Add")
@@ -33,7 +34,7 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name("td")), "No data")
+        self.assertEqual(self.get_element_text(rows[0].find_element(By.TAG_NAME, "td")), "No data")
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -46,14 +47,14 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0
 
-        form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
+        form = dialog.find_element(By.ID, modal_serializer_id)
+        containers = form.find_elements(By.TAG_NAME, "div")
         for container in containers:
             container_id = container.get_attribute("id")
             if container_id.startswith("container-"):
                 field_id = container_id.split('-', 1)[1]
-                field = container.find_element_by_id(field_id)
-                label = container.find_element_by_id("label-" + field_id)
+                field = container.find_element(By.ID, field_id)
+                label = container.find_element(By.ID, "label-" + field_id)
 
                 field_count += 1
                 label_text = self.get_element_text(label)
@@ -90,14 +91,14 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
                     select.select_by_value(select.value_from_text('Relation object 5'))
                 # StringRelatedField is read only with primary_key_related_field as source and is not shown in dialog
                 elif label_text == "File field" and renderer == 'html':
-                    container.find_element_by_name("file_field").send_keys(self.file_for_upload)
+                    container.find_element(By.NAME, "file_field").send_keys(self.file_for_upload)
                 elif label_text == 'File field two' and renderer == 'component':
-                    container.find_element_by_name("file_field_two").send_keys(self.file_for_upload)
+                    container.find_element(By.NAME, "file_field_two").send_keys(self.file_for_upload)
                 else:
                     field_count -= 1
 
         self.assertEqual(field_count, 7)
-        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
+        dialog.find_element(By.ID, ('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
@@ -106,7 +107,7 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
 
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = rows[0].find_elements_by_tag_name("td")
+        cells = rows[0].find_elements(By.TAG_NAME, "td")
         self.assertEqual(len(cells), 12)
 
         # Check for relations
@@ -118,21 +119,21 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
-        select = Select(dialog.find_element_by_name("choice_field"))
+        select = Select(dialog.find_element(By.NAME, "choice_field"))
         select.select_by_value(select.value_from_text('Choice 2'))
 
-        select = Select(dialog.find_element_by_name("primary_key_related_field"))
+        select = Select(dialog.find_element(By.NAME, "primary_key_related_field"))
         select.select_by_value(select.value_from_text('Relation object 9'))
 
         # Submit
-        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
+        dialog.find_element(By.ID, ('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         # TODO: remove following line when task for auto refresh is done.
         self.browser.refresh()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = rows[0].find_elements_by_tag_name("td")
+        cells = rows[0].find_elements(By.TAG_NAME, "td")
         self.assertEqual(len(cells), 12)
 
         # Check for changed values
@@ -145,26 +146,26 @@ class AdvancedFieldsTest(WaitingStaticLiveServerTestCase):
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         # Change regex field to throw error
-        regex_field = dialog.find_element_by_name("regex_field")
+        regex_field = dialog.find_element(By.NAME, "regex_field")
         regex_field.clear()
         regex_field.send_keys("Test error")
 
         # Submit
-        dialog.find_element_by_id(('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
+        dialog.find_element(By.ID, ('save-' if renderer == 'html' else 'submit-') + modal_serializer_id).click()
 
         if renderer == 'html':
             self.wait_for_modal_dialog_disapear(modal_serializer_id)
         # Check for errors
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        errors = dialog.find_elements_by_class_name("invalid-feedback")
+        errors = dialog.find_elements(By.CLASS_NAME, "invalid-feedback")
         # Bootstrap v3
         if not errors:
-            errors = dialog.find_elements_by_class_name("help-block")
+            errors = dialog.find_elements(By.CLASS_NAME, "help-block")
 
         # jQueryUI
         if not errors:
-            errors = dialog.find_elements_by_class_name("ui-error-span")
+            errors = dialog.find_elements(By.CLASS_NAME, "ui-error-span")
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].get_attribute("innerHTML"),
                          "This value does not match the required pattern (?&lt;=abc)def.")

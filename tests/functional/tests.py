@@ -20,35 +20,35 @@ class WriteOnlyAndTaggingTest(WaitingStaticLiveServerTestCase):
         af = AdvancedFields.objects.create(regex_field='abcdef', choice_field='123456')
         self.browser.get(self.live_server_url + '/write-only-fields.' + renderer)
         table = self.get_table_body(whole_table=True)
-        header = table.find_elements_by_css_selector('thead tr th')
+        header = table.find_elements(By.CSS_SELECTOR, 'thead tr th')
         self.assertEqual(len(header), 3)
         for idx, th in enumerate(header):
             if idx == 1:
                 self.assertEqual(th.text.strip().replace(' ', ''), 'Shown↕')
             else:
                 self.assertNotEqual(th.text.strip(), 'Hidden')
-        body = table.find_elements_by_css_selector('tbody tr td')
+        body = table.find_elements(By.CSS_SELECTOR, 'tbody tr td')
         self.assertEqual(len(body), 3)
-        self.assertNotEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="choice_field"]')), 0)
-        self.assertEqual(len(table.find_elements_by_css_selector('tbody tr td[data-name="regex_field"]')), 0)
+        self.assertNotEqual(len(table.find_elements(By.CSS_SELECTOR, 'tbody tr td[data-name="choice_field"]')), 0)
+        self.assertEqual(len(table.find_elements(By.CSS_SELECTOR, 'tbody tr td[data-name="regex_field"]')), 0)
         af.delete()
 
     @parameterized.expand(['html', 'component'])
     def test_choice_allow_tags_fields(self, renderer):
         self.browser.get(self.live_server_url + '/choice-allow-tags-fields.' + renderer)
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btn = header.find_elements_by_class_name('btn')
+        add_btn = header.find_elements(By.CLASS_NAME, 'btn')
         add_btn[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_tag_name("div")
+        form = dialog.find_element(By.ID, modal_serializer_id)
+        containers = form.find_elements(By.TAG_NAME, "div")
         for container in containers:
             container_id = container.get_attribute("id")
             if container_id.startswith("container-"):
                 field_id = container_id.split('-', 1)[1]
-                label = container.find_element_by_id("label-" + field_id)
-                field = container.find_element_by_id(field_id)
+                label = container.find_element(By.ID, "label-" + field_id)
+                field = container.find_element(By.ID, field_id)
 
                 label_text = self.get_element_text(label)
 
@@ -66,7 +66,7 @@ class WriteOnlyAndTaggingTest(WaitingStaticLiveServerTestCase):
         WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2) \
             .until(EC.element_to_be_clickable((By.ID, btn_element_id)))
 
-        dialog.find_element_by_id(btn_element_id).click()
+        dialog.find_element(By.ID, btn_element_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
         rows = self.get_table_body(expected_rows=1)

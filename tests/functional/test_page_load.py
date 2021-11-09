@@ -2,6 +2,7 @@ import time
 
 from django.urls import reverse
 from parameterized import parameterized
+from selenium.webdriver.common.by import By
 
 from tests.functional.selenium_test_case import WaitingStaticLiveServerTestCase
 from tests.request_sync import RequestSyncMiddleware
@@ -15,8 +16,8 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
     def test_validated_list(self, renderer):
         with RequestSyncMiddleware.add_sync_url_mutex('page-load', 1):
             self.browser.get(self.live_server_url + reverse('page-load-list', args=[renderer]))
-            tbody = self.browser.find_element_by_tag_name('tbody')
-            new_num_elements = num_elements = len(tbody.find_elements_by_tag_name('tr'))
+            tbody = self.browser.find_element(By.TAG_NAME, 'tbody')
+            new_num_elements = num_elements = len(tbody.find_elements(By.TAG_NAME, 'tr'))
             self.assertEqual(num_elements, 30, 'Initial page load should contain 30 data rows')
 
         def load_next():
@@ -26,7 +27,7 @@ class PageLoadFormTest(WaitingStaticLiveServerTestCase):
             while time.time() < tim + 2 and new_num_elements == num_elements:
                 # we wait for 5 seconds for number of elements to update on page
                 time.sleep(.1)
-                new_num_elements = len(tbody.find_elements_by_tag_name('tr'))
+                new_num_elements = len(tbody.find_elements(By.TAG_NAME, 'tr'))
 
         load_next()
         self.assertGreater(
