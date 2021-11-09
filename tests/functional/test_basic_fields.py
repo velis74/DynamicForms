@@ -1,6 +1,7 @@
 import time
 
 from parameterized import parameterized
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from .selenium_test_case import Browsers, MAX_WAIT, WaitingStaticLiveServerTestCase
@@ -14,14 +15,14 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # Go to basic-fields html and check if there's a "+ Add" button
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btn = header.find_element_by_name('btn-add')
-        md_btn = header.find_element_by_name('btn-modal_dialog')
+        add_btn = header.find_element(By.NAME, 'btn-add')
+        md_btn = header.find_element(By.NAME, 'btn-modal_dialog')
         self.assertEqual(self.get_element_text(add_btn), '+ Add')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element(By.TAG_NAME, 'td')), 'No data')
 
         # ---------------------------------------------------------------------------------------------------------#
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
@@ -30,7 +31,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         if renderer == 'html':
             md_btn.click()
             dialog, modal_serializer_id = self.wait_for_modal_dialog()
-            dialog.find_element_by_id('dlg-btn-ok').click()
+            dialog.find_element(By.ID, 'dlg-btn-ok').click()
             alert = self.browser.switch_to.alert
             self.assertEqual(alert.text, 'Clicked OK button')
             alert.accept()
@@ -43,14 +44,14 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0
 
-        form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_xpath('//div[starts-with(@id, "container-")]')
+        form = dialog.find_element(By.ID, modal_serializer_id)
+        containers = form.find_elements(By.XPATH, '//div[starts-with(@id, "container-")]')
         for container in containers:
             container_id = container.get_attribute('id')
             if container_id.startswith('container-'):
                 field_id = container_id.split('-', 1)[1]
-                label = container.find_element_by_id("label-" + field_id)
-                field = container.find_element_by_id(field_id)
+                label = container.find_element(By.ID, "label-" + field_id)
+                field = container.find_element(By.ID, field_id)
 
                 field_count += 1
                 label_text = self.get_element_text(label)
@@ -141,7 +142,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                     self.initial_check(field, '', 'password_field', 'password')
                     field.send_keys('password')
                     id_attr = field.get_attribute('id')
-                    container.find_element_by_id('pwf-' + id_attr).click()
+                    container.find_element(By.ID, 'pwf-' + id_attr).click()
                     self.assertEqual('text', field.get_attribute('type'))
                 else:
                     field_count -= 1
@@ -149,12 +150,12 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(field_count, 16)
 
         save_button_prefix = "save-" if renderer == 'html' else 'submit-'
-        dialog.find_element_by_id(save_button_prefix + modal_serializer_id).click()
+        dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
         time.sleep(1)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = rows[0].find_elements_by_tag_name("td")
+        cells = rows[0].find_elements(By.TAG_NAME, "td")
         self.assertEqual(len(cells), 18)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
@@ -162,20 +163,20 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
 
         # Change email, url, uuid, number, datetime, date and time fields to throw errors
-        dialog.find_element_by_name("email_field").send_keys("Test error")
-        dialog.find_element_by_name("url_field").send_keys("Test error")
-        dialog.find_element_by_name("uuid_field").send_keys("Test error")
-        dialog.find_element_by_name("integer_field").send_keys("Test error")
+        dialog.find_element(By.NAME, "email_field").send_keys("Test error")
+        dialog.find_element(By.NAME, "url_field").send_keys("Test error")
+        dialog.find_element(By.NAME, "uuid_field").send_keys("Test error")
+        dialog.find_element(By.NAME, "integer_field").send_keys("Test error")
         if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-            dialog.find_element_by_name("datetime_field").send_keys("1111111111")
-            dialog.find_element_by_name("date_field").send_keys("1111111111")
-            dialog.find_element_by_name("time_field").send_keys(Keys.DELETE)
+            dialog.find_element(By.NAME, "datetime_field").send_keys("1111111111")
+            dialog.find_element(By.NAME, "date_field").send_keys("1111111111")
+            dialog.find_element(By.NAME, "time_field").send_keys(Keys.DELETE)
         elif self.selected_browser == Browsers.EDGE:
             self.update_edge_field(self.get_field_id_by_name(dialog, "datetime_field"), "1111111111")
             self.update_edge_field(self.get_field_id_by_name(dialog, "date_field"), "1111111111")
             self.update_edge_field(self.get_field_id_by_name(dialog, "time_field"), "1111111111")
         elif self.selected_browser in (Browsers.IE, Browsers.FIREFOX):
-            dt_field = dialog.find_element_by_name("datetime_field")
+            dt_field = dialog.find_element(By.NAME, "datetime_field")
             dt_field.send_keys('09/1/2017')
             dt_field.send_keys(Keys.TAB)
             dt_field.send_keys('07:14')
@@ -188,15 +189,15 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             self.clear_input(dt_field)
             dt_field.send_keys(Keys.TAB)
             self.clear_input(dt_field)
-            self.clear_input(dialog.find_element_by_name("date_field"))
-            self.clear_input(dialog.find_element_by_name("time_field"))
+            self.clear_input(dialog.find_element(By.NAME, "date_field"))
+            self.clear_input(dialog.find_element(By.NAME, "time_field"))
         else:
-            dialog.find_element_by_name("datetime_field").send_keys("Test error")
-            dialog.find_element_by_name("date_field").send_keys("Test error")
-            dialog.find_element_by_name("time_field").send_keys("Test error")
+            dialog.find_element(By.NAME, "datetime_field").send_keys("Test error")
+            dialog.find_element(By.NAME, "date_field").send_keys("Test error")
+            dialog.find_element(By.NAME, "time_field").send_keys("Test error")
 
         # Submit
-        dialog.find_element_by_id(save_button_prefix + modal_serializer_id).click()
+        dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
         if renderer == 'html':
             self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
@@ -205,13 +206,13 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
         tim = time.time()
         while True:
-            errors = dialog.find_elements_by_class_name("invalid-feedback")
+            errors = dialog.find_elements(By.CLASS_NAME, "invalid-feedback")
             # Bootstrap v3
             if not errors:
-                errors = dialog.find_elements_by_class_name("help-block")
+                errors = dialog.find_elements(By.CLASS_NAME, "help-block")
             # jQueryUI
             if not errors:
-                errors = dialog.find_elements_by_class_name("ui-error-span")
+                errors = dialog.find_elements(By.CLASS_NAME, "ui-error-span")
 
             if errors or renderer != 'component' or time.time() > tim + MAX_WAIT:
                 break

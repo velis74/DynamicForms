@@ -1,5 +1,6 @@
 from django.urls import reverse
 from parameterized import parameterized
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from tests.functional.select import Select
@@ -12,12 +13,12 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
     def test_hidden_fields(self, renderer):
 
         def _check_shown(show_note, show_unit, show_int, show_qty, show_cst, show_add):
-            unit = Select(form.find_element_by_css_selector('[name="unit"]'))
-            int_fld = form.find_element_by_css_selector('input[name="int_fld"]')
-            qty_fld = form.find_element_by_css_selector('input[name="qty_fld"]')
-            cst_fld = form.find_element_by_css_selector('input[name="cst_fld"]')
-            add_text = form.find_element_by_css_selector('input[name="additional_text"]')
-            add_container = form.find_element_by_id(f'container-{add_text.get_attribute("id")}')
+            unit = Select(form.find_element(By.CSS_SELECTOR, '[name="unit"]'))
+            int_fld = form.find_element(By.CSS_SELECTOR, 'input[name="int_fld"]')
+            qty_fld = form.find_element(By.CSS_SELECTOR, 'input[name="qty_fld"]')
+            cst_fld = form.find_element(By.CSS_SELECTOR, 'input[name="cst_fld"]')
+            add_text = form.find_element(By.CSS_SELECTOR, 'input[name="additional_text"]')
+            add_container = form.find_element(By.ID, f'container-{add_text.get_attribute("id")}')
 
             self.assertEqual(note.is_displayed(), show_note)
             self.assertEqual(note_container.is_displayed(), show_note)
@@ -31,9 +32,9 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + reverse('hidden-fields-list', args=[renderer]))
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btn = header.find_element_by_class_name("btn")
+        add_btn = header.find_element(By.CLASS_NAME, "btn")
         if add_btn.tag_name == 'div':
-            btn_text = self.get_element_text(add_btn.find_element_by_tag_name('span'))
+            btn_text = self.get_element_text(add_btn.find_element(By.TAG_NAME, 'span'))
         else:
             btn_text = self.get_element_text(add_btn)
         self.assertEqual(btn_text, "+ Add")
@@ -41,9 +42,9 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        form = dialog.find_element_by_id(modal_serializer_id)
-        note = form.find_element_by_css_selector('input[name="note"]')
-        note_container = form.find_element_by_id(f'container-{note.get_attribute("id")}')
+        form = dialog.find_element(By.ID, modal_serializer_id)
+        note = form.find_element(By.CSS_SELECTOR, 'input[name="note"]')
+        note_container = form.find_element(By.ID, f'container-{note.get_attribute("id")}')
 
         _check_shown(True, True, False, False, False, True)
         # If we enter "abc" unit field should be hidden
@@ -57,7 +58,7 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
         _check_shown(True, True, False, False, False, True)
 
         # Select first option. No additional fields should be shown
-        unit = Select(form.find_element_by_css_selector('[name="unit"]'))
+        unit = Select(form.find_element(By.CSS_SELECTOR, '[name="unit"]'))
         unit.select_by_index(0)
         _check_shown(True, True, False, False, False, True)
 

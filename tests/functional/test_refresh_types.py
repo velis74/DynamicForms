@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from examples.models import RefreshType
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 
@@ -6,19 +8,19 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
 
     def add_refresh_types_record(self, btn_position, text, add_second_record=None):
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
-        add_btns = header.find_elements_by_class_name('btn')
+        add_btns = header.find_elements(By.CLASS_NAME, 'btn')
         add_btns[btn_position].click()
 
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
 
-        form = dialog.find_element_by_id(modal_serializer_id)
-        containers = form.find_elements_by_css_selector("div[id^=container-]")
+        form = dialog.find_element(By.ID, modal_serializer_id)
+        containers = form.find_elements(By.CSS_SELECTOR, "div[id^=container-]")
         for container in containers:
             container_id = container.get_attribute("id")
             if container_id.startswith("container-"):
                 field_id = container_id.split('-', 1)[1]
-                label = container.find_element_by_id("label-" + field_id)
-                field = container.find_element_by_id(field_id)
+                label = container.find_element(By.ID, "label-" + field_id)
+                field = container.find_element(By.ID, field_id)
 
                 if self.get_element_text(label) == "Description":
                     self.initial_check(field, "", "description", "text")
@@ -32,7 +34,7 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
                 description="Refresh type extra"
             )
 
-        dialog.find_element_by_id("save-" + modal_serializer_id).click()
+        dialog.find_element(By.ID, "save-" + modal_serializer_id).click()
 
         if btn_position == 5:  # Custom function only
             alert = self.get_alert()
@@ -48,7 +50,7 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
 
-        add_btns = header.find_elements_by_class_name('btn')
+        add_btns = header.find_elements(By.CLASS_NAME, 'btn')
         self.assertEqual(self.get_element_text(add_btns[0]), '+ Add (refresh record)')
         self.assertEqual(self.get_element_text(add_btns[1]), '+ Add (refresh table)')
         self.assertEqual(self.get_element_text(add_btns[2]), '+ Add (no refresh)')
@@ -59,20 +61,20 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
         # Check if there's a "no data" table row
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
+        self.assertEqual(self.get_element_text(rows[0].find_element(By.TAG_NAME, 'td')), 'No data')
 
         # Test Add action with refreshType='record'
         self.add_refresh_types_record(0, 'Refresh record')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
-        cells = rows[0].find_elements_by_tag_name("td")
+        cells = rows[0].find_elements(By.TAG_NAME, "td")
         self.assertEqual(len(cells), 4)
 
         # Test Add action with refreshType='table'
         self.add_refresh_types_record(1, 'Refresh table')
         rows = self.get_table_body()
         self.assertEqual(len(rows), 2)
-        rows[0].find_elements_by_tag_name("td")
+        rows[0].find_elements(By.TAG_NAME, "td")
 
         self.add_refresh_types_record(1, 'Refresh table 2', add_second_record=True)
         rows = self.get_table_body()
@@ -113,19 +115,19 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 8)
 
         # Test Delete action with refreshType='record'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[0].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 7)
 
         # Test Delete action with refreshType='table'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[1].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 6)
 
         # Test Delete action with refreshType='no refresh'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[2].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 6)
@@ -136,13 +138,13 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 5)
 
         # Test Delete action with refreshType='reload'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[3].click()
         rows = self.get_table_body()
         self.assertEqual(len(rows), 4)
 
         # Test Delete action with refreshType='redirect'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[4].click()
         # Redirection to /validated.html defined in action happens
         redirect_url = self.get_current_url()
@@ -153,7 +155,7 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='custom function'
-        del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
+        del_btns = rows[0].find_elements(By.TAG_NAME, 'td')[3].find_elements(By.CLASS_NAME, 'btn')
         del_btns[5].click()
 
         alert = self.get_alert()
