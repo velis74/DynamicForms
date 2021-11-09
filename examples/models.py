@@ -83,6 +83,7 @@ class Filter(models.Model):
         (3, 'Choice 4'),), help_text='Integer field with choices', verbose_name='Integer field with choices')
     bool_field = models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')
     name = models.CharField(max_length=20, help_text='Name field', verbose_name='Name field', null=True, blank=True)
+    rtf_field = models.TextField(help_text="RTF Field", verbose_name="RTF Field", null=True, blank=True)
 
 
 class BasicFields(models.Model):
@@ -189,4 +190,3 @@ class RefreshType(models.Model):
 class Document(models.Model):
     description = models.CharField(max_length=30, help_text='Document description')
     file = models.FileField(upload_to='documents/', blank=False)
-

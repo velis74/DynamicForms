@@ -54,9 +54,18 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         char_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="char_field"]')
         datetime_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="datetime_field"]')
         int_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="int_field"]')
+        rtf_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="rtf_field"]')
         if not is_component_renderer:
             int_choices_field = filter_row.find_element(By.CSS_SELECTOR, 'select[name="int_choice_field"]')
         bool_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="bool_field"]')
+
+        self.wait_data_loading(loading_row, skip=is_component_renderer)
+        rtf_field.send_keys("def")
+        filter_btn.click()
+        self.wait_data_loading(loading_row, skip=is_component_renderer)
+        self.assertFalse(self.check_data("1"), "Row 1 shouldn\'t be shown")
+        self.clear_input(rtf_field)
+        filter_btn.click()
 
         self.wait_data_loading(loading_row, skip=is_component_renderer)
         char_field.send_keys("def")
