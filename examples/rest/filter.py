@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from dynamicforms import serializers, viewsets
 from dynamicforms.action import Actions, TableAction, TablePosition
+from dynamicforms.fields import RTFField
 from examples.rest.fields.name_field import NameTestField
 from ..models import Filter
 
@@ -35,6 +36,7 @@ class FilterSerializer(serializers.ModelSerializer):
         source='*',
 
     )
+    rtf_field = RTFField()
 
     class Meta:
         model = Filter
