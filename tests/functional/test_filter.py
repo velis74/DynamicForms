@@ -89,7 +89,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
             if self.github_actions:
                 datetime_field.send_keys("AM")
         elif self.selected_browser in (Browsers.FIREFOX,):
-            datetime_field.send_keys(date_field.datetime_field.strftime("%Y-%m-%dT"))
+            datetime_field.send_keys(date_field.datetime_field.strftime("%d/%m/%Y"))
             datetime_field.send_keys(Keys.TAB)
             datetime_field.send_keys(date_field.datetime_field.strftime("%H:%M"))
         else:
