@@ -2,6 +2,8 @@ import random
 
 import django.utils.timezone
 
+from setup.settings import TESTING
+
 
 def add_relation(Relation):
     if not Relation.objects.all().count():
@@ -15,10 +17,12 @@ def add_filter(Filter):
         char_field = ['abc', 'def', 'ghi', 'abcdef', 'abcghi', 'defghi', 'abcdefghi']
         for i in range(1, 100 + 1):
             date_now = date_now + django.utils.timezone.timedelta(hours=3)
-            Filter.objects.create(
-                char_field='%s %d' % (char_field[(i - 1) % 7], i), datetime_field=date_now, id=i,
-                int_field=((i - 1) % 10) + 1, int_choice_field=((i - 1) % 4), bool_field=((i - 1) % 10) > 4
-            )
+            filter_data: dict = dict(char_field='%s %d' % (char_field[(i - 1) % 7], i), datetime_field=date_now,
+                                     int_field=((i - 1) % 10) + 1, int_choice_field=((i - 1) % 4),
+                                     bool_field=((i - 1) % 10) > 4)
+            if TESTING:
+                filter_data[Filter._meta.pk.name] = i
+            Filter.objects.create(**filter_data)
 
 
 def add_page_load(PageLoad):
