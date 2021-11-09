@@ -16,7 +16,7 @@ def add_filter(Filter):
         for i in range(1, 100 + 1):
             date_now = date_now + django.utils.timezone.timedelta(hours=3)
             Filter.objects.create(
-                char_field='%s %d' % (char_field[(i - 1) % 7], i), datetime_field=date_now,
+                char_field='%s %d' % (char_field[(i - 1) % 7], i), datetime_field=date_now, id=i,
                 int_field=((i - 1) % 10) + 1, int_choice_field=((i - 1) % 4), bool_field=((i - 1) % 10) > 4
             )
 
