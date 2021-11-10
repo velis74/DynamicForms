@@ -1,8 +1,6 @@
 from enum import IntEnum
-from datetime import time
 
 import pytz
-from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models

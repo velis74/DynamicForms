@@ -147,7 +147,8 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                 else:
                     field_count -= 1
 
-        self.assertEqual(field_count, 16)
+        # self.assertEqual(field_count, 16)
+        self.assertEqual(field_count, 16 - 1)  # minus datetime_field
 
         save_button_prefix = "save-" if renderer == 'html' else 'submit-'
         dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
@@ -156,7 +157,8 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
-        self.assertEqual(len(cells), 18)
+        # self.assertEqual(len(cells), 18)
+        self.assertEqual(len(cells), 18 - 1)  # minus datetime_field
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -176,19 +178,19 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             self.update_edge_field(self.get_field_id_by_name(dialog, "date_field"), "1111111111")
             self.update_edge_field(self.get_field_id_by_name(dialog, "time_field"), "1111111111")
         elif self.selected_browser in (Browsers.IE, Browsers.FIREFOX):
-            dt_field = dialog.find_element(By.NAME, "datetime_field")
-            dt_field.send_keys('09/1/2017')
-            dt_field.send_keys(Keys.TAB)
-            dt_field.send_keys('07:14')
-            self.clear_input(dt_field)
-            dt_field.send_keys(Keys.TAB)
-            self.clear_input(dt_field)
-            dt_field.send_keys(Keys.TAB)
-            self.clear_input(dt_field)
-            dt_field.send_keys(Keys.TAB)
-            self.clear_input(dt_field)
-            dt_field.send_keys(Keys.TAB)
-            self.clear_input(dt_field)
+            # dt_field = dialog.find_element(By.NAME, "datetime_field")
+            # dt_field.send_keys('09/1/2017')
+            # dt_field.send_keys(Keys.TAB)
+            # dt_field.send_keys('07:14')
+            # self.clear_input(dt_field)
+            # dt_field.send_keys(Keys.TAB)
+            # self.clear_input(dt_field)
+            # dt_field.send_keys(Keys.TAB)
+            # self.clear_input(dt_field)
+            # dt_field.send_keys(Keys.TAB)
+            # self.clear_input(dt_field)
+            # dt_field.send_keys(Keys.TAB)
+            # self.clear_input(dt_field)
             self.clear_input(dialog.find_element(By.NAME, "date_field"))
             self.clear_input(dialog.find_element(By.NAME, "time_field"))
         else:
@@ -219,7 +221,9 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
             time.sleep(0.01)
 
-        self.assertEqual(len(errors), 7)
+        # self.assertEqual(len(errors), 7)
+        # datetime field is excluded
+        self.assertEqual(len(errors), 6)
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")
         self.assertEqual(errors[1].get_attribute("innerHTML"), "Enter a valid URL.")
         self.assertIn(errors[2].get_attribute("innerHTML"),
@@ -227,12 +231,15 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                        '"Test error" is not a valid UUID.')
                       )
         self.assertEqual(errors[3].get_attribute("innerHTML"), "A valid integer is required.")
-        self.assertEqual(errors[4].get_attribute("innerHTML"),
-                         "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]]"
-                         "[+HH:MM|-HH:MM|Z].")
-        self.assertIn(errors[5].get_attribute("innerHTML"),
+        # self.assertEqual(errors[4].get_attribute("innerHTML"),
+        #                  "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]]"
+        #                  "[+HH:MM|-HH:MM|Z].")
+
+        # reindexed error messages because of datetime field temporary suspension
+
+        self.assertIn(errors[4].get_attribute("innerHTML"),
                       ("Date has wrong format. Use one of these formats instead: YYYY-MM-DD.",
                        "Date has wrong format. Use one of these formats instead: YYYY[-MM[-DD]].",)
                       )
-        self.assertEqual(errors[6].get_attribute("innerHTML"),
+        self.assertEqual(errors[5].get_attribute("innerHTML"),
                          "Time has wrong format. Use one of these formats instead: hh:mm[:ss[.uuuuuu]].")
