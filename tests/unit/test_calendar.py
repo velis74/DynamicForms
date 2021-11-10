@@ -11,7 +11,6 @@ from dynamicforms.template_render.mixins.util import convert_to_json_if
 class CalendarEventTest(APITestCase):
 
     def test_basic_operations(self):
-
         def get_json(response, expected_status):
             self.assertEqual(expected_status, response.status_code)
             if expected_status == status.HTTP_204_NO_CONTENT:
@@ -30,7 +29,7 @@ class CalendarEventTest(APITestCase):
         # Insert a new event
         event = dict(
             title='Party time', colour=0x000008,
-            date_from=datetime.date(2020, 1, 30), time_from=datetime.time(10,0),
+            date_from=datetime.date(2020, 1, 30), time_from=datetime.time(10, 0),
             date_to=datetime.date(2020, 1, 30), time_to=datetime.time(11, 0),
         )
 
