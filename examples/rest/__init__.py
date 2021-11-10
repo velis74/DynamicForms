@@ -13,6 +13,7 @@ from .relation import RelationViewset
 from .single_dialog import SingleDialogViewSet
 from .validated import ValidatedViewSet
 from .write_only_fields import WriteOnlyFieldsViewSet
+from .calendar import CalendarEventViewSet
 
 router = routers.DefaultRouter()
 router.register(r'hidden-fields', HiddenFieldsViewSet, 'hidden-fields')
@@ -29,3 +30,4 @@ router.register(r'choice-allow-tags-fields', ChoiceAllowTagsFieldsViewSet, 'choi
 router.register(r'calculated-css-class-for-table-row', CalculatedCssClassForTableRowViewSet,
                 'calculated-css-class-for-table-row')
 router.register(r'documents', DocumentsViewset, 'documents')
+router.register(r'calendar-event', CalendarEventViewSet, 'calendar-event')
