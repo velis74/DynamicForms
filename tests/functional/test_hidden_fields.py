@@ -1,3 +1,5 @@
+import time
+
 from django.urls import reverse
 from parameterized import parameterized
 from selenium.webdriver.common.by import By
@@ -30,6 +32,7 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
             self.assertEqual(add_container.is_displayed(), show_add)
 
         self.browser.get(self.live_server_url + reverse('hidden-fields-list', args=[renderer]))
+        time.sleep(2)
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btn = header.find_element(By.CLASS_NAME, "btn")
