@@ -273,6 +273,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         add_save_btn_prefix = 'save-' if renderer == 'html' else 'submit-'
 
         self.add_validated_record(add_btn_pos, 5, False, add_save_btn_prefix)
+        time.sleep(1)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
