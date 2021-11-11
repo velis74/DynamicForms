@@ -3,6 +3,8 @@
 #   tudi SETTINGS.TIME_FORMAT (no, in ostala dva tudi)
 # TODO: unit test za nested serializerje. Preveriti je tudi treba, če imajo field serializerji na voljo pravilne
 #   row_data zapise
+import time
+
 from parameterized import parameterized
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,6 +38,7 @@ class WriteOnlyAndTaggingTest(WaitingStaticLiveServerTestCase):
     @parameterized.expand(['html', 'component'])
     def test_choice_allow_tags_fields(self, renderer):
         self.browser.get(self.live_server_url + '/choice-allow-tags-fields.' + renderer)
+        time.sleep(2)
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btn = header.find_elements(By.CLASS_NAME, 'btn')
         add_btn[0].click()
