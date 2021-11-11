@@ -1,5 +1,3 @@
-import time
-
 from django.urls import reverse
 from parameterized import parameterized
 from selenium.webdriver.common.by import By
