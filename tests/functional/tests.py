@@ -71,7 +71,7 @@ class WriteOnlyAndTaggingTest(WaitingStaticLiveServerTestCase):
 
         dialog.find_element(By.ID, btn_element_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-
+        time.sleep(1)
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.check_row(
