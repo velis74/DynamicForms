@@ -1,11 +1,12 @@
+import datetime
+from datetime import time
 from enum import IntEnum
 
-import pytz
-from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from enumfields import EnumIntegerField
 
 
 class Validated(models.Model):
@@ -196,59 +197,40 @@ class Document(models.Model):
 
 
 class CalendarRecurrence(models.Model):
-    class Pattern(IntEnum):
-        Daily = 1
-        Weekly = 2
-        Monthly = 3
-        Yearly = 4
+    from .recurrence_utils import Pattern, date_range as dr_func
 
-    PATTERN_CHOICES = [(m.value, m.name) for m in Pattern]
-
-    date_from = models.DateField(verbose_name=_('Recurrence start'), null=False, blank=False)
-    date_to = models.DateField(verbose_name=_('Recurrence end'), null=False, blank=False)
-    pattern = models.IntegerField(verbose_name=_('Pattern'), choices=PATTERN_CHOICES, null=False, blank=False)
+    start_at = models.DateTimeField(verbose_name=_('Recurrence start'), null=False, blank=False)
+    end_at = models.DateTimeField(verbose_name=_('Recurrence end'), null=False, blank=False)
+    pattern = EnumIntegerField(Pattern, verbose_name=_('Pattern'), null=False, blank=False)
     recur = models.JSONField(verbose_name=_('Recur parameters'), null=False, blank=False)
-    """
-      Daily:
-        { every: int } 
-        - repeat every n days
-      Weekly:  
-        { every: int, weekdays: List[str] }
-        - every: repeat every n-th week 
-        - weekdays: list of two-character day codes for monday - sunday + holiday
-      Monthly:
-        { days: List[int|Union[weekday_modifier: Enum(first, last, second, third, fourth), weekday: str]] }
-        - days is a list of days in a month when this event is recurring
-        - the days can be specified as integers (e.g. 1 == 1st) or with a modifier (e.g. first we)
-      Yearly:
-        { dates: List[Union[int, int]] }
-        - dates is a list of day.month. in a year when the event occurs  
-    """
 
+    def date_range(self, cutoff_at: datetime.datetime):
+        recur = self.recur
+        if self.pattern == CalendarRecurrence.Pattern.Weekly:
+            recur = dict(self.recur)
+            recur['holidays'] = self.get_holidays()
+        return CalendarRecurrence.dr_func(self.start_at, self.end_at, cutoff_at, self.pattern, recur)
+
+    def get_holidays(self):
+        # not implemented yet
+        return set()
 
 class CalendarEvent(models.Model):
     title = models.CharField(max_length=80, verbose_name=_('Title'), null=False, blank=False)
     description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
     colour = models.IntegerField(verbose_name='Colour', null=True, blank=True)
-    date_from = models.DateField(verbose_name=_('From'), null=False, blank=False)
-    time_from = models.TimeField(verbose_name='', null=True, blank=True)
-    date_to = models.DateField(verbose_name=_('To'), null=False, blank=False)
-    time_to = models.TimeField(verbose_name='', null=True, blank=True)
+    start_at = models.DateTimeField(verbose_name=_('Start'), null=False, blank=False)
+    end_at = models.DateTimeField(verbose_name=_('End'), null=False, blank=False)
     recurrence = models.ForeignKey(CalendarRecurrence, verbose_name=_('Recurrence'), on_delete=models.PROTECT,
                                    related_name='events', null=True, blank=True)
 
     @property
     def all_day(self):
-        return self.time_from is None and self.time_to is None
-
-    def is_later_than(self, time: timezone.datetime):
-        tz = pytz.timezone(settings.TIME_ZONE)
-        my_time = timezone.datetime.combine(self.date_to, self.time_to or timezone.datetime.min.time(), tzinfo=tz)
-        return my_time > time
+        return self.start_at.time() == 0 and self.end_at.time == time(23, 59, 59, 999999)
 
     class Meta:
         indexes = [
-            models.Index(fields=('recurrence', 'date_from'))
+            models.Index(fields=('recurrence', 'start_at'))
         ]
 
 

@@ -1,72 +1,534 @@
 import datetime
 import json
 
+import pytz
 from django.urls import reverse
+from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from dynamicforms.template_render.mixins.util import convert_to_json_if
+from examples.models import CalendarEvent, CalendarRecurrence
+from examples.recurrence_utils import date_range_daily, date_range_monthly, date_range_weekly, date_range_yearly
 
 
-class CalendarEventTest(APITestCase):
+class CommonTestBase(APITestCase):
+
+    def get_json(self, response, expected_status):
+        if response.status_code == status.HTTP_400_BAD_REQUEST and response.status_code != expected_status:
+            print('You did something bad!!!')
+            print(response.content)
+        self.assertEqual(expected_status, response.status_code)
+        if expected_status == status.HTTP_204_NO_CONTENT:
+            return None
+        self.assertEqual('application/json', response['content-type'])
+        return json.loads(response.content.decode('utf-8'))
+
+    def encode_json(self, data):
+        return convert_to_json_if(data, True).encode('utf-8')
+
+    def retrieve_event_id(self, id: int):
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=id, format='json'))
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        return response
+
+    def check_event_as_expected(self, response: dict, expected_response: dict):
+        trimmed_response = {k: response[k] for k in expected_response.keys()}
+        if 'recurrence' in trimmed_response and trimmed_response['recurrence']:
+            trimmed_response['recurrence'] = {
+                k: trimmed_response['recurrence'][k] for k in expected_response['recurrence'].keys()
+            }
+        self.assertEqual(expected_response, trimmed_response)
+        self.assertIn('id', response)
+        inserted_id = response['id']
+        self.assertIsInstance(inserted_id, int)
+        return inserted_id
+
+
+class CalendarEventTest(CommonTestBase):
 
     def test_basic_operations(self):
-        def get_json(response, expected_status):
-            self.assertEqual(expected_status, response.status_code)
-            if expected_status == status.HTTP_204_NO_CONTENT:
-                return None
-            self.assertEqual('application/json', response['content-type'])
-            return json.loads(response.content.decode('utf-8'))
-
-        def encode_json(data):
-            return convert_to_json_if(event, True).encode('utf-8')
-
         # check that table is empty and the API is working
         event_url = reverse('calendar-event-list', args=['json'])
-        response = get_json(self.client.get(event_url), status.HTTP_200_OK)
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
         self.assertTrue(not response)  # we are expecting that there are no records in the events table
 
         # Insert a new event
         event = dict(
             title='Party time', colour=0x000008,
-            date_from=datetime.date(2020, 1, 30), time_from=datetime.time(10, 0),
-            date_to=datetime.date(2020, 1, 30), time_to=datetime.time(11, 0),
+            start_at=datetime.datetime(2020, 1, 30, 10, 0),
+            end_at=datetime.datetime(2020, 1, 30, 11, 0),
         )
 
-        response = get_json(
-            self.client.post(event_url, data=encode_json(event), content_type='application/json'),
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
             status.HTTP_201_CREATED
         )
         expected_response = dict(
             title='Party time', description=None, colour=0x000008,
-            date_from='2020-01-30', time_from='10:00:00', date_to='2020-01-30', time_to='11:00:00',
-            recurrence=None
+            start_at='2020-01-30T10:00:00Z', end_at='2020-01-30T11:00:00Z',
         )
         trimmed_response = {k: response[k] for k in expected_response.keys()}
         self.assertEqual(expected_response, trimmed_response)
         self.assertIn('id', response)
+        self.assertNotIn('recurrence', response)  # nested serializers don't get serialized when None
         inserted_id = response['id']
         self.assertIsInstance(inserted_id, int)
 
         # retrieve the new event
-        event_url = reverse('calendar-event-detail', kwargs=dict(pk=inserted_id, format='json'))
-        response = get_json(self.client.get(event_url), status.HTTP_200_OK)
-        self.assertTrue(response)
-        trimmed_response = {k: response[k] for k in expected_response.keys()}  # we reuse the expected result from above
-        self.assertEqual(expected_response, trimmed_response)
+        response = self.retrieve_event_id(inserted_id)
+        self.check_event_as_expected(response, expected_response)
 
         # patch the event, change only description
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=inserted_id, format='json'))
         event = dict(description='Let\'s rock this place!')
-        response = get_json(
-            self.client.patch(event_url, data=encode_json(event), content_type='application/json'),
+        response = self.get_json(
+            self.client.patch(event_url, data=self.encode_json(event), content_type='application/json'),
             status.HTTP_200_OK
         )
         expected_response['description'] = event['description']
-        trimmed_response = {k: response[k] for k in expected_response.keys()}
-        self.assertEqual(expected_response, trimmed_response)
+        self.check_event_as_expected(response, expected_response)
 
-        response = get_json(
+        # delete the event
+        response = self.get_json(
             self.client.delete(event_url),
             status.HTTP_204_NO_CONTENT
         )
         self.assertIsNone(response)
+
+
+class CalendarRecurrenceUtilsTest(CommonTestBase):
+
+    @parameterized.expand([(None,), (datetime.datetime(2021, 11, 17, 0, 0),)])
+    def test_recurrence_generator_daily(self, cutoff_at):
+        def D(d):
+            return datetime.date(2021, 11, d)
+
+        # first, let's test a daily generator, every single day
+        res = list(date_range_daily(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 11, 23, 16, 0), cutoff_at, 1
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)), map(D, range(13, 24)))
+        ))
+        self.assertEqual(res, expected_res)
+
+        # every three days
+        res = list(date_range_daily(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 11, 23, 16, 0), cutoff_at, 3
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)), (D(13), D(16), D(19), D(22)))
+        ))
+        self.assertEqual(res, expected_res)
+
+    @parameterized.expand([(None,), (datetime.datetime(2021, 11, 17, 0, 0),)])
+    def test_recurrence_generator_weekly(self, cutoff_at):
+        def D(d):
+            return datetime.date(2021, 11, d)
+
+        # first, we test a simple, repeat on various days of the week, pattern
+        res = list(date_range_weekly(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 11, 23, 16, 0), cutoff_at, 1,
+            ['Monday', 'Wednesday', 'Fr', 'Sun'], set()
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)),
+                (D(13), D(14), D(15), D(17), D(19), D(21), D(22)))
+        ))
+        self.assertEqual(res, expected_res)
+
+        # now we also try every other week
+        res = list(date_range_weekly(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 11, 23, 16, 0), cutoff_at, 2,
+            ['Mo'], set()
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)), (D(13), D(22)))
+        ))
+        self.assertEqual(res, expected_res)
+
+        # and holidays too
+        res = list(date_range_weekly(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 11, 23, 16, 0), cutoff_at, 2,
+            ['Mo', 'Ho'], {D(23)}
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)), (D(13), D(22), D(23)))
+        ))
+        self.assertEqual(res, expected_res)
+
+    @parameterized.expand([(None,), (datetime.datetime(2021, 11, 28, 0, 0),)])
+    def test_recurrence_generator_monthly(self, cutoff_at):
+        """
+        { days: List[int|Union[weekday_modifier: Enum(first, last, second, third, fourth), weekday: str]] }
+        - days is a list of days in a month when this event is recurring
+        - the days can be specified as integers (e.g. 1, 15, 23) or with a modifier (e.g. first we, 3rd thu, last fr)
+        """
+
+        def nov(d):
+            return datetime.datetime(2021, 11, d, 16, 0)
+
+        def dec(d):
+            return datetime.datetime(2021, 12, d, 16, 0)
+
+        # first, we test a simple, repeat on various days of the week, pattern
+        res = list(date_range_monthly(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2021, 12, 31, 16, 0), cutoff_at,
+            [5, 14, 22, 'first mo', 'last fr', ('2nd', 'tu')]
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)),
+                (nov(13), nov(14), nov(22), nov(26), dec(5), dec(6), dec(14), dec(22), dec(31)))
+        ))
+        self.assertEqual(res, expected_res)
+
+    @parameterized.expand([(None,), (datetime.datetime(2021, 12, 28, 0, 0),)])
+    def test_recurrence_generator_yearly(self, cutoff_at):
+        """
+        { dates: List[Tuple[int, int]] }
+        - dates is a list of (day, month). in a year when the event occurs
+        """
+
+        def D(y, m, d):
+            return datetime.datetime(y, m, d, 16, 0)
+
+        # first, we test a simple, repeat on various days of the week, pattern
+        res = list(date_range_yearly(
+            datetime.datetime(2021, 11, 13, 16, 0), datetime.datetime(2022, 9, 1, 16, 0), cutoff_at,
+            [(2, 5), (15, 6), (31, 7), (1, 10), (19, 11)]
+        ))
+        expected_res = list(filter(
+            lambda x: cutoff_at is None or x >= cutoff_at,
+            map(lambda x: datetime.datetime.combine(x, datetime.time(16, 0)),
+                (D(2021, 11, 13), D(2021, 11, 19), D(2022, 5, 2), D(2022, 6, 15), D(2022, 7, 31)))
+        ))
+        self.assertEqual(res, expected_res)
+
+
+class CalendarRecurrenceTest(CommonTestBase):
+
+    # noinspection PyTypedDict
+    def get_event_def(self, dates_iso: bool, skip_recurrence: bool = False):
+        start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
+        res = dict(
+            title='Party time', colour=0x000008,
+            start_at=start_at, end_at=start_at + datetime.timedelta(hours=1),
+            recurrence=dict(
+                start_at=start_at, end_at=start_at + datetime.timedelta(days=11),
+                pattern=CalendarRecurrence.Pattern.Weekly,
+                recur=dict(every=1, weekdays=['Mo', 'We', 'Su', 'Ho'])
+            )
+        )
+        if dates_iso:
+            res['start_at'] = res['start_at'].isoformat().replace('+00:00', 'Z')
+            res['end_at'] = res['end_at'].isoformat().replace('+00:00', 'Z')
+            res['recurrence']['start_at'] = res['recurrence']['start_at'].isoformat().replace('+00:00', 'Z')
+            res['recurrence']['end_at'] = res['recurrence']['end_at'].isoformat().replace('+00:00', 'Z')
+        if skip_recurrence:
+            res.pop('recurrence')
+        return res
+
+    def test_recurrence_basic(self):
+        # First we create a calendar event with a recurrence using models API
+        event = self.get_event_def(dates_iso=False)
+        event['recurrence'] = CalendarRecurrence.objects.create(**event['recurrence'])
+        cal_evnt = CalendarEvent.objects.create(**event)
+
+        # Get the created event from database
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(1, len(response))
+        response = response[0]  # Get the first record
+
+        expected_response = self.get_event_def(dates_iso=True, skip_recurrence=True)
+        self.check_event_as_expected(response, expected_response)
+
+        # Get the created event from database, this time in form mode
+        expected_response = self.get_event_def(dates_iso=True)
+        response = self.retrieve_event_id(cal_evnt.id)
+        self.check_event_as_expected(response, expected_response)
+
+        # remove the created event from database
+        cal_evnt.delete()
+        cal_evnt.recurrence.delete()  # this should fail once recurrence actually creates the additional events
+
+    def test_recurrence_post_get(self):
+        # Insert a new event via API
+        event = self.get_event_def(dates_iso=True)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        recurrence_id = response['recurrence']['id']
+        # First check if result of POST is as expected
+        expected_response = dict(event)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # check if all events were created as per recurrence
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(6, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+
+        # check all instances to be as they need to be
+        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+            response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+            expected_response['id'] = instance_id
+            delta = datetime.timedelta(days=d)
+            expected_response['start_at'] = (datetime.datetime(2020, 1, 30, 10) + delta).isoformat() + 'Z'
+            expected_response['end_at'] = (datetime.datetime(2020, 1, 30, 11) + delta).isoformat() + 'Z'
+            self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+            self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # Then retrieve the record from the API
+        response = self.retrieve_event_id(instance_ids[2])  # 3rd instance is the one on 3.2.2020
+        expected_response['id'] = instance_ids[2]
+        expected_response['start_at'] = '2020-02-03T10:00:00Z'
+        expected_response['end_at'] = '2020-02-03T11:00:00Z'
+        self.assertEqual(instance_ids[2], self.check_event_as_expected(response, expected_response))
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        for change_this_record_only in (True, False):
+            # change one event only or this event and all events after it
+            event = dict(expected_response)
+            event['description'] = 'one changed event'
+            event['recurrence']['id'] = recurrence_id
+            event['change_this_record_only'] = change_this_record_only
+            event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_ids[2], format='json'))
+            response = self.get_json(
+                self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+                status.HTTP_200_OK
+            )
+            expected_response['description'] = 'one changed event'
+            self.check_event_as_expected(response, expected_response)
+
+            # check that events are as they're supposed to be after the one change
+            event_url = reverse('calendar-event-list', args=['json'])
+            response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+            self.assertTrue(response)
+            self.assertIsInstance(response, list)
+            self.assertEqual(6, len(response))
+            instance_ids = tuple(map(lambda x: x['id'], response))
+            for d in (0, 3, 4, 6, 10, 11):
+                current_event = response.pop(0)
+                self.assertEqual(
+                    (datetime.datetime(2020, 1, 30, 10) + datetime.timedelta(days=d)).isoformat() + 'Z',
+                    current_event['start_at']
+                )
+                # The algorithm now changes all events following the changed event
+                if change_this_record_only:
+                    self.assertEqual(None if d != 4 else 'one changed event', current_event['description'])
+                else:
+                    self.assertEqual(None if d < 4 else 'one changed event', current_event['description'])
+
+    def test_recurrence_shorten(self):
+        # Insert a new event via API
+        event = self.get_event_def(dates_iso=True)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        recurrence_id = response['recurrence']['id']
+        # First check if result of POST is as expected
+        expected_response = dict(event)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # check if all events were created as per recurrence
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(6, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+
+        # check all instances to be as they need to be
+        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+            response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+            expected_response['id'] = instance_id
+            delta = datetime.timedelta(days=d)
+            expected_response['start_at'] = (datetime.datetime(2020, 1, 30, 10) + delta).isoformat() + 'Z'
+            expected_response['end_at'] = (datetime.datetime(2020, 1, 30, 11) + delta).isoformat() + 'Z'
+            self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+            self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # Then retrieve the record from the API
+        response = self.retrieve_event_id(instance_ids[2])  # 3rd instance is the one on 3.2.2020
+        expected_response['id'] = instance_ids[2]
+        expected_response['start_at'] = '2020-02-03T10:00:00Z'
+        expected_response['end_at'] = '2020-02-03T11:00:00Z'
+        self.assertEqual(instance_ids[2], self.check_event_as_expected(response, expected_response))
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # shorten recurrence
+        event = dict(expected_response)
+        event['recurrence']['id'] = recurrence_id
+        event['recurrence']['end_at'] = event['end_at']
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_ids[2], format='json'))
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        self.check_event_as_expected(response, expected_response)
+
+        # check that events are as they're supposed to be after the one change
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(3, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+        for d in (0, 3, 4):
+            current_event = response.pop(0)
+            self.assertEqual(
+                (datetime.datetime(2020, 1, 30, 10) + datetime.timedelta(days=d)).isoformat() + 'Z',
+                current_event['start_at']
+            )
+
+    def test_recurrence_remove(self):
+        # remove recurrence altogether
+        event = self.get_event_def(dates_iso=True)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        recurrence_id = response['recurrence']['id']
+        # First check if result of POST is as expected
+        expected_response = dict(event)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # check if all events were created as per recurrence
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(6, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+
+        # check all instances to be as they need to be
+        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+            response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+            expected_response['id'] = instance_id
+            delta = datetime.timedelta(days=d)
+            expected_response['start_at'] = (datetime.datetime(2020, 1, 30, 10) + delta).isoformat() + 'Z'
+            expected_response['end_at'] = (datetime.datetime(2020, 1, 30, 11) + delta).isoformat() + 'Z'
+            self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+            self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # Then retrieve the record from the API
+        response = self.retrieve_event_id(instance_ids[0])  # 3rd instance is the one on 3.2.2020
+        expected_response = self.get_event_def(dates_iso=True)
+        self.assertEqual(instance_ids[0], self.check_event_as_expected(response, expected_response))
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # remove recurrence
+        event = dict(expected_response)
+        event.pop('recurrence', None)
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_ids[0], format='json'))
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response.pop('recurrence', None)
+        self.check_event_as_expected(response, expected_response)
+        self.assertIsNone(response.get('recurrence', None))
+
+        # check that events are as they're supposed to be after the one change
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(1, len(response))
+        for d in (0,):
+            current_event = response.pop(0)
+            self.assertEqual(
+                (datetime.datetime(2020, 1, 30, 10) + datetime.timedelta(days=d)).isoformat() + 'Z',
+                current_event['start_at']
+            )
+
+    def test_recurrence_remove_middle(self):
+        # remove recurrence in the middle of the recurrence
+        event = self.get_event_def(dates_iso=True)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        recurrence_id = response['recurrence']['id']
+        # First check if result of POST is as expected
+        expected_response = dict(event)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # check if all events were created as per recurrence
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(6, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+
+        # check all instances to be as they need to be
+        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+            response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+            expected_response['id'] = instance_id
+            delta = datetime.timedelta(days=d)
+            expected_response['start_at'] = (datetime.datetime(2020, 1, 30, 10) + delta).isoformat() + 'Z'
+            expected_response['end_at'] = (datetime.datetime(2020, 1, 30, 11) + delta).isoformat() + 'Z'
+            self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+            self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # Then retrieve the record from the API
+        instance_id = instance_ids[2]
+        response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+        expected_response = self.get_event_def(dates_iso=True)
+        expected_response['id'] = instance_ids[2]
+        expected_response['start_at'] = '2020-02-03T10:00:00Z'
+        expected_response['end_at'] = '2020-02-03T11:00:00Z'
+        self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        # remove recurrence
+        event = dict(expected_response)
+        event.pop('recurrence', None)
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_id, format='json'))
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        # we expect recurrence to still be there because we only removed it from FUTURE events, but not past ones
+        self.check_event_as_expected(response, expected_response)
+
+        # check that events are as they're supposed to be after the one change
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(3, len(response))
+        expected_response = self.get_event_def(dates_iso=True)
+        for (instance_id, d) in zip(instance_ids, (0, 3, 4)):
+            response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
+            expected_response['id'] = instance_id
+            delta = datetime.timedelta(days=d)
+            expected_response['start_at'] = (datetime.datetime(2020, 1, 30, 10) + delta).isoformat() + 'Z'
+            expected_response['end_at'] = (datetime.datetime(2020, 1, 30, 11) + delta).isoformat() + 'Z'
+            expected_response.pop('recurrence', None)
+            self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
+            self.assertEqual(recurrence_id, response['recurrence']['id'])

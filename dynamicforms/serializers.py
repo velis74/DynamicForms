@@ -253,6 +253,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         models.URLField: fields.URLField,
         models.GenericIPAddressField: fields.IPAddressField,
         models.FilePathField: fields.FilePathField,
+        models.JSONField: fields.JSONField,
     }
     if models.DurationField is not None:
         serializer_field_mapping[models.DurationField] = fields.DurationField

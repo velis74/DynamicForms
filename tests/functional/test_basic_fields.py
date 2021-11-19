@@ -40,6 +40,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
+        time.sleep(1)
 
         # check if all fields are in the dialog and no excessive fields too
         field_count = 0

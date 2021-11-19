@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 
 from examples.models import RefreshType
@@ -65,6 +67,7 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
 
         # Test Add action with refreshType='record'
         self.add_refresh_types_record(0, 'Refresh record')
+        time.sleep(1)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
@@ -77,6 +80,7 @@ class RefreshTypesTest(WaitingStaticLiveServerTestCase):
         rows[0].find_elements(By.TAG_NAME, "td")
 
         self.add_refresh_types_record(1, 'Refresh table 2', add_second_record=True)
+        time.sleep(1)
         rows = self.get_table_body()
         self.assertEqual(len(rows), 4)
 
