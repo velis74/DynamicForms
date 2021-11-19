@@ -254,6 +254,7 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, FieldRenderMixin, Action
         kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'datetime-local')
         kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('display_format', 'dd.MM.yyyy hh:mm:ss')
         super().__init__(**kwargs)
 
 

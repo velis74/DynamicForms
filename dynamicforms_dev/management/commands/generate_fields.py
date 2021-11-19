@@ -42,7 +42,7 @@ render_params = ClassAssemblyDict({
     fields.IntegerField: dict(input_type='number'),
     fields.FloatField: dict(input_type='number', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
     fields.DecimalField: dict(input_type='text', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
-    fields.DateTimeField: dict(input_type='datetime-local', form='DFWidgetDatetime', ),
+    fields.DateTimeField: dict(input_type='datetime-local', form='DFWidgetDatetime', display_format='dd.MM.yyyy hh:mm:ss'),
     fields.DateField: dict(input_type='date'),
     fields.TimeField: dict(input_type='time'),
     serializers.FileField: dict(input_type='file', form='DFWidgetFile', table='df-tablecell-file'),

@@ -1,7 +1,21 @@
 <template>
   <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
-    <datetime slot="input" v-model="value" zone="America/New_York" type="datetime" value-zone="Europe/Moscow"/>
-    <div slot="error">{{ value }}</div>
+    <div
+      :id="def.uuid"
+      slot="input"
+      :key="def.uuid"
+      class="df-datetime-class"
+      :name="def.name"
+    >
+      <datetime
+        v-model="value"
+        type="datetime"
+        :phrases="{ok: 'Ok', cancel: 'Cancel'}"
+        :input-class="'df-widget-datetime-input form-control'"
+        :format="displayFormat"
+      />
+    </div>
+    <div v-if="value" slot="error">Debug value {{ value }}</div>
   </DFWidgetBase>
 </template>
 
@@ -20,14 +34,27 @@ export default {
     showLabelOrHelpText: { type: Boolean, default: true },
   },
   computed: {
-    inputType() { return this.def.render_params.input_type; },
-    maxLength() { return this.def.render_params.max_length || (1 << 24); }, // eslint-disable-line no-bitwise
-    isTextArea() { return this.def.textarea === true; },
+    inputType() {
+      return this.def.render_params.input_type;
+    },
+    maxLength() {
+      // eslint-disable-next-line no-bitwise
+      return this.def.render_params.max_length || (1 << 24);
+    },
+    isTextArea() {
+      return this.def.textarea === true;
+    },
     value: {
-      get: function get() { return this.data[this.def.name]; },
+      get: function get() {
+        return this.data[this.def.name];
+      },
       set: function set(newVal) {
         this.data[this.def.name] = newVal; // eslint-disable-line
       },
+    },
+    displayFormat() {
+      return this.def.render_params && this.def.render_params.display_format ?
+        this.def.render_params.display_format : 'dd.MM.yyyy hh:mm:ss';
     },
   },
   methods: {
@@ -38,6 +65,19 @@ export default {
 };
 </script>
 
-<style scoped>
-  @import '~vue-datetime/dist/vue-datetime.css';
+<style type="text/css">
+@import '~vue-datetime/dist/vue-datetime.css';
+
+/*.df-widget-datetime-input {*/
+/*  width: 100%;*/
+/*  !*border: none;*!*/
+/*  !*border-color: red;*!*/
+/*  border: 1px solid #ced4da;*/
+/*  border-radius: 0.25rem;*/
+/*  !*height: 100%;*!*/
+/*}*/
+
+/*.vdatetime-popup__header {*/
+/*  background-color: palegreen;*/
+/*}*/
 </style>
