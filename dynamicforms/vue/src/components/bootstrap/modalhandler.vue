@@ -40,6 +40,7 @@ import * as $ from 'jquery';
 import apiClient from '../../apiClient';
 import DynamicForms from '../../dynamicforms';
 import eventBus from '../../logic/eventBus';
+import translationsMixin from '../../mixins/translationsMixin';
 
 import DFFormLayout from './form/dfformlayout.vue';
 import DFLoadingIndicator from './loadingindicator.vue';
@@ -49,6 +50,7 @@ export default {
   components: {
     DFFormLayout, DFLoadingIndicator,
   },
+  mixins: [translationsMixin],
   data() {
     return {
       dialogs: [],
@@ -160,8 +162,6 @@ export default {
     hide: function hide() {
       $(this.bootstrapDialog).modal('hide');
     },
-    // gettext: (str) => window.django.gettext(str),
-    gettext: (str) => str,
     buttonClick(event, button, callback) {
       eventBus.$emit(`tableActionExecuted_${this.currentDialog.tableUuid}`, {
         action: button,

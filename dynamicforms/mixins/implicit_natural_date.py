@@ -63,7 +63,8 @@ class NaturalDateTimeMixin(object):
                     setattr(self, 'format', global_format)
                     return value or ''
 
-            return localize(value)
+            return localize(value) if getattr(self, 'is_rendering_to_html', False) else super().render_to_table(
+                value, row_data)
 
         return super().render_to_table(value, row_data)
 

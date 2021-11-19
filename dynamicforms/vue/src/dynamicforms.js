@@ -10,6 +10,7 @@ const DynamicForms = {
     }
     return undefined;
   },
+  defaultDatetimeFormat: 'dd.MM.yyyy hh:mm:ss',
 };
 
 window.dynamicforms = DynamicForms;

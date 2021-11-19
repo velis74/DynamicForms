@@ -10,7 +10,7 @@
       <datetime
         v-model="value"
         type="datetime"
-        :phrases="{ok: 'Ok', cancel: 'Cancel'}"
+        :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
         :input-class="'df-widget-datetime-input form-control'"
         :format="displayFormat"
       />
@@ -22,11 +22,15 @@
 <script>
 import { Datetime } from 'vue-datetime';
 
+import DynamicForms from '../../../dynamicforms';
+import translationsMixin from '../../../mixins/translationsMixin';
+
 import DFWidgetBase from './dfwidgetbase.vue';
 
 export default {
   name: 'DFWidgetDatetime',
   components: { DFWidgetBase, Datetime },
+  mixins: [translationsMixin],
   props: {
     def: { type: Object, required: true },
     data: { type: Object, required: true },
@@ -53,8 +57,8 @@ export default {
       },
     },
     displayFormat() {
-      return this.def.render_params && this.def.render_params.display_format ?
-        this.def.render_params.display_format : 'dd.MM.yyyy hh:mm:ss';
+      return this.def.render_params && this.def.render_params.form_format ?
+        this.def.render_params.form_format : DynamicForms.defaultDatetimeFormat;
     },
   },
   methods: {
