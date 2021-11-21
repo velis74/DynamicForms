@@ -1,6 +1,11 @@
+import sys
+from collections import namedtuple
 from datetime import date, datetime, timedelta
 from enum import IntEnum
 from typing import List, Optional, Set, Tuple, Union
+
+from versio.version import Version
+from versio.version_scheme import Pep440VersionScheme
 
 
 class Pattern(IntEnum):
@@ -60,11 +65,21 @@ def date_range_daily(start_at, end_at: datetime, cutoff_at: Optional[datetime], 
         current_result += timedelta(days=every)
 
 
+_ISOCldr = namedtuple('ISOCalendar', ['year', 'week', 'weekday'])
+
+
+def ISOCalendar(tpl: tuple):
+    if Version(f'{sys.version_info.major}.{sys.version_info.minor}', scheme=Pep440VersionScheme) >= \
+        Version('3.9', scheme=Pep440VersionScheme):
+        return tpl
+    return _ISOCldr(*tpl)
+
+
 def date_range_weekly(start_at, end_at: datetime, cutoff_at: Optional[datetime],
                       every: int, weekdays: List[str], holidays: Set[date]):
     cutoff_at = cutoff_at or start_at
     current_result = start_at
-    prev_iso_calendar = current_result.date().isocalendar()
+    prev_iso_calendar = ISOCalendar(current_result.date().isocalendar())
     week_no = 0
     weekdays = set(
         dict(zip(('ho', 'mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'), range(8)))[day]
@@ -78,7 +93,7 @@ def date_range_weekly(start_at, end_at: datetime, cutoff_at: Optional[datetime],
         if matching and current_result >= cutoff_at:
             yield current_result  # first instance always matches
         current_result += timedelta(days=1)
-        iso_calendar = current_result.date().isocalendar()
+        iso_calendar = ISOCalendar(current_result.date().isocalendar())
         if iso_calendar.week != prev_iso_calendar.week:
             week_no += 1
         prev_iso_calendar = iso_calendar
