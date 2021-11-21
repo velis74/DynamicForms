@@ -2,7 +2,10 @@ import warnings
 from typing import Dict, Optional
 from uuid import UUID
 
+from rest_framework import __version__ as drf_version
 from rest_framework import fields, relations
+from versio.version import Version
+from versio.version_scheme import Pep440VersionScheme
 
 from .action import Actions
 from .mixins import (
@@ -472,6 +475,8 @@ class JSONField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONFi
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
+        if Version(drf_version, scheme=Pep440VersionScheme) < Version('3.12', scheme=Pep440VersionScheme):
+            kwargs.pop('decoder', None)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetTextarea')
         kwargs['render_params'].setdefault('input_type', 'text')

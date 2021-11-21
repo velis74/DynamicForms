@@ -117,9 +117,13 @@ class Command(BaseCommand):
             print('import warnings', file=output)
             print('from typing import Dict, Optional', file=output)
             print('from uuid import UUID\n', file=output)
-            print('from rest_framework import fields, relations\n', file=output)
-            print('from .action import Actions', file=output)
 
+            print('from rest_framework import __version__ as drf_version', file=output)
+            print('from rest_framework import fields, relations', file=output)
+            print('from versio.version import Version', file=output)
+            print('from versio.version_scheme import Pep440VersionScheme\n', file=output)
+
+            print('from .action import Actions', file=output)
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
                 [''] + textwrap.wrap(
@@ -344,6 +348,11 @@ class Command(BaseCommand):
                     f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",
                     file=output)
                 print(indt(8) + 'kwargs.update(kw)', file=output)
+
+                if issubclass(field, fields.JSONField):
+                    print(indt(8) + "if Version(drf_version, scheme=Pep440VersionScheme) < "
+                                    "Version('3.12', scheme=Pep440VersionScheme):", file=output)
+                    print(indt(12) + "kwargs.pop('decoder', None)", file=output)
 
                 params = render_params[field]
                 print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
