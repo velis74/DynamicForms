@@ -16,9 +16,9 @@ class ViewModeListSerializer(ViewModeBase):
     class ViewMode(ViewModeEnum):
         TABLE = auto()  # Render to full table with header, filter, rows
 
-    # noinspection PySuperArguments,PyUnresolvedReferences
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.child = None
+        super().__init__(*args, **kwargs)
 
     @staticmethod
     def mixin_to_serializer(view_mode: 'ViewModeListSerializer.ViewMode', serializer: ListSerializer,
