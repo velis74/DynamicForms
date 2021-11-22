@@ -13,6 +13,7 @@
         :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
         :input-class="'df-widget-datetime-input form-control'"
         :format="displayFormat"
+        @input="dateTimeInput"
       />
     </div>
     <div v-if="value" slot="error">Debug value {{ value }}</div>
@@ -64,6 +65,9 @@ export default {
   methods: {
     onValueConfirmed(doFilter) {
       this.$emit('onValueConfirmed', doFilter);
+    },
+    dateTimeInput(e) {
+      this.onValueConfirmed(true);
     },
   },
 };

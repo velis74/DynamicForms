@@ -151,7 +151,6 @@ export default {
       }
     },
     setTableFilter(filter) {
-      // console.log(filter);
       this.filterQueryString = $.param(_.pickBy(
         _.clone(filter.filter), (v) => (_.isString(v) ? _.size(v) : v !== null && v !== undefined),
       ));

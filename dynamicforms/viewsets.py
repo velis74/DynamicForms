@@ -5,6 +5,7 @@ import pytz
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
+from django.db.models import QuerySet
 from django.http import Http404
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
@@ -279,7 +280,14 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         # TODO: this would probably be better moved into the fields themselves
         if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
             return queryset.filter(**{field + '__icontains': value})
-        if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
+        if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
+            date_time: datetime = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+            date_time.replace(second=0)
+            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+            qs: QuerySet = queryset.filter(**{field + '__gte': date_time,
+                                              field + '__lt': date_time + timedelta(minutes=1)})
+            return qs
+        if isinstance(model_meta.get_field(field), (models.DateField,)):
             date_time = None
             hm_iso_format: str = '%Y-%m-%dT%H:%M'
             is_hm_iso_format: bool = False
