@@ -66,7 +66,7 @@ export default {
     onValueConfirmed(doFilter) {
       this.$emit('onValueConfirmed', doFilter);
     },
-    dateTimeInput(e) {
+    dateTimeInput() {
       this.onValueConfirmed(true);
     },
   },
