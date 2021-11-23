@@ -75,11 +75,11 @@ class CommonTestBase(APITestCase):
         if num_reminders:
             r_type, unit = CalendarReminder.RType, CalendarReminder.Unit
             res['reminders'] = [
-                                   dict(type=r_type.Notification.value, unit=unit.Hours.value, quantity=1),
-                                   dict(type=r_type.Email.value, unit=unit.Minutes.value, quantity=90),
-                                   dict(type=r_type.Notification.value, unit=unit.Days.value, quantity=3),
-                                   dict(type=r_type.Email.value, unit=unit.Seconds.value, quantity=432000),
-                               ][:num_reminders]
+                dict(type=r_type.Notification.value, unit=unit.Hours.value, quantity=1),
+                dict(type=r_type.Email.value, unit=unit.Minutes.value, quantity=90),
+                dict(type=r_type.Notification.value, unit=unit.Days.value, quantity=3),
+                dict(type=r_type.Email.value, unit=unit.Seconds.value, quantity=432000),
+            ][:num_reminders]
         if dates_iso:
             res = self.dates_to_iso(res)
             # res['start_at'] = res['start_at'].isoformat().replace('+00:00', 'Z')
@@ -560,8 +560,6 @@ class CalendarRecurrenceTest(CommonTestBase):
 
 class CalendarRemindersTest(CommonTestBase):
     """
-    test inserting event without reminders: reminders must not be in the database
-    test inserting with reminders: reminders must be in database
     test that inserted reminders are also returned
     test changing a reminder or two
     test removing a reminder
@@ -573,6 +571,8 @@ class CalendarRemindersTest(CommonTestBase):
 
     @parameterized.expand([(0,), (2,)])
     def test_insert_and_check_from_db(self, num_reminders):
+        # test inserting event without reminders: reminders must not be in the database
+        # test inserting with reminders: reminders must be in database
         event = self.get_event_def(num_reminders=num_reminders)
         event_url = reverse('calendar-event-list', args=['json'])
         response = self.get_json(
