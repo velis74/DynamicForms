@@ -11,10 +11,8 @@ class RemindersSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwds)
         # this is a nested serializer - we don't need link to parent object
         self.fields['event'].display = serializers.DisplayMode.SUPPRESS
-
-    @property
-    def validated_data(self):
-        return super().validated_data()
+        self.fields['event'].required = False
+        self.fields['event'].write_only = True
 
     class Meta:
         model = CalendarReminder

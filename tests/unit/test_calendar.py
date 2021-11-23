@@ -2,13 +2,14 @@ import datetime
 import json
 
 import pytz
+from django.forms import model_to_dict
 from django.urls import reverse
 from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from dynamicforms.template_render.mixins.util import convert_to_json_if
-from examples.models import CalendarEvent, CalendarRecurrence
+from examples.models import CalendarEvent, CalendarRecurrence, CalendarReminder
 from examples.recurrence_utils import date_range_daily, date_range_monthly, date_range_weekly, date_range_yearly
 
 
@@ -39,11 +40,55 @@ class CommonTestBase(APITestCase):
             trimmed_response['recurrence'] = {
                 k: trimmed_response['recurrence'][k] for k in expected_response['recurrence'].keys()
             }
+        if 'reminders' in trimmed_response and trimmed_response['reminders'] and expected_response['reminders']:
+            trimmed_response['reminders'] = [
+                {k: reminder[k] for k in expected_response['reminders'][0].keys()}
+                for reminder in trimmed_response['reminders']
+            ]
         self.assertEqual(expected_response, trimmed_response)
         self.assertIn('id', response)
         inserted_id = response['id']
         self.assertIsInstance(inserted_id, int)
         return inserted_id
+
+    def dates_to_iso(self, res):
+        if isinstance(res, dict):
+            return {k: self.dates_to_iso(v) for k, v in res.items()}
+        elif isinstance(res, list):
+            return list((self.dates_to_iso(i) for i in res))
+        elif isinstance(res, datetime.datetime):
+            return res.isoformat().replace('+00:00', 'Z')
+        return res
+
+    # noinspection PyTypedDict
+    def get_event_def(self, dates_iso: bool = True, skip_recurrence: bool = False, num_reminders: int = 0):
+        start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
+        res = dict(
+            title='Party time', colour=0x000008,
+            start_at=start_at, end_at=start_at + datetime.timedelta(hours=1),
+            recurrence=dict(
+                start_at=start_at, end_at=start_at + datetime.timedelta(days=11),
+                pattern=CalendarRecurrence.Pattern.Weekly.value,
+                recur=dict(every=1, weekdays=['Mo', 'We', 'Su', 'Ho'])
+            )
+        )
+        if num_reminders:
+            r_type, unit = CalendarReminder.RType, CalendarReminder.Unit
+            res['reminders'] = [
+                                   dict(type=r_type.Notification.value, unit=unit.Hours.value, quantity=1),
+                                   dict(type=r_type.Email.value, unit=unit.Minutes.value, quantity=90),
+                                   dict(type=r_type.Notification.value, unit=unit.Days.value, quantity=3),
+                                   dict(type=r_type.Email.value, unit=unit.Seconds.value, quantity=432000),
+                               ][:num_reminders]
+        if dates_iso:
+            res = self.dates_to_iso(res)
+            # res['start_at'] = res['start_at'].isoformat().replace('+00:00', 'Z')
+            # res['end_at'] = res['end_at'].isoformat().replace('+00:00', 'Z')
+            # res['recurrence']['start_at'] = res['recurrence']['start_at'].isoformat().replace('+00:00', 'Z')
+            # res['recurrence']['end_at'] = res['recurrence']['end_at'].isoformat().replace('+00:00', 'Z')
+        if skip_recurrence:
+            res.pop('recurrence')
+        return res
 
 
 class CalendarEventTest(CommonTestBase):
@@ -214,27 +259,6 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
 
 
 class CalendarRecurrenceTest(CommonTestBase):
-
-    # noinspection PyTypedDict
-    def get_event_def(self, dates_iso: bool, skip_recurrence: bool = False):
-        start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
-        res = dict(
-            title='Party time', colour=0x000008,
-            start_at=start_at, end_at=start_at + datetime.timedelta(hours=1),
-            recurrence=dict(
-                start_at=start_at, end_at=start_at + datetime.timedelta(days=11),
-                pattern=CalendarRecurrence.Pattern.Weekly,
-                recur=dict(every=1, weekdays=['Mo', 'We', 'Su', 'Ho'])
-            )
-        )
-        if dates_iso:
-            res['start_at'] = res['start_at'].isoformat().replace('+00:00', 'Z')
-            res['end_at'] = res['end_at'].isoformat().replace('+00:00', 'Z')
-            res['recurrence']['start_at'] = res['recurrence']['start_at'].isoformat().replace('+00:00', 'Z')
-            res['recurrence']['end_at'] = res['recurrence']['end_at'].isoformat().replace('+00:00', 'Z')
-        if skip_recurrence:
-            res.pop('recurrence')
-        return res
 
     def test_recurrence_basic(self):
         # First we create a calendar event with a recurrence using models API
@@ -532,3 +556,45 @@ class CalendarRecurrenceTest(CommonTestBase):
             expected_response.pop('recurrence', None)
             self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
             self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+
+class CalendarRemindersTest(CommonTestBase):
+    """
+    test inserting event without reminders: reminders must not be in the database
+    test inserting with reminders: reminders must be in database
+    test that inserted reminders are also returned
+    test changing a reminder or two
+    test removing a reminder
+    test adding one more reminder
+    test reminder sort order (must be sorted by total time before event ascending)
+    test that reminders are copied to subsequent events in recurrence interval
+    test that reminders are NOT copied to subsequent events in recurrence interval when change_this_record_only == True
+    """
+
+    @parameterized.expand([(0,), (2,)])
+    def test_insert_and_check_from_db(self, num_reminders):
+        event = self.get_event_def(num_reminders=num_reminders)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        recurrence_id = response['recurrence']['id']
+        event_id = response['id']
+        # First check if result of POST is as expected
+        expected_response = self.get_event_def()
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(recurrence_id, response['recurrence']['id'])
+
+        def strip_event(instance):
+            reminder = model_to_dict(instance)
+            reminder.pop('event')
+            return reminder
+
+        # now also check with database
+        event = CalendarEvent.objects.get(pk=event_id)
+        expected_response = model_to_dict(event)
+        expected_response['recurrence'] = model_to_dict(event.recurrence)
+        expected_response['reminders'] = list((strip_event(reminder) for reminder in event.reminders.all()))
+        expected_response = self.dates_to_iso(expected_response)
+        self.check_event_as_expected(response, expected_response)

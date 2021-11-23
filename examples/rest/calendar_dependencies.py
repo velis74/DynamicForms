@@ -1,10 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 
 from django.db import transaction
 from django.forms.models import model_to_dict
 
 from dynamicforms import fields, serializers, viewsets
-from examples.models import CalendarEvent, CalendarRecurrence
+from examples.models import CalendarEvent, CalendarRecurrence, CalendarReminder
 from .calendar_recurrence import RecurrenceSerializer
 
 
@@ -26,7 +26,7 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
     #     data.pop('recur')
     #     return super().to_internal_value(data)
 
-    def save_dependencies(self, validated_data, instance: CalendarEvent = None):
+    def save_dependencies(self, validated_data, instance: CalendarEvent = None, reminders: Optional[List[dict]] = None):
 
         def save_recurrence(data):
             recurrence = CalendarRecurrence.objects.filter(pk=int(data.get('id', 0))).first()
@@ -35,23 +35,40 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
                 return res.update(recurrence, data)
             return res.create(data)
 
-        if validated_data.get('recurrence', None):
+        if isinstance(validated_data.get('recurrence', None), CalendarRecurrence):
+            pass  # we already saved recurrence, so let's not do anything about it now
+        elif validated_data.get('recurrence', None):
             validated_data['recurrence'] = save_recurrence(validated_data['recurrence'])
         elif instance:
             instance.recurrence = None
 
+        if reminders:
+            from .calendar_reminders import RemindersSerializer
+            r_ids = set()
+            for reminder in reminders:
+                reminder['event'] = instance.id
+                ser = RemindersSerializer(
+                    instance=CalendarReminder.objects.filter(pk=reminder.get('id', 0)).first(), data=reminder
+                )
+                ser.is_valid(raise_exception=True)
+                r_ids.add(ser.save().id)
+            CalendarReminder.objects.filter(event=instance).exclude(id__in=r_ids).delete()
+        elif instance:
+            CalendarReminder.objects.filter(event=instance).delete()
+
     def create(self, validated_data):
         change_this_record_only = validated_data.pop('change_this_record_only', False)
+        reminders = validated_data.pop('reminders', [])
         self.save_dependencies(validated_data)
-        return self.handle_recurrence(
-            super().create(validated_data), None, change_this_record_only
-        )
+        instance = super().create(validated_data)
+        self.save_dependencies(validated_data, instance, reminders)
+        return self.handle_recurrence(instance, None, change_this_record_only)
 
     @transaction.atomic
     def update(self, instance, validated_data):
         change_this_record_only = validated_data.pop('change_this_record_only', False)
-        self.save_dependencies(validated_data, instance)
-
+        reminders = validated_data.pop('reminders', [])
+        self.save_dependencies(validated_data, instance, reminders)
         return self.handle_recurrence(
             super().update(instance, validated_data), self.old_recurrence, change_this_record_only
         )

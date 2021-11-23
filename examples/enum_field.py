@@ -11,4 +11,4 @@ class EnumField(fields.IntegerField):
         return self.enum_type(data)
 
     def to_representation(self, value, row_data=None):
-        return value.value
+        return value.value if isinstance(value, self.enum_type) else value
