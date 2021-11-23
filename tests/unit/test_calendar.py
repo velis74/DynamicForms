@@ -82,10 +82,6 @@ class CommonTestBase(APITestCase):
             ][:num_reminders]
         if dates_iso:
             res = self.dates_to_iso(res)
-            # res['start_at'] = res['start_at'].isoformat().replace('+00:00', 'Z')
-            # res['end_at'] = res['end_at'].isoformat().replace('+00:00', 'Z')
-            # res['recurrence']['start_at'] = res['recurrence']['start_at'].isoformat().replace('+00:00', 'Z')
-            # res['recurrence']['end_at'] = res['recurrence']['end_at'].isoformat().replace('+00:00', 'Z')
         if skip_recurrence:
             res.pop('recurrence')
         return res
@@ -559,17 +555,8 @@ class CalendarRecurrenceTest(CommonTestBase):
 
 
 class CalendarRemindersTest(CommonTestBase):
-    """
-    test that inserted reminders are also returned
-    test changing a reminder or two
-    test removing a reminder
-    test adding one more reminder
-    test reminder sort order (must be sorted by total time before event ascending)
-    test that reminders are copied to subsequent events in recurrence interval
-    test that reminders are NOT copied to subsequent events in recurrence interval when change_this_record_only == True
-    """
 
-    @parameterized.expand([(0,), (2,)])
+    @parameterized.expand([(0,), (2,), (4,)])
     def test_insert_and_check_from_db(self, num_reminders):
         # test inserting event without reminders: reminders must not be in the database
         # test inserting with reminders: reminders must be in database
@@ -582,7 +569,7 @@ class CalendarRemindersTest(CommonTestBase):
         recurrence_id = response['recurrence']['id']
         event_id = response['id']
         # First check if result of POST is as expected
-        expected_response = self.get_event_def()
+        expected_response = self.get_event_def(num_reminders=num_reminders)
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(recurrence_id, response['recurrence']['id'])
 
@@ -593,8 +580,158 @@ class CalendarRemindersTest(CommonTestBase):
 
         # now also check with database
         event = CalendarEvent.objects.get(pk=event_id)
-        expected_response = model_to_dict(event)
-        expected_response['recurrence'] = model_to_dict(event.recurrence)
-        expected_response['reminders'] = list((strip_event(reminder) for reminder in event.reminders.all()))
-        expected_response = self.dates_to_iso(expected_response)
+        response = model_to_dict(event)
+        response['recurrence'] = model_to_dict(event.recurrence)
+        response['reminders'] = list((strip_event(reminder) for reminder in event.reminders.all()))
+        response = self.dates_to_iso(response)
         self.check_event_as_expected(response, expected_response)
+
+        # test that inserted reminders are also returned by the API
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=event_id, format='json'))
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.check_event_as_expected(response, expected_response)
+
+    def test_reminder_changing(self):
+        # First we insert the event
+        event = self.get_event_def(num_reminders=2)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        expected_response = self.get_event_def(num_reminders=2)
+        self.check_event_as_expected(response, expected_response)
+        event_id = response['id']
+
+        # Now, we retrieve it
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=event_id, format='json'))
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.check_event_as_expected(response, expected_response)
+
+        # add IDs to original event definition
+        event['id'] = event_id
+        event['recurrence']['id'] = response['recurrence']['id']
+        for idx, reminder in enumerate(event['reminders']):
+            reminder['id'] = response['reminders'][idx]['id']
+
+        original_count = CalendarEvent.objects.count()
+        # store original event definition unchanged
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response = self.get_event_def(num_reminders=2)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
+
+        # test adding one more reminder
+        event['reminders'].append(self.get_event_def(num_reminders=3)['reminders'][2])
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response = self.get_event_def(num_reminders=3)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
+        event['reminders'][2]['id'] = response['reminders'][2]['id']
+
+        # test changing a reminder or two
+        event['reminders'][0]['unit'] = CalendarReminder.Unit.Minutes
+        event['reminders'][1]['quantity'] = 20
+
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response = self.get_event_def(num_reminders=3)
+        expected_response['reminders'][0]['unit'] = CalendarReminder.Unit.Minutes.value
+        expected_response['reminders'][1]['quantity'] = 20
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
+
+        # test removing a reminder
+        event['reminders'].pop(1)
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response = self.get_event_def(num_reminders=3)
+        expected_response['reminders'][0]['unit'] = CalendarReminder.Unit.Minutes.value
+        expected_response['reminders'].pop(1)
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
+
+        # test reminder sort order (must be sorted by total time before event ascending)
+        event['reminders'][1]['unit'] = CalendarReminder.Unit.Seconds
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response = self.get_event_def(num_reminders=3)
+        expected_response['reminders'][0]['unit'] = CalendarReminder.Unit.Minutes.value
+        expected_response['reminders'].pop(1)
+        expected_response['reminders'][1]['unit'] = CalendarReminder.Unit.Seconds.value
+        # the order changes because second reminder is now closer to the event than the first reminder
+        expected_response['reminders'] = list(reversed(expected_response['reminders']))
+        self.check_event_as_expected(response, expected_response)
+        self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
+
+    """
+    test that reminders are copied to subsequent events in recurrence interval
+    test that reminders are NOT copied to subsequent events in recurrence interval when change_this_record_only == True
+    """
+
+    @parameterized.expand([(False,), (True,)])
+    def test_reminders_copying(self, change_this_record_only):
+        # First we insert the event
+        event = self.get_event_def(num_reminders=2)
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_201_CREATED
+        )
+        expected_response = self.get_event_def(num_reminders=2)
+        self.check_event_as_expected(response, expected_response)
+
+        event_url = reverse('calendar-event-list', args=['json'])
+        response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+        self.assertTrue(response)
+        self.assertIsInstance(response, list)
+        self.assertEqual(6, len(response))
+        instance_ids = tuple(map(lambda x: x['id'], response))
+
+        response = self.retrieve_event_id(instance_ids[2])  # 3rd instance is the one on 3.2.2020
+        expected_response = self.get_event_def(num_reminders=2)
+        expected_response['id'] = instance_ids[2]
+        expected_response['start_at'] = '2020-02-03T10:00:00Z'
+        expected_response['end_at'] = '2020-02-03T11:00:00Z'
+        self.assertEqual(instance_ids[2], self.check_event_as_expected(response, expected_response))
+
+        event['id'] = instance_ids[2]
+        event['recurrence']['id'] = response['recurrence']['id']
+        event['start_at'] = '2020-02-03T10:00:00Z'
+        event['end_at'] = '2020-02-03T11:00:00Z'
+        event['change_this_record_only'] = change_this_record_only
+        event['description'] = 'one changed event'
+        event['reminders'].append(self.get_event_def(num_reminders=3)['reminders'][2])
+
+        event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_ids[2], format='json'))
+        response = self.get_json(
+            self.client.put(event_url, data=self.encode_json(event), content_type='application/json'),
+            status.HTTP_200_OK
+        )
+        expected_response['description'] = 'one changed event'
+        expected_response['reminders'].append(self.get_event_def(num_reminders=3)['reminders'][2])
+        self.check_event_as_expected(response, expected_response)
+
+        for instance_id, d in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+            event_url = reverse('calendar-event-detail', kwargs=dict(pk=instance_id, format='json'))
+            response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
+
+            self.assertEqual(
+                (datetime.datetime(2020, 1, 30, 10) + datetime.timedelta(days=d)).isoformat() + 'Z',
+                response['start_at'], msg=str((instance_id, d))
+            )
+            condition = (d != 4) if change_this_record_only else (d < 4)
+            self.assertEqual(None if condition else 'one changed event', response['description'])
+            self.assertEqual(2 if condition else 3, len(response['reminders']))

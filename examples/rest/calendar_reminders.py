@@ -9,7 +9,8 @@ class RemindersSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        # this is a nested serializer - we don't need link to parent object
+        self.fields['id'].read_only = False  # https://stackoverflow.com/a/46525126/1760858
+        # this is a nested serializer - we don't need a link to parent object
         self.fields['event'].display = serializers.DisplayMode.SUPPRESS
         self.fields['event'].required = False
         self.fields['event'].write_only = True

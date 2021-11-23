@@ -96,6 +96,7 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
                 CalendarEvent.objects.filter(recurrence_id=instance.recurrence_id).order_by('start_at').all()
             )
             instance_data = model_to_dict(instance)
+            instance_reminders = list(instance.reminders.all())
             del instance_data['id']
             instance_data['recurrence_id'] = instance_data.pop('recurrence', None)
             cur_task = next(existing, None)
@@ -116,6 +117,14 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
                 else:
                     dtm_task = CalendarEvent(**instance_data)
                 dtm_task.save()
+                if dtm_task.start_at > instance.start_at and not change_this_record_only:
+                    # update also reminders
+                    dtm_task.reminders.all().delete()
+                    for reminder in instance_reminders:
+                        CalendarReminder.objects.create(
+                            event=dtm_task, type=reminder.type, quantity=reminder.quantity, unit=reminder.unit
+                        )
+
             # finish up with deleting any tasks that exceed the shortened date_to
             if cur_task and cur_task.start_at <= recur.end_at:
                 cur_task = next(existing, None)
