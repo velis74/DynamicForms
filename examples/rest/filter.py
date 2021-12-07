@@ -36,7 +36,7 @@ class FilterSerializer(serializers.ModelSerializer):
         source='*',
 
     )
-    rtf_field = RTFField()
+    rtf_field = RTFField(required=False, allow_null=True)
 
     class Meta:
         model = Filter
