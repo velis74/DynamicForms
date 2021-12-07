@@ -2,7 +2,7 @@ import uuid as uuid_module
 from enum import IntEnum
 from typing import Iterable, List, Union
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import Serializer
 
 from .settings import DYNAMICFORMS

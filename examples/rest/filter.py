@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from dynamicforms import serializers, viewsets
 from dynamicforms.action import Actions, TableAction, TablePosition
@@ -33,7 +33,6 @@ class FilterSerializer(serializers.ModelSerializer):
         max_length=list(filter(lambda f: f.name == 'name', Filter._meta.fields))[0].max_length,
         allow_null=list(filter(lambda f: f.name == 'name', Filter._meta.fields))[0].null,
         source='*',
-
     )
 
     class Meta:
