@@ -11,6 +11,14 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "29.0.0",
     "@ckeditor/ckeditor5-vue2": "1.0.5",
+    "@fullcalendar/core": "^5.10.1",
+    "@fullcalendar/daygrid": "^5.10.1",
+    "@fullcalendar/interaction": "^5.10.1",
+    "@fullcalendar/list": "^5.10.1",
+    "@fullcalendar/moment": "^5.10.1",
+    "@fullcalendar/moment-timezone": "^5.10.1",
+    "@fullcalendar/timegrid": "^5.10.1",
+    "@fullcalendar/vue": "^5.10.1",
     "@vue/cli": "^4.5.13",
     "axios": "^0.21.1",
     "bootstrap": "^4.0.0-beta",
@@ -19,6 +27,7 @@
     "lodash": "^4.17.15",
     "popper.js": "^1.16.1",
     "select2": "^4.1.0-rc.0",
+    "suncalc": "^1.8.0",
     "vue": "^2.6.11",
     "vue-multiselect": "^2.1.6",
     "vue-observe-visibility": "^1.0.0",
@@ -42,12 +51,8 @@
   },
   "eslintConfig": {
     "root": true,
-    "env": {
-      "node": true
-    },
-    "plugins": [
-      "es"
-    ],
+    "env": { "node": true },
+    "plugins": ["es"],
     "extends": [
       "plugin:vue/essential",
       "plugin:vue/strongly-recommended",
@@ -63,18 +68,13 @@
       "no-plusplus": "off",
       "sort-imports": "off",
       "import/order": [
-        "error",
-        {
-          "newlines-between": "always",
-          "alphabetize": { "order": "asc", "caseInsensitive": true }
-        }
+        "error", { "newlines-between": "always", "alphabetize": { "order": "asc", "caseInsensitive": true } }
       ],
       "indent": ["error", 2, { "MemberExpression": 1 }],
       "es/no-destructuring": "error",
       "no-param-reassign": ["error", { "props": false }],
       "prefer-destructuring": [
-        "warn",
-        {
+        "warn", {
           "VariableDeclarator": { "array": false, "object": false },
           "AssignmentExpression": { "array": false, "object": false }
         },
@@ -90,19 +90,10 @@
     },
     "overrides": [
       {
-        "files": [
-          "**/__tests__/*.{j,t}s?(x)",
-          "**/tests/unit/**/*.spec.{j,t}s?(x)"
-        ],
-        "env": {
-          "jest": true
-        }
+        "files": ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
+        "env": { "jest": true }
       }
     ]
   },
-  "browserslist": [
-    "> 1%",
-    "since 2015",
-    "not dead"
-  ]
+  "browserslist": ["> 1%", "since 2015", "not dead"]
 }

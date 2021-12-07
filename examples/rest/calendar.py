@@ -1,3 +1,5 @@
+import datetime
+
 from examples.models import CalendarEvent, CalendarReminder
 from .calendar_dependencies import RecurrenceEventSerializer, RecurrenceEventViewSet
 from .calendar_recurrence import RecurrenceSerializer
@@ -44,4 +46,13 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
 
 class CalendarEventViewSet(RecurrenceEventViewSet):
     serializer_class = CalendarEventSerializer
-    queryset = CalendarEvent.objects.all()
+
+    def get_queryset(self):
+        res = CalendarEvent.objects.all()
+        start_at = self.request.query_params.get('start', '')
+        if start_at:
+            res = res.filter(end_at__gte=datetime.datetime.fromisoformat(start_at))
+        end_at = self.request.query_params.get('end', '')
+        if end_at:
+            res = res.filter(start_at__lte=datetime.datetime.fromisoformat(end_at))
+        return res

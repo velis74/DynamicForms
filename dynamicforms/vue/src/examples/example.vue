@@ -20,6 +20,7 @@
           <router-link to="/refresh-types">Refresh types</router-link>
           <router-link to="/calculated-css-class-for-table-row">Row css style</router-link>
           <router-link to="/choice-allow-tags-fields">Tag select fields</router-link>
+          <router-link to="/calendar">Calendar example</router-link>
           <router-link to="/documents">Documents</router-link>
         </div>
       </div>
@@ -38,13 +39,16 @@ import apiClient from '../apiClient';
 import DynamicForms from '../dynamicforms';
 import eventBus from '../logic/eventBus';
 
+import Calendar from './calendar.vue';
 import ExampleHiddenLayout from './example_hidden_layout.vue';
 import PageLoader from './pageloader.vue';
 import SingleDialog from './single_dialog.vue';
 
 Vue.use(VueRouter);
-Vue.component(SingleDialog.name, SingleDialog); // we must register the custom component or it won't show
-Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout); // we must register the custom component or it won't show
+// we must register custom components or they won't show
+Vue.component(SingleDialog.name, SingleDialog);
+Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout);
+Vue.component(Calendar.name, Calendar);
 
 const singleDlgFakeUUID = 'fake-uuid-654654-634565';
 const routes = [
@@ -58,6 +62,7 @@ const routes = [
   { path: '/calculated-css-class-for-table-row', component: PageLoader },
   { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
   { path: '/choice-allow-tags-fields', component: PageLoader },
+  { path: '/calendar', component: Calendar },
   { path: '/documents', component: PageLoader },
 ];
 const router = new VueRouter({ routes });
