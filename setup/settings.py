@@ -158,3 +158,5 @@ DYNAMICFORMS = {
     'testing': TESTING,
     'allow_anonymous_user_to_preupload_files': True,
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

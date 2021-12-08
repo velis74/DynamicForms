@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
-from django.urls import path
+from django.conf.urls import include
+from django.urls import path, re_path
 from django.views.i18n import JavaScriptCatalog
 from rest_framework.documentation import include_docs_urls
 
@@ -7,10 +7,10 @@ from examples.rest import router
 from .views import component_index, index
 
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    url(r'^component$', component_index, name='component_index'),
-    url(r'^', include(router.urls)),
-    url(r'^dynamicforms/', include('dynamicforms.urls')),
-    url(r'^api-docs/', include_docs_urls(title='Example API documentation')),
+    re_path(r'^$', index, name='index'),
+    re_path(r'^component$', component_index, name='component_index'),
+    re_path(r'^', include(router.urls)),
+    re_path(r'^dynamicforms/', include('dynamicforms.urls')),
+    re_path(r'^api-docs/', include_docs_urls(title='Example API documentation')),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]
