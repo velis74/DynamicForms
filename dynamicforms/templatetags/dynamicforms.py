@@ -8,7 +8,7 @@ from django.template.defaulttags import IfNode
 from django.template.loader import get_template
 from django.template.loader_tags import BlockNode, ExtendsNode
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.templatetags import rest_framework as drftt
 from rest_framework.utils.encoders import JSONEncoder
 

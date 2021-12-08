@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import HttpResponse, JsonResponse
-from django.utils.translation import ugettext as __
+from django.utils.translation import gettext as __
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 

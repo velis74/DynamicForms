@@ -4,7 +4,7 @@ The class provides transformation functionality
 """
 from typing import Iterable
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from dynamicforms.action import TableAction, TablePosition
 from dynamicforms.mixins import DisplayMode, FieldAlignment
