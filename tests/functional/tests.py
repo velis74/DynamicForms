@@ -343,7 +343,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
             close_dialog = dialog.find_element_by_class_name("close-btn")
         close_dialog.click()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.check_row(rows[0], 8, ['1', '123', 'false', '8', 'Choice 3', 'C', 'Some comment', None])
 
@@ -354,7 +354,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[0].click()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
@@ -366,26 +366,26 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         # Test Add action with refreshType='table'
         self.add_validated_record(1, 5)
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 8)
 
         self.add_validated_record(1, 7, add_second_record=True)
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=3)
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='table'
         time.sleep(0.5)
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=2)
         self.assertEqual(len(rows), 2)
 
         time.sleep(0.5)
         del_btns = rows[0].find_elements_by_tag_name('td')[7].find_elements_by_class_name('btn')
         del_btns[1].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
 
         time.sleep(0.5)
@@ -393,7 +393,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         del_btns[1].click()
 
         # Test that "no data" row is shown
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         self.assertEqual(self.get_element_text(rows[0].find_element_by_tag_name('td')), 'No data')
 
@@ -402,7 +402,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=2)
         self.assertEqual(len(rows), 2)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 8)
@@ -413,7 +413,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
 
         # -------------------------------------------#
@@ -479,7 +479,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
         time.sleep(0.5)
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = self.check_row(rows[0], 8, ['6', '123', 'true', '6', 'Choice 1', 'A', '', None])
 
@@ -1013,34 +1013,35 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         # Test Add action with refreshType='record'
         self.add_refresh_types_record(0, 'Refresh record')
-        rows = self.get_table_body()
+        time.sleep(1)  # No data row is present, wait for new to load
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements_by_tag_name("td")
         self.assertEqual(len(cells), 4)
 
         # Test Add action with refreshType='table'
         self.add_refresh_types_record(1, 'Refresh table')
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=2)
         self.assertEqual(len(rows), 2)
         cells = rows[0].find_elements_by_tag_name("td")
 
         self.add_refresh_types_record(1, 'Refresh table 2', add_second_record=True)
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=4)
         self.assertEqual(len(rows), 4)
 
         # Test Add action with refreshType='no refresh'
         self.add_refresh_types_record(2, 'No refresh')
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=4)
         self.assertEqual(len(rows), 4)
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=5)
         self.assertEqual(len(rows), 5)
 
         # Test Add action with refreshType='reload'
         self.add_refresh_types_record(3, 'Page reload')
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=6)
         self.assertEqual(len(rows), 6)
 
         # Test Add action with refreshType='redirect'
@@ -1050,7 +1051,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertRegex(redirect_url, '/validated.html')
         # Back to /refresh-types.html
         self.browser.get(self.live_server_url + '/refresh-types.html')
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=7)
         self.assertEqual(len(rows), 7)
 
         # Test Add action with refreshType='custom function'
@@ -1059,36 +1060,36 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=8)
         self.assertEqual(len(rows), 8)
 
         # Test Delete action with refreshType='record'
         del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[0].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=7)
         self.assertEqual(len(rows), 7)
 
         # Test Delete action with refreshType='table'
         del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[1].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=6)
         self.assertEqual(len(rows), 6)
 
         # Test Delete action with refreshType='no refresh'
         del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[2].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=6)
         self.assertEqual(len(rows), 6)
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=5)
         self.assertEqual(len(rows), 5)
 
         # Test Delete action with refreshType='reload'
         del_btns = rows[0].find_elements_by_tag_name('td')[3].find_elements_by_class_name('btn')
         del_btns[3].click()
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=4)
         self.assertEqual(len(rows), 4)
 
         # Test Delete action with refreshType='redirect'
@@ -1099,7 +1100,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         self.assertRegex(redirect_url, '/validated.html')
         # Back to /refresh-types.html
         self.browser.get(self.live_server_url + '/refresh-types.html')
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=3)
         self.assertEqual(len(rows), 3)
 
         # Test Delete action with refreshType='custom function'
@@ -1112,7 +1113,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
 
         self.browser.refresh()
 
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=2)
         self.assertEqual(len(rows), 2)
 
     def test_single_dialog(self):
