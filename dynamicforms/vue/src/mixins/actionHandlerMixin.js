@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import apiClient from '../apiClient';
+import DynamicForms from '../dynamicforms';
 import eventBus from '../logic/eventBus';
 
 const callDbFunction = (payload) => {
@@ -28,7 +29,42 @@ const callDbFunction = (payload) => {
 };
 
 const actionHandlerMixin = {
+  mounted() {
+    eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
+  },
+  beforeDestroy() {
+    eventBus.$off(`tableActionExecuted_${this.uuid}`);
+  },
   methods: {
+    tableAction(payload) {
+      if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
+        this.executeTableAction(payload.action, payload.data, payload.modal, {});
+      } else {
+        const action = payload.action ? payload.action.action : null;
+        if (action === null) return; // Action is empty or not there, nothing will be executed
+
+        if (action.href) {
+          // action is a link to a subpage or to a router path
+          // we will do nothing because the action was already rendered as a link
+        } else {
+          // Action is a call to a function with some parameters
+          const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
+          if (func) {
+            let params = {};
+            try {
+              params = payload.action.action.params;
+              // eslint-disable-next-line no-empty
+            } catch (e) {}
+            const data = { context: this, ...payload };
+            if (params) {
+              func.apply(params, [data]);
+            } else {
+              func(data);
+            }
+          }
+        }
+      }
+    },
     executeTableAction(action, data, modal, params) {
       if (!_.size(action)) {
         return;
