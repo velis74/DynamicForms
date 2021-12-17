@@ -1,5 +1,9 @@
 import datetime
 
+from django.utils.translation import gettext_lazy as _
+
+from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
+from dynamicforms.template_render.layout import Column, Layout, Row
 from examples.models import CalendarEvent, CalendarReminder
 from .calendar_dependencies import RecurrenceEventSerializer, RecurrenceEventViewSet
 from .calendar_recurrence import RecurrenceSerializer
@@ -13,6 +17,10 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
         'new': 'New event',
         'edit': 'Editing event',
     }
+    actions = Actions(
+        FormButtonAction(btn_type=FormButtonTypes.CUSTOM, name='delete_dlg', label=_('Delete')),
+        add_default_crud=True, add_form_buttons=True
+    )
 
     recurrence = RecurrenceSerializer(required=False)
     reminders = RemindersSerializer(many=True, required=False)
@@ -36,11 +44,22 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
             raise ValueError(f'Unknown CalendarReminder.Unit[{reminder["unit"]}]')
 
         res = super().to_representation(instance, row_data)
-        res['reminders'] = list(sorted(res['reminders'], key=lambda reminder: seconds(reminder)))
+        from dynamicforms.serializers import Serializer
+        if self.view_mode != Serializer.ViewMode.TABLE_ROW:
+            # table row serializes to string, so there's nothing to do here
+            res['reminders'] = list(sorted(res['reminders'], key=lambda reminder: seconds(reminder)))
         return res
 
     class Meta:
         model = CalendarEvent
+        layout = Layout(
+            Row(Column('title', 'col-10'), Column('colour', 'col-2')),
+            Row('description'),
+            Row('start_at', 'end_at'),
+            Row('reminders'),
+            Row(Column('recurrence', 'col-8'), Column('change_this_record_only', 'col-4')),
+            columns=2, size='large'
+        )
         exclude = ()
 
 

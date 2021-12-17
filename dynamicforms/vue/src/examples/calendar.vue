@@ -20,17 +20,25 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/vue';
 import SunCalc from 'suncalc';
 
+import apiClient from '@/apiClient';
+import DynamicForms from '@/dynamicforms';
+import ActionHandlerMixin from '@/mixins/actionHandlerMixin';
+
 export default {
   name: 'Calendar',
   components: { FullCalendar },
+  mixins: [ActionHandlerMixin],
   emits: ['title-change'],
   data() {
     return {
+      uuid: 'calendar_entry',
       sunriseTime: '8:00',
       sunsetTime: '16:00',
+      url: '/calendar-event',
     };
   },
   computed: {
+    detail_url() { return `${this.url}/--record_id--.json`; },
     calendarOptions() {
       return {
         plugins: [dayGridPlugin, listPlugin, momentPlugin, momentTimezonePlugin, timeGridPlugin, interactionPlugin],
@@ -55,18 +63,19 @@ export default {
               (selectInfo.end.getHours() === 21 && selectInfo.end.getMinutes() === 0));
         },
 
-        // eventResize: resizeReservation,
-        // eventDrop: resizeReservation,
+        allDaySlot: false,
+        eventResize: this.resizeReservation,
+        eventDrop: this.resizeReservation,
 
         initialView: 'timeGridWeek',
         editable: true,
         dayMaxEvents: true, // allow "more" link when too many events
         eventOverlap: false,
 
-        // eventClick: editReservation,
-        // select: addReservation,
+        eventClick: this.editReservation,
+        select: this.addReservation,
 
-        events: '/calendar-event.json',
+        events: `${this.url}.json`,
         eventDataTransform: this.eventDataTransform,
         eventTimeFormat: 'HH:mm',
         timeZone: 'Europe/Ljubljana',
@@ -98,11 +107,52 @@ export default {
       // console.log(suncalc, this.sunriseTime, this.sunsetTime);
     },
     eventDataTransform(input) {
-      input.start = new Date(input.start_at);
-      input.end = new Date(input.end_at);
       return {
         id: input.id, start: input.start_at, end: input.end_at, title: input.title,
       };
+    },
+    async addReservation(selectionInfo) {
+      // console.log(selectionInfo.start, selectionInfo.end, selectionInfo.allDay);
+      const startAt = encodeURIComponent(selectionInfo.startStr);
+      const endAt = encodeURIComponent(selectionInfo.endStr);
+      const dlgRes = DynamicForms.dialog.fromURL(
+        `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`, 'new', this.uuid,
+      );
+      console.log(dlgRes);
+    },
+    async editReservation(clickInfo) {
+      // console.log(clickInfo.event);
+      const eventId = clickInfo.event.id;
+      const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
+      switch (dlgRes?.action?.name) {
+      case 'delete_dlg':
+        clickInfo.event.remove();
+        break;
+      case 'submit':
+        clickInfo.event.setDates(dlgRes.data.start_at, dlgRes.data.end_at);
+        clickInfo.event.setProp('title', dlgRes.data.title);
+        break;
+      default:
+        console.log(dlgRes);
+      }
+    },
+    actionDelete_dlgExecute(action, data, modal, params, promise) {
+      // will be called from actionHandlerMixin
+      if (promise) promise.resolveData = { action, data, params };
+      this.actionDeleteExecute(action, data, modal, params, promise);
+      if (modal) modal.hide();
+    },
+    async resizeReservation(resizeInfo) {
+      const url = this.detail_url.replace('--record_id--', resizeInfo.event.id);
+      try {
+        await apiClient.patch(
+          url, { id: resizeInfo.event.id, start_at: resizeInfo.event.startStr, end_at: resizeInfo.event.endStr },
+        );
+      } catch (exc) {
+        resizeInfo.revert();
+        // console.log(resizeInfo.event.backgroundColor);
+        // window.setTimeout(() => resizeInfo.event.setProp('backgroundColor', '#F00'), 1);
+      }
     },
   },
 };

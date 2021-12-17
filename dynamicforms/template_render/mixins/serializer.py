@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from django.template import loader
 from rest_framework.reverse import reverse
-from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
+from rest_framework.serializers import Serializer, SerializerMetaclass
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition
@@ -69,13 +69,25 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         from .listserializer import ViewModeListSerializer
 
         view_mode_list = kwargs.pop('view_mode_list', None)
+
+        # Set list_serializer_class of class Meta
+        meta = getattr(cls, 'Meta', None)
+        if meta is None:
+            meta = type('Meta', (object,))
+            cls.Meta = meta
+        if not hasattr(meta, 'list_serializer_class'):
+            meta.list_serializer_class = ViewModeListSerializer
+
         res = super().__new__(cls, *args, **kwargs)
-        if isinstance(res, ListSerializer):
+        if isinstance(res, ViewModeListSerializer):
 
             if not view_mode_list and res.child.view_mode == ViewModeSerializer.ViewMode.TABLE_ROW:
                 view_mode_list = ViewModeListSerializer.ViewMode.TABLE
 
-            res = ViewModeListSerializer.mixin_to_serializer(view_mode_list, res)
+            res.set_view_mode(view_mode_list)
+            res.display_table = res.child.display_table
+            res.display_form = res.child.display_form
+
         return res
 
     def set_bound_value(self, value: Dict[Any, Any]):

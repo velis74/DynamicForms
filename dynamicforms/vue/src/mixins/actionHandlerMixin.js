@@ -31,6 +31,14 @@ const callDbFunction = (payload) => {
 };
 
 const actionHandlerMixin = {
+  /*
+   * Expects the master object to have the following properties and methods:
+   * - uuid: string  (all actions)
+   * - showModal(action, data)   (add and edit)
+   * - detail_url: string with --record_id--  (delete and submit)
+   * - processedConfiguration: object (optional for delete and submit methods)
+   * - loadData() (optional for filter method)
+   */
   mounted() {
     eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
   },
@@ -40,60 +48,68 @@ const actionHandlerMixin = {
   methods: {
     tableAction(payload) {
       if (payload.action === undefined || !_.size(payload.action)) return;
+      const action = payload.action ? payload.action.action : null;
+      const actionName = payload.action.name;
+      const actionNameTitleCase = actionName.charAt(0).toUpperCase() + actionName.slice(1);
+      const actionMethodName = `action${actionNameTitleCase}Execute`;
+      const actionMethod = this[actionMethodName] instanceof Function ? this[actionMethodName] : null;
 
-      switch (payload.action.name) {
+      switch (actionName) {
       case 'add':
-        this.actionAddExecute(payload.action, payload.data, payload.modal, {});
+        this.actionAddExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
       case 'edit':
-        this.actionEditExecute(payload.action, payload.data, payload.modal, {});
+        this.actionEditExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
       case 'delete':
-        this.actionDeleteExecute(payload.action, payload.data, payload.modal, {});
+        this.actionDeleteExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
       case 'filter':
-        this.actionFilterExecute(payload.action, payload.data, payload.modal, {});
+        this.actionFilterExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
       case 'submit':
-        this.actionSubmitExecute(payload.action, payload.data, payload.modal, {});
+        this.actionSubmitExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
       case 'cancel':
-        this.actionCancelExecute(payload.action, payload.data, payload.modal, {});
+        this.actionCancelExecute(payload.action, payload.data, payload.modal, {}, payload.promise);
         break;
-      default: {
-        const action = payload.action ? payload.action.action : null;
-        if (action === null) return; // Action is empty or not there, nothing will be executed
-
-        if (action.href) {
-          // action is a link to a subpage or to a router path
-          // we will do nothing because the action was already rendered as a link
+      default:
+        if (actionMethod != null) {
+          // So the method for this action has been implemented elsewhere, and now we will call it
+          actionMethod.apply(this, [payload.action, payload.data, payload.modal, {}, payload.promise]);
         } else {
-          // Action is a call to a function with some parameters
-          const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
-          if (func) {
-            let params = {};
-            try {
-              params = payload.action.action.params;
-              // eslint-disable-next-line no-empty
-            } catch (e) {}
-            const data = { context: this, ...payload };
-            if (params) {
-              func.apply(params, [data]);
-            } else {
-              func(data);
+          if (action === null) return; // Action is empty or not there, nothing will be executed
+
+          if (action.href) {
+            // action is a link to a subpage or to a router path
+            // we will do nothing because the action was already rendered as a link
+          } else {
+            // Action is a call to a function with some parameters
+            const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
+            if (func) {
+              let params = {};
+              try {
+                params = payload.action.action.params;
+                // eslint-disable-next-line no-empty
+              } catch (e) {}
+              const data = { context: this, ...payload };
+              if (params) {
+                func.apply(params, [data]);
+              } else {
+                func(data);
+              }
             }
           }
         }
       }
-      }
     },
-    actionAddExecute(action, data, modal, params) { // eslint-disable-line no-unused-vars
+    actionAddExecute(action, data, modal, params, promise) { // eslint-disable-line no-unused-vars
       this.showModal(action, data);
     },
-    actionEditExecute(action, data, modal, params) { // eslint-disable-line no-unused-vars
+    actionEditExecute(action, data, modal, params, promise) { // eslint-disable-line no-unused-vars
       this.showModal(action, data);
     },
-    actionDeleteExecute(action, data, modal, params) {
+    actionDeleteExecute(action, data, modal, params, promise) { // eslint-disable-line no-unused-vars
       const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', data.id);
       callDbFunction({
         method: 'delete',
@@ -104,7 +120,7 @@ const actionHandlerMixin = {
           }),
       });
     },
-    actionSubmitExecute(action, data, modal, params) {
+    actionSubmitExecute(action, data, modal, params, promise) {
       let dataId;
       let submitMethod;
       if (data.id) {
@@ -115,6 +131,8 @@ const actionHandlerMixin = {
         submitMethod = 'post';
       }
       submitMethod = params.submitMethod || submitMethod;
+
+      if (promise) promise.resolveData = { action, data, params };
 
       // noinspection JSUnresolvedVariable
       const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', dataId);
@@ -148,10 +166,11 @@ const actionHandlerMixin = {
           }),
       });
     },
-    actionCancelExecute(action, data, modal, params) { // eslint-disable-line no-unused-vars
+    actionCancelExecute(action, data, modal, params, promise) {
+      if (promise) promise.resolveData = { action, data, params };
       if (modal) modal.hide();
     },
-    actionFilterExecute(action, data, modal, params) { // eslint-disable-line no-unused-vars
+    actionFilterExecute(action, data, modal, params, promise) { // eslint-disable-line no-unused-vars
       this.loadData();
     },
   },

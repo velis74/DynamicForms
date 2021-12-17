@@ -1,16 +1,17 @@
 from enum import auto
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from django.template import loader
 from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer
 
+from dynamicforms.mixins import FieldRenderMixin
 from .base import ViewModeBase
 from .render_mode_enum import ViewModeEnum
 from .util import convert_to_json_if
 
 
-class ViewModeListSerializer(ViewModeBase):
+class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
     bound_value = None
 
     class ViewMode(ViewModeEnum):
@@ -19,16 +20,6 @@ class ViewModeListSerializer(ViewModeBase):
     def __init__(self, *args, **kwargs):
         self.child = None
         super().__init__(*args, **kwargs)
-
-    @staticmethod
-    def mixin_to_serializer(view_mode: 'ViewModeListSerializer.ViewMode', serializer: ListSerializer,
-                            value: Optional[List[Dict]] = None):
-        serializer.__class__ = type(
-            'ViewMode' + serializer.child.__class__.__name__, (ViewModeListSerializer, serializer.__class__), {}
-        )
-        super(ViewModeListSerializer, serializer).set_view_mode(view_mode)
-        serializer.set_bound_value(value)
-        return serializer
 
     def set_bound_value(self, value: List[Dict]):
         self.bound_value = value
@@ -57,7 +48,8 @@ class ViewModeListSerializer(ViewModeBase):
         res['list_url'] = self.reverse_url
         return convert_to_json_if(res, output_json)
 
-    uuid = property(lambda self: self.child.uuid)  # propagate original serializer's uuid to list serializer
+    # propagate original serializer's uuid to list serializer
+    uuid = property(lambda self: self.child.uuid, lambda self, value: setattr(self.child, 'uuid', value))
 
     @classmethod
     def get_reverse_url(cls, view_name, request):
@@ -85,6 +77,13 @@ class ViewModeListSerializer(ViewModeBase):
         elif self.child:
             return self.child.request
         return None
+
+    def as_component_def(self: 'DFField') -> dict:
+        if hasattr(self.child, 'as_component_def_table'):
+            return self.child.as_component_def_table
+        res = super().as_component_def()
+        res['render_params']['form'] = 'DFWidgetPlaceholder'
+        return res
 
 
 # noinspection PyAbstractClass
