@@ -1,10 +1,5 @@
 <template>
   <div>
-    <p>
-      This example showcases DynamicForms' capacity for handling nested serializers, both in list and form mode. Do not
-      pay too much attention to the JS fullCalendar component used here, but instead focus on the dialogs for adding or
-      editing events.
-    </p>
     <FullCalendar :options="calendarOptions"/>
   </div>
 </template>
@@ -38,6 +33,7 @@ export default {
     };
   },
   computed: {
+    defaultSubmitHeaders() { return { 'x-viewmode': 'FORM' }; },
     detail_url() { return `${this.url}/--record_id--.json`; },
     calendarOptions() {
       return {
@@ -115,10 +111,13 @@ export default {
       // console.log(selectionInfo.start, selectionInfo.end, selectionInfo.allDay);
       const startAt = encodeURIComponent(selectionInfo.startStr);
       const endAt = encodeURIComponent(selectionInfo.endStr);
-      const dlgRes = DynamicForms.dialog.fromURL(
+      const dlgRes = await DynamicForms.dialog.fromURL(
         `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`, 'new', this.uuid,
       );
-      console.log(dlgRes);
+      const event = this.eventDataTransform(dlgRes.data);
+      selectionInfo.view.calendar.addEvent(event, true);
+      // selectionInfo.view.calendar.refetchEvents();
+      console.log([event, event.start, dlgRes]);
     },
     async editReservation(clickInfo) {
       // console.log(clickInfo.event);

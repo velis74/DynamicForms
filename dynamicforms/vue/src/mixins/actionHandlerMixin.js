@@ -38,7 +38,11 @@ const actionHandlerMixin = {
    * - detail_url: string with --record_id--  (delete and submit)
    * - processedConfiguration: object (optional for delete and submit methods)
    * - loadData() (optional for filter method)
+   * - defaultSubmitHeaders() calculated value specifying custom headers for submit button
    */
+  computed: {
+    defaultSubmitHeaders() { return { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true }; },
+  },
   mounted() {
     eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
   },
@@ -136,8 +140,7 @@ const actionHandlerMixin = {
 
       // noinspection JSUnresolvedVariable
       const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', dataId);
-      const headers = params && 'headers' in params ?
-        params.headers : { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true };
+      const headers = params?.headers || this.defaultSubmitHeaders;
       const self = this;
 
       callDbFunction({
@@ -147,6 +150,8 @@ const actionHandlerMixin = {
         config: { headers },
         then: params.then ||
           ((res) => {
+            // update resolve data with record that came back from the server
+            if (promise) promise.resolveData = { action, data: res.data, params };
             if (modal) modal.hide();
             if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRowFromForm(res.data);
           }),
