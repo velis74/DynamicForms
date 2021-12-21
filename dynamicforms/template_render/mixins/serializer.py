@@ -158,8 +158,6 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'ordering_parameter': getattr(self.context['view'], 'ordering_parameter', 'ordering'),
             'ordering_style': getattr(self.context['view'], 'ordering_style', None)
         }
-        if not getattr(self, 'parent', None):
-            params['record_data'] = self.data
         return convert_to_json_if(params, output_json)
 
     def get_df_control_data(self: '_ViewModeBoundSerializer', row):
@@ -180,19 +178,20 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             )
         )
 
-    def get_dialog_def(self):
+    @property
+    def layout(self):
         template_context = getattr(self, 'template_context', {})
-
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'layout'):
-            res = self.Meta.layout.as_component_def(self)
+            return self.Meta.layout
         else:
             from dynamicforms.template_render.layout import Layout
-            res = Layout(
+            return Layout(
                 size=template_context.get('dialog_classes', ''),
                 header_classes=template_context.get('dialog_header_classes', '')
-            ).as_component_def(self)
+            )
 
-        # mangle the old-style template filename such that it only contains allowed characters
+    def get_dialog_def(self):
+        res = self.layout.as_component_def(self)
         res['component_name'] = self.component_name
 
         return res
