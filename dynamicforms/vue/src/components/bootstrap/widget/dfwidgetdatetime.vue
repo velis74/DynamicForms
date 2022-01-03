@@ -7,7 +7,9 @@
       class="df-datetime-class"
       :name="def.name"
     >
+      {{ def }}
       <datetime
+        v-if="!def.render_params.allow_null"
         v-model="value"
         type="datetime"
         :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
@@ -15,6 +17,19 @@
         :format="displayFormat"
         @input="dateTimeInput"
       />
+      <div v-else class="input-group mb-3">
+        <datetime
+          v-model="value"
+          type="datetime"
+          :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
+          :input-class="'df-widget-datetime-input form-control'"
+          :format="displayFormat"
+          @input="dateTimeInput"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-sm btn-outline-secondary" type="button">Clear</button>
+        </div>
+      </div>
     </div>
     <div v-if="value" slot="error">Debug value {{ value }}</div>
   </DFWidgetBase>
