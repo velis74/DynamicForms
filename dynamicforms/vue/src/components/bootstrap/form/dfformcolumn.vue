@@ -46,12 +46,20 @@ import DFWidgetDatetime from '../widget/dfwidgetdatetime.vue';
 import DFWidgetFile from '../widget/dfwidgetfile.vue';
 import DFWidgetInput from '../widget/dfwidgetinput.vue';
 import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
+import DFWidgetPlaceholder from '../widget/dfwidgetplaceholder.vue';
 import DFWidgetSelect from '../widget/dfwidgetselect.vue';
 
 export default {
   name: 'DFFormColumn',
   components: {
-    DFWidgetInput, DFWidgetPassword, DFWidgetCKEditor, DFWidgetSelect, DFWidgetCheckbox, DFWidgetFile, DFWidgetDatetime,
+    DFWidgetInput,
+    DFWidgetPassword,
+    DFWidgetCKEditor,
+    DFWidgetSelect,
+    DFWidgetCheckbox,
+    DFWidgetFile,
+    DFWidgetPlaceholder,
+    DFWidgetDatetime,
   },
   props: {
     def: { type: Object, required: true },

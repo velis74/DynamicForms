@@ -5,7 +5,7 @@ from enum import IntEnum
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
 
@@ -157,26 +157,14 @@ class AdvancedFields(models.Model):
     # string_related_field, which is always read_only is defined only in serializer
     # and primary_key_related_field is defined as its source
     primary_key_related_field = models.OneToOneField(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='primary'
+        Relation, on_delete=models.CASCADE, null=True, related_name='primary'
     )
     slug_related_field = models.ForeignKey(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='slug'
+        Relation, on_delete=models.CASCADE, null=True, related_name='slug'
     )
-    hyperlinked_related_field = models.ManyToManyField(
-        Relation,
-        related_name='hyper_related'
-    )
+    hyperlinked_related_field = models.ManyToManyField(Relation, related_name='hyper_related')
     hyperlinked_identity_field = models.ForeignKey(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='hyper_identity'
+        Relation, on_delete=models.CASCADE, null=True, related_name='hyper_identity'
     )
 
     def __str__(self):
@@ -197,7 +185,8 @@ class Document(models.Model):
 
 
 class CalendarRecurrence(models.Model):
-    from .recurrence_utils import Pattern, date_range as dr_func
+    from .recurrence_utils import date_range as dr_func
+    from .recurrence_utils import Pattern
 
     start_at = models.DateTimeField(verbose_name=_('Recurrence start'), null=False, blank=False)
     end_at = models.DateTimeField(verbose_name=_('Recurrence end'), null=False, blank=False)
@@ -235,7 +224,7 @@ class CalendarEvent(models.Model):
 
 
 class CalendarReminder(models.Model):
-    class RT(IntEnum):
+    class RType(IntEnum):
         Notification = 1
         Email = 2
 
@@ -246,9 +235,10 @@ class CalendarReminder(models.Model):
         Days = 4
         Weeks = 5
 
-    REMINDER_TYPE_CHOICES = [(m.value, m.name) for m in RT]
+    REMINDER_TYPE_CHOICES = [(m.value, m.name) for m in RType]
     UNIT_CHOICES = [(m.value, m.name) for m in Unit]
 
+    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, related_name='reminders')
     type = models.IntegerField(verbose_name=_('Type'), choices=REMINDER_TYPE_CHOICES, null=False, blank=False)
     quantity = models.IntegerField(verbose_name=_('Quantity'), null=False, blank=False)
-    pattern = models.IntegerField(verbose_name=_('Pattern'), choices=UNIT_CHOICES, null=False, blank=False)
+    unit = models.IntegerField(verbose_name=_('Unit'), choices=UNIT_CHOICES, null=False, blank=False)

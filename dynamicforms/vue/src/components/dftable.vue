@@ -13,7 +13,6 @@ import apiClient from '../apiClient';
 import DynamicForms from '../dynamicforms';
 import ActionsHandler from '../logic/actionsHandler';
 import DisplayMode from '../logic/displayMode';
-import eventBus from '../logic/eventBus';
 import LoadableTableRows from '../logic/loadableTableRows';
 import TableColumn from '../logic/tableColumn';
 import actionHandlerMixin from '../mixins/actionHandlerMixin';
@@ -86,9 +85,6 @@ export default {
       }
     },
   },
-  beforeDestroy() {
-    eventBus.$off(`tableActionExecuted_${this.uuid}`);
-  },
   mounted() {
     let bodyColumnCss = '';
     this.columns.forEach((column, idx) => {
@@ -100,7 +96,6 @@ export default {
     const styleTag = document.createElement('style');
     styleTag.appendChild(document.createTextNode(bodyColumnCss));
     document.head.appendChild(styleTag);
-    eventBus.$on(`tableActionExecuted_${this.uuid}`, this.tableAction);
   },
   methods: {
     changeOrder(colIdx, sortDirection, sortSeq, clearAllOthers) {
@@ -156,35 +151,6 @@ export default {
       ));
       if (filter.doFilter) {
         this.loadData();
-      }
-    },
-    tableAction(payload) {
-      if (['add', 'edit', 'delete', 'filter', 'submit', 'cancel'].includes(payload.action.name)) {
-        this.executeTableAction(payload.action, payload.data, payload.modal, {});
-      } else {
-        const action = payload.action ? payload.action.action : null;
-        if (action === null) return; // Action is empty or not there, nothing will be executed
-
-        if (action.href) {
-          // action is a link to a subpage or to a router path
-          // we will do nothing because the action was already rendered as a link
-        } else {
-          // Action is a call to a function with some parameters
-          const func = DynamicForms.getObjectFromPath(payload.action.action.func_name);
-          if (func) {
-            let params = {};
-            try {
-              params = payload.action.action.params;
-              // eslint-disable-next-line no-empty
-            } catch (e) {}
-            const data = { context: this, ...payload };
-            if (params) {
-              func.apply(params, [data]);
-            } else {
-              func(data);
-            }
-          }
-        }
       }
     },
   },

@@ -1,7 +1,7 @@
 import threading
 
 from django.conf import settings as s
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from versio.version import Version
 from versio.version_scheme import Pep440VersionScheme
 

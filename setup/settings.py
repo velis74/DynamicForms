@@ -125,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
@@ -158,3 +158,5 @@ DYNAMICFORMS = {
     'testing': TESTING,
     'allow_anonymous_user_to_preupload_files': True,
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
