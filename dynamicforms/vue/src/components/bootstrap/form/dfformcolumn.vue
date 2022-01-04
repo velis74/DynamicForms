@@ -5,13 +5,7 @@
         {{ def.title }}
       </div>
       <div class="card-body">
-        <component
-          :is="def.field.render_params.form"
-          :def="def.field"
-          :data="data"
-          :errors="errors"
-          :show-label-or-help-text="showLabelOrHelpText"
-        />
+        <DFFormLayout :uuid="def.uuid" :record="data" :rows="def.layout.rows"/>
       </div>
       <div v-if="def.footer" class="card-footer">
         {{ def.footer }}
@@ -48,9 +42,12 @@ import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
 import DFWidgetPlaceholder from '../widget/dfwidgetplaceholder.vue';
 import DFWidgetSelect from '../widget/dfwidgetselect.vue';
 
+import DFFormLayout from './dfformlayout.vue';
+
 export default {
   name: 'DFFormColumn',
   components: {
+    DFFormLayout,
     DFWidgetInput,
     DFWidgetPassword,
     DFWidgetCKEditor,

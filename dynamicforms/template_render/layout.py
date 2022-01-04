@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
+from rest_framework.serializers import Serializer as DRFSerializer
+
 from dynamicforms.fields import DFField, DisplayMode
 
 if TYPE_CHECKING:
@@ -11,7 +13,7 @@ class Field(object):
         self.field_name = field_name
         self.render_format = render_format
 
-    def field_def(self, serializer: 'Serializer') -> DFField:
+    def field_def(self, serializer: 'Serializer') -> Union[DFField, DRFSerializer]:
         return serializer.fields[self.field_name]
 
     def as_component_def(self, serializer: 'Serializer'):
@@ -97,7 +99,10 @@ class Layout(object):
         for field_name, field in serializer.fields.items():
             if field_name not in used_fields and field.display_form != DisplayMode.SUPPRESS:
                 used_fields.add(field_name)
-                row.append(field_name)
+                row.append(
+                    Group(field_name)  # nested Serializer or ListSerializer
+                    if isinstance(field, DRFSerializer) else field_name  # "just" a standard field
+                )
                 if field.display_form == DisplayMode.FULL:
                     row_num += 1
                 if row_num >= self.columns:
@@ -112,19 +117,21 @@ class Layout(object):
 
 
 class Group(Column):
-    def __init__(self, field: Union[str, Field, None], title, sub_layout: Layout,
+    def __init__(self, field: Union[str, Field, None], title: str = None, sub_layout: Layout = None,
                  width_classes: Optional[str] = None, footer: Optional[str] = None):
         super().__init__(field, width_classes)
         self.title = title
         self.layout = sub_layout
         self.footer = footer
 
-    def _get_laid_fields(self):
-        return self.layout._get_laid_fields()
-
     def as_component_def(self, serializer: 'Serializer') -> Dict:
         res = super().as_component_def(serializer)
+        sub_serializer = self.field.field_def(serializer)  # type: Serializer
+        layout = self.layout or sub_serializer.layout
         res.update(
-            dict(type='group', title=self.title, footer=self.footer, layout=self.layout.as_component_def(serializer))
+            dict(type='group'), footer=self.footer, title=self.title or sub_serializer.label,
+            uuid=sub_serializer.uuid,
+            layout=layout.as_component_def(sub_serializer)
         )
+        res.pop('field', None)
         return res

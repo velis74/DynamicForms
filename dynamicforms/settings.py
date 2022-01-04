@@ -182,6 +182,6 @@ def version_check(checked_version, min_version):
     :return: True when checked version is high enough
     """
 
-    if not checked_version:
+    if not checked_version or checked_version == 'None':
         return False
     return Version(checked_version, scheme=Pep440VersionScheme) >= Version(min_version, scheme=Pep440VersionScheme)

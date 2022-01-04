@@ -3,7 +3,7 @@ import datetime
 from django.utils.translation import gettext_lazy as _
 
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
-from dynamicforms.template_render.layout import Column, Layout, Row
+from dynamicforms.template_render.layout import Column, Group, Layout, Row
 from examples.models import CalendarEvent, CalendarReminder
 from .calendar_dependencies import RecurrenceEventSerializer, RecurrenceEventViewSet
 from .calendar_recurrence import RecurrenceSerializer
@@ -57,7 +57,7 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
             Row('description'),
             Row('start_at', 'end_at'),
             Row('reminders'),
-            Row(Column('recurrence', 'col-8'), Column('change_this_record_only', 'col-4')),
+            Row(Group('recurrence', width_classes='col-8'), Column('change_this_record_only', 'col-4')),
             columns=2, size='large'
         )
         exclude = ()
