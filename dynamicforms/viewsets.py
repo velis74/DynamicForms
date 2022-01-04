@@ -39,8 +39,10 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        field_names = [(f.name + '_id') if isinstance(f, models.ForeignKey) else f.name
-            for f in self.get_queryset().model._meta.fields]
+        field_names = [
+            (f.name + '_id') if isinstance(
+                f, models.ForeignKey) else f.name for f in self.get_queryset().model._meta.fields
+        ]
         model = self.get_queryset().model
         fld = model._meta.get_field
         instantiation_params = {k: fld(k).to_python(v) for k, v in self.request.GET.items() if k in field_names}

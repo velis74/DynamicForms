@@ -96,24 +96,34 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                     self.initial_check(field, '', 'decimal_field', 'text')
                     field.send_keys('15.18')
                 elif label_text == 'Datetime field':
-                    self.initial_check(field, '', 'datetime_field', ('datetime-local', 'text'))
-                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('08122018')
-                        field.send_keys(Keys.TAB)
-                        field.send_keys('081500')
-                        if self.github_actions:
-                            field.send_keys('AM')
-                    elif self.selected_browser == Browsers.EDGE:
-                        # There is a bug when sending keys to EDGE.
-                        # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
-                        # Workaround is to do this with javascript using execute_script method
-                        self.update_edge_field(field_id, '2018-12-08T08:15')
-                    elif self.selected_browser == Browsers.FIREFOX:
-                        field.send_keys('08/12/2018')
-                        field.send_keys(Keys.TAB)
-                        field.send_keys('08:15')
-                    else:
-                        field.send_keys('2018-12-08 08:15:00')
+                    _field = field if renderer == 'html' else field.find_element(by=By.TAG_NAME, value='input')
+                    self.initial_check(_field, '',
+                                       'datetime_field' if renderer == 'html' else '', ('datetime-local', 'text'))
+                    if renderer == 'html':
+                        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                            _field.send_keys('08122018')
+                            _field.send_keys(Keys.TAB)
+                            _field.send_keys('081500')
+                            if self.github_actions:
+                                _field.send_keys('AM')
+                        elif self.selected_browser == Browsers.EDGE:
+                            # There is a bug when sending keys to EDGE.
+                            # https://stackoverflow.com/questions/38747126/selecting-calendar-control-in-edge-using-selenium
+                            # Workaround is to do this with javascript using execute_script method
+                            self.update_edge_field(field_id, '2018-12-08T08:15')
+                        elif self.selected_browser == Browsers.FIREFOX:
+                            _field.send_keys('08/12/2018')
+                            _field.send_keys(Keys.TAB)
+                            _field.send_keys('08:15')
+                        else:
+                            _field.send_keys('2018-12-08 08:15:00')
+                    elif renderer == 'component':
+                        _field.click()
+                        self.browser.find_element(by=By.CLASS_NAME,
+                                                  value='vdatetime-popup__actions__button--confirm').click()
+                        time.sleep(0.5)
+                        self.browser.find_element(by=By.CLASS_NAME,
+                                                  value='vdatetime-popup__actions__button--confirm').click()
                 elif label_text == 'Date field':
                     self.initial_check(field, '', 'date_field',
                                        ('date', 'text') if self.selected_browser in (
@@ -148,8 +158,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                 else:
                     field_count -= 1
 
-        # self.assertEqual(field_count, 16)
-        self.assertEqual(field_count, 16 - 1)  # minus datetime_field
+        self.assertEqual(field_count, 16)
 
         save_button_prefix = "save-" if renderer == 'html' else 'submit-'
         dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
@@ -158,8 +167,8 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         rows = self.get_table_body()
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
-        # self.assertEqual(len(cells), 18)
-        self.assertEqual(len(cells), 18 - 1)  # minus datetime_field
+
+        self.assertEqual(len(cells), 18)
 
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
@@ -222,8 +231,6 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
 
             time.sleep(0.01)
 
-        # self.assertEqual(len(errors), 7)
-        # datetime field is excluded
         self.assertEqual(len(errors), 6)
         self.assertEqual(errors[0].get_attribute("innerHTML"), "Enter a valid email address.")
         self.assertEqual(errors[1].get_attribute("innerHTML"), "Enter a valid URL.")
