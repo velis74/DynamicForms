@@ -98,8 +98,8 @@ class CalendarEventTest(CommonTestBase):
         # Insert a new event
         event = dict(
             title='Party time', colour=0x000008,
-            start_at=datetime.datetime(2020, 1, 30, 10, 0),
-            end_at=datetime.datetime(2020, 1, 30, 11, 0),
+            start_at=datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc),
+            end_at=datetime.datetime(2020, 1, 30, 11, 0, tzinfo=pytz.utc),
         )
 
         response = self.get_json(

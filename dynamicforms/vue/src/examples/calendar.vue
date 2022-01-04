@@ -15,9 +15,9 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/vue';
 import SunCalc from 'suncalc';
 
-import apiClient from '@/apiClient';
-import DynamicForms from '@/dynamicforms';
-import ActionHandlerMixin from '@/mixins/actionHandlerMixin';
+import apiClient from '../apiClient';
+import DynamicForms from '../dynamicforms';
+import ActionHandlerMixin from '../mixins/actionHandlerMixin';
 
 export default {
   name: 'Calendar',
@@ -123,7 +123,7 @@ export default {
       // console.log(clickInfo.event);
       const eventId = clickInfo.event.id;
       const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
-      switch (dlgRes?.action?.name) {
+      switch (dlgRes && dlgRes.action ? dlgRes.action.name : null) {
       case 'delete_dlg':
         clickInfo.event.remove();
         break;

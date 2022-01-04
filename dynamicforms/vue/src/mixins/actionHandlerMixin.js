@@ -140,7 +140,7 @@ const actionHandlerMixin = {
 
       // noinspection JSUnresolvedVariable
       const url = params && params.detailUrl ? params.detailUrl : this.detail_url.replace('--record_id--', dataId);
-      const headers = params?.headers || this.defaultSubmitHeaders;
+      const headers = (params ? params.headers : null) || this.defaultSubmitHeaders;
       const self = this;
 
       callDbFunction({

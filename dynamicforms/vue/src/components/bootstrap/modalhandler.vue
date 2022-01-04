@@ -179,7 +179,8 @@ export default {
         });
       }
       $(this.bootstrapDialog).modal('show');
-      return this.currentDialog.promise?.promise; // should return the promise object of last inserted dialog
+      // should return the promise object of last inserted dialog
+      return this.currentDialog.promise ? this.currentDialog.promise.promise : null;
     },
     hide: function hide() {
       $(this.bootstrapDialog).modal('hide');

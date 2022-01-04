@@ -27,8 +27,8 @@ export default {
   components: { DFFormRow },
   mixins: [formFieldChangeMixin],
   props: {
-    rows: { type: Array, required: true },
     uuid: { type: String, required: true },
+    rows: { type: Array, required: true },
     record: { type: Object, default: null },
   },
   data() {
