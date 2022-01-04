@@ -293,12 +293,8 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             return qs
         if isinstance(model_meta.get_field(field), (models.DateField,)):
             date_time = None
-            hm_iso_format: str = '%Y-%m-%dT%H:%M'
-            is_hm_iso_format: bool = False
-            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S',
-                                  hm_iso_format, settings.DATE_FORMAT, '%Y-%m-%d']:
+            for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
                 try:
-                    is_hm_iso_format = hm_iso_format == date_time_fmt
                     date_time = datetime.strptime(value, date_time_fmt)
                     break
                 except:
@@ -306,11 +302,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             if date_time is None:
                 return queryset
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            if len(value) <= 10:
-                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-            timedelta_value: dict = dict(seconds=1) if not is_hm_iso_format else dict(minutes=1)
-            return queryset.filter(**{field + '__gte': date_time,
-                                      field + '__lt': date_time + timedelta(**timedelta_value)})
+            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
         else:
             if isinstance(model_meta.get_field(field), models.BooleanField):
                 value = (value == 'true')
