@@ -100,6 +100,8 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                     self.initial_check(_field, '',
                                        'datetime_field' if renderer == 'html' else '', ('datetime-local', 'text'))
                     if renderer == 'html':
+                        # datetime UI not supported
+                        continue
                         if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
                             _field.send_keys('08122018')
                             _field.send_keys(Keys.TAB)
@@ -163,18 +165,11 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         save_button_prefix = "save-" if renderer == 'html' else 'submit-'
         dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
-
-        print(self.browser.page_source)
-
-        self.browser.refresh()
-
-        time.sleep(3)  # Zato, da se lahko tabela osveži
+        time.sleep(1)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
-
         self.assertEqual(len(cells), 18)
-
         # Then we click the record row to edit it. Go back to model_single.html and check if it had been edited
         cells[0].click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog(modal_serializer_id)
