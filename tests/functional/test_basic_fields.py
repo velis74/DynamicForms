@@ -163,6 +163,11 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         save_button_prefix = "save-" if renderer == 'html' else 'submit-'
         dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
+
+        print(self.browser.page_source)
+
+        self.browser.refresh()
+
         time.sleep(3)  # Zato, da se lahko tabela osveži
         rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
