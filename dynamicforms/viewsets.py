@@ -7,6 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.db.models import QuerySet
 from django.http import Http404
+from django.utils.dateparse import parse_datetime
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -39,10 +40,8 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        field_names = [
-            (f.name + '_id') if isinstance(
-                f, models.ForeignKey) else f.name for f in self.get_queryset().model._meta.fields
-        ]
+        field_names = [(f.name + '_id')
+                       if isinstance(f, models.ForeignKey) else f.name for f in self.get_queryset().model._meta.fields]
         model = self.get_queryset().model
         fld = model._meta.get_field
         instantiation_params = {k: fld(k).to_python(v) for k, v in self.request.GET.items() if k in field_names}
@@ -285,7 +284,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
             return queryset.filter(**{field + '__icontains': value})
         if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
-            date_time: datetime = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+            date_time: datetime = parse_datetime(value.replace('Z', ''))
             date_time.replace(second=0)
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
             qs: QuerySet = queryset.filter(**{field + '__gte': date_time,

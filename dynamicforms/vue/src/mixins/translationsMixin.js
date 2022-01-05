@@ -1,7 +1,7 @@
 const translationsMixin = {
   methods: {
     gettext(str) {
-      return str;
+      return window.gettext ? window.gettext(str) : str;
     },
   },
 };
