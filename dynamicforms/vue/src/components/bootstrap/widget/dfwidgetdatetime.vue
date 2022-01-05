@@ -11,7 +11,7 @@
         <datetime
           :key="datetimeFieldKey"
           v-model="value"
-          type="datetime"
+          :type="inputType"
           :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
           :input-class="'df-widget-datetime-input form-control'"
           :format="displayFormat"
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
 
 import DynamicForms from '../../../dynamicforms';
@@ -67,6 +69,11 @@ export default {
         return this.data[this.def.name];
       },
       set: function set(newVal) {
+        if (_.size(newVal) && this.inputType !== 'datetime') {
+          // eslint-disable-next-line no-param-reassign
+          newVal = this.inputType === 'date' ?
+            DateTime.fromISO(newVal).toFormat('yyyy-MM-dd') : DateTime.fromISO(newVal).toFormat('HH:mm:ss');
+        }
         this.data[this.def.name] = newVal; // eslint-disable-line
         return this.data[this.def.name];
       },

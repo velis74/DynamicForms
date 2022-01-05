@@ -127,27 +127,39 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
                         self.browser.find_element(by=By.CLASS_NAME,
                                                   value='vdatetime-popup__actions__button--confirm').click()
                 elif label_text == 'Date field':
-                    self.initial_check(field, '', 'date_field',
+                    _field = field if renderer == 'html' else field.find_element(by=By.TAG_NAME, value='input')
+                    self.initial_check(_field, '', 'date_field' if renderer == 'html' else '',
                                        ('date', 'text') if self.selected_browser in (
-                                           Browsers.IE, Browsers.SAFARI) else 'date')
-                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('08122018')
-                    elif self.selected_browser == Browsers.EDGE:
-                        field.send_keys(Keys.ENTER)
-                    else:
-                        field.send_keys('2018-12-08')
+                                           Browsers.IE, Browsers.SAFARI) or renderer == 'component' else 'date')
+                    if renderer == 'html':
+                        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                            _field.send_keys('08122018')
+                        elif self.selected_browser == Browsers.EDGE:
+                            _field.send_keys(Keys.ENTER)
+                        else:
+                            _field.send_keys('2018-12-08')
+                    elif renderer == 'component':
+                        _field.click()
+                        self.browser.find_element(by=By.CLASS_NAME,
+                                                  value='vdatetime-popup__actions__button--confirm').click()
                 elif label_text == 'Time field':
-                    self.initial_check(field, '', 'time_field',
+                    _field = field if renderer == 'html' else field.find_element(by=By.TAG_NAME, value='input')
+                    self.initial_check(_field, '', 'time_field' if renderer == 'html' else '',
                                        ('time', 'text') if self.selected_browser in (
-                                           Browsers.IE, Browsers.SAFARI) else 'time')
-                    if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-                        field.send_keys('081500')
-                        if self.github_actions:
-                            field.send_keys('AM')
-                    elif self.selected_browser == Browsers.EDGE:
-                        field.send_keys(Keys.ENTER)
-                    else:
-                        field.send_keys('08:15:00')
+                                           Browsers.IE, Browsers.SAFARI) or renderer == 'component' else 'time')
+                    if renderer == 'html':
+                        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+                            _field.send_keys('081500')
+                            if self.github_actions:
+                                _field.send_keys('AM')
+                        elif self.selected_browser == Browsers.EDGE:
+                            _field.send_keys(Keys.ENTER)
+                        else:
+                            _field.send_keys('08:15:00')
+                    elif renderer == 'component':
+                        _field.click()
+                        self.browser.find_element(by=By.CLASS_NAME,
+                                                  value='vdatetime-popup__actions__button--confirm').click()
                 elif label_text == 'Duration field':
                     self.initial_check(field, '', 'duration_field', 'text')
                     field.send_keys('180')
@@ -201,8 +213,14 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             # self.clear_input(dt_field)
             # dt_field.send_keys(Keys.TAB)
             # self.clear_input(dt_field)
-            self.clear_input(dialog.find_element(By.NAME, "date_field"))
-            self.clear_input(dialog.find_element(By.NAME, "time_field"))
+            date_field = dialog.find_element(By.NAME, "date_field")
+            time_field = dialog.find_element(By.NAME, "time_field")
+            if renderer == 'component':
+                date_field.find_element(By.CLASS_NAME, 'clear-datetime').click()
+                time_field.find_element(By.CLASS_NAME, 'clear-datetime').click()
+            else:
+                self.clear_input(date_field)
+                self.clear_input(time_field)
         else:
             dialog.find_element(By.NAME, "datetime_field").send_keys("Test error")
             dialog.find_element(By.NAME, "date_field").send_keys("Test error")

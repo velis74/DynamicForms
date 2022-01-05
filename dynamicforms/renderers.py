@@ -112,7 +112,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
         # Get a clone of the field with text-only value representation.
         field = field.as_form_field()
 
-        if style.get('input_type') == 'datetime-local' and isinstance(field.value, six.text_type):
+        if style.get('input_type') == 'datetime' and isinstance(field.value, six.text_type):
             field.value = field.value.rstrip('Z')
 
         if 'template' in style:

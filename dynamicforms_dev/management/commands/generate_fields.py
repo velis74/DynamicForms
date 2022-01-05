@@ -42,10 +42,10 @@ render_params = ClassAssemblyDict({
     fields.IntegerField: dict(input_type='number'),
     fields.FloatField: dict(input_type='number', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
     fields.DecimalField: dict(input_type='text', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
-    fields.DateTimeField: dict(input_type='datetime-local', form='DFWidgetDatetime', table_format='dd.MM.yyyy HH:mm',
+    fields.DateTimeField: dict(input_type='datetime', form='DFWidgetDatetime', table_format='dd.MM.yyyy HH:mm',
                                form_format='dd.MM.yyyy HH:mm', table='#DFTableCellDatetime', ),
-    fields.DateField: dict(input_type='date'),
-    fields.TimeField: dict(input_type='time'),
+    fields.DateField: dict(input_type='date', form='DFWidgetDatetime', table_format='dd.MM.yyyy', form_format='dd.MM.yyyy', table='#DFTableCellDatetime', ),
+    fields.TimeField: dict(input_type='time', form='DFWidgetDatetime', table_format='HH:mm', form_format='HH:mm', table='#DFTableCellDatetime', ),
     serializers.FileField: dict(input_type='file', form='DFWidgetFile', table='df-tablecell-file'),
     fields.BooleanField: dict(
         table='df-tablecell-bool', input_type='checkbox', label_after_element=True, form='DFWidgetCheckbox',
