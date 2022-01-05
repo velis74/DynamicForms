@@ -78,7 +78,7 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
             return self.child.request
         return None
 
-    def as_component_def(self: 'DFField') -> dict:
+    def as_component_def(self: 'DFField') -> dict: # noqa
         if hasattr(self.child, 'as_component_def_table'):
             return self.child.as_component_def_table
         res = super().as_component_def()

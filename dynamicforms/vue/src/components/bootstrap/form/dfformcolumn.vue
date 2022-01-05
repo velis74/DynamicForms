@@ -36,6 +36,7 @@
 import DisplayMode from '../../../logic/displayMode';
 import DFWidgetCheckbox from '../widget/dfwidgetcheckbox.vue';
 import DFWidgetCKEditor from '../widget/dfwidgetckeditor.vue';
+import DFWidgetDatetime from '../widget/dfwidgetdatetime.vue';
 import DFWidgetFile from '../widget/dfwidgetfile.vue';
 import DFWidgetInput from '../widget/dfwidgetinput.vue';
 import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
@@ -53,6 +54,7 @@ export default {
     DFWidgetCheckbox,
     DFWidgetFile,
     DFWidgetPlaceholder,
+    DFWidgetDatetime,
   },
   props: {
     def: { type: Object, required: true },

@@ -38,11 +38,12 @@
 
 <script>
 import Actions from '../actions.vue';
+import DFTableCellDatetime from '../tableCells/dftablecelldatetime.vue';
 import DFTableCellFloat from '../tableCells/dftablecellfloat.vue';
 
 export default {
   name: 'DFTableBody',
-  components: { Actions, DFTableCellFloat },
+  components: { Actions, DFTableCellFloat, DFTableCellDatetime },
   props: {
     columns: { type: Array, required: true },
     rows: { type: Array, required: true },

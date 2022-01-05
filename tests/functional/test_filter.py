@@ -1,14 +1,10 @@
 import time
-from datetime import timedelta
 
 from django.urls import reverse
-from django.utils import timezone
-# from django.utils.formats import localize
 from parameterized import parameterized
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 
-from .selenium_test_case import Browsers, WaitingStaticLiveServerTestCase
+from .selenium_test_case import WaitingStaticLiveServerTestCase
 
 
 class FilterFormTest(WaitingStaticLiveServerTestCase):
@@ -52,7 +48,9 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
                                                 'tfoot tr[id*="loading-"') if not is_component_renderer else None
 
         char_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="char_field"]')
-        datetime_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="datetime_field"]')
+        datetime_field = filter_row.find_element(
+            By.CSS_SELECTOR, 'input[name="datetime_field"]') if not is_component_renderer else \
+            filter_row.find_element(By.CLASS_NAME, 'vdatetime-input')
         int_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="int_field"]')
         rtf_field = filter_row.find_element(By.CSS_SELECTOR, 'input[name="rtf_field"]')
         if not is_component_renderer:
@@ -78,26 +76,42 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         # char_field.clear()
         self.clear_input(char_field)
 
-        from examples.models import Filter
-        date_field = Filter.objects.filter(datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
-        tomorrow = date_field.datetime_field.strftime("%Y-%m-%dT%H:%M")
+        # from examples.models import Filter
+        # date_field = Filter.objects.filter(
+        # datetime_field__gt=timezone.now() + timedelta(days=1)).order_by('id').first()
+        # tomorrow = date_field.datetime_field.strftime("%Y-%m-%dT%H:%M")
         # tomorrow_check = localize(date_field.datetime_field.date())
-        if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
-            datetime_field.send_keys(date_field.datetime_field.strftime("%m%d%Y" if self.github_actions else "%d%m%Y"))
-            datetime_field.send_keys(Keys.TAB)
-            datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
-            if self.github_actions:
-                datetime_field.send_keys("AM")
-        elif self.selected_browser in (Browsers.FIREFOX,):
-            datetime_field.send_keys(date_field.datetime_field.strftime("%d/%m/%Y"))
-            datetime_field.send_keys(Keys.TAB)
-            datetime_field.send_keys(date_field.datetime_field.strftime("%H:%M"))
-        else:
-            datetime_field.send_keys(tomorrow)
+
+        if renderer == 'html':
+            pass
+            # commented out datetime field because of missing UI
+            # if self.selected_browser in (Browsers.CHROME, Browsers.OPERA):
+            #     datetime_field.send_keys(date_field.datetime_field.strftime(
+            #         "%m%d%Y" if self.github_actions else "%d%m%Y"))
+            #     datetime_field.send_keys(Keys.TAB)
+            #     datetime_field.send_keys(date_field.datetime_field.strftime("%H%M%S"))
+            #     if self.github_actions:
+            #         datetime_field.send_keys("AM")
+            # elif self.selected_browser in (Browsers.FIREFOX,):
+            #     datetime_field.send_keys(date_field.datetime_field.strftime("%d/%m/%Y"))
+            #     datetime_field.send_keys(Keys.TAB)
+            #     datetime_field.send_keys(date_field.datetime_field.strftime("%H:%M"))
+            # else:
+            #     datetime_field.send_keys(tomorrow)
 
         filter_btn.click()
         self.wait_data_loading(loading_row, skip=is_component_renderer)
-        data_rows = self.browser.find_elements(By.CSS_SELECTOR, 'tbody tr')
+
+        if is_component_renderer:
+            datetime_field.click()
+            self.browser.find_element(by=By.CLASS_NAME,
+                                      value='vdatetime-popup__actions__button--confirm').click()
+            time.sleep(0.5)
+            self.browser.find_element(by=By.CLASS_NAME,
+                                      value='vdatetime-popup__actions__button--confirm').click()
+            time.sleep(0.5)
+            self.assertEqual(0, len(self.browser.find_elements(By.CSS_SELECTOR, 'tbody tr')))
+            self.browser.find_element(by=By.CLASS_NAME, value='clear-datetime').click()
 
         # commented out datetime field because of missing UI
 
@@ -110,7 +124,7 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
 
         int_field.send_keys("2")
         # datetime_field.clear()
-        self.clear_input(datetime_field)
+        # self.clear_input(datetime_field)
         filter_btn.click()
         self.wait_data_loading(loading_row, skip=is_component_renderer)
         self.assertTrue(self.check_data("2"), "No row 2")
@@ -169,7 +183,10 @@ class FilterFormTest(WaitingStaticLiveServerTestCase):
         self.assertFalse(self.check_data("15"), "Row 15 shouldn\'t be shown")
 
         char_field.send_keys("jkl")
-        datetime_field.send_keys(tomorrow)
+        if not is_component_renderer:
+            pass
+            # commented out datetime field because of missing UI
+            # datetime_field.send_keys(tomorrow)
         int_field.send_keys("11")
         if not is_component_renderer:
             self.select_option_for_select2(filter_row, int_choices_field.get_attribute('id'), text="Choice 3")

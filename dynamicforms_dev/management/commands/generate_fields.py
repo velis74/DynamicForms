@@ -42,7 +42,8 @@ render_params = ClassAssemblyDict({
     fields.IntegerField: dict(input_type='number'),
     fields.FloatField: dict(input_type='number', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
     fields.DecimalField: dict(input_type='text', table='#DFTableCellFloat', table_show_zeroes=True, step='0.1'),
-    fields.DateTimeField: dict(input_type='datetime-local'),
+    fields.DateTimeField: dict(input_type='datetime-local', form='DFWidgetDatetime', table_format='dd.MM.yyyy HH:mm',
+                               form_format='dd.MM.yyyy HH:mm', table='#DFTableCellDatetime', ),
     fields.DateField: dict(input_type='date'),
     fields.TimeField: dict(input_type='time'),
     serializers.FileField: dict(input_type='file', form='DFWidgetFile', table='df-tablecell-file'),
@@ -100,13 +101,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                    obj.__name__.endswith('Field'):
+                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                        obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -179,9 +180,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                (parm.kind == parm.POSITIONAL_ONLY or
-                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                ):
+                                    (parm.kind == parm.POSITIONAL_ONLY or
+                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                    ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 
@@ -264,7 +265,6 @@ class Command(BaseCommand):
                         field_params.append('decoder=None')
                     elif cls == fields.ModelField:
                         field_params.append('max_length: Optional[int] = None')
-
 
                 field_params.insert(0, 'self')
                 field_params.append('**kw')

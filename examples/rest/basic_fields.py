@@ -40,8 +40,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     nullint_field = fields.IntegerField(allow_null=True)
     float_field = fields.FloatField()
     decimal_field = fields.DecimalField(max_digits=5, decimal_places=2)
-    # datetime_field = fields.DateTimeField()
-    # datetime_field = None
+    datetime_field = fields.DateTimeField(required=False)
     date_field = fields.DateField()
     time_field = fields.TimeField()
     duration_field = fields.DurationField()
@@ -49,7 +48,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BasicFields
-        exclude = ('datetime_field', ) # datetime field ui is not supported
+        exclude = ()
         layout = Layout(columns=3, size='large')
 
 

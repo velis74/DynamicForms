@@ -5,7 +5,9 @@ import pytz
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
+from django.db.models import QuerySet
 from django.http import Http404
+from django.utils.dateparse import parse_datetime
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -38,8 +40,8 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        field_names = [(f.name + '_id') if isinstance(f, models.ForeignKey) else f.name
-            for f in self.get_queryset().model._meta.fields]
+        field_names = [(f.name + '_id')
+                       if isinstance(f, models.ForeignKey) else f.name for f in self.get_queryset().model._meta.fields]
         model = self.get_queryset().model
         fld = model._meta.get_field
         instantiation_params = {k: fld(k).to_python(v) for k, v in self.request.GET.items() if k in field_names}
@@ -281,14 +283,17 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         # TODO: this would probably be better moved into the fields themselves
         if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
             return queryset.filter(**{field + '__icontains': value})
-        if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
+        if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
+            date_time: datetime = parse_datetime(value.replace('Z', ''))
+            date_time.replace(second=0)
+            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+            qs: QuerySet = queryset.filter(**{field + '__gte': date_time,
+                                              field + '__lt': date_time + timedelta(minutes=1)})
+            return qs
+        if isinstance(model_meta.get_field(field), (models.DateField,)):
             date_time = None
-            hm_iso_format: str = '%Y-%m-%dT%H:%M'
-            is_hm_iso_format: bool = False
-            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S',
-                                  hm_iso_format, settings.DATE_FORMAT, '%Y-%m-%d']:
+            for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
                 try:
-                    is_hm_iso_format = hm_iso_format == date_time_fmt
                     date_time = datetime.strptime(value, date_time_fmt)
                     break
                 except:
@@ -296,11 +301,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             if date_time is None:
                 return queryset
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            if len(value) <= 10:
-                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-            timedelta_value: dict = dict(seconds=1) if not is_hm_iso_format else dict(minutes=1)
-            return queryset.filter(**{field + '__gte': date_time,
-                                      field + '__lt': date_time + timedelta(**timedelta_value)})
+            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
         else:
             if isinstance(model_meta.get_field(field), models.BooleanField):
                 value = (value == 'true')

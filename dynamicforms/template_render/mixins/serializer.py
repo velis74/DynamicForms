@@ -73,7 +73,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         # Set list_serializer_class of class Meta
         meta = getattr(cls, 'Meta', None)
         if meta is None:
-            meta = type('Meta', (object,))
+            meta = type('Meta', (object,), {})
             cls.Meta = meta
         if not hasattr(meta, 'list_serializer_class'):
             meta.list_serializer_class = ViewModeListSerializer

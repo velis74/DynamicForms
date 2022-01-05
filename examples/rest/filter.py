@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 
 from dynamicforms import serializers, viewsets
 from dynamicforms.action import Actions, TableAction, TablePosition
-from dynamicforms.fields import RTFField
+from dynamicforms.fields import DateTimeField, RTFField
 from examples.rest.fields.name_field import NameTestField
 from ..models import Filter
 
@@ -36,7 +36,12 @@ class FilterSerializer(serializers.ModelSerializer):
         source='*',
 
     )
-    rtf_field = RTFField()
+    rtf_field = RTFField(required=False, allow_null=True)
+    datetime_field = DateTimeField(label='Datetime field',
+                                   render_params=dict(
+                                       table_format='dd.MM.yyyy HH:mm',
+                                       form_format='dd.MM.yyyy HH:mm', )
+                                   )
 
     class Meta:
         model = Filter
