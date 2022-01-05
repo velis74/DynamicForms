@@ -164,7 +164,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
         dialog.find_element(By.ID, save_button_prefix + modal_serializer_id).click()
         self.wait_for_modal_dialog_disapear(modal_serializer_id)
         time.sleep(1)  # Zato, da se lahko tabela osveži
-        rows = self.get_table_body()
+        rows = self.get_table_body(expected_rows=1)
         self.assertEqual(len(rows), 1)
         cells = rows[0].find_elements(By.TAG_NAME, "td")
 
