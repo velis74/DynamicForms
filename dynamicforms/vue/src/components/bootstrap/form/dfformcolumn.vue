@@ -43,12 +43,10 @@ import DFWidgetPassword from '../widget/dfwidgetpassword.vue';
 import DFWidgetPlaceholder from '../widget/dfwidgetplaceholder.vue';
 import DFWidgetSelect from '../widget/dfwidgetselect.vue';
 
-import DFFormLayout from './dfformlayout.vue';
-
 export default {
   name: 'DFFormColumn',
   components: {
-    DFFormLayout,
+    DFFormLayout: () => import('./dfformlayout.vue'),
     DFWidgetInput,
     DFWidgetPassword,
     DFWidgetCKEditor,

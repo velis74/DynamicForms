@@ -1,7 +1,6 @@
 <template>
   <DFFormColumn
     v-if="isHiddenSingle"
-    :name="writableColumns[0].field.name"
     :def="writableColumns[0]"
     :data="data"
     :errors="errors"
@@ -11,7 +10,6 @@
     <DFFormColumn
       v-for="(column, idx) in writableColumns"
       :key="idx"
-      :name="column.field.name"
       :def="column"
       :data="data"
       :errors="errors"
