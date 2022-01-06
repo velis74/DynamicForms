@@ -7,7 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.db.models import QuerySet
 from django.http import Http404
-from django.utils.dateparse import parse_datetime, parse_time, time_re, datetime_re
+from django.utils.dateparse import datetime_re, parse_datetime, parse_time, time_re
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
