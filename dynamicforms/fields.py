@@ -259,7 +259,7 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, FieldRenderMixin, Action
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
-        kwargs['render_params'].setdefault('input_type', 'datetime-local')
+        kwargs['render_params'].setdefault('input_type', 'datetime')
         kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
         kwargs['render_params'].setdefault('table_format', 'dd.MM.yyyy HH:mm')
         kwargs['render_params'].setdefault('form_format', 'dd.MM.yyyy HH:mm')
@@ -279,9 +279,11 @@ class DateField(DateFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, F
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'DFWidgetInput')
+        kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'date')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
+        kwargs['render_params'].setdefault('table_format', 'dd.MM.yyyy')
+        kwargs['render_params'].setdefault('form_format', 'dd.MM.yyyy')
         super().__init__(**kwargs)
 
 
@@ -298,9 +300,11 @@ class TimeField(TimeFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, F
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form', 'DFWidgetInput')
+        kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'time')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-plaintext')
+        kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
+        kwargs['render_params'].setdefault('table_format', 'HH:mm')
+        kwargs['render_params'].setdefault('form_format', 'HH:mm')
         super().__init__(**kwargs)
 
 
