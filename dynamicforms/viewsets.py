@@ -7,7 +7,9 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.db.models import QuerySet
 from django.http import Http404
-from django.utils.dateparse import datetime_re, parse_datetime, parse_time, time_re
+from django.utils.dateparse import (
+    datetime_re, iso8601_duration_re, parse_datetime, parse_duration, parse_time, standard_duration_re, time_re
+)
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -265,13 +267,15 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
     def __get_time_resolution(self, value: str) -> dict:
         try:
             value = value.replace('Z', '')
-            resolution = getattr(
-                time_re.match(value), 'lastgroup', '') or getattr(datetime_re.match(value), 'lastgroup', '')
-            if resolution in ('second', 'microsecond'):
+            resolution = getattr(time_re.match(value), 'lastgroup', '') or getattr(
+                datetime_re.match(value), 'lastgroup', '') or getattr(
+                standard_duration_re.match(value), 'lastgroup', '') or getattr(
+                iso8601_duration_re.match(value), 'lastgroup', '')
+            if resolution in ('second', 'microsecond', 'seconds', 'microseconds'):
                 return dict(seconds=1)
-            if resolution == 'hour':
+            if resolution in ('hour', 'hours'):
                 return dict(hours=1)
-            if resolution == 'minute':
+            if resolution == ('minute', 'minutes'):
                 return dict(minutes=1)
         except:
             pass
@@ -315,6 +319,17 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 )
                 end = (start + timedelta(**self.__get_time_resolution(value))).time()
                 return queryset.filter(**{field + '__gte': start, field + '__lt': end})
+            except:
+                return queryset
+        if isinstance(model_meta.get_field(field), (models.DurationField,)):
+            try:
+                duration = parse_duration(value)
+                duration = duration - timedelta(microseconds=duration.microseconds)
+                qs = queryset.filter(**{
+                    field + '__gte': duration,
+                    field + '__lt': duration + timedelta(**self.__get_time_resolution(value))
+                })
+                return qs
             except:
                 return queryset
         if isinstance(model_meta.get_field(field), (models.DateField,)):
