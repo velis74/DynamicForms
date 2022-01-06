@@ -7,7 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.db.models import QuerySet
 from django.http import Http404
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_datetime, parse_time, time_re, datetime_re
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -262,6 +262,21 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                         break
         return res
 
+    def __get_time_resolution(self, value: str) -> dict:
+        try:
+            value = value.replace('Z', '')
+            resolution = getattr(
+                time_re.match(value), 'lastgroup', '') or getattr(datetime_re.match(value), 'lastgroup', '')
+            if resolution in ('second', 'microsecond'):
+                return dict(seconds=1)
+            if resolution == 'hour':
+                return dict(hours=1)
+            if resolution == 'minute':
+                return dict(minutes=1)
+        except:
+            pass
+        return {}
+
     # noinspection PyMethodMayBeStatic
     def filter_queryset_field(self, queryset, field, value):
         """
@@ -285,11 +300,23 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             return queryset.filter(**{field + '__icontains': value})
         if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
             date_time: datetime = parse_datetime(value.replace('Z', ''))
-            date_time.replace(second=0)
+            date_time.replace(microsecond=0)
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            qs: QuerySet = queryset.filter(**{field + '__gte': date_time,
-                                              field + '__lt': date_time + timedelta(minutes=1)})
+            qs: QuerySet = queryset.filter(**{
+                field + '__gte': date_time,
+                field + '__lt': date_time + timedelta(**self.__get_time_resolution(value))
+            })
             return qs
+        if isinstance(model_meta.get_field(field), (models.TimeField,)):
+            try:
+                start = datetime.combine(
+                    datetime.now().date(),
+                    parse_time(value).replace(microsecond=0)
+                )
+                end = (start + timedelta(**self.__get_time_resolution(value))).time()
+                return queryset.filter(**{field + '__gte': start, field + '__lt': end})
+            except:
+                return queryset
         if isinstance(model_meta.get_field(field), (models.DateField,)):
             date_time = None
             for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
