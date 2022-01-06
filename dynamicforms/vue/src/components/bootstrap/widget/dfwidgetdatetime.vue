@@ -4,23 +4,30 @@
       :id="def.uuid"
       slot="input"
       :key="def.uuid"
-      class="df-datetime-class"
+      class="input-group df-datetime-class"
       :name="def.name"
     >
-      <div class="input-group mb-3">
-        <datetime
-          :key="datetimeFieldKey"
-          v-model="value"
-          :type="inputType"
-          :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
-          :input-class="'df-widget-datetime-input form-control'"
-          :format="displayFormat"
-          @input="dateTimeInput"
-        />
-        <div class="input-group-append">
-          <button class="btn btn-sm btn-outline-secondary clear-datetime" type="button" @click="clear">
-            <IonIcon class="d-inline-block" name="trash-outline"/>
-          </button>
+      <datetime
+        :key="datetimeFieldKey"
+        v-model="value"
+        :type="inputType"
+        :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
+        :input-class="'df-widget-datetime-input form-control'"
+        :format="displayFormat"
+        style="display: inline-block; float: left; width: 85%"
+        @input="dateTimeInput"
+      />
+      <div
+        class="input-group-append"
+        style="display: inline-block; float: left; width: 15%;"
+      >
+        <div
+          class="btn btn-sm clear-datetime shadow-none input-group-text"
+          type="button"
+          style="border: none; justify-content: center;"
+          @click="clear"
+        >
+          <IonIcon name="trash-outline"/>
         </div>
       </div>
     </div>
