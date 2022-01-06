@@ -5,7 +5,6 @@ import pytz
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
-from django.db.models import QuerySet
 from django.http import Http404
 from django.utils.dateparse import (
     datetime_re, iso8601_duration_re, parse_datetime, parse_duration, parse_time, standard_duration_re, time_re
@@ -275,7 +274,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 return dict(seconds=1)
             if resolution in ('hour', 'hours'):
                 return dict(hours=1)
-            if resolution == ('minute', 'minutes'):
+            if resolution in ('minute', 'minutes'):
                 return dict(minutes=1)
         except:
             pass
@@ -299,55 +298,48 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         if field not in (fld.name for fld in model_meta.get_fields()):
             return queryset
 
-        # TODO: this would probably be better moved into the fields themselves
-        if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
-            return queryset.filter(**{field + '__icontains': value})
-        if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
-            date_time: datetime = parse_datetime(value.replace('Z', ''))
-            date_time.replace(microsecond=0)
-            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            qs: QuerySet = queryset.filter(**{
-                field + '__gte': date_time,
-                field + '__lt': date_time + timedelta(**self.__get_time_resolution(value))
-            })
-            return qs
-        if isinstance(model_meta.get_field(field), (models.TimeField,)):
-            try:
+        try:
+            # TODO: this would probably be better moved into the fields themselves
+            if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
+                return queryset.filter(**{field + '__icontains': value})
+            if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
+                date_time: datetime = parse_datetime(value.replace('Z', ''))
+                date_time.replace(microsecond=0)
+                date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+                return queryset.filter(**{
+                    field + '__gte': date_time,
+                    field + '__lt': date_time + timedelta(**self.__get_time_resolution(value))
+                })
+            if isinstance(model_meta.get_field(field), (models.TimeField,)):
                 start = datetime.combine(
                     datetime.now().date(),
                     parse_time(value).replace(microsecond=0)
                 )
                 end = (start + timedelta(**self.__get_time_resolution(value))).time()
                 return queryset.filter(**{field + '__gte': start, field + '__lt': end})
-            except:
-                return queryset
-        if isinstance(model_meta.get_field(field), (models.DurationField,)):
-            try:
+            if isinstance(model_meta.get_field(field), (models.DurationField,)):
                 duration = parse_duration(value)
                 duration = duration - timedelta(microseconds=duration.microseconds)
-                qs = queryset.filter(**{
+                return queryset.filter(**{
                     field + '__gte': duration,
                     field + '__lt': duration + timedelta(**self.__get_time_resolution(value))
                 })
-                return qs
-            except:
-                return queryset
-        if isinstance(model_meta.get_field(field), (models.DateField,)):
-            date_time = None
-            for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
-                try:
-                    date_time = datetime.strptime(value, date_time_fmt)
-                    break
-                except:
-                    pass
-            if date_time is None:
-                return queryset
-            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-        else:
-            if isinstance(model_meta.get_field(field), models.BooleanField):
-                value = (value == 'true')
-            return queryset.filter(**{field: value})
+            if isinstance(model_meta.get_field(field), (models.DateField,)):
+                date_time = None
+                for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
+                    try:
+                        date_time = datetime.strptime(value, date_time_fmt)
+                        break
+                    except:
+                        pass
+                date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
+            else:
+                if isinstance(model_meta.get_field(field), models.BooleanField):
+                    value = (value == 'true')
+                return queryset.filter(**{field: value})
+        except:
+            return queryset
 
     @staticmethod
     def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = 'id'):
