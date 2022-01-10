@@ -1,5 +1,7 @@
-License
-=======
+License BSD-3-clause
+====================
+
+This license applies to all files in the repository and any distribution.
 
 Copyright © 2017-present, Jure Erznožnik.
 All rights reserved.

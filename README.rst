@@ -1,7 +1,9 @@
 What is DynamicForms?
 =====================
 
-DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders (and anything else DRF supports) giving you free choice of how to implement your project. 
+DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer
+/ ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders
+(and anything else DRF supports) giving you free choice of how to implement your project.
 
 It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
