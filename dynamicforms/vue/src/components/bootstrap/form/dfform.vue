@@ -1,25 +1,55 @@
 <template>
-  <div class="card">
-    <div class="card-header">{{ data.titles.edit }}</div>
+  <div v-if="hasData && showForm" class="card">
+    <div class="card-header">{{ title }}</div>
     <div class="card-body">
-      <DFFormLayout :rows="data.dialog.rows" :uuid="data.uuid"/>
+      <component :is="component" :rows="layout" :uuid="uuid" :record="record"/>
     </div>
   </div>
+  <DFTable v-else-if="hasData && showTable" :config="data"/>
+  <DFLoadingIndicator v-else :loading="loading"/>
 </template>
 
 <script>
-// TODO: this file is completely redundant. It's basically just a card wrapper around DFFormLayout. It should be named
-//  appropriately
-import DFFormLayout from './dfformlayout.vue';
+import DFLoadingIndicator from '@/components/bootstrap/loadingindicator.vue';
 
 export default {
   name: 'DFForm',
-  components: { DFFormLayout },
+  components: {
+    DFLoadingIndicator,
+    DFFormLayout: () => import('./dfformlayout.vue'),
+    DFTable: () => import('@/components/dftable.vue'),
+  },
   props: {
-    data: {
-      type: Object,
-      required: true,
-      validator: (data) => (data.titles && data.titles.edit),
+    formPK: { type: null, default: () => 'new' },
+    showForm: { type: Boolean, default: true },
+    showTable: { type: Boolean, default: false },
+    data: { type: Object, default: () => { } },
+  },
+  data() {
+    return {
+      loading: false,
+    };
+  },
+  computed: {
+    hasData() { return Object.keys(this.data).length !== 0; },
+    title() {
+      if (this.data.titles) {
+        if (this.showForm) return this.data.titles[this.formPK === 'new' ? 'new' : 'edit'];
+        if (this.showTable) return this.data.titles.table;
+      }
+      return '';
+    },
+    layout() {
+      return this.data.dialog ? this.data.dialog.rows : '';
+    },
+    uuid() {
+      return this.data.uuid;
+    },
+    record() {
+      return this.data.record;
+    },
+    component() {
+      return this.data.dialog ? this.data.dialog.component_name : 'DFFormLayout';
     },
   },
 };

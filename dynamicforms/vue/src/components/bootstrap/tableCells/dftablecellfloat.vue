@@ -32,6 +32,7 @@ export default {
       }
       // Make a presentable value
       let res = this.value.toLocaleString();
+      if (res === 'None') return res;
       // fill the value with invisible decimals
       const dpPos = res.indexOf(config.decimal_char);
       const numDecimals = dpPos === -1 ? 0 : res.substr(dpPos + 1).length;

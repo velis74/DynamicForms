@@ -22,6 +22,7 @@
           <router-link to="/choice-allow-tags-fields">Tag select fields</router-link>
           <router-link to="/calendar">Calendar example</router-link>
           <router-link to="/documents">Documents</router-link>
+          <router-link to="/view-mode">The three view modes</router-link>
         </div>
       </div>
     </transition>
@@ -43,6 +44,7 @@ import Calendar from './calendar.vue';
 import ExampleHiddenLayout from './example_hidden_layout.vue';
 import PageLoader from './pageloader.vue';
 import SingleDialog from './single_dialog.vue';
+import ViewMode from './viewmode.vue';
 
 Vue.use(VueRouter);
 // we must register custom components or they won't show
@@ -64,6 +66,7 @@ const routes = [
   { path: '/choice-allow-tags-fields', component: PageLoader },
   { path: '/calendar', component: Calendar },
   { path: '/documents', component: PageLoader },
+  { path: '/view-mode', component: ViewMode },
 ];
 const router = new VueRouter({ routes });
 
@@ -77,6 +80,11 @@ export default {
       title: '',
       currentFormUUID: null,
     };
+  },
+  watch: {
+    $route() {
+      this.menuShown = false;
+    },
   },
   mounted() {
     if (router.history.current.path === '/') {
@@ -159,12 +167,12 @@ export default {
 }
 
 .sidenav {
-  height:           100%;
-  width:            20em;
+  width:            20rem;
   position:         fixed;
   z-index:          2;
   top:              3.5em;
   left:             0;
+  bottom:           0;
   background-color: #111;
   overflow-x:       hidden;
 }
@@ -172,7 +180,7 @@ export default {
 .sidenav a {
   padding:         .5rem;
   text-decoration: none;
-  font-size:       2rem;
+  font-size:       1.75rem;
   white-space:     nowrap;
   color:           #818181;
   display:         block;
@@ -183,7 +191,7 @@ export default {
   background: black;
   position:   fixed;
   left:       0;
-  top:        0;
+  top:        3.5em;
   width:      100%;
   height:     100%;
   opacity:    0.2;
