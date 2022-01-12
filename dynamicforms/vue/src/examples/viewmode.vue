@@ -10,11 +10,10 @@
 </template>
 
 <script>
+import apiClient from '../apiClient';
 import DFForm from '../components/bootstrap/form/dfform.vue';
-
-import apiClient from '@/apiClient';
-import DynamicForms from '@/dynamicforms';
-import actionHandlerMixin from '@/mixins/actionHandlerMixin';
+import DynamicForms from '../dynamicforms';
+import actionHandlerMixin from '../mixins/actionHandlerMixin';
 
 export default {
   name: 'PageLoader',

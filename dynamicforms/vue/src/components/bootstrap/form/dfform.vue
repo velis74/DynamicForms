@@ -23,15 +23,15 @@
 </template>
 
 <script>
-import DFLoadingIndicator from '@/components/bootstrap/loadingindicator.vue';
-import eventBus from '@/logic/eventBus';
+import eventBus from '../../../logic/eventBus';
+import DFLoadingIndicator from '../loadingindicator.vue';
 
 export default {
   name: 'DFForm',
   components: {
     DFLoadingIndicator,
     DFFormLayout: () => import('./dfformlayout.vue'),
-    DFTable: () => import('@/components/dftable.vue'),
+    DFTable: () => import('../../dftable.vue'),
   },
   props: {
     formPK: { type: null, default: () => 'new' },
