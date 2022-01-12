@@ -196,6 +196,8 @@ export default {
       if (callback) {
         callback(button.data_return);
         callback.df_called = true;
+      } else if (!this.currentDialog.tableUuid) {
+        this.hide();
       }
     },
     message(title, message, callback) {

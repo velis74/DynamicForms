@@ -152,7 +152,11 @@ const actionHandlerMixin = {
           ((res) => {
             // update resolve data with record that came back from the server
             if (promise) promise.resolveData = { action, data: res.data, params };
-            if (modal) modal.hide();
+            if (modal) {
+              modal.hide();
+            } else {
+              DynamicForms.dialog.message('Success', 'Data successfully saved');
+            }
             if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRowFromForm(res.data);
           }),
         catch: params.catch ||

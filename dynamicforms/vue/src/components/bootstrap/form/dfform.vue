@@ -4,6 +4,19 @@
     <div class="card-body">
       <component :is="component" :rows="layout" :uuid="uuid" :record="record"/>
     </div>
+    <div class="card-footer text-right">
+      <button
+        v-for="button in buttons"
+        :id="button.element_id || button.uuid"
+        :key="button.uuid"
+        type="button"
+        :class="button.classes"
+        v-bind="button.arias"
+        @click.stop="buttonClick($event, button)"
+      >
+        {{ button.label }}
+      </button>
+    </div>
   </div>
   <DFTable v-else-if="hasData && showTable" :config="data"/>
   <DFLoadingIndicator v-else :loading="loading"/>
@@ -11,6 +24,7 @@
 
 <script>
 import DFLoadingIndicator from '@/components/bootstrap/loadingindicator.vue';
+import eventBus from '@/logic/eventBus';
 
 export default {
   name: 'DFForm',
@@ -50,6 +64,30 @@ export default {
     },
     component() {
       return this.data.dialog ? this.data.dialog.component_name : 'DFFormLayout';
+    },
+    buttons() {
+      const cDef = this.data;
+      const actions = cDef.dialog.actions;
+      return Object.keys(cDef.dialog.actions)
+        .filter((key) => cDef.dialog.actions[key].name !== 'form_init' && cDef.dialog.actions[key].name !== 'cancel')
+        .reduce(
+          (res, key) => {
+            actions[key].data_return = { dialog_id: cDef.uuid, button: actions[key] };
+            res.push(actions[key]);
+            return res;
+          }, [],
+        );
+    },
+  },
+  methods: {
+    buttonClick($event, button) {
+      eventBus.$emit(`tableActionExecuted_${this.uuid}`, {
+        action: button,
+        data: this.data.record,
+        modal: null,
+        $event,
+        promise: null,
+      });
     },
   },
 };

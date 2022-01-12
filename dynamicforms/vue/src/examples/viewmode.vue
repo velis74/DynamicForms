@@ -59,6 +59,7 @@ export default {
           const url = `${this.url}/new.componentdef`;
           const data = await apiClient.get(url, { headers: { 'x-viewmode': 'FORM' } });
           this.data = data.data;
+          this.data.uuid = this.uuid;
         } else {
           await DynamicForms.dialog.fromURL(`${this.url}/new.componentdef`, 'new', this.uuid);
           this.setViewMode('table');
