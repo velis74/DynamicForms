@@ -1,6 +1,6 @@
 <template>
   <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
-    <ckeditor slot="input" v-model="editorData" :editor="editor" :config="editorConfig"/>
+    <ckeditor slot="input" v-model="value" :editor="editor" :config="editorConfig"/>
   </DFWidgetBase>
 </template>
 
@@ -24,11 +24,18 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: '<p>Type some text...</p>',
       editorConfig: {
         // The configuration of the editor.
       },
     };
+  },
+  computed: {
+    value: {
+      get: function get() { return this.data[this.def.name]; },
+      set: function set(newVal) {
+        this.data[this.def.name] = newVal; // eslint-disable-line
+      },
+    },
   },
 };
 </script>
