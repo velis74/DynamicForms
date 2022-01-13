@@ -24,7 +24,8 @@ export default {
   },
   computed: {
     writableColumns() {
-      return this.columns;
+      // We return all fields that are not suppressed
+      return this.columns.filter((col) => col.field.visibility.form !== DisplayMode.SUPPRESS);
       // turns out we want to display read only columns, but they should be disabled. Displayed, but R/O
       // return this.columns.filter((col) => col.field.read_only !== true);
     },

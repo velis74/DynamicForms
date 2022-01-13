@@ -1,6 +1,6 @@
 {
   "name": "dynamicforms",
-  "version": "0.1.121",
+  "version": "0.1.124",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

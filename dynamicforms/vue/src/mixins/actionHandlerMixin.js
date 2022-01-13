@@ -40,6 +40,11 @@ const actionHandlerMixin = {
    * - loadData() (optional for filter method)
    * - defaultSubmitHeaders() calculated value specifying custom headers for submit button
    */
+  data() {
+    return {
+      data_successfully_sent_text: 'Data successfully saved',
+    };
+  },
   computed: {
     defaultSubmitHeaders() { return { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1, 'x-df-component-def': true }; },
   },
@@ -155,14 +160,15 @@ const actionHandlerMixin = {
             if (modal) {
               modal.hide();
             } else {
-              DynamicForms.dialog.message('Success', 'Data successfully saved');
+              DynamicForms.dialog.message('Success', self.data_successfully_sent_text);
             }
             if (self && self.processedConfiguration) self.processedConfiguration.rows.updateRowFromForm(res.data);
           }),
         catch: params.catch ||
           ((reason) => {
             const dfErrors = {};
-            const eventName = `formEvents_${modal.currentDialog.body.uuid}`;
+            const uuid = modal ? modal.currentDialog.body.uuid : this.uuid;
+            const eventName = `formEvents_${uuid}`;
             if (reason.response.status === 400) {
               _.forOwn(reason.response.data, (value, key) => {
                 dfErrors[`${key}`] = _.join(value, '\n');
