@@ -235,3 +235,14 @@ export default {
   opacity: 0;
 }
 </style>
+
+<style>
+.ionicon-wrapper {
+  display: inline-block;
+}
+
+.ionicon-wrapper > svg {
+  display: inline-block;
+  height:  1.5em;
+}
+</style>

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import IonIcon from './ionicon.vue';
+import IonIcon from 'vue-ionicon';
 
 export default {
   name: 'Actions',

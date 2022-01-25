@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import IonIcon from '../ionicon.vue';
+import IonIcon from 'vue-ionicon';
 
 import DFWidgetBase from './dfwidgetbase.vue';
 

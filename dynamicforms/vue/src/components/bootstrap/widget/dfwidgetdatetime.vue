@@ -38,10 +38,10 @@
 import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
+import IonIcon from 'vue-ionicon';
 
 import DynamicForms from '../../../dynamicforms';
 import translationsMixin from '../../../mixins/translationsMixin';
-import IonIcon from '../ionicon.vue';
 
 import DFWidgetBase from './dfwidgetbase.vue';
 
