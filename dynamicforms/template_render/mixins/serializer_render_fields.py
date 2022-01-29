@@ -2,6 +2,7 @@
 Class that contains renderable fields for the templates.
 The class provides transformation functionality
 """
+import uuid
 from typing import Iterable
 
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +25,7 @@ class SerializerRenderFields(object):
             if not isinstance(actions, Itr) or not all(isinstance(action, TableAction) for action in actions):
                 raise AssertionError('Actions should be an iterable of TableAction')
             actions = [action for action in actions if action.position == pos]
+            self.uuid = uuid.uuid1()
             self.position = pos
             self.actions = actions
             self.field_name = '#actions-' + pos.name.lower()
@@ -39,7 +41,7 @@ class SerializerRenderFields(object):
 
         def as_component_def(self) -> dict:
             return dict(
-                uuid='', name=str(self.field_name), label=str(self.label), read_only=False,
+                uuid=self.uuid, name=str(self.field_name), label=str(self.label), read_only=False,
                 alignment='right' if self.alignment == FieldAlignment.DECIMAL else self.alignment.name.lower(),
                 table_classes=self.table_classes, ordering=self.ordering(), render_params=self.render_params,
                 help_text='', visibility=dict(table=self.display_table.value), allow_null=False

@@ -148,6 +148,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
     def component_params(self: '_ViewModeBoundSerializer', output_json: bool = True):
         params = {
             'uuid': self.uuid,
+            'primary_key_name': self.Meta.model._meta.pk.name if self.Meta and self.Meta.model else 'id',
             'titles': self.form_titles,
             'columns': [c.as_component_def() for c in self.render_fields.fields],
             'actions': self.render_actions.table.as_action_def(),
