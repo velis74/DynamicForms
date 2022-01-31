@@ -16,6 +16,7 @@ db.sqlite3
 venv/
 media
 /node_modules
+/coverage
 /package-lock.json
 /dynamicforms/static/ckeditor5/
 /dynamicforms/vue/node_modules/
