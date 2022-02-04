@@ -42,7 +42,7 @@ export default {
           this.$emit('load-route', to.path, res.data.uuid);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           // eslint-disable-next-line no-alert
           alert(`Error retrieving component def:\n${err.data}`);
         });

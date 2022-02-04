@@ -14,7 +14,8 @@ const apiClient = axios.create({
 // let requestSeq = 0;
 
 apiClient.interceptors.request.use((config) => {
-  // const showProgress = config.showProgress !== undefined ? config.showProgress : true;
+  const showProgress = config.showProgress !== undefined ? config.showProgress : true;
+  console.assert(showProgress); // TODO remove when you enable the rest of functionality below
   // if (!config.url.includes('/dynamicforms/progress') && !config.url.includes('unpkg.com') && showProgress) {
   //   // we don't include the progress requests themselves into the progress tracking.
   //   // They were too messy and caused recursion that resulted in way too many requests.

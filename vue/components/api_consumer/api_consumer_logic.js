@@ -2,7 +2,7 @@ import apiClient from '../util/api_client';
 
 import { TableColumns } from './table_column';
 
-export default class APIConsumerLogic {
+class APIConsumerLogic {
   constructor(baseURL) {
     /**
      * baseURL points to the API entry point, basically the GET / LIST endpoint. We will be composing all the other
@@ -38,8 +38,16 @@ export default class APIConsumerLogic {
 
   async getFullDefinition() {
     const UXDefinition = await this.getUXDefinition(true);
+    this.titles = UXDefinition.titles;
     this.pkName = UXDefinition.primary_key_name;
     UXDefinition.columns.forEach((column) => { this.fields[column.name] = column; });
     this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
+    this.rows = UXDefinition.rows.results;
+  }
+
+  title(which) {
+    return this.titles[which];
   }
 }
+
+export default APIConsumerLogic;

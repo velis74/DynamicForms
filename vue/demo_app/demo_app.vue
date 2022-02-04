@@ -3,27 +3,38 @@
     :is="themeComponent"
     :themes="themes"
     :examples="examples"
+    :title="title"
     @theme-changed="(newTheme) => theme = newTheme"
-  />
+  >
+    <template #main-component>
+      <router-view @title-change="setTitle"/>
+    </template>
+  </component>
 </template>
 <script>
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
+import * as BootstrapComponents from '../components/bootstrap';
+import * as VuetifyComponents from '../components/vuetify';
+
 import BootstrapApp from './bootstrap/bootstrap-app';
 import VuetifyApp from './vuetify/vuetify-app';
 
 Vue.use(VueRouter);
+Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
+Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 
 const routes = [
-  { title: 'Validated', path: '/validated' }, // , component: PageLoader },
-  // { path: '/hidden-fields', component: PageLoader },
-  // { path: '/basic-fields', component: PageLoader },
-  // { path: '/advanced-fields', component: PageLoader },
-  // { path: '/page-load', component: PageLoader },
-  // { path: '/filter', component: PageLoader },
-  // { path: '/refresh-types', component: PageLoader },
-  // { path: '/calculated-css-class-for-table-row', component: PageLoader },
+  { title: 'Validated', path: '/validated', component: APIConsumerLoader },
+  { title: 'Hidden fields', path: '/hidden-fields', component: APIConsumerLoader },
+  { title: 'Basic fields', path: '/basic-fields', component: APIConsumerLoader },
+  { title: 'Advanced fields', path: '/advanced-fields', component: APIConsumerLoader },
+  { title: 'Page loading', path: '/page-load', component: APIConsumerLoader },
+  { title: 'Filtering', path: '/filter', component: APIConsumerLoader },
+  { title: 'Refresh types', path: '/refresh-types', component: APIConsumerLoader },
+  { title: 'Custom CSS per row', path: '/calculated-css-class-for-table-row', component: APIConsumerLoader },
   // { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
   // { path: '/choice-allow-tags-fields', component: PageLoader },
   // { path: '/calendar', component: Calendar },
@@ -37,8 +48,9 @@ export default {
   router,
   components: { VuetifyApp, BootstrapApp },
   data: () => ({
-    theme: 'material',
-    themes: ['bootstrap', 'material'],
+    title: '',
+    theme: 'vuetify',
+    themes: ['bootstrap', 'vuetify'],
   }),
   computed: {
     examples() {
@@ -48,11 +60,17 @@ export default {
       switch (this.theme) {
       case 'bootstrap':
         return 'BootstrapApp';
-      case 'material':
+      case 'vuetify':
         return 'VuetifyApp';
       default:
         throw new Error('Unknown theme');
       }
+    },
+  },
+  methods: {
+    setTitle(newTitle) {
+      this.title = newTitle;
+      document.title = `${newTitle} - DynamicForms`;
     },
   },
 };

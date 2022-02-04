@@ -12,7 +12,7 @@
           transition="scale-transition"
           width="40"
         /-->
-        <h2>DynamicForms</h2>
+        <h2>DynamicForms{{ title ? ` - ${title}` : '' }}</h2>
       </div>
 
       <v-spacer/>
@@ -31,25 +31,23 @@
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list nav>
-        <v-list-item v-for="example in examples" :key="example.title">
+        <v-list-item v-for="example in examples" :key="example.title" :to="example.path">
           <v-list-item-title>{{ example.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
     <v-main>
-      <HelloWorld/>
+      <slot name="main-component"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './HelloWorld';
-
 export default {
   name: 'VuetifyApp',
-  components: { HelloWorld },
   props: {
+    title: { type: String, required: true },
     themes: { type: Array, required: true },
     examples: { type: Array, required: true },
   },
