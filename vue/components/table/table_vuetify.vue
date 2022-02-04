@@ -19,8 +19,8 @@
 </template>
 <script>
 import Table from './table';
-import VuetifyTBody from './tbody_vuetify';
-import VuetifyTHead from './thead_vuetify';
+import VuetifyTBody from './tbody_generic';
+import VuetifyTHead from './thead_generic';
 
 export default {
   name: 'VuetifyTable',

@@ -6,7 +6,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item-dropdown text="Examples">
-            <b-dropdown-item v-for="example in examples" :key="example.name" href="#">
+            <b-dropdown-item v-for="example in examples" :key="example.name" :to="example.path">
               {{ example.title }}
             </b-dropdown-item>
           </b-nav-item-dropdown>
