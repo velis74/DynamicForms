@@ -2,17 +2,16 @@
   <v-card>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
-      <component :is="'style'" :key="tableStyle" v-html="tableStyle"/>
+      <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :class="uniqueId">
         <VuetifyTHead :rendered-columns="renderedColumns" @render-measured="measureRenders"/>
         <VuetifyTBody
           :data-columns="dataColumns"
           :rendered-columns="renderedColumns"
           :rows="rows"
-          pk-name="pkName"
+          :pk-name="pkName"
           @render-measured="measureRenders"
         />
-        <!--VuetifyTFoot/-->
       </div>
     </v-card-text>
   </v-card>

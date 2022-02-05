@@ -1,10 +1,10 @@
 <template>
-  <div class="df-thead">
+  <div ref="df-thead" class="df-thead">
     <div class="df-row">
       <div
         v-for="column in renderedColumns"
         :key="column.name"
-        :ref="column.name"
+        :ref="`col-${column.name}`"
         :class="`df-col text-${column.align}`"
       >
         {{ column.label }}
@@ -14,10 +14,10 @@
   </div>
 </template>
 <script>
-import RenderMeasured from './measure-render';
+import RenderMeasured from './render_measure';
 
 export default {
-  name: 'VuetifyTHead',
+  name: 'GenericTHead',
   mixins: [RenderMeasured],
   props: { renderedColumns: { type: Array, required: true } },
 };

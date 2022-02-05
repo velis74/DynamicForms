@@ -17,11 +17,7 @@ export default {
     /**
      * What UX should the component render
      */
-    displayComponent: {
-      type: Number,
-      required: true,
-      validator(value) { return Object.values(ComponentDisplay).includes(value); },
-    },
+    displayComponent: { type: Object, required: true, validator(value) { return ComponentDisplay.isDefined(value); } },
   },
   data() { return {}; },
   computed: {

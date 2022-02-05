@@ -1,14 +1,9 @@
 /**
- * This mixin takes care of column sizing and generating appropriate styles for our table component
- */
-
-/**
+ * This mixin takes care of column sizing and generating appropriate styles for our table component.
+ * It works in tandem with MeasureRender mixin that actually triggers the measuring events
  *
- * @param wrap
- * @param uniqueId
- * @param columns
- * @param maxColWidth
- * @returns {string}
+ * TODO: adapt styles to bootstrap / vuetify. check paddings, margins, etc
+ * TODO: support striped, dark / light, dense
  */
 function generateStyle(wrap, uniqueId, columns, maxColWidth) {
   // Unfortunately, this would have been much nicer as a computed value, but alas it did not work properly
@@ -59,7 +54,11 @@ export default {
       this.tableStyle = generateStyle(this.wrap, this.uniqueId, this.renderedColumns, this.maxColWidth);
     },
     measureRenders(data) {
-      this.maxColWidth[data.name] = Math.max(this.maxColWidth[data.name] || 0, data.maxWidth || 0);
+      data.forEach(({ name, maxWidth }) => {
+        if (name.substring(0, 4) !== 'col-') return;
+        const colName = name.substr(4);
+        this.maxColWidth[colName] = Math.max(this.maxColWidth[colName] || 0, maxWidth || 0);
+      });
       this.regenerateStyle();
     },
   },

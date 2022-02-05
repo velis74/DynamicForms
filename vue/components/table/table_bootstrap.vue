@@ -2,17 +2,16 @@
   <v-card>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
-      <component :is="'style'" :key="tableStyle" v-html="tableStyle"/>
+      <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :class="uniqueId">
         <BootstrapTHead :rendered-columns="renderedColumns" @render-measured="measureRenders"/>
         <BootstrapTBody
           :data-columns="dataColumns"
           :rendered-columns="renderedColumns"
           :rows="rows"
-          pk-name="pkName"
+          :pk-name="pkName"
           @render-measured="measureRenders"
         />
-        <!--BootstrapTFoot/-->
       </div>
     </v-card-text>
   </v-card>

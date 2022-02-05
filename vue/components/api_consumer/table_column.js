@@ -1,4 +1,4 @@
-import ColumnDisplay from './table_column_display';
+import ColumnDisplay from '../util/display_mode';
 
 export class TableColumn {
   constructor(initialData) {
@@ -7,7 +7,6 @@ export class TableColumn {
       name: { get() { return initialData.name; }, enumerable: true },
       label: { get() { return initialData.label; }, enumerable: true },
       ordering: { get() { return initialData.ordering; }, enumerable: true },
-      // alignment: { get() { return initialData.alignment; }, enumerable: true },
       align: {
         get() {
           if (initialData.alignment === 'decimal') return 'right';
@@ -15,18 +14,7 @@ export class TableColumn {
         },
         enumerable: true,
       },
-      visibility: {
-        get() {
-          const vis = initialData.visibility.table;
-          if (!Object.values(ColumnDisplay).includes(vis)) {
-            console.warn(
-              `Table column came with visibility set to ${vis}, but we don't know that constant`,
-            );
-          }
-          return vis;
-        },
-        enumerable: true,
-      },
+      visibility: { get() { return ColumnDisplay.get(initialData.visibility.table); }, enumerable: true },
     });
   }
 }

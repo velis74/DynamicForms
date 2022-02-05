@@ -1,4 +1,5 @@
-import ColumnDisplay from '../api_consumer/table_column_display';
+import TableRows from '../api_consumer/table_rows';
+import ColumnDisplay from '../util/display_mode';
 
 import TableColumnSizer from './table_column_sizer';
 
@@ -14,17 +15,14 @@ export default {
     title: { type: String, required: true },
     columns: { type: Array, required: true },
     columnDefs: { type: Object, required: true },
-    rows: { type: Array, required: true },
+    rows: { type: TableRows, required: true },
     wrap: { type: Boolean, default: false },
   },
   data() { return {}; },
   computed: {
     renderedColumns() {
       return this.columns.filter(
-        (column) => (
-          column.visibility === ColumnDisplay.FULL ||
-          column.visibility === ColumnDisplay.INVISIBLE
-        ),
+        (column) => (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE),
       );
     },
     dataColumns() { return this.columns.filter((column) => column.visibility === ColumnDisplay.HIDDEN); },
