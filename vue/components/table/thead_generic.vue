@@ -1,24 +1,30 @@
 <template>
   <div ref="df-thead" class="df-thead">
-    <div class="df-row">
-      <div
-        v-for="column in renderedColumns"
-        :key="column.name"
-        :ref="`col-${column.name}`"
-        :class="`df-col text-${column.align}`"
-      >
-        {{ column.label }}
-      </div>
-    </div>
+    <GenericTRow
+      :rendered-columns="renderedColumns"
+      :data-columns="[]"
+      :row-data="rowData"
+      thead
+    />
     <div class="df-separator"/>
   </div>
 </template>
 <script>
 import RenderMeasured from './render_measure';
+import GenericTRow from './trow_generic';
 
 export default {
   name: 'GenericTHead',
+  components: { GenericTRow },
   mixins: [RenderMeasured],
-  props: { renderedColumns: { type: Array, required: true } },
+  props: { renderedColumns: { type: Object, required: true } },
+  computed: {
+    rowData() {
+      return this.renderedColumns.items.reduce((result, col) => {
+        result[col.name] = col.label;
+        return result;
+      }, {});
+    },
+  },
 };
 </script>

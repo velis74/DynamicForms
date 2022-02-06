@@ -39,7 +39,7 @@ export default class TableRows {
   }
 
   async loadMoreRows(isVisible) {
-    if (!isVisible) return;
+    if (!isVisible || !this.next) return;
     const newRows = await this.logic.fetch(this.next, true);
     this.updateRows(newRows.results);
     this.next = newRows.next; // replace next so we can load another set of rows

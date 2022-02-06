@@ -1,7 +1,6 @@
 import TableRows from '../api_consumer/table_rows';
-import ColumnDisplay from '../util/display_mode';
 
-import TableColumnSizer from './table_column_sizer';
+import TableColumnSizer from './table_style';
 
 /**
  * Base Table mixin: provides logic for table component.
@@ -19,12 +18,4 @@ export default {
     wrap: { type: Boolean, default: false },
   },
   data() { return {}; },
-  computed: {
-    renderedColumns() {
-      return this.columns.filter(
-        (column) => (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE),
-      );
-    },
-    dataColumns() { return this.columns.filter((column) => column.visibility === ColumnDisplay.HIDDEN); },
-  },
 };
