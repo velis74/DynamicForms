@@ -1,4 +1,4 @@
-import ColumnDisplay from '../util/display_mode';
+import ColumnDisplay from './definitions/display_mode';
 
 /**
  * This mixin takes care of column sizing and generating appropriate styles for our table component.

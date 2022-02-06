@@ -10,6 +10,7 @@
   </div>
 </template>
 <script>
+import TableRow from './definitions/row';
 import RenderMeasured from './render_measure';
 import GenericTRow from './trow_generic';
 
@@ -20,10 +21,10 @@ export default {
   props: { renderedColumns: { type: Object, required: true } },
   computed: {
     rowData() {
-      return this.renderedColumns.items.reduce((result, col) => {
+      return new TableRow(this.renderedColumns.items.reduce((result, col) => {
         result[col.name] = col.label;
         return result;
-      }, {});
+      }, {}));
     },
   },
 };

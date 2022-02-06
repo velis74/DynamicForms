@@ -1,3 +1,5 @@
+import TableRow from './row';
+
 export default class TableRows {
   constructor(logic, rowsData) {
     this.logic = logic;
@@ -46,32 +48,22 @@ export default class TableRows {
     this.decorate(newRows.results);
   }
 
-  /**
-   * Decorates the row with some control structures that will help with rendering
-   */
-  createRowControlStructure(row) { // eslint-disable-line class-methods-use-this
-    row.dfControlStructure = {
-      measuredHeight: null, // will be filled out when it is rendered into DOM
-      isShowing: true, // row is currently in ViewPort and should fully render
-      componentName: 'GenericTRow', // default row renderer
-    };
-  }
-
   updateRows(newRows) {
     let wasModified = false;
     const pkName = this.logic.pkName;
 
     // ind[item.id] = idx;
-    newRows.map((item) => {
-      const pk = item[pkName];
+    newRows.map((row) => {
+      const rowData = new TableRow(row);
+      const pk = rowData[pkName];
       const pkIdx = this.rowIndices[pk];
-      this.createRowControlStructure(item);
+
       if (pkIdx != null) {
-        this.data[pkIdx] = item;
+        this.data[pkIdx] = rowData;
         wasModified = true;
       } else {
         // TODO: Currently all added records shows on current last table row. It should be dependent on ordering, etc.
-        const newLength = this.data.push(item);
+        const newLength = this.data.push(rowData);
         this.rowIndices[pk] = newLength - 1;
       }
       return null;

@@ -1,5 +1,5 @@
 <template>
-  <div class="df-row">
+  <div ref="row" class="df-row">
     <div
       v-for="column in renderedColumns.items"
       :key="column.name"

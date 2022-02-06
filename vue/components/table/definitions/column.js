@@ -1,6 +1,6 @@
-import ColumnDisplay from '../util/display_mode';
+import ColumnDisplay from './display_mode';
 
-export class TableColumn {
+export default class TableColumn {
   constructor(initialData) {
     this._maxWidth = 0;
     // Below we circumvent having to declare an internal variable which property getters would be reading from
@@ -51,8 +51,4 @@ export class TableColumn {
   maxWidthReset() {
     this._maxWidth = 0;
   }
-}
-
-export function TableColumns(columnNames, fields) {
-  return columnNames.map((columnName) => new TableColumn(fields[columnName]));
 }

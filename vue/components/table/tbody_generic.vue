@@ -14,8 +14,7 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import TableRows from '../api_consumer/table_rows';
-
+import TableRows from './definitions/rows';
 import GenericTRow from './trow_generic';
 
 export default {

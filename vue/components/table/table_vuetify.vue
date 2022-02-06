@@ -12,18 +12,21 @@
           :pk-name="pkName"
           @render-measured="measureRenders"
         />
+        <LoadingIndicator :loading="loading"/>
       </div>
     </v-card-text>
   </v-card>
 </template>
 <script>
+import LoadingIndicator from '../util/loading_indicator';
+
 import Table from './table';
 import VuetifyTBody from './tbody_generic';
 import VuetifyTHead from './thead_generic';
 
 export default {
   name: 'VuetifyTable',
-  components: { VuetifyTHead, VuetifyTBody },
+  components: { LoadingIndicator, VuetifyTHead, VuetifyTBody },
   mixins: [Table],
 };
 </script>

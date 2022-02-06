@@ -1,7 +1,6 @@
+import TableColumns from '../table/definitions/columns';
+import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api_client';
-
-import { TableColumns } from './table_column';
-import TableRows from './table_rows';
 
 class APIConsumerLogic {
   constructor(baseURL) {

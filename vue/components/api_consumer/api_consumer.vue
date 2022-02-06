@@ -50,6 +50,7 @@ export default {
           columns: this.consumer.tableColumns,
           columnDefs: this.consumer.fields,
           rows: this.consumer.rows,
+          loading: this.consumer.loading,
         };
       default:
         throw Error('Unknown component display type');

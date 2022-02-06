@@ -16,15 +16,12 @@ export default {
           if (colName.substr(0, 4) === 'col-') {
             const col = this.renderedColumns.getColByName[colName.substr(4)];
             col.maxWidth = Math.max.apply(null, elements.map((el) => el.clientWidth));
+          } else if (colName.substr(0, 3) === 'row') {
+            const cs = this.rowData.dfControlStructure;
+            cs.measuredHeight = Math.max.apply(null, elements.map((el) => el.clientHeight));
           }
-          // res.push({
-          //   name: colName,
-          //   maxWidth: Math.max.apply(null, elements.map((el) => el.clientWidth)),
-          //   maxHeight: Math.max.apply(null, elements.map((el) => el.clientHeight)),
-          // });
           return res;
         }, []);
-        // this.$emit('render-measured', data);
       });
     },
   },

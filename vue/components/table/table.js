@@ -1,5 +1,4 @@
-import TableRows from '../api_consumer/table_rows';
-
+import TableRows from './definitions/rows';
 import TableColumnSizer from './table_style';
 
 /**
@@ -16,6 +15,7 @@ export default {
     columnDefs: { type: Object, required: true },
     rows: { type: TableRows, required: true },
     wrap: { type: Boolean, default: false },
+    loading: { type: Boolean, default: false },
   },
   data() { return {}; },
 };

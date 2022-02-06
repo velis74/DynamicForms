@@ -13,17 +13,20 @@
           @render-measured="measureRenders"
         />
       </div>
+      <LoadingIndicator :loading="loading"/>
     </v-card-text>
   </v-card>
 </template>
 <script>
+import LoadingIndicator from '../util/loading_indicator';
+
 import Table from './table';
 import BootstrapTBody from './tbody_generic';
 import BootstrapTHead from './thead_generic';
 
 export default {
   name: 'BootstrapTable',
-  components: { BootstrapTHead, BootstrapTBody },
+  components: { BootstrapTHead, BootstrapTBody, LoadingIndicator },
   mixins: [Table],
 };
 </script>
