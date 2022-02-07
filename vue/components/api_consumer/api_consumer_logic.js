@@ -1,6 +1,7 @@
 import TableColumns from '../table/definitions/columns';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api_client';
+import getObjectFromPath from '../util/get_object_from_path';
 
 class APIConsumerLogic {
   constructor(baseURL) {
@@ -28,6 +29,11 @@ class APIConsumerLogic {
     this.actions = {};
     this.rows = [];
     this.formData = {};
+    this.ordering = {
+      parameter: 'ordering',
+      style: null,
+      counter: 0,
+    };
   }
 
   async fetch(url, isTable) {
@@ -45,6 +51,16 @@ class APIConsumerLogic {
     }
   }
 
+  async reload() {
+    const orderingTransformationFunction = getObjectFromPath(this.ordering_style);
+    const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue(orderingTransformationFunction);
+    const order = orderingValue.length ? `${this.ordering.parameter}=${orderingValue}` : '';
+
+    let url = `${this.baseURL}.json`;
+    if (order.length) url = `${url}?${order}`;
+    this.rows = new TableRows(this, await this.fetch(url, true));
+  }
+
   async getUXDefinition(isTable) {
     return this.fetch(`${this.baseURL}.componentdef`, isTable);
   }
@@ -56,6 +72,15 @@ class APIConsumerLogic {
     UXDefinition.columns.forEach((column) => { this.fields[column.name] = column; });
     this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
     this.rows = new TableRows(this, UXDefinition.rows);
+    this.setOrdering(
+      UXDefinition.ordering_parameter,
+      UXDefinition.ordering_style,
+      this.tableColumns[0].ordering.changeCounter,
+    );
+  }
+
+  setOrdering(parameter, style, counter) {
+    this.ordering = { parameter: parameter || 'ordering', style, counter };
   }
 
   title(which) {

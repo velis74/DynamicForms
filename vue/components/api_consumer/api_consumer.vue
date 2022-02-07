@@ -19,7 +19,7 @@ export default {
      */
     displayComponent: { type: Object, required: true, validator(value) { return ComponentDisplay.isDefined(value); } },
   },
-  data() { return {}; },
+  data() { return { orderingCounter: this.consumer.ordering.counter.counter }; },
   computed: {
     themeCapitalised() {
       let themeOwner = this.$parent;
@@ -55,6 +55,16 @@ export default {
       default:
         throw Error('Unknown component display type');
       }
+    },
+  },
+  watch: {
+    'consumer.ordering': {
+      handler() {
+        if (this.orderingCounter !== this.consumer.ordering.counter.counter) {
+          this.consumer.reload();
+        }
+      },
+      deep: true,
     },
   },
 };

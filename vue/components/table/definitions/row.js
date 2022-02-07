@@ -1,5 +1,7 @@
 export default class TableRow { // eslint-disable-line max-classes-per-file
   constructor(rowData) {
+    const dfControlData = rowData.df_control_data || {};
+    delete rowData.df_control_data;
     Object.assign(this, rowData);
 
     this.dfControlStructure = {
@@ -43,6 +45,9 @@ export default class TableRow { // eslint-disable-line max-classes-per-file
         set(value) { this._isShowing = value; },
         enumerable: true,
       },
+      CSSClass: { get() { return dfControlData.row_css_class || ''; }, enumerable: true },
+      CSSStyle: { get() { return dfControlData.row_css_style || ''; }, enumerable: true },
+      actions: { get() { return dfControlData.actions || ''; }, enumerable: true },
     });
   }
 }

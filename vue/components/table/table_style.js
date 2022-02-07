@@ -20,6 +20,8 @@ function generateStyle(wrap, uniqueId, renderedColumns) {
   }
   style += `.${uniqueId} > .df-thead > .df-separator { height: .25em; `;
   style += 'background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0)); } ';
+  style += `.${uniqueId} > .df-thead > .df-row > .df-col { white-space: nowrap; } `;
+  style += `.${uniqueId} > .df-thead > .df-row > .df-col.ordering { cursor: pointer; user-select: none; } `;
   style += `.${uniqueId} > * > .df-row > .df-col { display: inline-block; vertical-align: top; margin: .5em .25em; } `;
 
   // console.log(this.maxColWidth);

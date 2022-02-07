@@ -13,7 +13,7 @@ class CalculatedCssClassForTableRowSerializer(FilterSerializer):
 
     def get_row_css_style(self, obj):
         if obj:
-            return 'color:red;font-weight:bold;background-color:blue;' if \
+            return 'color:gold;font-weight:bold;background-color:steelblue;' if \
                 obj.char_field and 'abc' in obj.char_field else ''
         return ''
 
