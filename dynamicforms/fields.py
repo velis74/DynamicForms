@@ -314,7 +314,7 @@ class DurationField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Du
                  default=fields.empty, initial=fields.empty, source=None, label=None, help_text=None, style=None,
                  error_messages=None, validators=None, allow_null=False, actions: Actions = None, uuid: UUID = None,
                  display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
-                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.LEFT,
+                 table_classes: str = '', alignment: FieldAlignment = FieldAlignment.RIGHT,
                  render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)

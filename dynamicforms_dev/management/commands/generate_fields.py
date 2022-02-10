@@ -214,7 +214,9 @@ class Command(BaseCommand):
                             if p_def != inspect._empty:
                                 equals = ' = ' if ':' in parm_str else '='
                                 if isinstance(p_def, FieldAlignment):
-                                    if issubclass(field, (fields.IntegerField, fields.DecimalField)):
+                                    if issubclass(
+                                        field, (fields.IntegerField, fields.DecimalField, fields.DurationField)
+                                    ):
                                         p_def = FieldAlignment.RIGHT
                                     if issubclass(field, fields.FloatField):
                                         p_def = FieldAlignment.DECIMAL
