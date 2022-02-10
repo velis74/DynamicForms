@@ -214,7 +214,7 @@
       "render_params": {
         "form": "DFWidgetInput",
         "input_type": "number",
-        "table": "#DFTableCellFloat",
+        "table": "#TableCellFloat",
         "table_show_zeroes": true,
         "step": "0.1",
         "field_class": "form-control",
@@ -579,7 +579,7 @@
               "render_params": {
                 "form": "DFWidgetInput",
                 "input_type": "number",
-                "table": "#DFTableCellFloat",
+                "table": "#TableCellFloat",
                 "table_show_zeroes": true,
                 "step": "0.1",
                 "field_class": "form-control",

@@ -1,3 +1,5 @@
+import TranslationsMixin from '../util/translations_mixin';
+
 import TableRows from './definitions/rows';
 import TableColumnSizer from './table_style';
 
@@ -7,7 +9,7 @@ import TableColumnSizer from './table_style';
  * See table_bootstrap.vue & table_vuetify.vue for respective component declarations
  */
 export default {
-  mixins: [TableColumnSizer],
+  mixins: [TableColumnSizer, TranslationsMixin],
   props: {
     pkName: { type: String, required: true },
     title: { type: String, required: true },

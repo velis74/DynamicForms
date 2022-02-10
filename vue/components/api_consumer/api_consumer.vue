@@ -23,7 +23,7 @@ export default {
   computed: {
     themeCapitalised() {
       let themeOwner = this.$parent;
-      // we traverse the parents until we find the DeomApp parent which actuayll hosts the theme selected
+      // we traverse the parents until we find the DemoApp parent which actually hosts the theme selected
       while (themeOwner && themeOwner.$options.name !== 'DemoApp') {
         themeOwner = themeOwner.$parent;
       }

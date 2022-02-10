@@ -220,7 +220,7 @@ class FloatField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Float
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetInput')
         kwargs['render_params'].setdefault('input_type', 'number')
-        kwargs['render_params'].setdefault('table', '#DFTableCellFloat')
+        kwargs['render_params'].setdefault('table', '#TableCellFloat')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
@@ -240,7 +240,7 @@ class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Dec
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetInput')
         kwargs['render_params'].setdefault('input_type', 'text')
-        kwargs['render_params'].setdefault('table', '#DFTableCellFloat')
+        kwargs['render_params'].setdefault('table', '#TableCellFloat')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
         super().__init__(**kwargs)
@@ -260,7 +260,7 @@ class DateTimeField(DateTimeFieldMixin, NullValueMixin, FieldRenderMixin, Action
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'datetime')
-        kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
+        kwargs['render_params'].setdefault('table', '#TableCellDateTime')
         kwargs['render_params'].setdefault('table_format', 'dd.MM.yyyy HH:mm')
         kwargs['render_params'].setdefault('form_format', 'dd.MM.yyyy HH:mm')
         super().__init__(**kwargs)
@@ -281,7 +281,7 @@ class DateField(DateFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, F
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'date')
-        kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
+        kwargs['render_params'].setdefault('table', '#TableCellDateTime')
         kwargs['render_params'].setdefault('table_format', 'dd.MM.yyyy')
         kwargs['render_params'].setdefault('form_format', 'dd.MM.yyyy')
         super().__init__(**kwargs)
@@ -302,7 +302,7 @@ class TimeField(TimeFieldMixin, NullValueMixin, FieldRenderMixin, ActionMixin, F
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form', 'DFWidgetDatetime')
         kwargs['render_params'].setdefault('input_type', 'time')
-        kwargs['render_params'].setdefault('table', '#DFTableCellDatetime')
+        kwargs['render_params'].setdefault('table', '#TableCellDateTime')
         kwargs['render_params'].setdefault('table_format', 'HH:mm')
         kwargs['render_params'].setdefault('form_format', 'HH:mm')
         super().__init__(**kwargs)

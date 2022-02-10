@@ -13,6 +13,7 @@
           @render-measured="measureRenders"
         />
         <LoadingIndicator :loading="loading"/>
+        <div v-if="!loading && rows.data.length === 0" class="nodata">{{ gettext('No data') }}</div>
       </div>
     </v-card-text>
   </v-card>
@@ -30,3 +31,12 @@ export default {
   mixins: [Table],
 };
 </script>
+
+<style scoped>
+.nodata {
+  min-height:  4em;
+  line-height: 4em;
+  text-align:  center;
+  font-size:   200%;
+}
+</style>
