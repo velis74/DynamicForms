@@ -24,6 +24,8 @@ function generateStyle(uniqueId, renderedColumns) {
   }
   
   #${uniqueId} > .df-thead > .df-separator { 
+    margin-top: -.25em;
+    margin-bottom: .25em; /* these margins ensure that the separator is closer to thead than to rows in tbody */
     height: .25em; 
     background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0)); 
   }
@@ -40,7 +42,7 @@ function generateStyle(uniqueId, renderedColumns) {
     user-select: none; 
   }
   
-  #${uniqueId} .df-col > * { 
+  #${uniqueId} .df-col > * { /* ensures that columns themselves act like continuous text */
     display: inline-block; 
   } 
   `;

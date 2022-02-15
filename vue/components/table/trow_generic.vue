@@ -4,50 +4,25 @@
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
     @click.stop="(event) => rowClick(event, 'ROW_CLICK', null)"
-    @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', row)"
+    @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', null)"
   >
-    <div
+    <GenericColumn
       v-for="column in renderedColumns.items"
       :key="column.name"
-      :ref="`col-${column.name}`"
-      :class="`df-col text-${column.align} ${customClass(column)}`"
-      @click.stop="(event) => rowClick(event, 'ROW_CLICK', column)"
-      @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', column)"
-    >
-      <!-- first we render any field start actions -->
-      <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
-      <!-- then the field component itself -->
-      <component
-        :is="column.renderComponentName"
-        v-if="column.renderComponentName"
-        :row-data="rowData"
-        :column="column"
-        :thead="thead"
-      />
-      <!-- but maybe the field component is actually a row start / end actions field -->
-      <!--Actions
-        v-else-if="['#actions-row_start', '#actions-row_end'].includes(column.name)"
-        :thead="thead"
-        :row-data="rowData"
-        :actions="actions.filter(column.name.substr(9).toUpperCase())"
-      /-->
-      <!-- or it's just a decorated text and not a component -->
-      <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
-      <!-- we finish up with any field end actions -->
-      <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_END', column.name)"/-->
-      <OrderingIndicator v-if="thead" :ordering="column.ordering"/>
-    </div>
+      :column="column"
+      :row-data="rowData"
+      :thead="thead"
+    />
   </div>
 </template>
 
 <script>
-import * as TableCells from './cell-renderers';
-import OrderingIndicator from './ordering_indicator';
 import RenderMeasured from './render_measure';
+import GenericColumn from './tcolumn_generic';
 
 export default {
   name: 'GenericTRow',
-  components: { OrderingIndicator, ...TableCells },
+  components: { GenericColumn },
   mixins: [RenderMeasured],
   props: {
     renderedColumns: { type: Object, required: true },
@@ -57,22 +32,11 @@ export default {
   },
   methods: {
     onMeasure(refName, maxWidth, maxHeight) {
-      if (refName === 'row') {
-        this.rowData.setMeasuredHeight(maxHeight);
-      } else {
-        this.renderedColumns.getColByName[refName.substring(4)].setMaxWidth(maxWidth);
-      }
+      this.rowData.setMeasuredHeight(maxHeight);
     },
-    customClass(column) {
-      let res = column.CSSClass;
-      if (this.thead) res = `${res} ${column.CSSClassHead}`.trim();
-      return res;
-    },
+    // eslint-disable-next-line no-unused-vars
     rowClick(event, eventsFilter, column) {
-      if (this.thead && eventsFilter === 'ROW_CLICK' && column) {
-        // A column in thead was clicked: adjust sorting
-        this.$refs[`ordering-${column.name}`][0].orderClick(event); // defer handling the click to ordering indicator
-      }
+      // we're currently not processing any clicks outside column cells
     },
   },
 };
