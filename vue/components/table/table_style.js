@@ -7,29 +7,25 @@ import ColumnDisplay from './definitions/display_mode';
  * TODO: adapt styles to bootstrap / vuetify. check paddings, margins, etc
  * TODO: support striped, dark / light, dense
  */
-function generateStyle(wrap, uniqueId, renderedColumns) {
+function generateStyle(uniqueId, renderedColumns) {
   // Unfortunately, this would have been much nicer as a computed value, but alas it did not work properly
 
   let style = '';
-  if (wrap) {
-    style += `.${uniqueId} > * > .df-row { display: block; white-space: wrap; } `;
-  } else {
-    style += `.${uniqueId} { overflow-x: auto } `;
-    style += `.${uniqueId} > * { width: fit-content; min-width: 100%; } `;
-    style += `.${uniqueId} > * > .df-row { display: block; white-space: nowrap; } `;
-  }
-  style += `.${uniqueId} > .df-thead > .df-separator { height: .25em; `;
-  style += 'background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0)); } ';
-  style += `.${uniqueId} > .df-thead > .df-row > .df-col { white-space: nowrap; } `;
-  style += `.${uniqueId} > .df-thead > .df-row > .df-col.ordering { cursor: pointer; user-select: none; } `;
-  style += `.${uniqueId} > * > .df-row > .df-col { display: inline-block; vertical-align: top; margin: .5em .25em; } `;
-  style += `.${uniqueId} > * > .df-row > .df-col > * { display: inline-block; } `;
+  style += `#${uniqueId} { position: relative; overflow-x: auto; } `; // position ensures resize observer to work
+  style += `#${uniqueId} > * { width: fit-content; min-width: 100%; } `;
+  style += `#${uniqueId} .df-row { display: block; white-space: nowrap; } `;
+  const linear = 'linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0));';
+  style += `#${uniqueId} > .df-thead > .df-separator { height: .25em; background: ${linear} } `;
+  style += `#${uniqueId}` +
+    ' .df-col { white-space: nowrap; display: inline-block; vertical-align: top; margin: .5em .25em; } ';
+  style += `#${uniqueId} .df-col.ordering { cursor: pointer; user-select: none; } `;
+  style += `#${uniqueId} .df-col > * { display: inline-block; } `;
 
   // console.log(this.maxColWidth);
   if (renderedColumns) {
     renderedColumns.items.forEach((column, index) => {
       style += (
-        `.${uniqueId} > * > .df-row > .df-col:nth-of-type(${index + 1}) { ` +
+        `#${uniqueId} .df-col:nth-of-type(${index + 1}) { ` +
         `min-width: ${column.maxWidth}px; }`
       );
     });
@@ -44,7 +40,7 @@ export default {
     const uniqueId = `table-${uniqueIdGenerator++}`;
     return {
       uniqueId,
-      tableStyle: generateStyle(this.wrap, uniqueId, null),
+      tableStyle: generateStyle(uniqueId, null),
     };
   },
   computed: {
@@ -73,20 +69,8 @@ export default {
       this.regenerateStyle();
     },
     regenerateStyle() {
-      this.tableStyle = generateStyle(this.wrap, this.uniqueId, this.renderedColumns);
-    },
-    measureRenders(data) {
-      data.forEach(({ name, maxWidth }) => {
-        if (name.substring(0, 4) !== 'col-') return;
-        const colName = name.substr(4);
-        const col = this.renderedColumns.getColByName[colName];
-        if (col) col.maxWidth = maxWidth; // modifying prop's member here. being lazy right now
-      });
-      this.regenerateStyle();
+      this.tableStyle = generateStyle(this.uniqueId, this.renderedColumns);
     },
   },
-  watch: {
-    columns: { handler() { this.resetStyle(); }, deep: true },
-    wrap() { this.regenerateStyle(); },
-  },
+  watch: { columns: { handler() { this.resetStyle(); }, deep: true } },
 };

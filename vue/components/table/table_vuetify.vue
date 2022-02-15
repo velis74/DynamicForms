@@ -3,14 +3,13 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
-      <div :class="uniqueId">
-        <VuetifyTHead :rendered-columns="renderedColumns" @render-measured="measureRenders"/>
+      <div :id="uniqueId" ref="container">
+        <VuetifyTHead :rendered-columns="renderedColumns"/>
         <VuetifyTBody
           :data-columns="dataColumns"
           :rendered-columns="renderedColumns"
           :rows="rows"
           :pk-name="pkName"
-          @render-measured="measureRenders"
         />
         <LoadingIndicator :loading="loading"/>
         <div v-if="!loading && rows.data.length === 0" class="nodata">{{ gettext('No data') }}</div>

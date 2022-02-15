@@ -3,14 +3,13 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
-      <div :class="uniqueId">
-        <BootstrapTHead :rendered-columns="renderedColumns" @render-measured="measureRenders"/>
+      <div :id="uniqueId" ref="container">
+        <BootstrapTHead :rendered-columns="renderedColumns"/>
         <BootstrapTBody
           :data-columns="dataColumns"
           :rendered-columns="renderedColumns"
           :rows="rows"
           :pk-name="pkName"
-          @render-measured="measureRenders"
         />
       </div>
       <LoadingIndicator :loading="loading"/>

@@ -27,5 +27,10 @@ export default {
       }, {}));
     },
   },
+  methods: {
+    onMeasure(refName, maxWidth, maxHeight) {
+      this.rowData.dfControlStructure.measuredHeight = maxHeight;
+    },
+  },
 };
 </script>

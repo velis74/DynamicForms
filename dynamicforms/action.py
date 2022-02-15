@@ -142,7 +142,7 @@ class TableAction(ActionBase, RenderableActionMixin):
             # We need to do this differently because of dynamic page loading for tables: each time the serializer
             # has a different UUID
             action_action = action_action.replace('__TABLEID__',
-                                                  "$(event.target).parents('table').attr('id').substr(5)")
+                                                  "$(event.target).parents('table').attr('id').substring(5)")
         else:
             action_action = action_action.replace('__TABLEID__', "'" + str(serializer.uuid) + "'")
 

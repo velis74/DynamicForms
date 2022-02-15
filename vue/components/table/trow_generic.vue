@@ -35,7 +35,7 @@
       <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
       <!-- we finish up with any field end actions -->
       <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_END', column.name)"/-->
-      <OrderingIndicator v-if="thead" :ref="`ordering-${column.name}`" :ordering="column.ordering"/>
+      <OrderingIndicator v-if="thead" :ordering="column.ordering"/>
     </div>
   </div>
 </template>
@@ -56,10 +56,16 @@ export default {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
   },
   methods: {
+    onMeasure(refName, maxWidth, maxHeight) {
+      if (refName === 'row') {
+        this.rowData.setMeasuredHeight(maxHeight);
+      } else {
+        this.renderedColumns.getColByName[refName.substring(4)].setMaxWidth(maxWidth);
+      }
+    },
     customClass(column) {
-      let res = this.rowData.dfControlStructure.CSSClass;
-      if (this.thead) res = `${res} ${this.rowData.dfControlStructure.CSSClassHead}`.trim();
-      if (column.ordering.isOrderable) res = `${res} ordering`.trim();
+      let res = column.CSSClass;
+      if (this.thead) res = `${res} ${column.CSSClassHead}`.trim();
       return res;
     },
     rowClick(event, eventsFilter, column) {
