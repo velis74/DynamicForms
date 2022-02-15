@@ -8,26 +8,49 @@ import ColumnDisplay from './definitions/display_mode';
  * TODO: support striped, dark / light, dense
  */
 function generateStyle(uniqueId, renderedColumns) {
-  // Unfortunately, this would have been much nicer as a computed value, but alas it did not work properly
+  let style = ` 
+  #${uniqueId} { 
+    position: relative; /* position ensures resize observer to work */ 
+    overflow-x: auto; 
+  }
+  #${uniqueId} > * { /* thead, tbody, tfoot */ 
+    width: fit-content; 
+    min-width: 100%; 
+  }
+  
+  #${uniqueId} .df-row { 
+    display: block; 
+    white-space: nowrap; 
+  }
+  
+  #${uniqueId} > .df-thead > .df-separator { 
+    height: .25em; 
+    background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0)); 
+  }
+  
+  #${uniqueId} .df-col { 
+    white-space: nowrap; 
+    display: inline-block; 
+    vertical-align: top; 
+    margin: .5em .25em; 
+  }
+  
+  #${uniqueId} .df-col.ordering { 
+    cursor: pointer; 
+    user-select: none; 
+  }
+  
+  #${uniqueId} .df-col > * { 
+    display: inline-block; 
+  } 
+  `;
 
-  let style = '';
-  style += `#${uniqueId} { position: relative; overflow-x: auto; } `; // position ensures resize observer to work
-  style += `#${uniqueId} > * { width: fit-content; min-width: 100%; } `;
-  style += `#${uniqueId} .df-row { display: block; white-space: nowrap; } `;
-  const linear = 'linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0));';
-  style += `#${uniqueId} > .df-thead > .df-separator { height: .25em; background: ${linear} } `;
-  style += `#${uniqueId}` +
-    ' .df-col { white-space: nowrap; display: inline-block; vertical-align: top; margin: .5em .25em; } ';
-  style += `#${uniqueId} .df-col.ordering { cursor: pointer; user-select: none; } `;
-  style += `#${uniqueId} .df-col > * { display: inline-block; } `;
-
-  // console.log(this.maxColWidth);
   if (renderedColumns) {
     renderedColumns.items.forEach((column, index) => {
-      style += (
-        `#${uniqueId} .df-col:nth-of-type(${index + 1}) { ` +
-        `min-width: ${column.maxWidth}px; }`
-      );
+      style += `
+      #${uniqueId} .df-col:nth-of-type(${index + 1}) { 
+        min-width: ${column.maxWidth}px; 
+      }`;
     });
   }
   return style;
@@ -38,10 +61,7 @@ let uniqueIdGenerator = 0;
 export default {
   data() {
     const uniqueId = `table-${uniqueIdGenerator++}`;
-    return {
-      uniqueId,
-      tableStyle: generateStyle(uniqueId, null),
-    };
+    return { uniqueId };
   },
   computed: {
     renderedColumns() {
@@ -59,17 +79,12 @@ export default {
       });
     },
     dataColumns() { return this.columns.filter((column) => column.visibility === ColumnDisplay.HIDDEN); },
+    tableStyle() { return generateStyle(this.uniqueId, this.renderedColumns); },
   },
-  mounted() { this.regenerateStyle(); },
-  updated() { this.regenerateStyle(); },
   methods: {
     resetStyle() {
       // column definitions got changed, so this is probably a new table, so let's restart measurements and styles
       this.uniqueId = `table-${uniqueIdGenerator++}`;
-      this.regenerateStyle();
-    },
-    regenerateStyle() {
-      this.tableStyle = generateStyle(this.uniqueId, this.renderedColumns);
     },
   },
   watch: { columns: { handler() { this.resetStyle(); }, deep: true } },
