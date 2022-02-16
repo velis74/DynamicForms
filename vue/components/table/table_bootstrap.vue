@@ -4,10 +4,10 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container">
-        <BootstrapTHead :rendered-columns="renderedColumns"/>
+        <BootstrapTHead :rendered-columns="responsiveColumns"/>
         <BootstrapTBody
           :data-columns="dataColumns"
-          :rendered-columns="renderedColumns"
+          :rendered-columns="responsiveColumns"
           :rows="rows"
           :pk-name="pkName"
         />

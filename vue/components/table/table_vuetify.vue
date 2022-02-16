@@ -4,10 +4,10 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container">
-        <VuetifyTHead :rendered-columns="renderedColumns"/>
+        <VuetifyTHead :rendered-columns="responsiveColumns"/>
         <VuetifyTBody
           :data-columns="dataColumns"
-          :rendered-columns="renderedColumns"
+          :rendered-columns="responsiveColumns"
           :rows="rows"
           :pk-name="pkName"
         />

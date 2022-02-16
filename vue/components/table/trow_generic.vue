@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import IndexedColumns from './definitions/indexed_columns';
 import RenderMeasured from './render_measure';
 import GenericColumn from './tcolumn_generic';
 
@@ -25,7 +26,7 @@ export default {
   components: { GenericColumn },
   mixins: [RenderMeasured],
   props: {
-    renderedColumns: { type: Object, required: true },
+    renderedColumns: { type: IndexedColumns, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section

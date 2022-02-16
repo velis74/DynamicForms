@@ -1,4 +1,5 @@
 import ColumnDisplay from './definitions/display_mode';
+import IndexedColumns from './definitions/indexed_columns';
 
 /**
  * This mixin takes care of column sizing and generating appropriate styles for our table component.
@@ -48,11 +49,8 @@ function generateStyle(uniqueId, renderedColumns) {
   `;
 
   if (renderedColumns) {
-    renderedColumns.items.forEach((column, index) => {
-      style += `
-      #${uniqueId} .df-col:nth-of-type(${index + 1}) { 
-        min-width: ${column.maxWidth}px; 
-      }`;
+    renderedColumns.forEach((column, index) => {
+      style += `#${uniqueId} .df-col:nth-of-type(${index + 1}) { min-width: ${column.maxWidth}px; } `;
     });
   }
   return style;
@@ -67,18 +65,9 @@ export default {
   },
   computed: {
     renderedColumns() {
-      return this.columns.reduce((result, column) => {
-        if (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE) {
-          result.items.push(column);
-          result.getColIndexByName[column.name] = result.length - 1;
-          result.getColByName[column.name] = column;
-        }
-        return result;
-      }, {
-        items: [],
-        getColByName: {},
-        getColIndexByName: {},
-      });
+      return new IndexedColumns(this.columns.filter(
+        (column) => (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE),
+      ));
     },
     dataColumns() { return this.columns.filter((column) => column.visibility === ColumnDisplay.HIDDEN); },
     tableStyle() { return generateStyle(this.uniqueId, this.renderedColumns); },

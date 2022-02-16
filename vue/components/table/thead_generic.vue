@@ -10,6 +10,7 @@
   </div>
 </template>
 <script>
+import IndexedColumns from './definitions/indexed_columns';
 import TableRow from './definitions/row';
 import RenderMeasured from './render_measure';
 import GenericTRow from './trow_generic';
@@ -18,10 +19,11 @@ export default {
   name: 'GenericTHead',
   components: { GenericTRow },
   mixins: [RenderMeasured],
-  props: { renderedColumns: { type: Object, required: true } },
+  props: { renderedColumns: { type: IndexedColumns, required: true } },
   computed: {
     rowData() {
-      return new TableRow(this.renderedColumns.items.reduce((result, col) => {
+      // Creates a fake table row with column labels for data
+      return new TableRow(this.renderedColumns.reduce((result, col) => {
         result[col.name] = col.label;
         return result;
       }, {}));
