@@ -1,10 +1,8 @@
 export default class IndexedColumns {
   constructor(columns) {
     Object.defineProperties(this, {
-      items: {
-        get() { return columns; },
-        enumerable: false,
-      },
+      items: { get() { return columns; }, enumerable: false },
+      length: { get() { return columns.length; }, enumerable: true },
     });
 
     this.forEach((item) => { if (item && item.name) { this[item.name] = item; } });

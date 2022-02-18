@@ -1,7 +1,7 @@
 <template>
   <div
     ref="column"
-    :class="`df-col text-${column.align} ${customClass(column)}`"
+    :class="`${columnClass} ${column.name} text-${column.align} ${customClass(column)}`"
     @click.stop="(event) => rowClick(event, 'ROW_CLICK', column)"
     @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', column)"
   >
@@ -32,19 +32,21 @@
 
 <script>
 import * as TableCells from './cell-renderers';
+import ColumnGroup from './column_group';
 import TableColumn from './definitions/column';
 import OrderingIndicator from './ordering_indicator';
 import RenderMeasured from './render_measure';
 
 export default {
   name: 'GenericTColumn',
-  components: { OrderingIndicator, ...TableCells },
+  components: { ColumnGroup, OrderingIndicator, ...TableCells },
   mixins: [RenderMeasured],
   props: {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
   },
+  computed: { columnClass() { return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'; } },
   methods: {
     onMeasure(refName, maxWidth) {
       if (refName === 'column') {

@@ -19,19 +19,13 @@ export default {
   name: 'GenericTHead',
   components: { GenericTRow },
   mixins: [RenderMeasured],
-  props: { renderedColumns: { type: IndexedColumns, required: true } },
-  computed: {
-    rowData() {
-      // Creates a fake table row with column labels for data
-      return new TableRow(this.renderedColumns.reduce((result, col) => {
-        result[col.name] = col.label;
-        return result;
-      }, {}));
-    },
+  props: {
+    renderedColumns: { type: IndexedColumns, required: true },
+    rowData: { type: TableRow, required: true },
   },
   methods: {
     onMeasure(refName, maxWidth, maxHeight) {
-      this.rowData.dfControlStructure.measuredHeight = maxHeight;
+      this.rowData.setMeasuredHeight(maxHeight);
     },
   },
 };

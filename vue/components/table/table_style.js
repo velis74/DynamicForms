@@ -1,6 +1,3 @@
-import ColumnDisplay from './definitions/display_mode';
-import IndexedColumns from './definitions/indexed_columns';
-
 /**
  * This mixin takes care of column sizing and generating appropriate styles for our table component.
  * It works in tandem with MeasureRender mixin that actually triggers the measuring events
@@ -8,7 +5,9 @@ import IndexedColumns from './definitions/indexed_columns';
  * TODO: adapt styles to bootstrap / vuetify. check paddings, margins, etc
  * TODO: support striped, dark / light, dense
  */
-function generateStyle(uniqueId, renderedColumns) {
+import { ColumnGroup } from './definitions/responsive_layout';
+
+function generateStyle(uniqueId, responsiveColumns) {
   let style = ` 
   #${uniqueId} { 
     position: relative; /* position ensures resize observer to work */ 
@@ -31,10 +30,13 @@ function generateStyle(uniqueId, renderedColumns) {
     background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,0)); 
   }
   
-  #${uniqueId} .df-col { 
+  #${uniqueId} .df-col, #${uniqueId} .column-group { 
     white-space: nowrap; 
     display: inline-block; 
     vertical-align: top; 
+  }
+
+  #${uniqueId} .df-col { 
     margin: .5em .25em; 
   }
   
@@ -48,9 +50,16 @@ function generateStyle(uniqueId, renderedColumns) {
   } 
   `;
 
-  if (renderedColumns) {
-    renderedColumns.forEach((column, index) => {
-      style += `#${uniqueId} .df-col:nth-of-type(${index + 1}) { min-width: ${column.maxWidth}px; } `;
+  if (responsiveColumns) {
+    responsiveColumns.forEach((column) => {
+      const isColumnGroup = column instanceof ColumnGroup;
+      const colClass = isColumnGroup ? 'column-group' : 'df-col';
+      style += `#${uniqueId} .${colClass}.${column.name} { min-width: ${column.maxWidth}px; } `;
+      if (isColumnGroup) {
+        column.fields.forEach((field) => {
+          style += `#${uniqueId} .df-col.${field.name} { min-width: ${field.maxWidth}px; } `;
+        });
+      }
     });
   }
   return style;
@@ -63,20 +72,15 @@ export default {
     const uniqueId = `table-${uniqueIdGenerator++}`;
     return { uniqueId };
   },
-  computed: {
-    renderedColumns() {
-      return new IndexedColumns(this.columns.filter(
-        (column) => (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE),
-      ));
-    },
-    dataColumns() { return this.columns.filter((column) => column.visibility === ColumnDisplay.HIDDEN); },
-    tableStyle() { return generateStyle(this.uniqueId, this.renderedColumns); },
-  },
+  computed: { tableStyle() { return generateStyle(this.uniqueId, this.responsiveColumns); } },
   methods: {
     resetStyle() {
       // column definitions got changed, so this is probably a new table, so let's restart measurements and styles
       this.uniqueId = `table-${uniqueIdGenerator++}`;
     },
   },
-  watch: { columns: { handler() { this.resetStyle(); }, deep: true } },
+  watch: {
+    columns: { handler() { this.resetStyle(); }, deep: true },
+    responsiveColumns: { handler() { this.resetStyle(); }, deep: true },
+  },
 };

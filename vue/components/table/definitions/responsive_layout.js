@@ -1,8 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
 import TableColumn from './column';
 import DisplayMode from './display_mode';
+import IndexedColumns from './indexed_columns';
 
-class ResponsiveRowDef {
+export class ColumnGroupRow {
   constructor(fieldsDef, renderedColumns) {
     const fields = Array.isArray(fieldsDef) ? fieldsDef : [fieldsDef];
     this.fields = fields.map((field) => {
@@ -16,10 +17,10 @@ class ResponsiveRowDef {
   }
 }
 
-class ResponsiveColumnDef extends TableColumn {
-  constructor(columnDef, renderedColumns) {
+export class ColumnGroup extends TableColumn {
+  constructor(columnDef, renderedColumns, cgIndex) {
     super({
-      name: 'ColumnGroup',
+      name: `ColumnGroup${cgIndex}`,
       label: '',
       alignment: 'left',
       ordering: '',
@@ -27,7 +28,19 @@ class ResponsiveColumnDef extends TableColumn {
       render_params: { table: '#ColumnGroup' },
     }, []);
     const rows = Array.isArray(columnDef) ? columnDef : (columnDef.columns || []);
-    this.rows = rows.map((row) => new ResponsiveRowDef(row, renderedColumns));
+    this.rows = rows.map((row) => new ColumnGroupRow(row, renderedColumns));
+
+    Object.defineProperties(this, {
+      fields: {
+        get() {
+          return this.rows.reduce((result, row) => {
+            row.fields.forEach((field) => result.push(field));
+            return result;
+          }, []);
+        },
+        enumerable: true,
+      },
+    });
   }
 }
 
@@ -38,7 +51,7 @@ export class ResponsiveLayout {
 
     Object.defineProperties(this, {
       totalWidth: { get() { return this.getTotalWidth(); }, enumerable: true },
-      columns: { get() { return def.columns; }, enumerable: false },
+      columns: { get() { return def.columns; }, enumerable: true },
     });
 
     // add non-listed columns
@@ -51,9 +64,10 @@ export class ResponsiveLayout {
         });
       });
       const missingColumns = new Set([...allColumns].filter((item) => !usedColumns.has(item)));
+      let index = this.columns.length;
       renderedColumns.forEach((column) => {
         if (missingColumns.has(column.name)) {
-          this.columns.push(new ResponsiveColumnDef([column.name], renderedColumns));
+          this.columns.push(new ColumnGroup([column.name], renderedColumns, index++));
         }
       });
     }
@@ -62,13 +76,14 @@ export class ResponsiveLayout {
   // eslint-disable-next-line class-methods-use-this
   sanitizeColumnsDefinition(definition, renderedColumns) {
     let columns = Array.isArray(definition) ? definition : (definition.columns || []);
-    columns = columns.map((column) => new ResponsiveColumnDef(column, renderedColumns));
+    columns = new IndexedColumns(
+      columns.map((column, index) => new ColumnGroup(column, renderedColumns, index)),
+    );
     return { columns, rows: Math.max(1, ...columns.map((col) => col.rows.length)) };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getTotalWidth() {
-    return 0;
+    return this.columns.reduce((result, column) => result + column.maxWidth, 0);
   }
 }
 
@@ -91,7 +106,7 @@ export class ResponsiveLayouts {
         ['char_field', 'slug_field'],
         ['email_field', 'url_field'],
         ['uuid_field', ['ipaddress_field', 'integer_field', 'nullint_field']],
-        ['float_field', ['decimal_field']],
+        ['float_field', 'decimal_field'],
         [['datetime_field', 'date_field'], ['time_field', 'duration_field']],
       ],
       autoAddNonListedColumns: true,
@@ -121,11 +136,13 @@ export class ResponsiveLayouts {
   recalculate(containerWidth) {
     for (let i = 0; i < this.layouts.length; i++) {
       //  we're assuming each consecutive layout is narrower than the previous one
-      if (this.layouts[i].totalWidth < containerWidth) {
-        return this.layouts[i].columns;
+      if (this.layouts[i].totalWidth <= containerWidth) {
+        // console.log(`layout ${i}: ${this.layouts[i].totalWidth} <= ${containerWidth}`);
+        return this.layouts[i];
       }
     }
     // return last layout (one column) even if it is too wide still
-    return this.layouts[this.layouts.length - 1].columns;
+    // console.log(`layout ${this.layouts.length - 1}: none <= ${containerWidth}`);
+    return this.layouts[this.layouts.length - 1];
   }
 }

@@ -3,8 +3,8 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
-      <div :id="uniqueId" ref="container">
-        <VuetifyTHead :rendered-columns="responsiveColumns"/>
+      <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
+        <VuetifyTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
         <VuetifyTBody
           :data-columns="dataColumns"
           :rendered-columns="responsiveColumns"
