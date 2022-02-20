@@ -1,5 +1,5 @@
 <template>
-  <div class="column-group">
+  <div>
     <div v-for="(row, row_index) in column.rows" :key="row_index" class="sub-row">
       <GenericColumn
         v-for="field in row.fields"
@@ -18,7 +18,6 @@ import RenderMeasured from './render_measure';
 
 export default {
   name: 'ColumnGroup',
-  components: { GenericColumn: () => import('./tcolumn_generic') },
   mixins: [RenderMeasured],
   props: {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section

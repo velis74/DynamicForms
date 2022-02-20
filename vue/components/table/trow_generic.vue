@@ -19,11 +19,9 @@
 <script>
 import IndexedColumns from './definitions/indexed_columns';
 import RenderMeasured from './render_measure';
-import GenericColumn from './tcolumn_generic';
 
 export default {
   name: 'GenericTRow',
-  components: { GenericColumn },
   mixins: [RenderMeasured],
   props: {
     renderedColumns: { type: IndexedColumns, required: true },

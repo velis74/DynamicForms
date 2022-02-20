@@ -38,7 +38,7 @@ import OrderingIndicator from './ordering_indicator';
 import RenderMeasured from './render_measure';
 
 export default {
-  name: 'GenericTColumn',
+  name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, ...TableCells },
   mixins: [RenderMeasured],
   props: {
