@@ -42,8 +42,8 @@ export default {
     },
     responsiveLayouts() { return new ResponsiveLayouts(this.renderedColumns); },
     responsiveLayout() { return this.responsiveLayouts.recalculate(this.containerWidth || 0); },
-    responsiveColumns() { return this.responsiveLayout.columns; },
     responsiveLayoutWidth() { return this.responsiveLayout.totalWidth; },
+    responsiveColumns() { return this.responsiveLayout.columns; },
   },
   created() {
     this.resizeObserver = new ResizeObserver((entries) => {

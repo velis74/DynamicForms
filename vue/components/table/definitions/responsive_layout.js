@@ -1,4 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
+import Vue from 'vue';
+
 import TableColumn from './column';
 import DisplayMode from './display_mode';
 import IndexedColumns from './indexed_columns';
@@ -18,19 +20,21 @@ export class ColumnGroupRow {
 }
 
 export class ColumnGroup extends TableColumn {
-  constructor(columnDef, renderedColumns, cgIndex) {
+  constructor(layout, columnDef, renderedColumns) {
     super({
-      name: `ColumnGroup${cgIndex}`,
+      name: `ColumnGroup${layout.columns.length}`,
       label: '',
       alignment: 'left',
       ordering: '',
       visibility: { table: DisplayMode.FULL },
       render_params: { table: '#ColumnGroup' },
     }, []);
+
     const rows = Array.isArray(columnDef) ? columnDef : (columnDef.columns || []);
     this.rows = rows.map((row) => new ColumnGroupRow(row, renderedColumns));
 
     Object.defineProperties(this, {
+      layout: { get() { return layout; }, enumerable: false },
       fields: {
         get() {
           return this.rows.reduce((result, row) => {
@@ -42,17 +46,22 @@ export class ColumnGroup extends TableColumn {
       },
     });
   }
+
+  setMaxWidth(value) {
+    if (value > this.maxWidth) {
+      this.layout.totalWidth += value - (this.maxWidth || 0);
+      super.setMaxWidth(value);
+    }
+  }
 }
 
 export class ResponsiveLayout {
   constructor(definition, renderedColumns) {
-    const def = this.sanitizeColumnsDefinition(definition, renderedColumns);
-    this.rows = def.rows;
-
-    Object.defineProperties(this, {
-      totalWidth: { get() { return this.getTotalWidth(); }, enumerable: true },
-      columns: { get() { return def.columns; }, enumerable: true },
-    });
+    const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
+    this.columns = new IndexedColumns([]);
+    columnsDef.forEach((column) => this.columns.push(new ColumnGroup(this, column, renderedColumns)));
+    this.rows = Math.max(1, ...this.columns.map((col) => col.rows.length));
+    this.totalWidth = 0;
 
     // add non-listed columns
     if (definition.autoAddNonListedColumns) {
@@ -64,26 +73,12 @@ export class ResponsiveLayout {
         });
       });
       const missingColumns = new Set([...allColumns].filter((item) => !usedColumns.has(item)));
-      let index = this.columns.length;
       renderedColumns.forEach((column) => {
         if (missingColumns.has(column.name)) {
-          this.columns.push(new ColumnGroup([column.name], renderedColumns, index++));
+          this.columns.push(new ColumnGroup(this, [column.name], renderedColumns));
         }
       });
     }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  sanitizeColumnsDefinition(definition, renderedColumns) {
-    let columns = Array.isArray(definition) ? definition : (definition.columns || []);
-    columns = new IndexedColumns(
-      columns.map((column, index) => new ColumnGroup(column, renderedColumns, index)),
-    );
-    return { columns, rows: Math.max(1, ...columns.map((col) => col.rows.length)) };
-  }
-
-  getTotalWidth() {
-    return this.columns.reduce((result, column) => result + column.maxWidth, 0);
   }
 }
 
@@ -93,13 +88,13 @@ export class ResponsiveLayouts {
 
     // one row, columns next to each other variant is generated automatically
     // Any columns not listed in the array will be auto-added to first row at the end (here, none are listed)
-    this.layouts.push(new ResponsiveLayout({ autoAddNonListedColumns: true }, renderedColumns));
+    this.pushLayout(new ResponsiveLayout({ autoAddNonListedColumns: true }, renderedColumns));
 
     // two row layout
     // note how each "column" array has at most two members resulting in a two-row layout.
     // If there is only one member, that means an empty second row.
     // If any member is an array, that means group of fields
-    this.layouts.push(new ResponsiveLayout({
+    this.pushLayout(new ResponsiveLayout({
       columns: [
         ['id'],
         ['boolean_field', 'nullboolean_field'],
@@ -113,7 +108,7 @@ export class ResponsiveLayouts {
     }, renderedColumns));
 
     // three row layout
-    this.layouts.push(new ResponsiveLayout({
+    this.pushLayout(new ResponsiveLayout({
       columns: [
         ['id'],
         [
@@ -128,9 +123,13 @@ export class ResponsiveLayouts {
     }, renderedColumns));
 
     // n rows, 1 column variant is generated automatically
-    this.layouts.push(
-      new ResponsiveLayout({ columns: [renderedColumns.map((column) => column.name)] }, renderedColumns),
-    );
+    this.pushLayout(new ResponsiveLayout({ columns: [renderedColumns.map((column) => column.name)] }, renderedColumns));
+  }
+
+  pushLayout(layout) {
+    // For some reason, Vue will not decorate totalWidth property when used from table.js.
+    // Making the layout observable will
+    this.layouts.push(Vue.observable(layout));
   }
 
   recalculate(containerWidth) {
