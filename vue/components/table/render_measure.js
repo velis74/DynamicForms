@@ -12,8 +12,8 @@ export default {
           const tmp = this.$refs[colName]; // get the ref
           const elements = Array.isArray(tmp) ? tmp : [tmp]; // make sure the ref is an array
           if (!elements.length) return; // as column defs change, columns are reset, but refs from before stay
-          const maxWidth = Math.max.apply(null, elements.map((el) => el.clientWidth));
-          const maxHeight = Math.max.apply(null, elements.map((el) => el.clientHeight));
+          const maxWidth = Math.max.apply(null, elements.map((el) => (el ? el.clientWidth : 0)));
+          const maxHeight = Math.max.apply(null, elements.map((el) => (el ? el.clientHeight : 0)));
           if (typeof this.onMeasure === 'function') {
             this.onMeasure(colName, maxWidth, maxHeight);
           }

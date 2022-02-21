@@ -16,7 +16,7 @@ import GenericColumn from './tcolumn_generic';
 Vue.component(GenericColumn.name, GenericColumn);
 
 /**
- * Base Table mixin: provides logic for table component.
+ * Base Table (mixin): provides logic for table component.
  *
  * See table_bootstrap.vue & table_vuetify.vue for respective component declarations
  */
@@ -59,11 +59,14 @@ export default {
     });
   },
   mounted() { this.resizeObserver.observe(this.$refs.container); },
+  beforeUpdate() { this.resizeObserver.unobserve(this.$refs.container); },
   updated() { this.resizeObserver.observe(this.$refs.container); },
   unmounted() { this.resizeObserver.disconnect(); },
   methods: {
     onMeasure(refName, maxWidth) {
-      this.containerWidth = maxWidth;
+      if (maxWidth) {
+        this.containerWidth = maxWidth;
+      }
     },
   },
 };

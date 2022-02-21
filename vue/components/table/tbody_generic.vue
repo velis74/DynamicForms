@@ -16,12 +16,14 @@ import { ObserveVisibility } from 'vue-observe-visibility';
 
 import IndexedColumns from './definitions/indexed_columns';
 import TableRows from './definitions/rows';
+import RowsVisibilityObserver from './rows_visibility_observer';
 import GenericTRow from './trow_generic';
 
 export default {
   name: 'GenericTBody',
   directives: { 'observe-visibility': ObserveVisibility },
   components: { GenericTRow },
+  mixins: [RowsVisibilityObserver],
   props: {
     pkName: { type: String, required: true },
     renderedColumns: { type: IndexedColumns, required: true },
