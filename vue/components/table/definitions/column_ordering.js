@@ -34,12 +34,12 @@ export default class ColumnOrdering {
    * cycles field ordering 'asc' -> 'desc' -> 'unsorted'
    */
   cycleOrdering() {
-    if (this.direction === OrderingDirection.ASC) {
-      this.direction = OrderingDirection.DESC;
-    } else if (this.direction === OrderingDirection.DESC) {
-      this.direction = OrderingDirection.UNORDERED;
-    } else {
+    if (!this.isOrdered) {
       this.direction = OrderingDirection.ASC;
+    } else if (this.direction === OrderingDirection.ASC) {
+      this.direction = OrderingDirection.DESC;
+    } else {
+      this.direction = OrderingDirection.UNORDERED;
     }
   }
 
@@ -83,8 +83,8 @@ export default class ColumnOrdering {
       const oDir = this.direction === OrderingDirection.ASC ? OrderingDirection.DESC : OrderingDirection.ASC;
       this.setSorted(oDir, oSeq);
     } else {
-      this.orderingArray.splice(0, this.orderingArray.length);
       this.cycleOrdering();
+      this.orderingArray.splice(0, this.orderingArray.length);
       this.setSorted(this.direction, 1);
     }
     changeCounter.counter++;
