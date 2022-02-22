@@ -48,7 +48,7 @@ jobs:
 
       - name: Run Tox py-django4
         if: (success() || failure())
-        run: tox -e py-django40-drf312,py-django40-drftip
+        run: tox -e py-django40-drf312,py-django40-drf313,py-django40-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: (success() || failure())
