@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
 from dynamicforms.template_render.layout import Layout
+from dynamicforms.template_render.responsive_table_layout import ResponsiveTableLayout, ResponsiveTableLayouts
 from dynamicforms.viewsets import ModelViewSet
 from ..models import BasicFields
 
@@ -50,6 +51,33 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
         model = BasicFields
         exclude = ()
         layout = Layout(columns=3, size='large')
+        responsive_columns = ResponsiveTableLayouts(
+            auto_generate_single_row_layout=True,
+            layouts=[
+                ResponsiveTableLayout(
+                    'id',
+                    ['boolean_field', 'nullboolean_field'],
+                    ['char_field', 'slug_field'],
+                    ['email_field', 'url_field'],
+                    ['uuid_field', ['ipaddress_field', 'integer_field', 'nullint_field']],
+                    ['float_field', 'decimal_field'],
+                    [['datetime_field', 'date_field'], ['time_field', 'duration_field']],
+                    auto_add_non_listed_columns=True
+                ),
+                ResponsiveTableLayout(
+                    'id',
+                    [
+                        ['boolean_field', 'nullboolean_field'],
+                        ['ipaddress_field', 'integer_field', 'nullint_field'],
+                        ['float_field', 'decimal_field'],
+                    ],
+                    [['char_field', 'slug_field'], ['email_field', 'url_field'], 'uuid_field'],
+                    [['datetime_field', 'date_field'], ['time_field', 'duration_field']],
+                    auto_add_non_listed_columns=True
+                ),
+            ],
+            auto_generate_single_column_layout=True,
+        )
 
 
 class BasicFieldsViewset(ModelViewSet):

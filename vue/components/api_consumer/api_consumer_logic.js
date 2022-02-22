@@ -24,6 +24,7 @@ class APIConsumerLogic {
 
     this.fields = {};
     this.tableColumns = [];
+    this.responsiveTableLayouts = null;
     this.formFields = {};
     this.formLayout = {};
     this.actions = {};
@@ -77,6 +78,7 @@ class APIConsumerLogic {
       UXDefinition.ordering_style,
       this.tableColumns[0].ordering.changeCounter,
     );
+    this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
   }
 
   setOrdering(parameter, style, counter) {

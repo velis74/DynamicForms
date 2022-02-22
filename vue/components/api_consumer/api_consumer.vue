@@ -48,6 +48,7 @@ export default {
           title: this.consumer.title('table'),
           pkName: this.consumer.pkName,
           columns: this.consumer.tableColumns,
+          responsiveTableLayouts: this.consumer.responsiveTableLayouts,
           columnDefs: this.consumer.fields,
           rows: this.consumer.rows,
           loading: this.consumer.loading,

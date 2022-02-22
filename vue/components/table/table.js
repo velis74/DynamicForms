@@ -26,6 +26,7 @@ export default {
     pkName: { type: String, required: true },
     title: { type: String, required: true },
     columns: { type: Array, required: true },
+    responsiveTableLayouts: { type: Object, default: null },
     columnDefs: { type: Object, required: true },
     rows: { type: TableRows, required: true },
     loading: { type: Boolean, default: false },
@@ -45,7 +46,7 @@ export default {
         return result;
       }, {}));
     },
-    responsiveLayouts() { return new ResponsiveLayouts(this.renderedColumns); },
+    responsiveLayouts() { return new ResponsiveLayouts(this.renderedColumns, this.responsiveTableLayouts); },
     responsiveLayout() { return this.responsiveLayouts.recalculate(this.containerWidth || 0); },
     responsiveLayoutWidth() { return this.responsiveLayout.totalWidth; },
     responsiveColumns() { return this.responsiveLayout.columns; },

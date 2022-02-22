@@ -68,11 +68,8 @@ export default {
     //   this.findVisibleRows(entries);
     // });
     if (!this.intervalId) {
-      this.intervalId = setInterval(() => {
-        console.log('a');
-        this.findVisibleRows();
-      }, 100);
-      console.log('setting interval', this.intervalId);
+      this.intervalId = setInterval(() => { this.findVisibleRows(); }, 100);
+      // console.log('setting interval', this.intervalId);
     }
   },
   destroyed() {
@@ -81,7 +78,7 @@ export default {
       this.intersectionObserver = null;
     }
     if (this.intervalId) {
-      console.log('deleting interval', this.intervalId);
+      // console.log('deleting interval', this.intervalId);
       clearInterval(this.intervalId);
     }
   },
@@ -113,7 +110,7 @@ export default {
         lastVisible = search(children, firstVisible, 1, viewPortHeight);
       }
       const pageSize = lastVisible - firstVisible;
-      console.log(startWith, firstVisible, lastVisible);
+      // console.log(startWith, firstVisible, lastVisible);
       this.rows.data.forEach((row, index) => {
         const isShowing = index > firstVisible - pageSize && index < lastVisible + pageSize;
         if (row.dfControlStructure.isShowing !== isShowing) row.setIsShowing(isShowing);

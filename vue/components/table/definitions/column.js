@@ -7,6 +7,7 @@ export default class TableColumn {
   constructor(initialData, orderingArray) {
     this._maxWidth = 0;
     this.ordering = new ColumnOrdering(initialData.ordering, orderingArray, this);
+    this.layout = null;
 
     // Determine what is to be used for render decorator for this column
     const renderDecorator = initialData.render_params ? initialData.render_params.table : '';
@@ -78,8 +79,15 @@ export default class TableColumn {
     });
   }
 
+  setLayout(layout) {
+    this.layout = layout;
+  }
+
   setMaxWidth(value) {
-    if (value > this._maxWidth) this._maxWidth = value;
+    if (value > this._maxWidth) {
+      if (this.layout) this.layout.totalWidth += value - (this._maxWidth || 0);
+      this._maxWidth = value;
+    }
   }
 
   renderDecoratorPlain(rowData) {

@@ -151,6 +151,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'primary_key_name': self.Meta.model._meta.pk.name if self.Meta and self.Meta.model else 'id',
             'titles': self.form_titles,
             'columns': [c.as_component_def() for c in self.render_fields.fields],
+            'responsive_table_layouts': self.get_responsive_table_layouts_def(),
             'actions': self.render_actions.table.as_action_def(),
             'record': None if self.parent else self.data,
             'filter': self.filter_serializer_component_params() if self.show_filter else None,
@@ -196,6 +197,15 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         res['component_name'] = self.component_name
 
         return res
+
+    @property
+    def responsive_table_layouts(self):
+        if hasattr(self, 'Meta') and hasattr(self.Meta, 'responsive_columns'):
+            return self.Meta.responsive_columns
+        return None
+
+    def get_responsive_table_layouts_def(self):
+        return self.responsive_table_layouts and self.responsive_table_layouts.as_component_def(self)
 
     @classmethod
     def get_reverse_url(cls, view_name, request, kwargs=None):
