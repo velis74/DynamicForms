@@ -5,7 +5,7 @@
  * uses IntersectionObserver to do its magic
  * falls back on (relatively cheaply made) polling when observer isn't supported
  *
- * Actually, that's incorrect: IntersectionObserver is currently not used because it was much slower than polling
+ * Actually, that's incorrect: TODO: IntersectionObserver is currently not used because it was much slower than polling
  *
  * This mixin is intended to be used in tbody. it expects the root element to be the parent div with items as rows
  */

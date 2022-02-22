@@ -1,3 +1,6 @@
+// TODO: rowspan (field spanning multiple rows)
+// TODO: speed - currently there's way too much DOM
+
 // eslint-disable-next-line max-classes-per-file
 import Vue from 'vue';
 
