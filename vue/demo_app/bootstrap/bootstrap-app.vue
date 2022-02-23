@@ -30,6 +30,10 @@
   </div>
 </template>
 <script>
+import { BootstrapVue } from 'bootstrap-vue';
+import Vue from 'vue';
+
+Vue.use(BootstrapVue);
 export default {
   name: 'BootstrapApp',
   props: {
@@ -40,3 +44,8 @@ export default {
   emits: ['theme-changed'],
 };
 </script>
+
+<style scoped>
+  @import '~bootstrap/dist/css/bootstrap.css';
+  @import '~bootstrap-vue/dist/bootstrap-vue.css';
+</style>

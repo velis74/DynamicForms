@@ -44,8 +44,11 @@
 </template>
 
 <script>
+import vuetify from './vuetify';
+
 export default {
   name: 'VuetifyApp',
+  vuetify,
   props: {
     title: { type: String, required: true },
     themes: { type: Array, required: true },
