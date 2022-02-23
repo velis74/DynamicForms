@@ -44,7 +44,13 @@
 </template>
 
 <script>
+import Vue from 'vue';
+
+import * as VuetifyComponents from '../../components/vuetify';
+
 import vuetify from './vuetify';
+
+Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
 
 export default {
   name: 'VuetifyApp',

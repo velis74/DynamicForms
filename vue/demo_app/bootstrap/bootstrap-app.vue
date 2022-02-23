@@ -33,6 +33,10 @@
 import { BootstrapVue } from 'bootstrap-vue';
 import Vue from 'vue';
 
+import * as BootstrapComponents from '../../components/bootstrap';
+
+Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
+
 Vue.use(BootstrapVue);
 export default {
   name: 'BootstrapApp',
