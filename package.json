@@ -64,7 +64,7 @@
       "extract": {
         "ignoreOrder": true,
         "filename": "css/dynamicforms.[hash:8].css",
-        "chunkFilename": "css/dynamicforms.[name].[hash:8].css"
+        "chunkFilename": "css/dynamicforms.[name].css"
       }
     },
     "configureWebpack": {
@@ -88,7 +88,7 @@
       },
       "output": {
         "filename": "js/dynamicforms.[hash:8].js",
-        "chunkFilename": "js/dynamicforms.[name].[hash:8].js"
+        "chunkFilename": "js/dynamicforms.[name].js"
       }
     },
     "transpileDependencies": [
