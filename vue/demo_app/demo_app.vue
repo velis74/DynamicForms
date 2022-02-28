@@ -16,8 +16,15 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
+import * as BootstrapComponents from '../components/bootstrap';
+import * as VuetifyComponents from '../components/vuetify';
+
+import BootstrapApp from './bootstrap/bootstrap-app';
+import VuetifyApp from './vuetify/vuetify-app';
 
 Vue.use(VueRouter);
+Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
+Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 
 const routes = [
   { title: 'Validated', path: '/validated', component: APIConsumerLoader },
@@ -36,18 +43,10 @@ const routes = [
 ];
 const router = new VueRouter({ routes });
 
-// import BootstrapApp from './bootstrap/bootstrap-app';
-// import VuetifyApp from './vuetify/vuetify-app';
-
 export default {
   name: 'DemoApp',
   router,
-  components: {
-    // eslint-disable-next-line import/extensions
-    BootstrapApp: () => import('./bootstrap/bootstrap-app.vue'),
-    // eslint-disable-next-line import/extensions
-    VuetifyApp: () => import('./vuetify/vuetify-app.vue'),
-  },
+  components: { VuetifyApp, BootstrapApp },
   data: () => ({
     title: '',
     theme: 'vuetify',
