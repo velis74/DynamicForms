@@ -4,7 +4,7 @@
     :themes="themes"
     :examples="examples"
     :title="title"
-    @theme-changed="(newTheme) => theme = newTheme"
+    @theme-changed="changeTheme"
   >
     <template #main-component>
       <router-view @title-change="setTitle"/>
@@ -50,7 +50,8 @@ export default {
   },
   data: () => ({
     title: '',
-    theme: 'vuetify',
+    // eslint-disable-next-line max-len
+    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
   }),
   computed: {
@@ -72,6 +73,12 @@ export default {
     setTitle(newTitle) {
       this.title = newTitle;
       document.title = `${newTitle} - DynamicForms`;
+    },
+    changeTheme(newTheme) {
+      localStorage.setItem('df-theme', newTheme);
+      if (newTheme !== this.theme) {
+        window.location.reload();
+      }
     },
   },
 };
