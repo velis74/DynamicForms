@@ -271,7 +271,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             return table
 
         while True:
-            tbody = table.find_element_by_tag_name('tbody')
+            tbody = body.find_element_by_tag_name('table').find_element_by_tag_name('tbody')
             rows = tbody.find_elements_by_tag_name('tr')
             if expected_rows is not None and len(rows) != expected_rows:
                 self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')

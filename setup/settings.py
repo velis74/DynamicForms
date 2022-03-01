@@ -127,3 +127,5 @@ DYNAMICFORMS = {
     'page_template': 'examples/page.html',
     'testing': sys.argv[1:2] == ['test'],
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
