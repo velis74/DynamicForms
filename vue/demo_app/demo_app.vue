@@ -24,9 +24,8 @@ import * as BootstrapComponents from '../components/bootstrap';
 import * as VuetifyComponents from '../components/vuetify';
 
 import BootstrapApp from './bootstrap/bootstrap-app';
-import VuetifyApp from './vuetify/vuetify-app';
-
 import NamedComponentLoader from './named_component_loader';
+import VuetifyApp from './vuetify/vuetify-app';
 
 Vue.use(VueRouter);
 Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
