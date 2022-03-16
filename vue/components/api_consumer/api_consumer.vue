@@ -4,11 +4,14 @@
   </div>
 </template>
 <script>
+import ThemeMixin from '../util/theme_mixin';
+
 import APIConsumerLogic from './api_consumer_logic';
 import ComponentDisplay from './component_display';
 
 export default {
   name: 'APIConsumer',
+  mixins: [ThemeMixin],
   props: {
     /**
      * Object containing the properties required to render at least one of the display components
@@ -21,22 +24,14 @@ export default {
   },
   data() { return { orderingCounter: this.consumer.ordering.counter.counter }; },
   computed: {
-    themeCapitalised() {
-      let themeOwner = this.$parent;
-      // we traverse the parents until we find the DemoApp parent which actually hosts the theme selected
-      while (themeOwner && themeOwner.$options.name !== 'DemoApp') {
-        themeOwner = themeOwner.$parent;
-      }
-      return themeOwner.theme.charAt(0).toUpperCase() + themeOwner.theme.slice(1);
-    },
     renderComponent() {
       switch (this.displayComponent) {
       case ComponentDisplay.TABLE:
-        return `${this.themeCapitalised}Table`;
+        return `${this.theme.name.capitalised}Table`;
       case ComponentDisplay.FORM:
-        return `${this.themeCapitalised}Form`;
+        return `${this.theme.name.capitalised}Form`;
       case ComponentDisplay.DIALOG:
-        return `${this.themeCapitalised}Dialog`;
+        return `${this.theme.name.capitalised}Dialog`;
       default:
         throw Error('Unknown component display type');
       }
@@ -44,15 +39,7 @@ export default {
     renderComponentData() {
       switch (this.displayComponent) {
       case ComponentDisplay.TABLE:
-        return {
-          title: this.consumer.title('table'),
-          pkName: this.consumer.pkName,
-          columns: this.consumer.tableColumns,
-          responsiveTableLayouts: this.consumer.responsiveTableLayouts,
-          columnDefs: this.consumer.fields,
-          rows: this.consumer.rows,
-          loading: this.consumer.loading,
-        };
+        return this.consumer.tableDefinition;
       default:
         throw Error('Unknown component display type');
       }

@@ -1,3 +1,4 @@
+import VuetifyForm from './form/form_vuetify';
 import VuetifyTable from './table/table_vuetify';
 
-export default VuetifyTable;
+export { VuetifyTable, VuetifyForm };

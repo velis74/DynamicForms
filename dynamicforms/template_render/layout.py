@@ -16,12 +16,13 @@ class Field(object):
     def field_def(self, serializer: 'Serializer') -> Union[DFField, DRFSerializer]:
         return serializer.fields[self.field_name]
 
-    def as_component_def(self, serializer: 'Serializer'):
-        res = self.field_def(serializer).as_component_def()
-        res.update(dict(name=self.field_name))
+    def as_component_def(self, serializer: 'Serializer', fields: Dict):
+        field = self.field_def(serializer).as_component_def()
+        field['name'] = self.field_name
         if self.render_format:
-            res['render_format'] = self.render_format
-        return res
+            field['render_format'] = self.render_format
+        fields[field['name']] = field
+        return field['name']
 
 
 class Column(object):
@@ -37,8 +38,8 @@ class Column(object):
     def _get_laid_fields(self):
         return {self.field.field_name}
 
-    def as_component_def(self, serializer: 'Serializer') -> Dict:
-        res = dict(type='column', field=self.field.as_component_def(serializer))
+    def as_component_def(self, serializer: 'Serializer', fields: Dict) -> Dict:
+        res = dict(type='column', field=self.field.as_component_def(serializer, fields))
         if self.width_classes:
             res['width_classes'] = self.width_classes
         return res
@@ -46,7 +47,7 @@ class Column(object):
 
 class Row(object):
     def __init__(self, *columns, component: str = None):
-        self.component = component or 'DFFormRow'
+        self.component = component or 'FormRow'
         self.columns = []  # type: List[Column]
         for column in columns:
             if isinstance(column, str):
@@ -61,12 +62,22 @@ class Row(object):
     def _get_laid_fields(self):
         return set().union(*(col._get_laid_fields() for col in self.columns))
 
-    def as_component_def(self, serializer: 'Serializer') -> dict:
-        return dict(component=self.component, columns=[col.as_component_def(serializer) for col in self.columns])
+    def as_component_def(self, serializer: 'Serializer', fields: Dict) -> dict:
+        return dict(
+            component=self.component,
+            columns=[col.as_component_def(serializer, fields) for col in self.columns]
+        )
 
 
 class Layout(object):
-    def __init__(self, *rows: Row, columns: int = 1, size: str = '', header_classes: str = ''):
+    def __init__(
+        self,
+        component_name: str = 'FormLayout',
+        *rows: Row,
+        columns: int = 1,
+        size: str = '',
+        header_classes: str = ''
+    ):
         """
         Creates layout definition
         :param rows: layout rows containing columns & fields
@@ -78,13 +89,16 @@ class Layout(object):
         self.columns = columns
         self.size = size
         self.header_classes = header_classes
+        self.component_name = component_name
 
     def _get_laid_fields(self):
         return set().union(*(row._get_laid_fields() for row in self.rows))
 
-    def as_component_def(self, serializer: 'Serializer', used_fields: set = None) -> Dict:
+    def as_component_def(self, serializer: 'Serializer', fields: Dict = None, used_fields: set = None) -> Dict:
         assert serializer is not None
-        res = dict(rows=[row.as_component_def(serializer) for row in self.rows])
+        fields = fields if fields is not None else {}
+        res = dict(rows=[row.as_component_def(serializer, fields) for row in self.rows])
+        res['fields'] = fields
         used_fields = (used_fields or set()).union(self._get_laid_fields())
         if self.size:
             res['size'] = self.size
@@ -111,8 +125,9 @@ class Layout(object):
         if row:
             default_layout.rows.append(Row(*row))
         if default_layout.rows:
-            res['rows'] += default_layout.as_component_def(serializer, used_fields)['rows']
+            res['rows'] += default_layout.as_component_def(serializer, fields, used_fields)['rows']
         res['actions'] = serializer.render_actions.form.as_action_def()
+        res['component_name'] = self.component_name
         return res
 
 
@@ -124,14 +139,14 @@ class Group(Column):
         self.layout = sub_layout
         self.footer = footer
 
-    def as_component_def(self, serializer: 'Serializer') -> Dict:
-        res = super().as_component_def(serializer)
+    def as_component_def(self, serializer: 'Serializer', fields: Dict) -> Dict:
+        res = super().as_component_def(serializer, fields)
         sub_serializer = self.field.field_def(serializer)  # type: Serializer
         layout = self.layout or sub_serializer.layout
         res.update(
-            dict(type='group'), footer=self.footer, title=self.title or sub_serializer.label,
+            type='group', footer=self.footer, title=self.title or sub_serializer.label,
             uuid=sub_serializer.uuid,
-            layout=layout.as_component_def(sub_serializer)
+            layout=layout.as_component_def(sub_serializer, fields)
         )
         res.pop('field', None)
         return res

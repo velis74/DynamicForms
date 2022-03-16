@@ -4,9 +4,10 @@
 // eslint-disable-next-line max-classes-per-file
 import Vue from 'vue';
 
+import DisplayMode from '../../classes/display_mode';
+import IndexedArray from '../../classes/indexed_array';
+
 import TableColumn from './column';
-import DisplayMode from './display_mode';
-import IndexedColumns from './indexed_columns';
 
 export class ColumnGroupRow {
   constructor(fieldsDef, renderedColumns) {
@@ -53,7 +54,7 @@ export class ColumnGroup extends TableColumn {
 export class ResponsiveLayout {
   constructor(definition, renderedColumns) {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
-    this.columns = new IndexedColumns([]);
+    this.columns = new IndexedArray([]);
     columnsDef.forEach((column) => {
       this.columns.push(
         column.length === 1 ?

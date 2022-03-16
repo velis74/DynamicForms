@@ -1,7 +1,6 @@
 <template>
-  <DFWidgetBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
+  <InputBase :def="def" :data="data" :errors="errors" :show-label-or-help-text="showLabelOrHelpText">
     <input
-      v-if="!isTextArea"
       :id="def.uuid"
       slot="input"
       v-model="value"
@@ -26,33 +25,15 @@
       @input="onValueConfirmed(false)"
       @change="onValueConfirmed(false)"
     >
-    <textarea
-      v-else
-      :id="def.uuid"
-      slot="input"
-      v-model="value"
-      :class="def.render_params.field_class"
-      :name="def.name"
-      :placeholder="def.placeholder"
-      :maxlength="maxLength"
-      rows="4"
-
-      :readonly="def.read_only === true"
-      :disabled="def.read_only === true"
-
-      @keyup.enter="onValueConfirmed(true)"
-      @input="onValueConfirmed(false)"
-      @change="onValueConfirmed(false)"
-    />
-  </DFWidgetBase>
+  </InputBase>
 </template>
 
 <script>
-import DFWidgetBase from './dfwidgetbase.vue';
+import InputBase from './base';
 
 export default {
-  name: 'DFWidgetInput',
-  components: { DFWidgetBase },
+  name: 'DTextArea',
+  components: { InputBase },
   props: {
     def: { type: Object, required: true },
     data: { type: Object, required: true },
@@ -62,7 +43,6 @@ export default {
   computed: {
     inputType() { return this.def.render_params.input_type; },
     maxLength() { return this.def.render_params.max_length || (1 << 24); }, // eslint-disable-line no-bitwise
-    isTextArea() { return this.def.textarea === true; },
     value: {
       get: function get() { return this.data[this.def.name]; },
       set: function set(newVal) {

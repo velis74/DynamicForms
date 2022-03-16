@@ -28,8 +28,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": false,
-      "textarea": false
+      "allow_null": false
     },
     {
       "help_text": null,
@@ -52,8 +51,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": false,
-      "textarea": false
+      "allow_null": false
     },
     {
       "help_text": null,
@@ -76,8 +74,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": false,
-      "textarea": false
+      "allow_null": false
     },
     {
       "help_text": null,
@@ -100,8 +97,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": false,
-      "textarea": false
+      "allow_null": false
     },
     {
       "help_text": "Enter abc to hide unit field",
@@ -126,8 +122,7 @@
         "max_length": 20,
         "min_length": null
       },
-      "allow_null": false,
-      "textarea": false
+      "allow_null": false
     },
     {
       "help_text": null,
@@ -153,7 +148,6 @@
         "container_class": "form-group"
       },
       "allow_null": true,
-      "textarea": false,
       "choices": [
         {
           "id": null,
@@ -195,8 +189,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": true,
-      "textarea": false
+      "allow_null": true
     },
     {
       "help_text": "Feel free to use a decimal point / comma",
@@ -221,8 +214,7 @@
         "label_after_element": false,
         "container_class": "form-group"
       },
-      "allow_null": true,
-      "textarea": false
+      "allow_null": true
     },
     {
       "help_text": "Enter additional info here",
@@ -247,8 +239,7 @@
         "max_length": 80,
         "min_length": null
       },
-      "allow_null": true,
-      "textarea": false
+      "allow_null": true
     },
     {
       "help_text": "Now that you have shown me, please enter something",
@@ -273,8 +264,7 @@
         "max_length": 80,
         "min_length": null
       },
-      "allow_null": true,
-      "textarea": false
+      "allow_null": true
     },
     {
       "uuid": "e1406b7b-80ec-11ec-8148-8d304489807d",
@@ -332,7 +322,7 @@
   "dialog": {
     "rows": [
       {
-        "component": "DFFormRow",
+        "component": "FormRow",
         "columns": [
           {
             "type": "column",
@@ -357,8 +347,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": false,
-              "textarea": false
+              "allow_null": false
             }
           },
           {
@@ -384,8 +373,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": false,
-              "textarea": false
+              "allow_null": false
             }
           },
           {
@@ -411,8 +399,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": false,
-              "textarea": false
+              "allow_null": false
             }
           },
           {
@@ -438,8 +425,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": false,
-              "textarea": false
+              "allow_null": false
             }
           },
           {
@@ -467,14 +453,13 @@
                 "max_length": 20,
                 "min_length": null
               },
-              "allow_null": false,
-              "textarea": false
+              "allow_null": false
             }
           }
         ]
       },
       {
-        "component": "DFFormRow",
+        "component": "FormRow",
         "columns": [
           {
             "type": "column",
@@ -502,7 +487,6 @@
                 "container_class": "form-group"
               },
               "allow_null": true,
-              "textarea": false,
               "choices": [
                 {
                   "id": null,
@@ -527,7 +511,7 @@
         ]
       },
       {
-        "component": "DFFormRow",
+        "component": "FormRow",
         "columns": [
           {
             "type": "column",
@@ -552,8 +536,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": true,
-              "textarea": false
+              "allow_null": true
             }
           }
         ]
@@ -586,8 +569,7 @@
                 "label_after_element": false,
                 "container_class": "form-group"
               },
-              "allow_null": true,
-              "textarea": false
+              "allow_null": true
             }
           }
         ]
@@ -620,8 +602,7 @@
                 "max_length": 80,
                 "min_length": null
               },
-              "allow_null": true,
-              "textarea": false
+              "allow_null": true
             }
           }
         ]
@@ -654,8 +635,7 @@
                 "max_length": 80,
                 "min_length": null
               },
-              "allow_null": true,
-              "textarea": false
+              "allow_null": true
             }
           }
         ]

@@ -45,7 +45,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         instantiate. The component is expected to behave like DFFormLayout does
         :return: name of component to use when rendering the layout in VDOM
         """
-        res = getattr(self, 'form_template', 'DFFormLayout')
+        res = getattr(self, 'form_template', 'FormLayout')
         res = re.sub(r'[^a-zA-Z0-9._-]', '-', res)
         return res
 
@@ -193,10 +193,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             )
 
     def get_dialog_def(self):
-        res = self.layout.as_component_def(self)
-        res['component_name'] = self.component_name
-
-        return res
+        return self.layout.as_component_def(self)
 
     @property
     def responsive_table_layouts(self):
