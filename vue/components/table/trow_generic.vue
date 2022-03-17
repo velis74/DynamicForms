@@ -25,7 +25,8 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import IndexedColumns from './definitions/indexed_columns';
+import IndexedArray from '../classes/indexed_array';
+
 import RenderMeasured from './render_measure';
 
 export default {
@@ -33,7 +34,7 @@ export default {
   directives: { 'observe-visibility': ObserveVisibility },
   mixins: [RenderMeasured],
   props: {
-    renderedColumns: { type: IndexedColumns, required: true },
+    renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section

@@ -87,11 +87,10 @@ class FieldRenderMixin(object):
 
         # render_params need not only include form renderer and table formatting function. add anything you need!
         render_params = render_params or {}
-        render_params.setdefault('form', 'DFWidgetInput')
+        render_params.setdefault('form_component_name', 'DInput')
         render_params.setdefault('table', 'df-tablecell-plaintext')
         render_params.setdefault('input_type', 'text')
         render_params.setdefault('field_class', 'form-control')
-        render_params.setdefault('label_after_element', False)
         render_params.setdefault('container_class', 'form-group')
         self.render_params = render_params
 
@@ -264,7 +263,8 @@ class FieldRenderMixin(object):
             visibility=dict(table=self.display_table.value, form=self.display_form.value),
             render_params=self.render_params, help_text=res.get('help_text', ''), allow_null=self.allow_null
         ))
-        res['textarea'] = 'base_template' in self.style and self.style['base_template'] == 'textarea.html'
+        if 'base_template' in self.style and self.style['base_template'] == 'textarea.html':
+            res['render_params']['form'] = 'TextArea'
         if hasattr(self, 'max_length'):
             res['render_params']['max_length'] = self.max_length
         if hasattr(self, 'min_length'):

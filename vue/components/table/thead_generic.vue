@@ -10,7 +10,8 @@
   </div>
 </template>
 <script>
-import IndexedColumns from './definitions/indexed_columns';
+import IndexedArray from '../classes/indexed_array';
+
 import TableRow from './definitions/row';
 import RenderMeasured from './render_measure';
 import GenericTRow from './trow_generic';
@@ -20,7 +21,7 @@ export default {
   components: { GenericTRow },
   mixins: [RenderMeasured],
   props: {
-    renderedColumns: { type: IndexedColumns, required: true },
+    renderedColumns: { type: IndexedArray, required: true },
     rowData: { type: TableRow, required: true },
   },
   methods: {

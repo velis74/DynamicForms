@@ -1,7 +1,7 @@
+import ColumnDisplay from '../../classes/display_mode';
 import getObjectFromPath from '../../util/get_object_from_path';
 
 import ColumnOrdering from './column_ordering';
-import ColumnDisplay from './display_mode';
 
 export default class TableColumn {
   constructor(initialData, orderingArray) {

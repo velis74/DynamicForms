@@ -1,3 +1,5 @@
+import FormPayload from '../form/definitions/form_payload';
+import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api_client';
@@ -26,10 +28,12 @@ class APIConsumerLogic {
     this.tableColumns = [];
     this.responsiveTableLayouts = null;
     this.formFields = {};
-    this.formLayout = {};
+    this.formLayout = null;
+    this.formComponent = 'FormLayout'; // component responsible for rendering the form layout
     this.actions = {};
     this.rows = [];
     this.formData = {};
+    this.requestedPKValue = null;
     this.ordering = {
       parameter: 'ordering',
       style: null,
@@ -62,14 +66,16 @@ class APIConsumerLogic {
     this.rows = new TableRows(this, await this.fetch(url, true));
   }
 
-  async getUXDefinition(isTable) {
-    return this.fetch(`${this.baseURL}.componentdef`, isTable);
+  async getUXDefinition(pkValue, isTable) {
+    let url = this.baseURL;
+    if (!isTable) url += `/${pkValue}`;
+    return this.fetch(`${url}.componentdef`, isTable);
   }
 
   async getFullDefinition() {
-    const UXDefinition = await this.getUXDefinition(true);
-    this.titles = UXDefinition.titles;
+    const UXDefinition = await this.getUXDefinition(null, true);
     this.pkName = UXDefinition.primary_key_name;
+    this.titles = UXDefinition.titles;
     UXDefinition.columns.forEach((column) => { this.fields[column.name] = column; });
     this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
     this.rows = new TableRows(this, UXDefinition.rows);
@@ -79,6 +85,19 @@ class APIConsumerLogic {
       this.tableColumns[0].ordering.changeCounter,
     );
     this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
+    // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
+  }
+
+  async getFormDefinition(pkValue) {
+    if (this.formLayout == null) {
+      const UXDefinition = await this.getUXDefinition(pkValue, false);
+      this.requestedPKValue = pkValue;
+      this.pkName = UXDefinition.primary_key_name;
+      this.titles = UXDefinition.titles;
+      this.formLayout = new FormLayout(UXDefinition.dialog);
+      this.formData = new FormPayload(UXDefinition.record, this.formLayout);
+      // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
+    }
   }
 
   setOrdering(parameter, style, counter) {
@@ -87,6 +106,33 @@ class APIConsumerLogic {
 
   title(which) {
     return this.titles[which];
+  }
+
+  get tableDefinition() {
+    return {
+      title: this.title('table'),
+      pkName: this.pkName,
+      columns: this.tableColumns,
+      responsiveTableLayouts: this.responsiveTableLayouts,
+      columnDefs: this.fields,
+      rows: this.rows,
+      loading: this.loading,
+    };
+  }
+
+  get pkValue() {
+    return this.requestedPKValue === 'new' ? 'new' : (this.formData || {})[this.pkName];
+  }
+
+  get formDefinition() {
+    return {
+      title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
+      pkName: this.pkName,
+      pkValue: this.pkValue,
+      layout: this.formLayout,
+      payload: this.formData,
+      loading: this.loading,
+    };
   }
 }
 

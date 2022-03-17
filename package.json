@@ -22,6 +22,8 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^33.0.0",
+    "@ckeditor/ckeditor5-vue2": "^1.0.5",
     "axios": ">=0.25.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
@@ -31,6 +33,9 @@
     "luxon": "^1.28.0",
     "resize-observer-polyfill": "^1.5.1",
     "vue": "^2.6.14",
+    "vue-datetime": "^1.0.0-beta.14",
+    "vue-ionicon": "^1.1.1",
+    "vue-multiselect": "^2.1.6",
     "vue-observe-visibility": "^1.0.0",
     "vue-router": "^3.5.2",
     "vuetify": "^2.4.0"

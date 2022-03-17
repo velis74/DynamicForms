@@ -12,10 +12,16 @@
   </component>
 </template>
 <script>
+/**
+ * TODO: not all demos working yet. must port more from the old ViewMode
+ * TODO: unit tests for everything. none there yet
+ */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
+
+import NamedComponentLoader from './named_component_loader';
 
 Vue.use(VueRouter);
 
@@ -32,7 +38,12 @@ const routes = [
   // { path: '/choice-allow-tags-fields', component: PageLoader },
   // { path: '/calendar', component: Calendar },
   // { path: '/documents', component: PageLoader },
-  // { path: '/view-mode', component: ViewMode },
+  {
+    title: 'The three view-modes',
+    path: '/view-mode',
+    component: NamedComponentLoader,
+    props: { componentName: 'ViewMode', componentNameAddTemplateName: true, componentProps: {} },
+  },
 ];
 const router = new VueRouter({ routes });
 

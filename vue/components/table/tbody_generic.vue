@@ -14,7 +14,8 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import IndexedColumns from './definitions/indexed_columns';
+import IndexedArray from '../classes/indexed_array';
+
 import TableRows from './definitions/rows';
 import RowsVisibilityObserver from './rows_visibility_observer';
 import GenericTRow from './trow_generic';
@@ -26,7 +27,7 @@ export default {
   mixins: [RowsVisibilityObserver],
   props: {
     pkName: { type: String, required: true },
-    renderedColumns: { type: IndexedColumns, required: true },
+    renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rows: { type: TableRows, required: true },
   },

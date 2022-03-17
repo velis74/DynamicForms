@@ -82,7 +82,7 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
         if hasattr(self.child, 'as_component_def_table'):
             return self.child.as_component_def_table
         res = super().as_component_def()
-        res['render_params']['form'] = 'DFWidgetPlaceholder'
+        res['render_params']['form_component_name'] = 'DPlaceholder'
         return res
 
 

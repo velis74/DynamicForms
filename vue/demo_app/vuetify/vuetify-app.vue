@@ -45,12 +45,13 @@
 
 <script>
 import Vue from 'vue';
+import Vuetify from 'vuetify/lib/framework';
 
 import * as VuetifyComponents from '../../components/vuetify';
 
-import vuetify from './vuetify';
-
 Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
+Vue.use(Vuetify);
+const vuetify = new Vuetify({});
 
 export default {
   name: 'VuetifyApp',

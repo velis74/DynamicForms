@@ -1,12 +1,12 @@
 from dynamicforms import serializers
 from dynamicforms.action import Actions, FieldChangeAction, FormInitAction
+from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields
 
 
 class HiddenFieldsSerializer(serializers.ModelSerializer):
     template_context = dict(url_reverse='hidden-fields')
-    component_name = 'ExampleHiddenLayout'
     form_titles = {
         'table': 'Hidden fields list',
         'new': 'New hidden fields object',
@@ -23,6 +23,7 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HiddenFields
         exclude = ()
+        layout = Layout('ExampleHiddenLayout')
 
 
 class HiddenFieldsViewSet(ModelViewSet):

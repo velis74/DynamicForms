@@ -1,10 +1,10 @@
 import ResizeObserver from 'resize-observer-polyfill';
 import Vue from 'vue';
 
+import ColumnDisplay from '../classes/display_mode';
+import IndexedArray from '../classes/indexed_array';
 import TranslationsMixin from '../util/translations_mixin';
 
-import ColumnDisplay from './definitions/display_mode';
-import IndexedColumns from './definitions/indexed_columns';
 import { ResponsiveLayouts } from './definitions/responsive_layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
@@ -34,7 +34,7 @@ export default {
   data() { return { containerWidth: null, resizeObserver: null }; },
   computed: {
     renderedColumns() {
-      return new IndexedColumns(this.columns.filter(
+      return new IndexedArray(this.columns.filter(
         (column) => (column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE),
       ));
     },

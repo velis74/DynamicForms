@@ -15,7 +15,7 @@ class ClassAssemblyDict:
     and assemble response from keys as defined in this dict. Any keys not found in higher MRO levels will be populated
     from lower ones.
     See e.g. EmailField and Field mappings below: EmailField will return a dict with three members,
-      two of them from Field mapping: dict(form='DFWidgetInput', input_type='email', table='df-tablecell-plaintext'),
+      two of them from Field mapping: dict(form_component_name='DInput', input_type='email', table='df-tablecell-plaintext'),
     raises a KeyError if nothing matches
     """
 
@@ -36,41 +36,42 @@ class ClassAssemblyDict:
 
 
 render_params = ClassAssemblyDict({
-    fields.Field: dict(form='DFWidgetInput', input_type='text', table='df-tablecell-plaintext'),
+    fields.Field: dict(form_component_name='DInput', input_type='text', table='df-tablecell-plaintext'),
     fields.EmailField: dict(input_type='email', table='df-tablecell-email'),
     fields.URLField: dict(input_type='url', table='df-tablecell-link', pattern='https?://.*'),
     fields.IntegerField: dict(input_type='number'),
     fields.FloatField: dict(input_type='number', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
     fields.DecimalField: dict(input_type='text', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
-    fields.DateTimeField: dict(input_type='datetime', form='DFWidgetDatetime', table_format='dd.MM.yyyy HH:mm',
+    fields.DateTimeField: dict(input_type='datetime', form_component_name='DDateTime',
+                               table_format='dd.MM.yyyy HH:mm',
                                form_format='dd.MM.yyyy HH:mm', table='#TableCellDateTime', ),
-    fields.DateField: dict(input_type='date', form='DFWidgetDatetime', table_format='dd.MM.yyyy',
+    fields.DateField: dict(input_type='date', form_component_name='DDateTime', table_format='dd.MM.yyyy',
                            form_format='dd.MM.yyyy', table='#TableCellDateTime', ),
-    fields.TimeField: dict(input_type='time', form='DFWidgetDatetime', table_format='HH:mm', form_format='HH:mm',
-                           table='#TableCellDateTime', ),
-    serializers.FileField: dict(input_type='file', form='DFWidgetFile', table='df-tablecell-file'),
+    fields.TimeField: dict(input_type='time', form_component_name='DDateTime', table_format='HH:mm',
+                           form_format='HH:mm', table='#TableCellDateTime', ),
+    serializers.FileField: dict(input_type='file', form_component_name='DFile', table='df-tablecell-file'),
     fields.BooleanField: dict(
-        table='df-tablecell-bool', input_type='checkbox', label_after_element=True, form='DFWidgetCheckbox',
+        table='df-tablecell-bool', input_type='checkbox', form_component_name='DCheckbox',
         field_class='form-check-input position-checkbox-static', label_class='form-check-label',
         container_class='form-check form-group'
     ),
     fields.NullBooleanField: dict(
-        table='df-tablecell-bool', input_type='checkbox', label_after_element=True, form='DFWidgetCheckbox',
+        table='df-tablecell-bool', input_type='checkbox', form_component_name='DCheckbox',
         field_class='form-check-input position-checkbox-static', label_class='form-check-label',
         container_class='form-check form-group'
     ),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
-    fields.ChoiceField: dict(form='DFWidgetSelect', multiple=False, allow_tags='%allow_tags'),
+    fields.ChoiceField: dict(form_component_name='DSelect', multiple=False, allow_tags='%allow_tags'),
     fields.MultipleChoiceField: dict(multiple=True),
-    relations.RelatedField: dict(form='DFWidgetSelect', multiple=False),
-    relations.ManyRelatedField: dict(form='DFWidgetSelect', multiple=True),
+    relations.RelatedField: dict(form_component_name='DSelect', multiple=False),
+    relations.ManyRelatedField: dict(form_component_name='DSelect', multiple=True),
     # TODO: The following two aren't taken care of yet for rendering in components
-    serializers.Serializer: dict(form='DFWidgetFieldset'),
-    serializers.ListSerializer: dict(form='DFWidgetListFieldset'),
-    fields.ListField: dict(form='DFWidgetListField'),
-    fields.DictField: dict(form='DFWidgetDictField'),
-    fields.FilePathField: dict(form='DFWidgetSelect', multiple=False),
-    fields.JSONField: dict(form='DFWidgetTextarea'),
+    serializers.Serializer: dict(form_component_name='DFWidgetFieldset'),
+    serializers.ListSerializer: dict(form_component_name='DFWidgetListFieldset'),
+    fields.ListField: dict(form_component_name='DFWidgetListField'),
+    fields.DictField: dict(form_component_name='DFWidgetDictField'),
+    fields.FilePathField: dict(form_component_name='DSelect', multiple=False),
+    fields.JSONField: dict(form_component_name='DTextArea'),
 })
 
 
@@ -103,13 +104,13 @@ class Command(BaseCommand):
             field_list = []
             for obj in fields.__dict__.values():
                 if obj != fields.Field and inspect.isclass(obj) and \
-                        issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
+                    issubclass(obj, fields.Field) and not obj.__name__.startswith('_'):
                     field_list.append(obj)
 
             for obj in relations.__dict__.values():
                 if obj != relations.RelatedField and inspect.isclass(obj) and \
-                        (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
-                        obj.__name__.endswith('Field'):
+                    (issubclass(obj, relations.RelatedField) or issubclass(obj, relations.ManyRelatedField)) and \
+                    obj.__name__.endswith('Field'):
                     field_list.append(obj)
 
             field_list.append(RTFField)
@@ -182,9 +183,9 @@ class Command(BaseCommand):
                                 had_kwds |= parm.kind == parm.VAR_KEYWORD
                                 continue
                             if depth and len(field_params) and \
-                                    (parm.kind == parm.POSITIONAL_ONLY or
-                                     (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
-                                    ):
+                                (parm.kind == parm.POSITIONAL_ONLY or
+                                 (parm.kind == parm.POSITIONAL_OR_KEYWORD and parm.default == inspect._empty)
+                                ):
                                 # positional arguments can only be declared before any keyword ones
                                 continue
 
