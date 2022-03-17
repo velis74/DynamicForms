@@ -16,6 +16,7 @@
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
+import _ from 'lodash';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
@@ -47,23 +48,25 @@ const routes = [
 ];
 const router = new VueRouter({ routes });
 
-// import BootstrapApp from './bootstrap/bootstrap-app';
-// import VuetifyApp from './vuetify/vuetify-app';
-
 export default {
   name: 'DemoApp',
   router,
   components: {
     // eslint-disable-next-line import/extensions
-    BootstrapApp: () => import('./bootstrap/bootstrap-app.vue'),
+    BootstrapApp: () => import(/* webpackChunkName: "bootstrap" */ './bootstrap/bootstrap-app.vue'),
     // eslint-disable-next-line import/extensions
-    VuetifyApp: () => import('./vuetify/vuetify-app.vue'),
+    VuetifyApp: () => import(/* webpackChunkName: "vuetify" */ './vuetify/vuetify-app.vue'),
   },
   data: () => ({
     title: '',
     // eslint-disable-next-line max-len
     theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
+    key: Math.random(Math.random() * 1000),
+    themeData: {
+      bootstrap: [],
+      vuetify: [],
+    },
   }),
   computed: {
     examples() {
@@ -87,8 +90,32 @@ export default {
     },
     changeTheme(newTheme) {
       localStorage.setItem('df-theme', newTheme);
+      const saveOldData = !_.size(this.themeData[this.theme]);
+      const items = [];
+      _.forEach(document.getElementsByTagName('link'), (i) => {
+        items.push(i);
+      });
+      _.forEach(document.getElementsByTagName('script'), (i) => {
+        items.push(i);
+      });
+      // eslint-disable-next-line no-unreachable
       if (newTheme !== this.theme) {
-        window.location.reload();
+        _.forEach(items, (s) => {
+          if (s && s.attributes && s.attributes.href && s.attributes.href.value &&
+              (_.includes(s.attributes.href.value, `.${this.theme}.css`) ||
+              _.includes(s.attributes.href.value, `.${this.theme}.js`))) {
+            console.log('remove', s.attributes.href.value);
+            document.getElementsByTagName('head')[0].removeChild(s);
+            if (saveOldData) {
+              this.themeData[this.theme].push(s);
+            }
+          }
+        });
+        _.forEach(this.themeData[newTheme], (v) => {
+          console.log('add', v);
+          document.getElementsByTagName('head')[0].appendChild(v);
+        });
+        this.theme = newTheme;
       }
     },
   },

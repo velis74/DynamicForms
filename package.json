@@ -94,6 +94,10 @@
       "output": {
         "filename": "js/dynamicforms.[hash:8].js",
         "chunkFilename": "js/dynamicforms.[name].js"
+      },
+      "optimization": {
+        "minimize": false,
+        "splitChunks": false
       }
     },
     "transpileDependencies": [
