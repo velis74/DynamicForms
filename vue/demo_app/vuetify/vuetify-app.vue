@@ -49,7 +49,11 @@ import Vuetify from 'vuetify/lib/framework';
 
 import * as VuetifyComponents from '../../components/vuetify';
 
+import VuetifyViewMode from './view_mode';
+
 Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
+Vue.component(VuetifyViewMode.name, VuetifyViewMode);
+
 Vue.use(Vuetify);
 const vuetify = new Vuetify({});
 
