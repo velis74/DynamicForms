@@ -62,7 +62,6 @@ export default {
     // eslint-disable-next-line max-len
     theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
-    key: Math.random(Math.random() * 1000),
     themeData: {
       bootstrap: [],
       vuetify: [],
@@ -90,21 +89,14 @@ export default {
     },
     changeTheme(newTheme) {
       localStorage.setItem('df-theme', newTheme);
-      const saveOldData = !_.size(this.themeData[this.theme]);
-      const items = [];
-      _.forEach(document.getElementsByTagName('link'), (i) => {
-        items.push(i);
-      });
-      _.forEach(document.getElementsByTagName('script'), (i) => {
-        items.push(i);
-      });
-      // eslint-disable-next-line no-unreachable
       if (newTheme !== this.theme) {
-        _.forEach(items, (s) => {
-          if (s && s.attributes && s.attributes.href && s.attributes.href.value &&
-              (_.includes(s.attributes.href.value, `.${this.theme}.css`) ||
-              _.includes(s.attributes.href.value, `.${this.theme}.js`))) {
-            console.log('remove', s.attributes.href.value);
+        const saveOldData = !_.size(this.themeData[this.theme]);
+        _.forEach(Array.prototype.slice.call(document.getElementsByTagName('link')).concat(
+          Array.prototype.slice.call(document.getElementsByTagName('script')),
+        ), (s) => {
+          if ((s.href && _.includes(s.href, `.${this.theme}.css`)) ||
+              (s.src && _.includes(s.src, `.${this.theme}.js`)) ||
+              (s.href && _.includes(s.href, `.${this.theme}.js`))) {
             document.getElementsByTagName('head')[0].removeChild(s);
             if (saveOldData) {
               this.themeData[this.theme].push(s);
@@ -112,7 +104,6 @@ export default {
           }
         });
         _.forEach(this.themeData[newTheme], (v) => {
-          console.log('add', v);
           document.getElementsByTagName('head')[0].appendChild(v);
         });
         this.theme = newTheme;
