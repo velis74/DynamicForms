@@ -49,17 +49,13 @@ import Vuetify from 'vuetify/lib/framework';
 
 import * as VuetifyComponents from '../../components/vuetify';
 
-import VuetifyViewMode from './view_mode';
-
-Vue.use(Vuetify);
 Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
-Vue.component(VuetifyViewMode.name, VuetifyViewMode);
-
+Vue.use(Vuetify);
 const vuetify = new Vuetify({});
-export { vuetify };
 
 export default {
   name: 'VuetifyApp',
+  vuetify,
   props: {
     title: { type: String, required: true },
     themes: { type: Array, required: true },

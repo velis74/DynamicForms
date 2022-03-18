@@ -4,7 +4,7 @@
     :themes="themes"
     :examples="examples"
     :title="title"
-    @theme-changed="(newTheme) => theme = newTheme"
+    @theme-changed="changeTheme"
   >
     <template #main-component>
       <router-view @title-change="setTitle"/>
@@ -16,20 +16,15 @@
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
+import _ from 'lodash';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
-import * as BootstrapComponents from '../components/bootstrap';
-import * as VuetifyComponents from '../components/vuetify';
 
-import BootstrapApp from './bootstrap/bootstrap-app';
 import NamedComponentLoader from './named_component_loader';
-import VuetifyApp from './vuetify/vuetify-app';
 
 Vue.use(VueRouter);
-Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
-Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 
 const routes = [
   { title: 'Validated', path: '/validated', component: APIConsumerLoader },
@@ -56,11 +51,21 @@ const router = new VueRouter({ routes });
 export default {
   name: 'DemoApp',
   router,
-  components: { VuetifyApp, BootstrapApp },
+  components: {
+    // eslint-disable-next-line import/extensions
+    BootstrapApp: () => import(/* webpackChunkName: "bootstrap" */ './bootstrap/bootstrap-app.vue'),
+    // eslint-disable-next-line import/extensions
+    VuetifyApp: () => import(/* webpackChunkName: "vuetify" */ './vuetify/vuetify-app.vue'),
+  },
   data: () => ({
     title: '',
-    theme: 'vuetify',
+    // eslint-disable-next-line max-len
+    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
+    themeData: {
+      bootstrap: [],
+      vuetify: [],
+    },
   }),
   computed: {
     examples() {
@@ -77,10 +82,49 @@ export default {
       }
     },
   },
+  mounted() {
+    this.resetResources(null);
+  },
   methods: {
     setTitle(newTitle) {
       this.title = newTitle;
       document.title = `${newTitle} - DynamicForms`;
+    },
+    removeResources(theme) {
+      const removed = [];
+      _.forEach(Array.prototype.slice.call(document.getElementsByTagName('link')).concat(
+        Array.prototype.slice.call(document.getElementsByTagName('script')),
+      ), (s) => {
+        if ((s.href && _.includes(s.href, `.${theme}.css`)) ||
+              (s.src && _.includes(s.src, `.${theme}.js`)) ||
+              (s.href && _.includes(s.href, `.${theme}.js`))) {
+          document.getElementsByTagName('head')[0].removeChild(s);
+          removed.push(s);
+        }
+      });
+      return removed;
+    },
+    resetResources(newTheme) {
+      if (!newTheme) {
+        _.forEach(_.filter(this.themes, (t) => t !== this.theme), (th) => {
+          this.removeResources(th);
+        });
+        return;
+      }
+      const removedResources = this.removeResources(this.theme);
+      if (!_.size(this.themeData[this.theme])) {
+        this.themeData[this.theme] = this.themeData[this.theme].concat(removedResources);
+      }
+      _.forEach(this.themeData[newTheme], (v) => {
+        document.getElementsByTagName('head')[0].appendChild(v);
+      });
+    },
+    changeTheme(newTheme) {
+      localStorage.setItem('df-theme', newTheme);
+      if (newTheme !== this.theme) {
+        this.resetResources(newTheme);
+        this.theme = newTheme;
+      }
     },
   },
 };
