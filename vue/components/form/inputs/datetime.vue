@@ -1,31 +1,29 @@
 <template>
-  <v-input v-bind="baseBinds">
-    <datetime
-      v-model="value"
-      :type="inputType"
-      :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
-      :input-class="'df-widget-datetime-input form-control'"
-      :format="displayFormat"
-      style="display: inline-block; float: left; width: 85%"
-      @input="dateTimeInput"
-    />
-    <div class="input-group-append" style="display: inline-block; float: left; width: 15%;">
-      <div
-        class="btn btn-sm clear-datetime shadow-none input-group-text"
-        type="button"
-        style="border: none; justify-content: center;"
-        @click="clear"
-      >
-        <IonIcon class="datetime-delete-icon" name="trash-outline"/>
+  <vuetify-input :config="baseBinds">
+    <div style="width: 100%;">
+      <datetime
+        :key="datetimeFieldKey"
+        v-model="value"
+        :type="inputType"
+        :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
+        :format="displayFormat"
+        style="display: inline-block; float: left; width: 85%; border: 1px solid #e8e8e8; height: 2em;"
+        input-style="vertical-align: sub; width: 100%;"
+        @input="dateTimeInput"
+      />
+      <div style="display: inline-block; float: left; width: 15%;">
+        <div
+          type="button"
+          style="border: none; justify-content: center;"
+          @click="clear">
+          <IonIcon class="datetime-delete-icon" name="trash-outline"/>
+        </div>
       </div>
     </div>
-  </v-input>
+  </vuetify-input>
 </template>
 
 <script>
-/**
- * TODO: the field does not look like a Vuetify field: it is not underlined, label is on left
- */
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
 import IonIcon from 'vue-ionicon';
@@ -33,19 +31,23 @@ import IonIcon from 'vue-ionicon';
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
-
-const defaultDatetimeFormat = 'dd.MM.yyyy HH:mm:ss';
+import VuetifyInput from './input_vuetify';
 
 export default {
-  name: 'DDateTime',
-  components: { Datetime, IonIcon },
+  name: 'DDatetime',
+  components: { Datetime, IonIcon, VuetifyInput },
   mixins: [InputBase, TranslationsMixin],
+  data() {
+    return { datetimeFieldKey: Math.round(Math.random() * 1000) };
+  },
   computed: {
     inputType() {
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() { return this.payload.value; },
+      get: function get() {
+        return this.payload.value;
+      },
       set: function set(newVal) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign
@@ -56,23 +58,33 @@ export default {
       },
     },
     displayFormat() {
-      return this.field.renderParams.formFormat || defaultDatetimeFormat;
+      return this.field.renderParams.formFormat || 'dd.MM.yyyy HH:mm:ss';
     },
   },
   methods: {
-    onValueConfirmed(doFilter) { this.$emit('onValueConfirmed', doFilter); },
-    dateTimeInput() { this.onValueConfirmed(true); },
-    clear() { this.value = ''; },
+    onValueConfirmed(doFilter) {
+      this.$emit('onValueConfirmed', doFilter);
+    },
+    dateTimeInput() {
+      this.onValueConfirmed(true);
+    },
+    clear() {
+      this.value = '';
+      this.datetimeFieldKey = Math.round(Math.random() * 1000);
+    },
   },
 };
 </script>
 
-<style type="text/css">
-@import '~vue-datetime/dist/vue-datetime.css';
-</style>
-
 <style scoped>
+@import '~vue-datetime/dist/vue-datetime.css';
+
 .datetime-delete-icon {
   width: 1em;
+  top: 55%;
+  position: absolute;
+  margin: 0;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 </style>

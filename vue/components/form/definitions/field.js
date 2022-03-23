@@ -33,28 +33,29 @@ function wrapInProxy(renderParams) {
   });
 }
 
-function RenderParams(params) {
-  this.inputType = params.input_type;
-  this.fieldCSSClass = params.field_class;
-  this.maxLength = params.max_length;
+function RenderParams(fieldDef) {
+  this.inputType = fieldDef.render_params.input_type;
+  this.fieldCSSClass = fieldDef.render_params.field_class;
+  this.maxLength = fieldDef.render_params.max_length;
+  this.allowNull = fieldDef.allow_null;
 
   // Text input
-  this.pattern = params.pattern;
-  this.min = params.min;
-  this.max = params.max;
-  this.minLength = params.min_length || 0;
-  this.maxLength = params.max_length || 1E20;
+  this.pattern = fieldDef.render_params.pattern;
+  this.min = fieldDef.render_params.min;
+  this.max = fieldDef.render_params.max;
+  this.minLength = fieldDef.render_params.min_length || 0;
+  this.maxLength = fieldDef.render_params.max_length || 1E20;
 
   // text input, translated into HTML attributes
-  this.step = params.step;
-  this.size = params.size;
+  this.step = fieldDef.render_params.step;
+  this.size = fieldDef.render_params.size;
 
   // DateTime
-  this.formFormat = params.form_format;
+  this.formFormat = fieldDef.render_params.form_format;
 
   // select
-  this.multiple = params.multiple;
-  this.allowTags = params.allow_tags;
+  this.multiple = fieldDef.render_params.multiple;
+  this.allowTags = fieldDef.render_params.allow_tags;
 
   return IS_DEVELOPMENT ? wrapInProxy(this) : this;
 }
@@ -73,7 +74,7 @@ export default class FormField {
         enumerable: true,
       },
       visibility: { get() { return DisplayMode.get(fieldDef.visibility.form); }, enumerable: true },
-      renderParams: { get() { return new RenderParams(fieldDef.render_params); }, enumerable: true },
+      renderParams: { get() { return new RenderParams(fieldDef); }, enumerable: true },
       readOnly: { get() { return fieldDef.read_only === true; }, enumerable: true },
       componentName: { get() { return fieldDef.render_params.form_component_name; }, enumerable: true },
       choices: { get() { return fieldDef.choices; }, enumerable: true },

@@ -1,9 +1,5 @@
 <template>
-  <v-input
-    v-bind="baseBinds"
-    :data-value="selenium ? result : null"
-    :data-options="selenium ? options_json : null"
-  >
+  <vuetify-input :config="baseBinds">
     <Multiselect
       v-model="selected"
       :options="options"
@@ -24,7 +20,7 @@
       @input="onInput"
       @tag="onTag"
     />
-  </v-input>
+  </vuetify-input>
 </template>
 
 <script>
@@ -36,10 +32,11 @@ import Multiselect from 'vue-multiselect';
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DSelect',
-  components: { Multiselect },
+  components: { Multiselect, VuetifyInput },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {

@@ -1,10 +1,7 @@
 <template>
-  <vuetify-input>
+  <vuetify-input :config="baseBinds">
     <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>
   </vuetify-input>
-<!--    <v-input v-bind="baseBinds">-->
-<!--    <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>-->
-<!--  </v-input>-->
 </template>
 
 <script>

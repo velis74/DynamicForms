@@ -1,27 +1,27 @@
 <template>
-    <v-text-field
-        :id="field.uuid"
-        v-model="value"
-        :type="inputType"
-        :class="field.renderParams.fieldCSSClass"
-        :name="field.name"
-        :placeholder="field.placeholder"
+  <v-text-field
+    :id="field.uuid"
+    v-model="value"
+    :type="inputType"
+    :class="field.renderParams.fieldCSSClass"
+    :name="field.name"
+    :placeholder="field.placeholder"
 
-        :rules="rules"
-        :step="field.renderParams.step"
-        :size="field.renderParams.size"
+    :rules="rules"
+    :step="field.renderParams.step"
+    :size="field.renderParams.size"
 
-        :readonly="field.readOnly"
-        :disabled="field.readOnly"
+    :readonly="field.readOnly"
+    :disabled="field.readOnly"
 
-        v-bind="baseBinds"
-        :hint="field.helpText"
-        :label="field.label"
+    v-bind="baseBinds"
+    :hint="field.helpText"
+    :label="field.label"
 
-        @keyup.enter="onValueConfirmed(true)"
-        @input="onValueConfirmed(false)"
-        @change="onValueConfirmed(false)"
-    />
+    @keyup.enter="onValueConfirmed(true)"
+    @input="onValueConfirmed(false)"
+    @change="onValueConfirmed(false)"
+  />
 </template>
 
 <script>
