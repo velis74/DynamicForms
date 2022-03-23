@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>{{ title }}<!--TODO: actions--></v-card-title>
     <v-card-text>
-      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload"/>
+      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" @value-changed="valueChanged"/>
     </v-card-text>
     <v-card-actions>
       <!--TODO: actions-->
@@ -27,5 +27,10 @@ export default {
   },
   data() { return {}; },
   computed: {},
+  methods: {
+    valueChanged(payload) {
+      console.log('a', payload);
+    },
+  },
 };
 </script>

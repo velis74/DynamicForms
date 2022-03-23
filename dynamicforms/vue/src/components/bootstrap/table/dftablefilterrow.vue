@@ -12,7 +12,6 @@
         :errors="{}"
         :show-label-or-help-text="false"
         :css-classes="''"
-        @onValueConfirmed="onValueConfirmed"
       />
     </th>
     <th v-if="actionsRowEnd.list.length" class="tr-th-action">
@@ -55,11 +54,6 @@ export default {
       // todo: which columns are in filter needs to be configured in serializer......
       // we're currently matching DFTable's filtering to full visibility
       return _.filter(this.configuration.columns, (c) => c.visibility.table === DisplayMode.FULL);
-    },
-  },
-  methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('setTableFilter', { filter: this.filter, doFilter });
     },
   },
 };

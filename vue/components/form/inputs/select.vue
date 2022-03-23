@@ -98,15 +98,12 @@ export default {
     }
   },
   methods: {
-    onSelect(v) {
+    onSelect() {
       this.value = this.result; // eslint-disable-line vue/no-mutating-props
-      this.$emit('itemSelected', v);
-      this.$emit('onValueConfirmed', true);
     },
     onInput(inp) {
       if (inp === null) {
         this.value = this.result; // eslint-disable-line vue/no-mutating-props
-        this.$emit('itemSelected', inp);
       }
     },
     onTag(newTag) {

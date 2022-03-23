@@ -20,10 +20,6 @@
 
       :readonly="def.read_only === true"
       :disabled="def.read_only === true"
-
-      @keyup.enter="onValueConfirmed(true)"
-      @input="onValueConfirmed(false)"
-      @change="onValueConfirmed(false)"
     >
   </InputBase>
 </template>
@@ -48,11 +44,6 @@ export default {
       set: function set(newVal) {
         this.data[this.def.name] = newVal; // eslint-disable-line
       },
-    },
-  },
-  methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('onValueConfirmed', doFilter);
     },
   },
 };

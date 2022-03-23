@@ -22,9 +22,11 @@ import VueRouter from 'vue-router';
 
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
 
+import ExampleHiddenLayout from './example_hidden_layout';
 import NamedComponentLoader from './named_component_loader';
 
 Vue.use(VueRouter);
+Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout);
 
 const routes = [
   { title: 'Validated', path: '/validated', component: APIConsumerLoader },

@@ -7,7 +7,6 @@
       :input-class="'df-widget-datetime-input form-control'"
       :format="displayFormat"
       style="display: inline-block; float: left; width: 85%"
-      @input="dateTimeInput"
     />
     <div class="input-group-append" style="display: inline-block; float: left; width: 15%;">
       <div
@@ -59,9 +58,7 @@ export default {
       return this.field.renderParams.formFormat || defaultDatetimeFormat;
     },
   },
-  methods: {
-    onValueConfirmed(doFilter) { this.$emit('onValueConfirmed', doFilter); },
-    dateTimeInput() { this.onValueConfirmed(true); },
+  methods: { // eslint-disable-line object-curly-newline
     clear() { this.value = ''; },
   },
 };

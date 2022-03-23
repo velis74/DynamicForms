@@ -27,7 +27,7 @@ export default {
       viewModes: ['form', 'table', 'dialog'],
       uuid: 'the-three-modes',
       viewMode: 'form',
-      consumer: new APIConsumerLogic('/filter'),
+      consumer: new APIConsumerLogic('/hidden-fields'),
       data: {},
     };
   },
