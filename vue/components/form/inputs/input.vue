@@ -15,8 +15,6 @@
     :disabled="field.readOnly"
 
     v-bind="baseBinds"
-    :hint="field.helpText"
-    :label="field.label"
 
     @keyup.enter="onValueConfirmed(true)"
     @input="onValueConfirmed(false)"

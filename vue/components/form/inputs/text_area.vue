@@ -8,6 +8,7 @@
       :class="def.render_params.field_class"
       :name="def.name"
       :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
+       :placeholder="def.placeholder"
 
       :pattern="def.render_params.pattern"
       :min="def.render_params.min"
