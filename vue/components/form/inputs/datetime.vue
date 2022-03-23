@@ -45,9 +45,7 @@ export default {
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() {
-        return this.payload.value;
-      },
+      get: function get() { return this.payload.value; },
       set: function set(newVal) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign
@@ -62,12 +60,8 @@ export default {
     },
   },
   methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('onValueConfirmed', doFilter);
-    },
-    dateTimeInput() {
-      this.onValueConfirmed(true);
-    },
+    onValueConfirmed(doFilter) { this.$emit('onValueConfirmed', doFilter); },
+    dateTimeInput() { this.onValueConfirmed(true); },
     clear() {
       this.value = '';
       this.datetimeFieldKey = Math.round(Math.random() * 1000);

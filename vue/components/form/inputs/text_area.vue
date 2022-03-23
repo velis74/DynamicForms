@@ -40,19 +40,11 @@ export default {
     showLabelOrHelpText: { type: Boolean, default: true },
   },
   computed: {
-    inputType() {
-      return this.def.render_params.input_type;
-    },
-    maxLength() {
-      return this.def.render_params.max_length || (1 << 24);
-    }, // eslint-disable-line no-bitwise
+    inputType() { return this.def.render_params.input_type; },
+    maxLength() { return this.def.render_params.max_length || (1 << 24); }, // eslint-disable-line no-bitwise
     value: {
-      get: function get() {
-        return this.data[this.def.name];
-      },
-      set: function set(newVal) {
-        this.data[this.def.name] = newVal; // eslint-disable-line
-      },
+      get: function get() { return this.data[this.def.name]; },
+      set: function set(newVal) { this.data[this.def.name] = newVal; } // eslint-disable-line
     },
   },
   methods: {

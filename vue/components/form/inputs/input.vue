@@ -37,9 +37,7 @@ export default {
   name: 'DInput',
   mixins: [InputBase, TranslationsMixin],
   computed: {
-    inputType() {
-      return this.field.renderParams.inputType;
-    },
+    inputType() { return this.field.renderParams.inputType; },
     rules() {
       const res = [];
       const rp = this.field.renderParams;

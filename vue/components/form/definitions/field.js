@@ -34,28 +34,29 @@ function wrapInProxy(renderParams) {
 }
 
 function RenderParams(fieldDef) {
-  this.inputType = fieldDef.render_params.input_type;
-  this.fieldCSSClass = fieldDef.render_params.field_class;
-  this.maxLength = fieldDef.render_params.max_length;
+  const params = fieldDef.render_params;
+  this.inputType = params.input_type;
+  this.fieldCSSClass = params.field_class;
+  this.maxLength = params.max_length;
   this.allowNull = fieldDef.allow_null;
 
   // Text input
-  this.pattern = fieldDef.render_params.pattern;
-  this.min = fieldDef.render_params.min;
-  this.max = fieldDef.render_params.max;
-  this.minLength = fieldDef.render_params.min_length || 0;
-  this.maxLength = fieldDef.render_params.max_length || 1E20;
+  this.pattern = params.pattern;
+  this.min = params.min;
+  this.max = params.max;
+  this.minLength = params.min_length || 0;
+  this.maxLength = params.max_length || 1E20;
 
   // text input, translated into HTML attributes
-  this.step = fieldDef.render_params.step;
-  this.size = fieldDef.render_params.size;
+  this.step = params.step;
+  this.size = params.size;
 
   // DateTime
-  this.formFormat = fieldDef.render_params.form_format;
+  this.formFormat = params.form_format;
 
   // select
-  this.multiple = fieldDef.render_params.multiple;
-  this.allowTags = fieldDef.render_params.allow_tags;
+  this.multiple = params.multiple;
+  this.allowTags = params.allow_tags;
 
   return IS_DEVELOPMENT ? wrapInProxy(this) : this;
 }
