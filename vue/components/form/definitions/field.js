@@ -63,6 +63,8 @@ export default class FormField {
   constructor(fieldDef) {
     // Below we circumvent having to declare an internal variable which property getters would be reading from
     Object.defineProperties(this, {
+      fieldDef: { get() { return fieldDef; }, enumerable: false },
+
       name: { get() { return fieldDef.name; }, enumerable: true },
       label: { get() { return fieldDef.label; }, enumerable: true },
       align: {
@@ -84,4 +86,15 @@ export default class FormField {
   }
 
   get isVisible() { return (this.visibility !== DisplayMode.SUPPRESS && this.visibility !== DisplayMode.HIDDEN); }
+
+  setVisibility(visibility) {
+    if (DisplayMode.getValue(visibility)) {
+      this.fieldDef.visibility.form = DisplayMode.getValue(visibility);
+    } else if (visibility) {
+      this.fieldDef.visibility.form = DisplayMode.FULL;
+    } else {
+      this.fieldDef.visibility.form = DisplayMode.HIDDEN;
+    }
+    this.renderKey++; // notify the components to redraw
+  }
 }

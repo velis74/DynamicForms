@@ -35,11 +35,6 @@ export default {
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
   },
-  methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('onValueConfirmed', doFilter);
-    },
-  },
 };
 </script>
 

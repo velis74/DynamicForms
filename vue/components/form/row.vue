@@ -1,10 +1,10 @@
 <template>
-  <v-row align="end">
+  <v-row v-if="anyFieldVisible" align="end">
     <slot name="before-columns"/>
     <FormField
       :is="column.layoutFieldComponentName"
       v-for="(column, idx) in renderableColumns"
-      :key="idx"
+      :key="`${idx}${column.renderKey}`"
       :field="column"
       :payload="payload"
       :errors="errors"
@@ -24,6 +24,7 @@ export default {
     columns: { type: Array, required: true },
     payload: { type: FormPayload, default: null },
     errors: { type: Object, default: () => {} },
+    anyFieldVisible: { type: Boolean, required: true },
   },
   computed: {
     renderableColumns() {

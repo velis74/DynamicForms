@@ -15,10 +15,6 @@
     :disabled="field.readOnly"
 
     v-bind="baseBinds"
-
-    @keyup.enter="onValueConfirmed(true)"
-    @input="onValueConfirmed(false)"
-    @change="onValueConfirmed(false)"
   />
 </template>
 
@@ -51,11 +47,6 @@ export default {
         res.push((value) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`));
       }
       return res;
-    },
-  },
-  methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('onValueConfirmed', doFilter);
     },
   },
 };

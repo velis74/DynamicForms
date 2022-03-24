@@ -6,12 +6,13 @@
       :payload="proceduralPayload"
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
-      @onValueConfirmed="onValueConfirmed"
     />
   </v-col>
 </template>
 
 <script>
+import _ from 'lodash';
+
 import FormPayload from './definitions/form_payload';
 import DCheckbox from './inputs/checkbox';
 import DCKEditor from './inputs/ckeditor';
@@ -45,17 +46,21 @@ export default {
       const classes = this.field.widthClasses;
       return classes ? ` ${classes}` : '';
     },
+    layout() {
+      let layout = this.$parent;
+      while (layout && layout.$options.name !== 'FormLayout') layout = layout.$parent;
+      return layout;
+    },
     proceduralPayload() {
       const self = this;
       return {
         get value() { return self.payload[self.field.name]; },
-        setValue: function setValue(newValue) { self.payload[`set${self.field.name}Value`](newValue); },
+        setValue: function setValue(newValue) {
+          const oldValue = _.cloneDeep(self.payload);
+          self.payload[`set${self.field.name}Value`](newValue);
+          self.layout.emit('value-changed', { field: self.field.name, oldValue, newValue: self.payload });
+        },
       };
-    },
-  },
-  methods: {
-    onValueConfirmed(doFilter) {
-      this.$emit('onValueConfirmed', doFilter);
     },
   },
 };
