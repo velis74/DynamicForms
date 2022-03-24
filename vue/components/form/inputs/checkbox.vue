@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       internalValue: false,
-      indeterminate: this.field.renderParams.allowNull && (this.value === undefined || this.value === null),
+      indeterminate: this.field.allowNull && (this.value === undefined || this.value === null),
     };
   },
   mounted() {
@@ -40,7 +40,7 @@ export default {
   methods: {
     change(newValue) {
       const oldVal = _.clone(this.internalValue);
-      if (this.field.renderParams.allowNull) {
+      if (this.field.allowNull) {
         if (oldVal === true) {
           this.indeterminate = true;
           this.internalValue = null;

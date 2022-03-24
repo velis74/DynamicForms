@@ -33,12 +33,10 @@ function wrapInProxy(renderParams) {
   });
 }
 
-function RenderParams(fieldDef) {
-  const params = fieldDef.render_params;
+function RenderParams(params) {
   this.inputType = params.input_type;
   this.fieldCSSClass = params.field_class;
   this.maxLength = params.max_length;
-  this.allowNull = fieldDef.allow_null;
 
   // Text input
   this.pattern = params.pattern;
@@ -75,12 +73,13 @@ export default class FormField {
         enumerable: true,
       },
       visibility: { get() { return DisplayMode.get(fieldDef.visibility.form); }, enumerable: true },
-      renderParams: { get() { return new RenderParams(fieldDef); }, enumerable: true },
+      renderParams: { get() { return new RenderParams(fieldDef.render_params); }, enumerable: true },
       readOnly: { get() { return fieldDef.read_only === true; }, enumerable: true },
       componentName: { get() { return fieldDef.render_params.form_component_name; }, enumerable: true },
       choices: { get() { return fieldDef.choices; }, enumerable: true },
       widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },
       helpText: { get() { return fieldDef.help_text; }, enumerable: true },
+      allowNull: { get() { return fieldDef.allow_null; }, enumerable: true },
     });
   }
 

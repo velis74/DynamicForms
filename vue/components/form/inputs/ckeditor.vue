@@ -1,5 +1,10 @@
 <template>
-  <vuetify-input :config="baseBinds">
+  <vuetify-input
+    :label="baseBinds.label"
+    :messages="baseBinds.messages"
+    :error-messages="baseBinds['error-messages']"
+    :error-count="baseBinds['error-count']"
+  >
     <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>
   </vuetify-input>
 </template>

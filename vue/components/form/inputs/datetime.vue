@@ -1,5 +1,10 @@
 <template>
-  <vuetify-input :config="baseBinds">
+  <vuetify-input
+    :label="baseBinds.label"
+    :messages="baseBinds.messages"
+    :error-messages="baseBinds['error-messages']"
+    :error-count="baseBinds['error-count']"
+  >
     <div style="width: 100%;">
       <datetime
         :key="datetimeFieldKey"
@@ -15,7 +20,8 @@
         <div
           type="button"
           style="border: none; justify-content: center;"
-          @click="clear">
+          @click="clear"
+        >
           <IonIcon class="datetime-delete-icon" name="trash-outline"/>
         </div>
       </div>

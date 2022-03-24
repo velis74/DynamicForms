@@ -1,5 +1,10 @@
 <template>
-  <vuetify-input :config="baseBinds">
+  <vuetify-input
+    :label="baseBinds.label"
+    :messages="baseBinds.messages"
+    :error-messages="baseBinds['error-messages']"
+    :error-count="baseBinds['error-count']"
+  >
     <div>
       <div>
         <input
@@ -13,14 +18,14 @@
         >
       </div>
       <div>
-        <v-progress-linear v-if="currentFile" :value="progress" height="10" style="margin-top: 5px;">
-        </v-progress-linear>
+        <v-progress-linear v-if="currentFile" :value="progress" height="10" style="margin-top: 5px;"/>
         <div>
           <div v-if="showFileOnServer">
             {{ getFileName(currentFile ? currentFile.name : value) }}
             <button
               style="color: red"
-              @click="removeFile">
+              @click="removeFile"
+            >
               <IonIcon style="width: 1em; padding-top: 0.2em;" name="trash-outline"/>
             </button>
           </div>
