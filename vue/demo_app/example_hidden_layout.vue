@@ -13,6 +13,9 @@ export default {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
   },
+  data() {
+    return { oldPayload: this.payload.deepClone() };
+  },
   computed: { // eslint-disable-line object-curly-newline
     unitVisible() { return this.layout.fields.unit.visibility === DisplayMode.FULL; },
   },
@@ -22,6 +25,15 @@ export default {
 
     // eslint-disable-next-line func-names
     'payload.note': function (newValue, oldValue) { this.noteChanged(newValue, oldValue); },
+    payload: {
+      handler(newValue) {
+        // See note in handler funcion on https://vuejs.org/guide/essentials/watchers.html#deep-watchers
+        // If we want to track changes we have to manually keep previous value in custom variable.
+        this.unitChanged(newValue);
+        this.oldPayload = newValue.deepClone();
+      },
+      deep: true,
+    },
   },
   mounted() { this.unitChanged(this.payload); },
   updated() { this.unitChanged(this.payload); },
