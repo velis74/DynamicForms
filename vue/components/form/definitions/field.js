@@ -87,13 +87,17 @@ export default class FormField {
   get isVisible() { return (this.visibility !== DisplayMode.SUPPRESS && this.visibility !== DisplayMode.HIDDEN); }
 
   setVisibility(visibility) {
+    let displayMode;
     if (DisplayMode.getValue(visibility)) {
-      this.fieldDef.visibility.form = DisplayMode.getValue(visibility);
+      displayMode = DisplayMode.getValue(visibility);
     } else if (visibility) {
-      this.fieldDef.visibility.form = DisplayMode.FULL;
+      displayMode = DisplayMode.FULL;
     } else {
-      this.fieldDef.visibility.form = DisplayMode.HIDDEN;
+      displayMode = DisplayMode.HIDDEN;
     }
-    this.renderKey++; // notify the components to redraw
+    if (displayMode !== this.fieldDef.visibility.form) {
+      this.fieldDef.visibility.form = displayMode;
+      this.renderKey++; // notify the components to redraw
+    }
   }
 }
