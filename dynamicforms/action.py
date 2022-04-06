@@ -67,7 +67,8 @@ class RenderableActionMixin(object):
     Action that is rendered on screen
     """
 
-    def __init__(self, label: str, title: str, icon: str = None, btn_classes: Union[str, dict, None] = None):
+    def __init__(self, label: str, title: str, icon: str = None, btn_classes: Union[str, dict, None] = None,
+                 display_style: Union[dict, None] = None):
         """
         :param label: Label for rendering to on screen control
         :param title: Hint text for on-screen control
@@ -75,14 +76,17 @@ class RenderableActionMixin(object):
         :param btn_classes: optional class(es) of button. if variable is dict and key 'replace' have value True,
          then default class will be replaced with class(es) that are under key 'classes'. In other case class(es) will
          be just added to default class
+        :param display_style: How is action rendered - Button or non button, only icon, only label, bot icon and label
         """
         self.label = label
         self.title = title
         self.icon = icon
         self.btn_classes = btn_classes
+        self.display_style = display_style
 
     def as_component_def(self):
-        return dict(label=self.label, title=self.title, icon=self.icon, classes=self.btn_classes)
+        return dict(label=self.label, title=self.title, icon=self.icon, classes=self.btn_classes,
+                    displayStyle=self.display_style)
 
 
 class TablePosition(IntEnum):
@@ -104,15 +108,15 @@ class TableAction(ActionBase, RenderableActionMixin):
     def __init__(self, position: TablePosition, label: str, action_js: str,
                  title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
                  name: Union[str, None] = None, serializer: Serializer = None,
-                 btn_classes: Union[str, dict, None] = None, action=None):
+                 btn_classes: Union[str, dict, None] = None, action=None, display_style=None):
         ActionBase.__init__(self, action_js, name, serializer, action=action)
-        RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
+        RenderableActionMixin.__init__(self, label, title, icon, btn_classes, display_style)
         self.position = position
         self.field_name = field_name
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
-                           serializer, self.btn_classes, action=self.action)
+                           serializer, self.btn_classes, action=self.action, display_style=self.display_style)
 
     def to_component_params(self, row_data, serializer):
         """
@@ -471,8 +475,10 @@ class Actions(object):
         res = ''
 
         for button in self.actions:
-            if isinstance(button, FormButtonAction) and position in button.positions and \
-                    not serializer.suppress_action(button, request, viewset):
+            if (
+                isinstance(button, FormButtonAction) and position in button.positions and \
+                not serializer.suppress_action(button, request, viewset)
+            ):
                 res += button.render(serializer, position=position)
         return res
 

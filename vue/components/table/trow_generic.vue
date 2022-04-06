@@ -12,12 +12,20 @@
     @click.stop="(event) => rowClick(event, 'ROW_CLICK', null)"
     @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', null)"
   >
+    <component
+      :is="actionsComponentName"
+      v-if="!thead"
+      :actions="actions"
+      :position="actionPositionRowStart"
+    />
+
     <GenericColumn
       v-for="column in renderedColumns.items"
       :key="column.name"
       :column="column"
       :row-data="rowData"
       :thead="thead"
+      :actions="actions"
     />
   </div>
 </template>
@@ -25,6 +33,8 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
+import ActionsHandler from '../actions/actions_handler';
+import ActionsUtil from '../actions/actions_util';
 import IndexedArray from '../classes/indexed_array';
 
 import RenderMeasured from './render_measure';
@@ -32,12 +42,13 @@ import RenderMeasured from './render_measure';
 export default {
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
-  mixins: [RenderMeasured],
+  mixins: [RenderMeasured, ActionsUtil],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
+    actions: { type: ActionsHandler, required: false, default: null },
   },
   // beforeMount() { console.log('beforeMount', this.rowData.id); },
   // beforeUpdate() { console.log('beforeUpdate', this.rowData.id); },

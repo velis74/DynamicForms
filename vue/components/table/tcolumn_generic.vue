@@ -9,6 +9,13 @@
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
     <!-- then the field component itself -->
     <component
+      :is="actionsComponentName"
+      v-if="!thead"
+      :actions="actions"
+      :position="actionPositionFieldStart"
+      :field="column.name"
+    />
+    <component
       :is="column.renderComponentName"
       v-if="column.renderComponentName"
       :row-data="rowData"
@@ -27,10 +34,26 @@
     <!-- we finish up with any field end actions -->
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_END', column.name)"/-->
     <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering"/>
+    <component
+      :is="actionsComponentName"
+      v-if="!thead"
+      :actions="actions"
+      :position="actionPositionFieldEnd"
+      :field="column.name"
+    />
+    <component
+      :is="actionsComponentName"
+      v-if="!thead && column.name === '#actions-row_end'"
+      :actions="actions"
+      :position="actionPositionRowEnd"
+    />
   </div>
 </template>
 
 <script>
+import ActionsHandler from '../actions/actions_handler';
+import ActionsUtil from '../actions/actions_util';
+
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column_group';
 import TableColumn from './definitions/column';
@@ -40,11 +63,12 @@ import RenderMeasured from './render_measure';
 export default {
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, ...TableCells },
-  mixins: [RenderMeasured],
+  mixins: [RenderMeasured, ActionsUtil],
   props: {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
+    actions: { type: ActionsHandler, required: false, default: null },
   },
   computed: { columnClass() { return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'; } },
   methods: {
