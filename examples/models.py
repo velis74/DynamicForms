@@ -30,10 +30,10 @@ class Validated(models.Model):
     ))
     item_flags = models.CharField(max_length=4, blank=True, choices=(
         # this one will be a multi-choice field so you will need to override it in form
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-        ('D', 'D'),
+        ('A', 'Alpha'),
+        ('B', 'Beta'),
+        ('C', 'Cama'),
+        ('D', 'Delta'),
     ), validators=[
         RegexValidator(r'^[ABC]*$', 'Only options A-C may be chosen', 'regex')
     ])
