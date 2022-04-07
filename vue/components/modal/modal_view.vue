@@ -36,7 +36,12 @@ function processSlot(slot, content, createElement) {
 export default {
   name: 'ModalView',
   mixins: [ThemeMixin, ModalViewAPI],
-  data() { return { isPrimary: false }; },
+  data() {
+    return {
+      isPrimary: false,
+      renderSequence: 0,
+    };
+  },
   computed: {
     modalAPIView() { return `${this.theme.name.capitalised}Modal`; },
     slots() { return []; }, // TODO: Currently faked
@@ -58,7 +63,7 @@ export default {
     if (this.isPrimary && this.currentDialog) {
       return el(
         this.modalAPIView,
-        { props: { show: true } },
+        { props: { show: true }, key: this.renderSequence },
         [
           processSlot('title', this.currentDialog.title, el),
           processSlot('body', this.currentDialog.body, el),

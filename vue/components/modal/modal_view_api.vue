@@ -7,11 +7,12 @@ export default {
     fromRenderFunctions(existingDialog, slots) {
       return this.pushDialog(slots, existingDialog);
     },
-    message(title, message) {
+    message(title, message, options) {
       return this.pushDialog({
         title,
         body: message,
         actions: null, // TODO: Create FilteredActions object here [{ close: 'default' }]
+        options,
       }, null);
     },
     yesNo(title, question, actions, options) {
