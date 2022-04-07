@@ -64,27 +64,6 @@ export default {
   },
   computed: {
     className() { return 'df-modal-handler'; },
-    bootstrapDialog() {
-      return '.df-modal-handler';
-    },
-    currentDialog() {
-      const res = this.dialogs.length ? this.dialogs[this.dialogs.length - 1] : null;
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      if (res) res.uniqId = res.uniqId || this.uniqIdCounter++;
-      return res; // type: Object
-    },
-    sizeClass() {
-      const dlg = this.currentDialog;
-      if (!dlg) return 'modal-sm';
-      if (dlg.large || ['large', 'lg', 'modal-lg'].includes(dlg.size)) return 'modal-lg';
-      if (dlg.small || ['small', 'sm', 'modal-sm'].includes(dlg.size)) return 'modal-sm';
-      return '';
-    },
-    headerClasses() {
-      const dlg = this.currentDialog;
-      if (!dlg) return '';
-      return dlg.header_classes || '';
-    },
     title() {
       return this.currentDialog ? this.currentDialog.title : 'No dialogs to show!';
     },
@@ -199,16 +178,6 @@ export default {
       } else if (!this.currentDialog.tableUuid) {
         this.hide();
       }
-    },
-    message(title, message, callback) {
-      return this.show({
-        title, body: message, buttons: [{ close: 'default' }], callback,
-      });
-    },
-    yesNo(title, question, callback) {
-      return this.show({
-        title, body: question, buttons: [{ yes: 'default' }, { no: 'default' }], callback,
-      });
     },
     loading() { return Object.keys(this.inFlightRequests).length; },
     oldestInFlight() {

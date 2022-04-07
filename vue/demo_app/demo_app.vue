@@ -23,6 +23,7 @@ import VueRouter from 'vue-router';
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
 
 import ExampleHiddenLayout from './example_hidden_layout';
+import ModalDemo from './modal_demo';
 import NamedComponentLoader from './named_component_loader';
 
 Vue.use(VueRouter);
@@ -41,6 +42,7 @@ const routes = [
   // { path: '/choice-allow-tags-fields', component: PageLoader },
   // { path: '/calendar', component: Calendar },
   // { path: '/documents', component: PageLoader },
+  { title: 'Modal dialogs', path: '/modal', component: ModalDemo },
   {
     title: 'The three view-modes',
     path: '/view-mode',
