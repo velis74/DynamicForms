@@ -49,23 +49,6 @@ export default {
 };
 </script>
 
-<style>
-.dynamicforms-actioncontrol .btn {
-  margin-top:    -.25rem;
-  margin-right:  .5rem;
-  padding:       .15rem .3rem;
-  font-size:     .675rem;
-  line-height:   1.1;
-  border-radius: .13rem;
-}
-
-.dynamicforms-actioncontrol .btn img {
-  margin: .05rem .25rem .05rem 0;
-  width:  .75rem;
-  height: .75rem;
-}
-</style>
-
 <style scoped>
   @import '~bootstrap/dist/css/bootstrap.css';
   @import '~bootstrap-vue/dist/bootstrap-vue.css';

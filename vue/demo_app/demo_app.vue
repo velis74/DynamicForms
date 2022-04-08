@@ -36,6 +36,7 @@ const routes = [
   { title: 'Page loading', path: '/page-load', component: APIConsumerLoader },
   { title: 'Filtering', path: '/filter', component: APIConsumerLoader },
   { title: 'Refresh types', path: '/refresh-types', component: APIConsumerLoader },
+  { title: 'Actions overview', path: '/actions-overview', component: APIConsumerLoader },
   { title: 'Custom CSS per row', path: '/calculated-css-class-for-table-row', component: APIConsumerLoader },
   // { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
   // { path: '/choice-allow-tags-fields', component: PageLoader },

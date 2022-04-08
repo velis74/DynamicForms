@@ -15,7 +15,7 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import ActionsHandler from '../actions/actions_handler';
+import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
 import TableRows from './definitions/rows';
@@ -32,7 +32,7 @@ export default {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rows: { type: TableRows, required: true },
-    actions: { type: ActionsHandler, required: false, default: null },
+    actions: { type: FilteredActions, default: null },
   },
 };
 </script>

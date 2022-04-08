@@ -4,7 +4,7 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
-        <BootstrapActions :actions="actions" :position="actionPositionHeader"/>
+        <BootstrapActions :actions="actions.header()"/>
         <BootstrapTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
         <BootstrapTBody
           :data-columns="dataColumns"
@@ -20,8 +20,6 @@
   </v-card>
 </template>
 <script>
-import Vue from 'vue';
-
 import BootstrapActions from '../actions/actions_bootstrap';
 import ActionUtils from '../actions/actions_util';
 import LoadingIndicator from '../util/loading_indicator';
@@ -30,12 +28,9 @@ import Table from './table';
 import BootstrapTBody from './tbody_generic';
 import BootstrapTHead from './thead_generic';
 
-// Global registration is necessary: previous dynamic import was super-slow (see table.js)
-Vue.component(BootstrapActions.name, BootstrapActions);
-
 export default {
   name: 'BootstrapTable',
-  components: { BootstrapTHead, BootstrapTBody, LoadingIndicator },
+  components: { BootstrapActions, BootstrapTHead, BootstrapTBody, LoadingIndicator },
   mixins: [Table, ActionUtils],
 };
 </script>

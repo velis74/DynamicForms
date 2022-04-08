@@ -1,16 +1,16 @@
 <template>
-  <div v-if="actionList != null && actionList.length > 0">
+  <div v-if="actions != null && actions.length > 0">
     <v-btn
-      v-for="action in actionList"
+      v-for="action in actions"
       :key="action.name + action.icon"
-      :text="!getDisplayStyle(action).asButton"
-      :icon="!getDisplayStyle(action).showLabel"
+      :text="asText(action)"
+      :icon="asIcon(action)"
       :x-small="true"
       :elevation="0"
     >
-      <IonIcon v-if="getDisplayStyle(action).showIcon" class="action-icon" :name="action.icon"/>
-      <span v-if="getDisplayStyle(action).showIcon && getDisplayStyle(action).showLabel" style="width: .5rem"/>
-      <span v-if="getDisplayStyle(action).showLabel">{{ action.label }}</span>
+      <IonIcon v-if="showIcon(action)" class="action-icon" :name="action.icon"/>
+      <span v-if="showMargin(action)" style="width: .5rem"/>
+      <span v-if="showLabel(action)">{{ action.label }}</span>
     </v-btn>
   </div>
 </template>
@@ -25,49 +25,25 @@ export default {
   components: { IonIcon },
   mixins: [Actions],
   methods: {
-    getDisplayStyle(action) {
-      let res = this.displayStyle[action];
-      if (res == null) {
-        res = {};
-      }
-      this.displayStyle[action] = res;
-      res = res[this.$vuetify.breakpoint.name];
-
-      if (res == null) {
-        res = {};
-        if (action.displayStyle) {
-          if (action.displayStyle.xl && this.$vuetify.breakpoint.xl) {
-            res = action.displayStyle.xl;
-          } else if (action.displayStyle.lg && this.$vuetify.breakpoint.lgAndUp) {
-            res = action.displayStyle.lg;
-          } else if (action.displayStyle.md && this.$vuetify.breakpoint.mdAndUp) {
-            res = action.displayStyle.md;
-          } else if (action.displayStyle.sm && this.$vuetify.breakpoint.smAndUp) {
-            res = action.displayStyle.sm;
-          } else if (action.displayStyle.xs) {
-            res = action.displayStyle.xs;
-          } else {
-            res = action.displayStyle;
-          }
-        }
-        res = {
-          asButton: this.getBoolValueOrDef(res.asButton, false),
-          showIcon: this.getBoolValueOrDef(res.showIcon, true),
-          showLabel: this.getBoolValueOrDef(res.showLabel, true),
-        };
-        this.displayStyle[action][this.$vuetify.breakpoint.name] = res;
-      }
-      return res;
+    asText(action) {
+      return !this.displayStyle[action.name].asButton;
+    },
+    asIcon(action) {
+      return !this.showLabel(action);
+    },
+    showIcon(action) {
+      return this.displayStyle[action.name].showIcon;
+    },
+    showMargin(action) {
+      return this.showIcon(action) && this.showLabel(action);
+    },
+    showLabel(action) {
+      return this.displayStyle[action.name].showLabel;
     },
   },
 };
 </script>
 
 <style scoped>
-
-.action-icon {
-  width:  0.875rem;
-  height: 0.875rem
-}
-
+  @import "actions.css";
 </style>

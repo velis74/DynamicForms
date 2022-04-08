@@ -1,7 +1,7 @@
 import ResizeObserver from 'resize-observer-polyfill';
 import Vue from 'vue';
 
-import ActionsHandler from '../actions/actions_handler';
+import FilteredActions from '../actions/filtered_actions';
 import ColumnDisplay from '../classes/display_mode';
 import IndexedArray from '../classes/indexed_array';
 import TranslationsMixin from '../util/translations_mixin';
@@ -31,7 +31,7 @@ export default {
     columnDefs: { type: Object, required: true },
     rows: { type: TableRows, required: true },
     loading: { type: Boolean, default: false },
-    actions: { type: ActionsHandler, default: null },
+    actions: { type: FilteredActions, default: null },
   },
   data() { return { containerWidth: null, resizeObserver: null }; },
   computed: {
