@@ -29,8 +29,8 @@ export default {
   name: 'LoadingIndicator',
   props: {
     loading: { type: Boolean, required: true },
-    label: { type: String, required: false, default: null },
-    progress: { type: Number, required: false, default: null },
+    label: { type: String, default: null },
+    progress: { type: Number, default: null },
   },
 };
 </script>

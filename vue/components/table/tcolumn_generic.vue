@@ -11,9 +11,7 @@
     <component
       :is="actionsComponentName"
       v-if="!thead"
-      :actions="actions"
-      :position="actionPositionFieldStart"
-      :field="column.name"
+      :actions="actions.fieldStart(column.name)"
     />
     <component
       :is="column.renderComponentName"
@@ -37,22 +35,19 @@
     <component
       :is="actionsComponentName"
       v-if="!thead"
-      :actions="actions"
-      :position="actionPositionFieldEnd"
-      :field="column.name"
+      :actions="actions.fieldEnd(column.name)"
     />
     <component
       :is="actionsComponentName"
       v-if="!thead && column.name === '#actions-row_end'"
-      :actions="actions"
-      :position="actionPositionRowEnd"
+      :actions="actions.rowEnd()"
     />
   </div>
 </template>
 
 <script>
-import ActionsHandler from '../actions/actions_handler';
 import ActionsUtil from '../actions/actions_util';
+import FilteredActions from '../actions/filtered_actions';
 
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column_group';
@@ -68,7 +63,7 @@ export default {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
-    actions: { type: ActionsHandler, required: false, default: null },
+    actions: { type: FilteredActions, default: null },
   },
   computed: { columnClass() { return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'; } },
   methods: {

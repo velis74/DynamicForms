@@ -15,8 +15,7 @@
     <component
       :is="actionsComponentName"
       v-if="!thead"
-      :actions="actions"
-      :position="actionPositionRowStart"
+      :actions="actions.rowStart()"
     />
 
     <GenericColumn
@@ -33,8 +32,8 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import ActionsHandler from '../actions/actions_handler';
 import ActionsUtil from '../actions/actions_util';
+import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
 import RenderMeasured from './render_measure';
@@ -48,7 +47,7 @@ export default {
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
-    actions: { type: ActionsHandler, required: false, default: null },
+    actions: { type: FilteredActions, default: null },
   },
   // beforeMount() { console.log('beforeMount', this.rowData.id); },
   // beforeUpdate() { console.log('beforeUpdate', this.rowData.id); },
