@@ -120,8 +120,7 @@
       "./vue/"
     ],
     "testMatch": [
-      "**/*.spec.[jt]s?(x)",
-      "dialog_size.specs.js"
+      "**/*.spec.[jt]s?(x)"
     ],
     "moduleFileExtensions": [
       "js",
