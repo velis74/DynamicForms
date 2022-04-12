@@ -1,4 +1,4 @@
-import APIConsumerLogic from '../../api_consumer/api_consumer_logic';
+import APIConsumerLogic from '../../components/api_consumer/api_consumer_logic';
 
 import * as mockComponentDef from './api_consumer_table_componentdef.json';
 
