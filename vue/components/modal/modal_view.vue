@@ -63,7 +63,7 @@ export default {
     if (this.isPrimary && this.currentDialog) {
       return el(
         this.modalAPIView,
-        { props: { show: true }, key: this.renderSequence },
+        { props: { show: true, options: this.currentDialog.options || {} }, key: this.renderSequence },
         [
           processSlot('title', this.currentDialog.title, el),
           processSlot('body', this.currentDialog.body, el),
