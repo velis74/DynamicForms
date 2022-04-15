@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import DialogSize from '../components/classes/dialog_size';
 import { Modal, ModalView } from '../components/modal';
 
 /*
@@ -34,6 +35,7 @@ export default {
   name: 'ModalDemo',
   components: { Modal, ModalView },
   data() { return { showTemplate: false }; },
+  computed: { DialogSize() { return DialogSize; } },
   methods: {
     async btnClick(which, level) {
       switch (which) {

@@ -1,6 +1,6 @@
 <template>
   <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
-  <v-dialog v-model="doShow" width="unset">
+  <v-dialog v-model="doShow" :width="computedWidth" :max-width="computedWidth" :fullscreen="computedFullScreen">
     <v-card>
       <v-card-title>
         <slot name="title"/>
@@ -16,9 +16,45 @@
 </template>
 
 <script>
+import DialogSize from '../classes/dialog_size';
+
 export default {
   name: 'VuetifyModal',
-  props: { show: { type: Boolean, default: () => false } },
-  data() { return { doShow: this.show }; },
+  props: {
+    show: { type: Boolean, default: () => false },
+    options: { type: Object, required: true },
+  },
+  data() {
+    return {
+      doShow: this.show,
+      fullScreen: false,
+    };
+  },
+  computed: {
+    size() {
+      return this.options.size;
+    },
+    computedWidth() {
+      if (!this.fullScreen) {
+        switch (this.size) {
+        case 'sm':
+          return 400;
+        case 'lg':
+          return 600;
+        case 'xl':
+          return 800;
+        default:
+          return 'unset';
+        }
+      }
+      return 'unset';
+    },
+    computedFullScreen() {
+      if (this.size === DialogSize.SMALL && !this.Vuetify.breakpoint.smAndUp) { return true; }
+      if (this.size === DialogSize.LARGE && !this.Vuetify.breakpoint.lgAndUp) { return true; }
+      if (this.size === DialogSize.X_LARGE && !this.Vuetify.breakpoint.xlOnly) { return true; }
+      return true;
+    },
+  },
 };
 </script>
