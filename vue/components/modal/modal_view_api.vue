@@ -7,7 +7,7 @@ export default {
     fromRenderFunctions(existingDialog, slots) {
       return this.pushDialog(slots, existingDialog);
     },
-    message(title, message, options) {
+    message(title, message, actions, options) {
       return this.pushDialog({
         title,
         body: message,

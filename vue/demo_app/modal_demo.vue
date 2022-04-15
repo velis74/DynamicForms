@@ -52,6 +52,8 @@ export default {
         break;
       }
       case 'nested': {
+        const suggestedSize = [DialogSize.SMALL, DialogSize.DEFAULT, DialogSize.LARGE][Math.floor(Math.random() * 3)];
+        console.log(suggestedSize);
         await this.$dfModal.message(
           'Nested dialogs example',
           `This is dialog nesting ${level}\n` +
@@ -61,7 +63,7 @@ export default {
             { name: 'nest', label: 'Nest', action: () => { this.btnClick('nested', level + 1); } },
             { name: 'close' },
           ],
-          { size: ['small', 'normal', 'large'][Math.floor(Math.random() * 3)] },
+          { size: suggestedSize },
         );
         break;
       }
