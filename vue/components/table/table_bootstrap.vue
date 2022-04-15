@@ -4,11 +4,13 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
+        <BootstrapActions :actions="actions.header()"/>
         <BootstrapTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
         <BootstrapTBody
           :data-columns="dataColumns"
           :rendered-columns="responsiveColumns"
           :rows="rows"
+          :actions="actions"
           :pk-name="pkName"
         />
       </div>
@@ -18,6 +20,8 @@
   </v-card>
 </template>
 <script>
+import BootstrapActions from '../actions/actions_bootstrap';
+import ActionUtils from '../actions/actions_util';
 import LoadingIndicator from '../util/loading_indicator';
 
 import Table from './table';
@@ -26,8 +30,8 @@ import BootstrapTHead from './thead_generic';
 
 export default {
   name: 'BootstrapTable',
-  components: { BootstrapTHead, BootstrapTBody, LoadingIndicator },
-  mixins: [Table],
+  components: { BootstrapActions, BootstrapTHead, BootstrapTBody, LoadingIndicator },
+  mixins: [Table, ActionUtils],
 };
 </script>
 

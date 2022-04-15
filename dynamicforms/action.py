@@ -62,29 +62,6 @@ class ActionBase(object):
         return {k: getattr(self, k) for k in ('name', 'action_js', 'action')}
 
 
-class RenderableActionMixin(object):
-    """
-    Action that is rendered on screen
-    """
-
-    def __init__(self, label: str, title: str, icon: str = None, btn_classes: Union[str, dict, None] = None):
-        """
-        :param label: Label for rendering to on screen control
-        :param title: Hint text for on-screen control
-        :param icon: optional icon to add to render
-        :param btn_classes: optional class(es) of button. if variable is dict and key 'replace' have value True,
-         then default class will be replaced with class(es) that are under key 'classes'. In other case class(es) will
-         be just added to default class
-        """
-        self.label = label
-        self.title = title
-        self.icon = icon
-        self.btn_classes = btn_classes
-
-    def as_component_def(self):
-        return dict(label=self.label, title=self.title, icon=self.icon, classes=self.btn_classes)
-
-
 class TablePosition(IntEnum):
     HEADER = 0  # Table header of list view
     FILTER_ROW_START = 7  # Alternative to HEADER: command is placed in filter row, actions column at start of line
@@ -99,20 +76,70 @@ class TablePosition(IntEnum):
     FIELD_END = 6  # On right side of field value
 
 
+class FormButtonTypes(IntEnum):
+    CANCEL = 1
+    SUBMIT = 2
+    CUSTOM = 3
+
+
+class RenderableActionMixin(object):
+    """
+    Action that is rendered on screen
+    """
+
+    def __init__(self, label: str, title: str, icon: str = None, btn_classes: Union[str, dict, None] = None,
+                 display_style: Union[dict, None] = None):
+        """
+        :param label: Label for rendering to on screen control
+        :param title: Hint text for on-screen control
+        :param icon: optional icon to add to render
+        :param btn_classes: optional class(es) of button. if variable is dict and key 'replace' have value True,
+         then default class will be replaced with class(es) that are under key 'classes'. In other case class(es) will
+         be just added to default class
+        :param display_style: How is action rendered - Button or non button, only icon, only label, bot icon and label
+        """
+        self.label = label
+        self.title = title
+        self.icon = icon
+        self.btn_classes = btn_classes
+        self.display_style = display_style
+
+    def as_component_def(self):
+        return dict(label=self.label, title=self.title, icon=self.icon, classes=self.btn_classes,
+                    displayStyle=self.display_style)
+
+    @staticmethod
+    def def_display_style(table_position: Union[TablePosition, None] = None,
+                          form_button: Union[FormButtonTypes, None] = None):
+        if table_position == TablePosition.HEADER:
+            return dict(md=dict(asButton=True, showLabel=True, showIcon=True),
+                        xs=dict(asButton=True, showLabel=False, showIcon=True))
+        elif table_position in (
+            TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END, TablePosition.ROW_START, TablePosition.ROW_END
+        ):
+            return dict(xs=dict(asButton=True, showLabel=False, showIcon=True))
+        elif table_position in (TablePosition.FIELD_START, TablePosition.FIELD_END):
+            return dict(xs=dict(asButton=False, showLabel=False, showIcon=True))
+        elif form_button in (FormButtonTypes.SUBMIT, FormButtonTypes.CANCEL, FormButtonTypes.CUSTOM):
+            return dict(xs=dict(asButton=True, showLabel=True, showIcon=False))
+        return None
+
+
 class TableAction(ActionBase, RenderableActionMixin):
 
     def __init__(self, position: TablePosition, label: str, action_js: str,
                  title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
                  name: Union[str, None] = None, serializer: Serializer = None,
-                 btn_classes: Union[str, dict, None] = None, action=None):
+                 btn_classes: Union[str, dict, None] = None, action=None, display_style=None):
         ActionBase.__init__(self, action_js, name, serializer, action=action)
-        RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
+        RenderableActionMixin.__init__(self, label, title, icon, btn_classes,
+                                       display_style or self.def_display_style(table_position=position))
         self.position = position
         self.field_name = field_name
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
-                           serializer, self.btn_classes, action=self.action)
+                           serializer, self.btn_classes, action=self.action, display_style=self.display_style)
 
     def to_component_params(self, row_data, serializer):
         """
@@ -266,12 +293,6 @@ class FieldInitAction(FieldChangeAction):
         return 'window.setTimeout(function() {{ {0.action_js} }}, 1);;\n'.format(self)
 
 
-class FormButtonTypes(IntEnum):
-    CANCEL = 1
-    SUBMIT = 2
-    CUSTOM = 3
-
-
 class FormButtonAction(ActionBase, RenderableActionMixin):
     DEFAULT_LABELS = {
         FormButtonTypes.CANCEL: _('Cancel'),
@@ -282,11 +303,12 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
     def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
                  button_is_primary: bool = None, positions: List[str] = None,
                  name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None,
-                 action=None):
+                 action=None, display_style=None):
         ActionBase.__init__(self, action_js or False, name, serializer, action=action)
         title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
-        RenderableActionMixin.__init__(self, label, title, icon, btn_classes)
+        RenderableActionMixin.__init__(self, label, title, icon, btn_classes,
+                                       display_style or self.def_display_style(form_button=btn_type))
         self.uuid = uuid_module.uuid1()
         self.btn_type = btn_type
         self.positions = positions or ['dialog', 'form']
@@ -373,8 +395,7 @@ class Actions(object):
                             ))
         if add_default_filter:
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',
-                                            icon='search-outline',
-                                            action_js="dynamicforms.defaultFilter(event);"))
+                                            icon='search-outline', action_js="dynamicforms.defaultFilter(event);"))
 
         if add_form_buttons:
             self.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
@@ -471,8 +492,10 @@ class Actions(object):
         res = ''
 
         for button in self.actions:
-            if isinstance(button, FormButtonAction) and position in button.positions and \
-                    not serializer.suppress_action(button, request, viewset):
+            if (
+                isinstance(button, FormButtonAction) and position in button.positions and
+                not serializer.suppress_action(button, request, viewset)
+            ):
                 res += button.render(serializer, position=position)
         return res
 
