@@ -81,6 +81,7 @@ export default class FormField {
       choices: { get() { return fieldDef.choices; }, enumerable: true },
       widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },
       helpText: { get() { return fieldDef.help_text; }, enumerable: true },
+      allowNull: { get() { return fieldDef.allow_null; }, enumerable: true },
     });
   }
 

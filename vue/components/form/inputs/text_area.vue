@@ -8,7 +8,7 @@
       :class="def.render_params.field_class"
       :name="def.name"
       :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
-      :placeholder="def.placeholder"
+       :placeholder="def.placeholder"
 
       :pattern="def.render_params.pattern"
       :min="def.render_params.min"
@@ -41,9 +41,7 @@ export default {
     maxLength() { return this.def.render_params.max_length || (1 << 24); }, // eslint-disable-line no-bitwise
     value: {
       get: function get() { return this.data[this.def.name]; },
-      set: function set(newVal) {
-        this.data[this.def.name] = newVal; // eslint-disable-line
-      },
+      set: function set(newVal) { this.data[this.def.name] = newVal; } // eslint-disable-line
     },
   },
 };

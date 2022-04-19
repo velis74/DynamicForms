@@ -1,7 +1,12 @@
 <template>
-  <v-input v-bind="baseBinds">
+  <vuetify-input
+    :label="baseBinds.label"
+    :messages="baseBinds.messages"
+    :error-messages="baseBinds['error-messages']"
+    :error-count="baseBinds['error-count']"
+  >
     <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>
-  </v-input>
+  </vuetify-input>
 </template>
 
 <script>
@@ -11,10 +16,11 @@ import CKEditor from '@ckeditor/ckeditor5-vue2';
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DFWidgetCKEditor',
-  components: { ckeditor: CKEditor.component },
+  components: { ckeditor: CKEditor.component, VuetifyInput },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {

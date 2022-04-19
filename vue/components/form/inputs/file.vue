@@ -1,62 +1,57 @@
 <template>
-  <v-input v-bind="baseBinds">
-    <div class="input-group">
-      <input
-        ref="file"
-        :key="fileInputKey"
-        type="file"
-        :readonly="field.readOnly"
-        :disabled="field.readOnly"
-        :name="field.name"
-        @change="selectFile"
-      >
-    </div>
+  <vuetify-input
+    :label="baseBinds.label"
+    :messages="baseBinds.messages"
+    :error-messages="baseBinds['error-messages']"
+    :error-count="baseBinds['error-count']"
+  >
     <div>
-      <div v-if="currentFile" class="progress" style="margin-top: 0.3em;">
-        <div
-          class="progress-bar progress-bar-info progress-bar-striped"
-          role="progressbar"
-          :aria-valuenow="progress"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          :style="{ width: progress + '%' }"
+      <div>
+        <input
+          ref="file"
+          :key="fileInputKey"
+          type="file"
+          :readonly="field.readOnly"
+          :disabled="field.readOnly"
+          :name="field.name"
+          @change="selectFile"
         >
-          {{ progress }}%
-        </div>
       </div>
       <div>
-        <div v-if="showFileOnServer">
-          {{ getFileName(currentFile ? currentFile.name : value) }}
-          <button
-            type="button"
-            class="close"
-            aria-label="Close"
-            style="color: red"
-            @click="removeFile"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <v-progress-linear v-if="currentFile" :value="progress" height="10" style="margin-top: 5px;"/>
+        <div>
+          <div v-if="showFileOnServer">
+            {{ getFileName(currentFile ? currentFile.name : value) }}
+            <button
+              style="color: red"
+              @click="removeFile"
+            >
+              <IonIcon style="width: 1em; padding-top: 0.2em;" name="trash-outline"/>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </v-input>
+  </vuetify-input>
 </template>
 
 <script>
 /**
- * TODO: the field does not look like a Vuetify field: it is not underlined, label is on left
  * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
  *   is using IonIcon
  */
 import _ from 'lodash';
+import IonIcon from 'vue-ionicon';
 
 import apiClient from '../../util/api_client';
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DFile',
+  components: { VuetifyInput, IonIcon },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {
