@@ -1,7 +1,7 @@
 import DialogSize from '../classes/dialog_size';
 
 export default {
-  name: 'Modal',
+  name: 'DfModal',
   props: { // eslint-disable-line object-curly-newline
     value: { type: Boolean, required: true },
     size: { type: Object, default: () => DialogSize.DEFAULT, validator(value) { return DialogSize.isDefined(value); } },

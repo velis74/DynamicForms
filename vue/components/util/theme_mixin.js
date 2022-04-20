@@ -45,4 +45,5 @@ export default {
       return new Theme(theme);
     },
   },
+  methods: { getThemedComponentName(undecoratedName) { return `${this.theme.name.capitalised}${undecoratedName}`; } },
 };

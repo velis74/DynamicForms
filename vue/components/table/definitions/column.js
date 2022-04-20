@@ -130,7 +130,7 @@ export default class TableColumn {
       // eslint-disable-next-line no-param-reassign
       value = segments.map((x) => {
         const padding = x.length < 3 ? `<span style="opacity: .5">${'000'.slice(x.length - 3)}</span>` : '';
-        return padding + x;
+        return `${padding}<span>${x}</span>`;
       }).join('.');
     }
     return `<code>${value}</code>`;

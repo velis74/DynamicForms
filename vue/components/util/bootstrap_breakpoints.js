@@ -1,39 +1,45 @@
+import _ from 'lodash';
 import Vue from 'vue';
 
-const state = Vue.observable({ screen: {} });
+const state = {};
 
 // https://stackoverflow.com/a/62675498/9625282
 /* This assumes you're using default bootstrap breakpoint names */
-/* You need to hardcode the breakpoint values if you want to support IE11 */
 const style = getComputedStyle(document.body);
-const xs = style.getPropertyValue('--breakpoint-xs').replace('px', '');
-const sm = style.getPropertyValue('--breakpoint-sm').replace('px', '');
-const md = style.getPropertyValue('--breakpoint-md').replace('px', '');
-const lg = style.getPropertyValue('--breakpoint-lg').replace('px', '');
-const xl = style.getPropertyValue('--breakpoint-xl').replace('px', '');
+
+state.xs = style.getPropertyValue('--breakpoint-xs').replace('px', '') || 0;
+state.sm = style.getPropertyValue('--breakpoint-sm').replace('px', '') || 576;
+state.md = style.getPropertyValue('--breakpoint-md').replace('px', '') || 768;
+state.lg = style.getPropertyValue('--breakpoint-lg').replace('px', '') || 992;
+state.xl = style.getPropertyValue('--breakpoint-xl').replace('px', '') || 1200;
+// we're matching Vuetify, so no xxl
+// state.xxl = style.getPropertyValue('--breakpoint-xxl').replace('px', '') || 1400;
 
 function onResize() {
   const width = window.innerWidth;
 
-  /* Not really sure how to properly define gt or lt */
-  state.screen = {
-    xsOnly: width >= xs && width < sm,
-    smOnly: width >= sm && width < md,
-    mdOnly: width >= md && width < lg,
-    lgOnly: width >= lg && width < xl,
-    xlOnly: width >= xl,
-    xsAndUp: width >= xs,
-    smAndUp: width >= sm,
-    mdAndUp: width >= md,
-    lgAndUp: width >= lg,
-    smAndDown: width <= md,
-    mdAndDown: width <= lg,
-    lgAndDown: width <= xl,
-  };
+  state.xsAndUp = width >= state.xs;
+  state.xsOnly = width >= state.xs && width < state.sm;
+
+  state.smAndUp = width >= state.sm;
+  state.smAndDown = width < state.md;
+  state.smOnly = width >= state.sm && width < state.md;
+
+  state.mdAndUp = width >= state.md;
+  state.mdAndDown = width < state.lg;
+  state.mdOnly = width >= state.md && width < state.lg;
+
+  state.lgAndUp = width >= state.lg;
+  state.lgAndDown = width < state.xl;
+  state.lgOnly = width >= state.lg && width < state.xl;
+
+  state.xlOnly = width >= state.xl;
+
+  state.width = width;
+  state.height = window.innerHeight;
 }
 
-/* Might want to debounce the event, to limit amount of calls */
-window.onresize = onResize;
+window.onresize = _.debounce(onResize, 100);
 onResize();
 
-export default state;
+export default Vue.observable(state);

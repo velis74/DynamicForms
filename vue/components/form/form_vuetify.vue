@@ -11,22 +11,13 @@
 </template>
 
 <script>
-import FormPayload from './definitions/form_payload';
-import FormLayoutClass from './definitions/layout';
+import Form from './form';
 import FormLayout from './layout_vuetify';
 
 export default {
   name: 'VuetifyForm',
   components: { FormLayout },
-  props: {
-    pkName: { type: String, required: true },
-    title: { type: String, required: true },
-    pkValue: { type: null, required: true },
-    layout: { type: FormLayoutClass, required: true },
-    payload: { type: FormPayload, required: true },
-  },
-  data() { return {}; },
-  computed: {},
+  mixins: [Form],
   methods: {
     valueChanged(payload) {
       console.log('a', payload);

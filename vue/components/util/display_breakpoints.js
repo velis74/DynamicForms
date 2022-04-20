@@ -7,7 +7,7 @@ export default {
     screen_breakpoints() {
       switch (this.theme.name.toLowerCase()) {
       case 'bootstrap':
-        return BootstrapBreakpoints.screen;
+        return BootstrapBreakpoints;
       case 'vuetify':
         return this.$vuetify.breakpoint;
       default:

@@ -4,14 +4,14 @@
   </div>
 </template>
 <script>
-import ThemeMixin from '../util/theme_mixin';
+import { DfForm, DfModal, DfTable } from '../public';
 
 import APIConsumerLogic from './api_consumer_logic';
 import ComponentDisplay from './component_display';
 
 export default {
   name: 'APIConsumer',
-  mixins: [ThemeMixin],
+  components: { DfModal, DfForm, DfTable },
   props: {
     /**
      * Object containing the properties required to render at least one of the display components
@@ -27,11 +27,11 @@ export default {
     renderComponent() {
       switch (this.displayComponent) {
       case ComponentDisplay.TABLE:
-        return `${this.theme.name.capitalised}Table`;
+        return 'df-table';
       case ComponentDisplay.FORM:
-        return `${this.theme.name.capitalised}Form`;
+        return 'df-form';
       case ComponentDisplay.DIALOG:
-        return `${this.theme.name.capitalised}Dialog`;
+        return 'df-modal';
       default:
         throw Error('Unknown component display type');
       }
