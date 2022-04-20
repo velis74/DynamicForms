@@ -29,7 +29,7 @@ class FilteredActions {
           .reduce((obj, item) => {
             obj[item.name] = this.actions[item.name];
             return obj;
-          }, {}), this.showModal, this.tableUuid, this,
+          }, {}),
       );
     }
     return this.filterCache[cacheKey];
@@ -45,6 +45,13 @@ class FilteredActions {
 
   rowEnd() {
     return this.filter('ROW_END').list;
+  }
+
+  fieldAll(fieldName) {
+    const res = this.filter('FIELD_START', fieldName);
+    const add = this.filter('FIELD_END', fieldName);
+    Object.assign(res.actions, add.actions);
+    return res;
   }
 
   fieldStart(fieldName) {

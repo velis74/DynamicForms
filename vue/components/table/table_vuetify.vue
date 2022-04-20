@@ -5,7 +5,7 @@
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
         <VuetifyActions :actions="actions.header()"/>
-        <VuetifyTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
+        <VuetifyTHead :rendered-columns="responsiveColumns" :row-data="theadRowData" :actions="actions"/>
         <VuetifyTBody
           :data-columns="dataColumns"
           :rendered-columns="responsiveColumns"
@@ -20,7 +20,6 @@
   </v-card>
 </template>
 <script>
-import ActionUtils from '../actions/actions_util';
 import VuetifyActions from '../actions/actions_vuetify';
 import LoadingIndicator from '../util/loading_indicator';
 
@@ -31,7 +30,7 @@ import VuetifyTHead from './thead_generic';
 export default {
   name: 'VuetifyTable',
   components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody },
-  mixins: [Table, ActionUtils],
+  mixins: [Table],
 };
 </script>
 

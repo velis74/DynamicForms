@@ -5,20 +5,18 @@
     @click.stop="(event) => rowClick(event, 'ROW_CLICK', column)"
     @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', column)"
   >
+    <df-actions v-if="!thead && column.name === '#actions-row_start'" :actions="actions.rowStart()"/>
     <!-- first we render any field start actions -->
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
     <!-- then the field component itself -->
-    <component
-      :is="actionsComponentName"
-      v-if="!thead"
-      :actions="actions.fieldStart(column.name)"
-    />
+    <df-actions v-if="!thead" :actions="actions.fieldStart(column.name)"/>
     <component
       :is="column.renderComponentName"
       v-if="column.renderComponentName"
       :row-data="rowData"
       :column="column"
       :thead="thead"
+      :actions="actions"
     />
     <!-- but maybe the field component is actually a row start / end actions field -->
     <!--Actions
@@ -32,22 +30,14 @@
     <!-- we finish up with any field end actions -->
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_END', column.name)"/-->
     <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering"/>
-    <component
-      :is="actionsComponentName"
-      v-if="!thead"
-      :actions="actions.fieldEnd(column.name)"
-    />
-    <component
-      :is="actionsComponentName"
-      v-if="!thead && column.name === '#actions-row_end'"
-      :actions="actions.rowEnd()"
-    />
+    <df-actions v-if="!thead" :actions="actions.fieldEnd(column.name)"/>
+    <df-actions v-if="!thead && column.name === '#actions-row_end'" :actions="actions.rowEnd()"/>
   </div>
 </template>
 
 <script>
-import ActionsUtil from '../actions/actions_util';
 import FilteredActions from '../actions/filtered_actions';
+import DfActions from '../public/df-actions';
 
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column_group';
@@ -57,8 +47,8 @@ import RenderMeasured from './render_measure';
 
 export default {
   name: 'GenericColumn',
-  components: { ColumnGroup, OrderingIndicator, ...TableCells },
-  mixins: [RenderMeasured, ActionsUtil],
+  components: { ColumnGroup, OrderingIndicator, DfActions, ...TableCells },
+  mixins: [RenderMeasured],
   props: {
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },

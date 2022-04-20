@@ -21,7 +21,6 @@
 </template>
 <script>
 import BootstrapActions from '../actions/actions_bootstrap';
-import ActionUtils from '../actions/actions_util';
 import LoadingIndicator from '../util/loading_indicator';
 
 import Table from './table';
@@ -31,7 +30,7 @@ import BootstrapTHead from './thead_generic';
 export default {
   name: 'BootstrapTable',
   components: { BootstrapActions, BootstrapTHead, BootstrapTBody, LoadingIndicator },
-  mixins: [Table, ActionUtils],
+  mixins: [Table],
 };
 </script>
 

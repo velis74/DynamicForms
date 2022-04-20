@@ -6,7 +6,7 @@
       <v-btn @click="btnClick('nested', 1)">Nested</v-btn>
     </v-row>
     <ModalView/>
-    <Modal v-model="showTemplate">
+    <df-modal v-model="showTemplate">
       <div slot="title">Modal as template</div>
       <div slot="body">
         <p>This modal is created as a template in this demo page.</p>
@@ -16,13 +16,13 @@
         </p>
       </div>
       <div slot="actions">This won't be a div, but an Actions component when it's done</div>
-    </Modal>
+    </df-modal>
   </div>
 </template>
 
 <script>
 import DialogSize from '../components/classes/dialog_size';
-import { Modal, ModalView } from '../components/modal';
+import { DfModal, ModalView } from '../components/modal';
 
 /*
 // verjetno ne bo potrebno?
@@ -33,7 +33,7 @@ Vue.use(Modal);
 
 export default {
   name: 'ModalDemo',
-  components: { Modal, ModalView },
+  components: { DfModal, ModalView },
   data() { return { showTemplate: false }; },
   computed: { DialogSize() { return DialogSize; } },
   methods: {
