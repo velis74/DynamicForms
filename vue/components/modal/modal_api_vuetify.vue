@@ -31,29 +31,25 @@ export default {
     };
   },
   computed: {
-    size() {
-      return this.options.size;
-    },
+    size() { return this.options.size; },
     computedWidth() {
-      if (!this.fullScreen) {
-        switch (this.size) {
-        case 'sm':
-          return 400;
-        case 'lg':
-          return 600;
-        case 'xl':
-          return 800;
-        default:
-          return 'unset';
-        }
+      if (this.computedFullScreen) return 'unset';
+      switch (this.size) {
+      case DialogSize.SMALL:
+        return 400;
+      case DialogSize.LARGE:
+        return 800;
+      case DialogSize.X_LARGE:
+        return 1140;
+      default:
+        return 'unset';
       }
-      return 'unset';
     },
     computedFullScreen() {
-      if (this.size === DialogSize.SMALL && !this.Vuetify.breakpoint.smAndUp) { return true; }
-      if (this.size === DialogSize.LARGE && !this.Vuetify.breakpoint.lgAndUp) { return true; }
-      if (this.size === DialogSize.X_LARGE && !this.Vuetify.breakpoint.xlOnly) { return true; }
-      return true;
+      if (this.size === DialogSize.SMALL && !this.$vuetify.breakpoint.smAndUp) return true;
+      if (this.size === DialogSize.LARGE && !this.$vuetify.breakpoint.lgAndUp) return true;
+      if (this.size === DialogSize.X_LARGE && !this.$vuetify.breakpoint.xlOnly) return true;
+      return false;
     },
   },
 };
