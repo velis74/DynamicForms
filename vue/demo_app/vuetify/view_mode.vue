@@ -12,15 +12,15 @@
 
 <script>
 import APIConsumerLogic from '../../components/api_consumer/api_consumer_logic';
-import ThemeMixin from '../../components/util/theme_mixin';
+import { DfForm, DfTable } from '../../components/public';
+
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';
 // import actionHandlerMixin from '../mixins/actionHandlerMixin';
 
 export default {
   name: 'VuetifyViewMode',
-  // components: { DFForm },
-  mixins: [ThemeMixin], // actionHandlerMixin,
+  components: { DfForm, DfTable },
   emits: ['title-change', 'load-route'],
   data() {
     return {
@@ -38,8 +38,8 @@ export default {
     showDialog() { return this.viewMode === 'dialog'; },
     componentName() {
       if (!this.hasData) return null;
-      if (this.showTable && this.data) return `${this.theme.name.capitalised}Table`;
-      if (this.showForm && this.data) return `${this.theme.name.capitalised}Form`;
+      if (this.showTable && this.data) return 'df-table';
+      if (this.showForm && this.data) return 'df-form';
       return null;
     },
   },
@@ -66,6 +66,7 @@ export default {
           await this.consumer.getFormDefinition('new');
           this.data = this.consumer.formDefinition;
         } /* else {
+          TODO: uncomment when modal has fromURL() method
           await DynamicForms.dialog.fromURL(`${this.url}/new.componentdef`, 'new', this.uuid);
           this.setViewMode('table');
         } */

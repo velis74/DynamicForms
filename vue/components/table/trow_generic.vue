@@ -18,6 +18,7 @@
       :column="column"
       :row-data="rowData"
       :thead="thead"
+      :actions="actions"
     />
   </div>
 </template>
@@ -25,6 +26,7 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
+import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
 import RenderMeasured from './render_measure';
@@ -38,6 +40,7 @@ export default {
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
+    actions: { type: FilteredActions, default: null },
   },
   // beforeMount() { console.log('beforeMount', this.rowData.id); },
   // beforeUpdate() { console.log('beforeUpdate', this.rowData.id); },

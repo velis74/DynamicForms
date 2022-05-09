@@ -1,3 +1,4 @@
+import FilteredActions from '../actions/filtered_actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
@@ -85,6 +86,7 @@ class APIConsumerLogic {
       this.tableColumns[0].ordering.changeCounter,
     );
     this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
+    this.actions = new FilteredActions(UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
   }
 
@@ -96,6 +98,7 @@ class APIConsumerLogic {
       this.titles = UXDefinition.titles;
       this.formLayout = new FormLayout(UXDefinition.dialog);
       this.formData = new FormPayload(UXDefinition.record, this.formLayout);
+      this.actions = new FilteredActions(UXDefinition.actions);
       // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
     }
   }
@@ -117,6 +120,7 @@ class APIConsumerLogic {
       columnDefs: this.fields,
       rows: this.rows,
       loading: this.loading,
+      actions: this.actions,
     };
   }
 
@@ -132,6 +136,7 @@ class APIConsumerLogic {
       layout: this.formLayout,
       payload: this.formData,
       loading: this.loading,
+      actions: this.actions,
     };
   }
 }

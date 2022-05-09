@@ -8,12 +8,14 @@
       :rendered-columns="renderedColumns"
       :data-columns="dataColumns"
       :row-data="row"
+      :actions="actions"
     />
   </div>
 </template>
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
+import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
 import TableRows from './definitions/rows';
@@ -30,6 +32,7 @@ export default {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rows: { type: TableRows, required: true },
+    actions: { type: FilteredActions, default: null },
   },
 };
 </script>

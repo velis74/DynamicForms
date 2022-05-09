@@ -35,14 +35,10 @@ export default {
     computedWidth() {
       if (this.computedFullScreen) return 'unset';
       switch (this.size) {
-      case DialogSize.SMALL:
-        return 400;
-      case DialogSize.LARGE:
-        return 800;
-      case DialogSize.X_LARGE:
-        return 1140;
-      default:
-        return 'unset';
+      case DialogSize.SMALL: return 400;
+      case DialogSize.LARGE: return 800;
+      case DialogSize.X_LARGE: return 1140;
+      default: return 'unset';
       }
     },
     computedFullScreen() {
