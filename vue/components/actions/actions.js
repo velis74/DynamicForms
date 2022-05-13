@@ -20,7 +20,6 @@ export default {
           showIcon: actionRes.showIcon !== undefined ? actionRes.showIcon : true,
           showLabel: actionRes.showLabel !== undefined ? actionRes.showLabel : true,
         };
-
         res[action.name] = actionRes;
       }
       return res;
@@ -43,6 +42,18 @@ export default {
         style = displayStyle[attribute];
       }
       actionRes[attribute] = style;
+    },
+    asText(action) {
+      return !this.displayStyle[action.name].asButton;
+    },
+    asIcon(action) {
+      return !this.showLabel(action);
+    },
+    buttonVariant(action) {
+      return this.displayStyle[action.name].asButton ? 'info' : 'link';
+    },
+    getVisibilityClass(visible) {
+      return visible ? 'd-inline-block' : 'd-none';
     },
   },
 };
