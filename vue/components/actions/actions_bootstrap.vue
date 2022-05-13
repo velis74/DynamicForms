@@ -6,9 +6,9 @@
       :variant="buttonVariant(action)"
       size="sm"
     >
-      <IonIcon :class="iconClass(action)" class="action-icon" :name="action.icon"/>
+      <IonIcon :class="action.displayIcon" class="action-icon d-inline-block" :name="action.icon"/>
       <span :class="marginClass(action)" style="width: .5rem"/>
-      <span :class="labelClass(action)">{{ action.label }}</span>
+      <span :class="action.displayLabel">{{ action.labelText }}</span>
     </b-button>
   </div>
 </template>
@@ -23,9 +23,6 @@ export default {
   components: { IonIcon },
   mixins: [Actions],
   methods: {
-    buttonVariant(action) {
-      return this.displayStyle[action.name].asButton ? 'info' : 'link';
-    },
     iconClass(action) {
       return this.getVisibilityClass(this.displayStyle[action.name].showIcon);
     },
@@ -35,9 +32,6 @@ export default {
     marginClass(action) {
       return this.getVisibilityClass(this.displayStyle[action.name].showIcon &&
         this.displayStyle[action.name].showLabel);
-    },
-    getVisibilityClass(visible) {
-      return visible ? 'd-inline-block' : 'd-none';
     },
   },
 };

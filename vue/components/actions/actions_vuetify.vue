@@ -1,16 +1,13 @@
 <template>
   <div v-if="actions != null && actions.length > 0">
     <v-btn
-      v-for="action in actions"
-      :key="action.name + action.icon"
-      :text="asText(action)"
-      :icon="asIcon(action)"
-      :x-small="true"
+      v-for="(action,idx) in actions"
+      :key="idx"
       :elevation="0"
     >
-      <IonIcon v-if="showIcon(action)" class="action-icon" :name="action.icon"/>
+      <IonIcon v-if="action.displayIcon" class="action-icon" :name="action.icon"/>
       <span v-if="showMargin(action)" style="width: .5rem"/>
-      <span v-if="showLabel(action)">{{ action.label }}</span>
+      <span v-if="action.displayLabel">{{ action.labelText }}</span>
     </v-btn>
   </div>
 </template>
@@ -25,12 +22,6 @@ export default {
   components: { IonIcon },
   mixins: [Actions],
   methods: {
-    asText(action) {
-      return !this.displayStyle[action.name].asButton;
-    },
-    asIcon(action) {
-      return !this.showLabel(action);
-    },
     showIcon(action) {
       return this.displayStyle[action.name].showIcon;
     },
