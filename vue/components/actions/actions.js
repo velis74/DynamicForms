@@ -55,5 +55,22 @@ export default {
     getVisibilityClass(visible) {
       return visible ? 'd-inline-block' : 'd-none';
     },
+    displayIcon(action) {
+      return this.displayStyle[action.name].showIcon && this.iconAvailable(action);
+    },
+    displayLabel(action) {
+      if (this.displayStyle[action.name].showLabel && this.labelAvailable(action));
+      return !(this.displayStyle[action.name].showIcon && this.iconAvailable(action));
+    },
+    labelText(action) {
+      if (this.labelAvailable(action)) return action.label;
+      return action.name;
+    },
+    iconAvailable(action) {
+      return action.icon != null && action.icon.length > 0;
+    },
+    labelAvailable(action) {
+      return action.label !== null && action.label.length > 0;
+    },
   },
 };

@@ -5,25 +5,10 @@ class FilteredActions {
     Object.keys(this.actions).forEach((actionName) => {
       const action = this.actions[actionName];
       if (Object.prototype.hasOwnProperty.call(action, 'displayIcon')) return;
-      Object.defineProperties(action, {
-        displayIcon: { get: () => action.showIcon && action.iconAvailable },
-        displayLabel: {
-          get: () => {
-            if (action.showLabel && action.labelAvailable) return true;
-            return !(action.showIcon && action.iconAvailable);
-          },
-        },
-        labelText: {
-          get: () => {
-            if (action.labelAvailable) return action.label;
-            return action.name;
-          },
-        },
-        iconAvailable: { get: () => action.icon != null && action.icon.length > 0 },
-        labelAvailable: { get: () => action.label !== null && action.label.length > 0 },
-      });
+      Object.defineProperties(action, {});
     });
   }
+
   /**
    * returns list of action objects
    * @returns [Action]
