@@ -5,9 +5,9 @@
       :key="idx"
       :elevation="0"
     >
-      <IonIcon v-if="action.displayIcon" class="action-icon" :name="action.icon"/>
+      <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
       <span v-if="showMargin(action)" style="width: .5rem"/>
-      <span v-if="action.displayLabel">{{ action.labelText }}</span>
+      <span v-if="displayLabel(action)">{{ labelText(action) }}</span>
     </v-btn>
   </div>
 </template>
