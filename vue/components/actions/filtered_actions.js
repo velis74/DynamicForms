@@ -2,11 +2,6 @@ class FilteredActions {
   constructor(actions) {
     this.actions = actions;
     this.filterCache = {}; // contains cached .filter results
-    Object.keys(this.actions).forEach((actionName) => {
-      const action = this.actions[actionName];
-      if (Object.prototype.hasOwnProperty.call(action, 'displayIcon')) return;
-      Object.defineProperties(action, {});
-    });
   }
 
   /**

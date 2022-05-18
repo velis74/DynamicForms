@@ -6,7 +6,7 @@
       :elevation="0"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
-      <span v-if="showMargin(action)" style="width: .5rem"/>
+      <span v-if="displayIcon(action) && displayLabel(action)" style="width: .5rem"/>
       <span v-if="displayLabel(action)">{{ labelText(action) }}</span>
     </v-btn>
   </div>
@@ -21,17 +21,6 @@ export default {
   name: 'VuetifyActions',
   components: { IonIcon },
   mixins: [Actions],
-  methods: {
-    showIcon(action) {
-      return this.displayStyle[action.name].showIcon;
-    },
-    showMargin(action) {
-      return this.showIcon(action) && this.showLabel(action);
-    },
-    showLabel(action) {
-      return this.displayStyle[action.name].showLabel;
-    },
-  },
 };
 </script>
 
