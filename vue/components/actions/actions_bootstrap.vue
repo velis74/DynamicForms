@@ -6,9 +6,9 @@
       :variant="buttonVariant(action)"
       size="sm"
     >
-      <IonIcon :class="displayIcon" class="action-icon d-inline-block" :name="action.icon"/>
+      <IonIcon :class="displayIcon(action)" class="action-icon d-inline-block" :name="action.icon"/>
       <span :class="marginClass(action)" style="width: .5rem"/>
-      <span :class="displayLabel">{{ labelText }}</span>
+      <span :class="displayLabel(action)">{{ labelText(action) }}</span>
     </b-button>
   </div>
 </template>
