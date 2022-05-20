@@ -20,14 +20,15 @@
       <div>
         <v-progress-linear v-if="currentFile" :value="progress" height="10" style="margin-top: 5px;"/>
         <div>
-          <div v-if="showFileOnServer">
-            {{ getFileName(currentFile ? currentFile.name : value) }}
-            <button
-              style="color: red"
-              @click="removeFile"
-            >
-              <IonIcon style="width: 1em; padding-top: 0.2em;" name="trash-outline"/>
-            </button>
+          <div v-if="showFileOnServer" style="display: inline-block;">
+            <p>
+              {{ getFileName(currentFile ? currentFile.name : value) }}
+              <InputClearButton
+                :button-style="''"
+                :icon-style="'float: right; transform: none;'"
+                @clearButtonPressed="removeFile"
+              />
+            </p>
           </div>
         </div>
       </div>
@@ -41,17 +42,17 @@
  *   is using IonIcon
  */
 import _ from 'lodash';
-import IonIcon from 'vue-ionicon';
 
 import apiClient from '../../util/api_client';
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import InputClearButton from './clear_input_button';
 import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DFile',
-  components: { VuetifyInput, IonIcon },
+  components: { VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {

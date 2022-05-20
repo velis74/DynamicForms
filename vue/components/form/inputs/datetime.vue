@@ -17,13 +17,8 @@
         @input="dateTimeInput"
       />
       <div style="display: inline-block; float: left; width: 15%;">
-        <div
-          type="button"
-          style="border: none; justify-content: center;"
-          @click="clear"
-        >
-          <IonIcon class="datetime-delete-icon" name="trash-outline"/>
-        </div>
+        <InputClearButton :button-style="'border: none; justify-content: center;'"
+                          :icon-style="''" @clearButtonPressed="clear"/>
       </div>
     </div>
   </vuetify-input>
@@ -32,16 +27,16 @@
 <script>
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
-import IonIcon from 'vue-ionicon';
 
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import InputClearButton from './clear_input_button';
 import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DDatetime',
-  components: { Datetime, IonIcon, VuetifyInput },
+  components: { Datetime, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return { datetimeFieldKey: Math.round(Math.random() * 1000) };
@@ -78,13 +73,4 @@ export default {
 
 <style scoped>
 @import '~vue-datetime/dist/vue-datetime.css';
-
-.datetime-delete-icon {
-  width: 1em;
-  top: 55%;
-  position: absolute;
-  margin: 0;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
 </style>
