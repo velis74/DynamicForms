@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import FilteredActions from '../actions/filtered_actions';
 import EventEmitterMixin from '../public/event-emitter-mixin';
 
 import FormPayload from './definitions/form_payload';
@@ -33,6 +34,7 @@ export default {
   props: {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
+    actions: { type: FilteredActions, default: null },
   },
   data() { return { dfEventEmitter: true, errors: {} }; },
   computed: {

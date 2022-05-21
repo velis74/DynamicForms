@@ -25,7 +25,7 @@ class FilteredActions {
       this.filterCache[cacheKey] = new FilteredActions(
         Object.values(this.actions)
           .filter((action) => action.position === position && (
-            action.field_name === null || action.field_name === fieldName))
+            action.field_name == null || action.field_name === fieldName))
           .reduce((obj, item) => {
             obj[item.name] = this.actions[item.name];
             return obj;
@@ -60,6 +60,14 @@ class FilteredActions {
 
   fieldEnd(fieldName) {
     return this.filter('FIELD_END', fieldName).list;
+  }
+
+  formHeader() {
+    return this.filter('FORM_HEADER').list;
+  }
+
+  formFooter() {
+    return this.filter('FORM_FOOTER').list;
   }
 }
 

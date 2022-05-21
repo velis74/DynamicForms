@@ -1,4 +1,6 @@
 <script>
+import FilteredActions from '../actions/filtered_actions';
+
 import FormPayload from './definitions/form_payload';
 import FormLayoutClass from './definitions/layout';
 
@@ -10,6 +12,7 @@ export default {
     pkValue: { type: null, required: true },
     layout: { type: FormLayoutClass, required: true },
     payload: { type: FormPayload, required: true },
+    actions: { type: FilteredActions, default: null },
   },
 };
 </script>

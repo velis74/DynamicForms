@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 export default {
   name: 'EventEmitterMixin',
+  emits: ['value-changed'],
   data() { return { dfEventEmitter: false }; },
   computed: {
     parentEmitter() {

@@ -1,27 +1,31 @@
 <template>
   <v-card>
-    <v-card-title>{{ title }}<!--TODO: actions--></v-card-title>
+    <v-card-title>
+      {{ title }}
+      <v-layout v-if="actions.formHeader().length" justify-end>
+        <df-actions :actions="actions.formHeader()"/>
+      </v-layout>
+    </v-card-title>
     <v-card-text>
-      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" @value-changed="valueChanged"/>
+      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions"/>
     </v-card-text>
     <v-card-actions>
-      <!--TODO: actions-->
+      <v-layout justify-end>
+        <df-actions :actions="actions.formFooter()"/>
+      </v-layout>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { DfActions } from '../public';
+
 import Form from './form';
 import FormLayout from './layout_vuetify';
 
 export default {
   name: 'VuetifyForm',
-  components: { FormLayout },
+  components: { FormLayout, DfActions },
   mixins: [Form],
-  methods: {
-    valueChanged(payload) {
-      console.log('a', payload);
-    },
-  },
 };
 </script>

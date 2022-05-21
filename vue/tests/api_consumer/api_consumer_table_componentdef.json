@@ -651,10 +651,7 @@
         "uuid": "e1406b71-80ec-11ec-8148-8d304489807d",
         "element_id": "cancel-e1406b74-80ec-11ec-8148-8d304489807d",
         "type": "CANCEL",
-        "positions": [
-          "dialog",
-          "form"
-        ],
+        "position": "FORM_FOOTER",
         "name": "cancel",
         "action_js": false,
         "action": null,
@@ -667,10 +664,7 @@
         "uuid": "e1406b72-80ec-11ec-8148-8d304489807d",
         "element_id": "submit-e1406b74-80ec-11ec-8148-8d304489807d",
         "type": "SUBMIT",
-        "positions": [
-          "dialog",
-          "form"
-        ],
+        "position": "FORM_FOOTER",
         "name": "submit",
         "action_js": false,
         "action": null,
