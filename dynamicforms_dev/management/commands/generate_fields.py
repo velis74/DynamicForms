@@ -41,7 +41,7 @@ render_params = ClassAssemblyDict({
     fields.URLField: dict(input_type='url', table='df-tablecell-link', pattern='https?://.*'),
     fields.IntegerField: dict(input_type='number'),
     fields.FloatField: dict(input_type='number', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
-    fields.DecimalField: dict(input_type='text', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
+    fields.DecimalField: dict(input_type='number', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
     fields.DateTimeField: dict(input_type='datetime', form_component_name='DDateTime',
                                table_format='dd.MM.yyyy HH:mm',
                                form_format='dd.MM.yyyy HH:mm', table='#TableCellDateTime', ),

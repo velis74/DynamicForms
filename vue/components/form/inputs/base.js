@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import FormField from '../definitions/field';
 
 export default {
@@ -10,7 +12,17 @@ export default {
   computed: {
     value: {
       get: function get() { return this.payload.value; },
-      set: function set(newVal) { this.payload.setValue(newVal); },
+      set: function set(newVal) {
+        if (this.isNumber) {
+          if (newVal === '' || (_.endsWith(newVal, '.') || _.endsWith(newVal, ','))) {
+            return;
+          }
+          const numberVal = Number(newVal);
+          this.payload.setValue(!Number.isNaN(numberVal) ? numberVal : null);
+          return;
+        }
+        this.payload.setValue(newVal);
+      },
     },
 
     errorsList() { return this.errors || []; },
@@ -25,6 +37,9 @@ export default {
         'error-count': this.errorsDisplayCount + 10, // +10 so that it can show "rules" error messages
         messages: this.helpText ? [this.helpText] : null,
       };
+    },
+    isNumber() {
+      return this.field.renderParams.inputType === 'number';
     },
   },
 };
