@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import FilteredActions from '../actions/filtered_actions';
+import EventEmitterMixin from '../public/event-emitter-mixin';
 
 import FormPayload from './definitions/form_payload';
 import FormLayout from './definitions/layout';
@@ -29,18 +30,14 @@ import FormRow from './row';
 export default {
   name: 'FormLayout',
   components: { FormRow },
-  // mixins: [formFieldChangeMixin], // TODO: implement
+  mixins: [EventEmitterMixin], // TODO: implement also formFieldChangeMixin
   props: {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
+    actions: { type: FilteredActions, default: null },
   },
-  data() { return { errors: {} }; },
+  data() { return { dfEventEmitter: true, errors: {} }; },
   computed: {
-    parentLayout() {
-      let layout = this.$parent;
-      while (layout && layout.$options.name !== 'FormLayout') layout = layout.$parent;
-      return layout;
-    },
     errorText() {
       const nonFieldError = 'non_field_errors';
       try {
@@ -60,16 +57,6 @@ export default {
   },
   beforeDestroy() {
     // eventBus.$off(`formEvents_${this.uuid}`);
-  },
-  methods: {
-    emit(eventName, eventData) {
-      this.$emit(eventName, eventData);
-      if (this.parentLayout) {
-        const oldValue = _.cloneDeep(this.payload);
-        oldValue[eventData.field] = eventData.oldValue;
-        this.parentLayout.emit('value-changed', { field: this.layout.fieldName, oldValue, newValue: this.payload });
-      }
-    },
   },
 };
 </script>

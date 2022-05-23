@@ -13,6 +13,8 @@
 <script>
 import _ from 'lodash';
 
+import EventEmitterMixin from '../public/event-emitter-mixin';
+
 import FormPayload from './definitions/form_payload';
 import DCheckbox from './inputs/checkbox';
 import DCKEditor from './inputs/ckeditor';
@@ -34,6 +36,7 @@ export default {
     DPlaceholder,
     DSelect,
   },
+  mixins: [EventEmitterMixin],
   props: {
     field: { type: Object, required: true },
     payload: { type: FormPayload, required: true },
@@ -46,19 +49,14 @@ export default {
       const classes = this.field.widthClasses;
       return classes ? ` ${classes}` : '';
     },
-    layout() {
-      let layout = this.$parent;
-      while (layout && layout.$options.name !== 'FormLayout') layout = layout.$parent;
-      return layout;
-    },
     proceduralPayload() {
       const self = this;
       return {
-        get value() { return self.payload[self.field.name]; },
+        get value() { return _.cloneDeep(self.payload[self.field.name]); },
         setValue: function setValue(newValue) {
-          const oldValue = _.cloneDeep(self.payload);
+          const oldValue = _.cloneDeep(self.payload[self.field.name]);
           self.payload[`set${self.field.name}Value`](newValue);
-          self.layout.emit('value-changed', { field: self.field.name, oldValue, newValue: self.payload });
+          self.emit('value-changed', { field: self.field.name, oldValue, newValue: self.payload[self.field.name] });
         },
       };
     },

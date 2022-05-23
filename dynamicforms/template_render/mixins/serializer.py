@@ -152,7 +152,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'titles': self.form_titles,
             'columns': [c.as_component_def() for c in self.render_fields.fields],
             'responsive_table_layouts': self.get_responsive_table_layouts_def(),
-            'actions': self.render_actions.table.as_action_def(),
+            'actions': self.render_actions.as_action_def(),
             'record': None if self.parent else self.data,
             'filter': self.filter_serializer_component_params() if self.show_filter else None,
             'dialog': self.get_dialog_def(),
@@ -176,7 +176,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             row_css_style=self.get_row_css_style(row),
             actions=dict(
                 filter(lambda x: x[1] is not None,
-                       (action.to_component_params(row, self) for action in self.render_actions.table.actions))
+                       (action.to_component_params(row, self) for action in self.render_actions.actions))
             )
         )
 

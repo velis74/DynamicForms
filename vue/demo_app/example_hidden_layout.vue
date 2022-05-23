@@ -24,7 +24,7 @@ export default {
     'payload.note': function (newValue, oldValue) { this.noteChanged(newValue, oldValue); },
     payload: {
       handler(newValue) {
-        // See note in handler funcion on https://vuejs.org/guide/essentials/watchers.html#deep-watchers
+        // See note in handler function on https://vuejs.org/guide/essentials/watchers.html#deep-watchers
         // If we want to track changes we have to manually keep previous value in custom variable.
         this.unitChanged(newValue.unit);
         this.oldPayload = newValue.deepClone();

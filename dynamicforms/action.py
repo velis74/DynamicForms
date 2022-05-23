@@ -235,6 +235,19 @@ class FieldChangeAction(ActionBase):
         if serializer:
             self.tracked_fields = [self._resolve_reference(f) for f in self.tracked_fields]
 
+    def to_component_params(self, row_data, serializer):
+        """
+        generates a dict with parameters for component that is going to represent this action.
+        none means don't render / activate this action on this row
+
+        :param row_data:
+        :param serializer:
+        :return:
+        """
+        # perhaps this function is misnamed: it should be row_render_params, because only the row-level properties are
+        #  processed
+        return self.name, None
+
     def as_component_def(self):
         res = dict(tracked_fields=list(self.tracked_fields))
         res.update(ActionBase.as_component_def(self))
@@ -276,6 +289,19 @@ class FormInitAction(ActionBase):
     def copy_and_resolve_reference(self, serializer: Serializer):
         return FormInitAction(self.action_js, self.name, serializer, action=self.action)
 
+    def to_component_params(self, row_data, serializer):
+        """
+        generates a dict with parameters for component that is going to represent this action.
+        none means don't render / activate this action on this row
+
+        :param row_data:
+        :param serializer:
+        :return:
+        """
+        # perhaps this function is misnamed: it should be row_render_params, because only the row-level properties are
+        #  processed
+        return self.name, None
+
     def render(self, serializer: Serializer, **kwds):
         # we need window.setTimeout because at the time of form generation, the initial fields value collection
         # hasn't been done yet
@@ -283,6 +309,19 @@ class FormInitAction(ActionBase):
 
 
 class FieldInitAction(FieldChangeAction):
+
+    def to_component_params(self, row_data, serializer):
+        """
+        generates a dict with parameters for component that is going to represent this action.
+        none means don't render / activate this action on this row
+
+        :param row_data:
+        :param serializer:
+        :return:
+        """
+        # perhaps this function is misnamed: it should be row_render_params, because only the row-level properties are
+        #  processed
+        return self.name, None
 
     def copy_and_resolve_reference(self, serializer: Serializer):
         return FieldInitAction(self.tracked_fields, self.action_js, self.name, serializer)
@@ -293,6 +332,11 @@ class FieldInitAction(FieldChangeAction):
         return 'window.setTimeout(function() {{ {0.action_js} }}, 1);;\n'.format(self)
 
 
+class FormPosition(IntEnum):
+    FORM_HEADER = 1
+    FORM_FOOTER = 2
+
+
 class FormButtonAction(ActionBase, RenderableActionMixin):
     DEFAULT_LABELS = {
         FormButtonTypes.CANCEL: _('Cancel'),
@@ -301,7 +345,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
     }
 
     def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
-                 button_is_primary: bool = None, positions: List[str] = None,
+                 button_is_primary: bool = None, position: FormPosition = FormPosition.FORM_FOOTER,
                  name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None,
                  action=None, display_style=None):
         ActionBase.__init__(self, action_js or False, name, serializer, action=action)
@@ -311,7 +355,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
                                        display_style or self.def_display_style(form_button=btn_type))
         self.uuid = uuid_module.uuid1()
         self.btn_type = btn_type
-        self.positions = positions or ['dialog', 'form']
+        self.position = position or FormPosition.FORM_FOOTER
 
         if button_is_primary is None:
             button_is_primary = btn_type == FormButtonTypes.SUBMIT
@@ -324,18 +368,31 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
             (DF.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else '')
         )
 
+    def to_component_params(self, row_data, serializer):
+        """
+        generates a dict with parameters for component that is going to represent this action.
+        none means don't render / activate this action on this row
+
+        :param row_data:
+        :param serializer:
+        :return:
+        """
+        # perhaps this function is misnamed: it should be row_render_params, because only the row-level properties are
+        #  processed
+        return self.name, None
+
     def as_component_def(self):
         res = dict(uuid=str(self.uuid), element_id=f'{self.name}-{self.serializer.uuid}', type=self.btn_type.name,
-                   positions=list(self.positions))
+                   position=self.position.name)
         res.update(ActionBase.as_component_def(self))
         res.update(RenderableActionMixin.as_component_def(self))
         return res
 
     def copy_and_resolve_reference(self, serializer):
         return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.action_js, self.button_is_primary,
-                                self.positions, self.name, serializer)
+                                self.position, self.name, serializer)
 
-    def render(self, serializer: Serializer, position=None, **kwds):
+    def render(self, serializer: Serializer, position: FormPosition = None, **kwds):
         if self.btn_type == FormButtonTypes.CANCEL and position == 'form':
             return ''
         action_js = self.action_js
@@ -343,7 +400,10 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         if isinstance(action_js, str):
             action_js = self.prepare_string(action_js)
             action_js = action_js.format(**locals())
-        button_type = 'button' if self.btn_type != FormButtonTypes.SUBMIT or position == 'dialog' else 'submit'
+
+        is_submit = self.btn_type != FormButtonTypes.SUBMIT or position == FormPosition.FORM_FOOTER
+        button_type = 'submit' if is_submit else 'button'
+
         data_dismiss = 'data-dismiss="modal"' if self.btn_type == FormButtonTypes.CANCEL else ''
         if self.btn_type == FormButtonTypes.SUBMIT:
             button_id = 'save-' + str(serializer.uuid)
@@ -493,7 +553,7 @@ class Actions(object):
 
         for button in self.actions:
             if (
-                isinstance(button, FormButtonAction) and position in button.positions and
+                isinstance(button, FormButtonAction) and position == button.position and
                 not serializer.suppress_action(button, request, viewset)
             ):
                 res += button.render(serializer, position=position)

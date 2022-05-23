@@ -35,6 +35,10 @@ import Vue from 'vue';
 
 import * as BootstrapComponents from '../../components/bootstrap';
 
+import BootstrapViewMode from './view_mode';
+
+Vue.component(BootstrapViewMode.name, BootstrapViewMode);
+
 Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 
 Vue.use(BootstrapVue);

@@ -52,14 +52,11 @@ export default {
     buttonVariant(action) {
       return this.displayStyle[action.name].asButton ? 'info' : 'link';
     },
-    getVisibilityClass(visible) {
-      return visible ? 'd-inline-block' : 'd-none';
-    },
     displayIcon(action) {
       return this.displayStyle[action.name].showIcon && this.iconAvailable(action);
     },
     displayLabel(action) {
-      if (this.displayStyle[action.name].showLabel && this.labelAvailable(action));
+      if (this.displayStyle[action.name].showLabel && this.labelAvailable(action)) return true;
       return !(this.displayStyle[action.name].showIcon && this.iconAvailable(action));
     },
     labelText(action) {
