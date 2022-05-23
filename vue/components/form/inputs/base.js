@@ -18,7 +18,7 @@ export default {
             this.payload.setValue(Number(newVal));
             return;
           }
-          this.payload.setValue(null);
+          this.payload.setValue(undefined);
           return;
         }
         this.payload.setValue(newVal);
@@ -44,8 +44,12 @@ export default {
   },
   methods: {
     isValidNumber(num) {
-      return num && String(num) !== '' && !Number.isNaN(num) && !_.includes(String(num), ',') &&
-        !_.endsWith(String(num), ',');
+      const notValidValues = [undefined, Number.NaN, ''];
+      if (!this.field.allowNull) {
+        notValidValues.push(null);
+      }
+      return !_.includes(notValidValues, num) && String(num) !== '' && !Number.isNaN(num) &&
+        !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
     },
   },
 };
