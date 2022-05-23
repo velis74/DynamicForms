@@ -19,10 +19,6 @@
 </template>
 
 <script>
-/**
- * TODO: vuetify number input will store a string as value.
- * TODO: It won't store anything if number is entered incorrectly, e.g. by using the wrong decimal separator
- */
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
@@ -45,6 +41,9 @@ export default {
       }
       if (rp.maxLength) {
         res.push((value) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`));
+      }
+      if (this.isNumber) {
+        res.push((value) => (this.isValidNumber(value) ? true : 'Not a valid number'));
       }
       return res;
     },

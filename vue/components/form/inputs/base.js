@@ -14,11 +14,11 @@ export default {
       get: function get() { return this.payload.value; },
       set: function set(newVal) {
         if (this.isNumber) {
-          if (newVal === '' || (_.endsWith(newVal, '.') || _.endsWith(newVal, ','))) {
+          if (this.isValidNumber(newVal)) {
+            this.payload.setValue(Number(newVal));
             return;
           }
-          const numberVal = Number(newVal);
-          this.payload.setValue(!Number.isNaN(numberVal) ? numberVal : null);
+          this.payload.setValue(null);
           return;
         }
         this.payload.setValue(newVal);
@@ -40,6 +40,12 @@ export default {
     },
     isNumber() {
       return this.field.renderParams.inputType === 'number';
+    },
+  },
+  methods: {
+    isValidNumber(num) {
+      return num && String(num) !== '' && !Number.isNaN(num) && !_.includes(String(num), ',') &&
+        !_.endsWith(String(num), ',');
     },
   },
 };
