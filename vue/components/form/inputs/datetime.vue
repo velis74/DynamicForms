@@ -12,14 +12,11 @@
         :type="inputType"
         :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
         :format="displayFormat"
-        style="display: inline-block; float: left; width: 85%; border: 1px solid #e8e8e8; height: 2em;"
+        style="float: left; width: 85%; border: 1px solid #e8e8e8; height: 2rem;"
         input-style="vertical-align: sub; width: 100%;"
         @input="dateTimeInput"
       />
-      <div style="display: inline-block; float: left; width: 15%;">
-        <InputClearButton :button-style="'border: none; justify-content: center;'"
-                          :icon-style="''" @clearButtonPressed="clear"/>
-      </div>
+      <InputClearButton style="display: inline-block; width: 1rem; margin-top: 0.5rem;" @clearButtonPressed="clear"/>
     </div>
   </vuetify-input>
 </template>

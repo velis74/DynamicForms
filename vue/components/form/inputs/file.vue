@@ -23,11 +23,7 @@
           <div v-if="showFileOnServer" style="display: inline-block;">
             <p>
               {{ getFileName(currentFile ? currentFile.name : value) }}
-              <InputClearButton
-                :button-style="''"
-                :icon-style="'float: right; transform: none;'"
-                @clearButtonPressed="removeFile"
-              />
+              <InputClearButton style="float: right; width: 1rem; margin-top: .1rem;" @clearButtonPressed="removeFile"/>
             </p>
           </div>
         </div>
