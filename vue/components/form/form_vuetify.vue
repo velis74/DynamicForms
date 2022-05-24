@@ -11,7 +11,7 @@
     </v-card-text>
     <v-card-actions>
       <v-layout justify-end>
-        <df-actions :actions="actions.formFooter()"/>
+        <df-actions :actions="actions.formFooter()" style="margin-right: 0.5rem;"/>
       </v-layout>
     </v-card-actions>
   </v-card>

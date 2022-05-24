@@ -22,7 +22,7 @@ export default {
      */
     displayComponent: { type: Object, required: true, validator(value) { return ComponentDisplay.isDefined(value); } },
   },
-  data() { return { orderingCounter: this.consumer.ordering.counter.counter }; },
+  data() { return { orderingCounter: this.consumer.ordering.counter.counter, dfEventHandler: true }; },
   computed: {
     renderComponent() {
       switch (this.displayComponent) {
@@ -43,6 +43,12 @@ export default {
       default:
         throw Error('Unknown component display type');
       }
+    },
+  },
+  methods: {
+    handleEvent(type, eventPayload) {
+      console.log('foo', Math.random(), type, eventPayload);
+      return true;
     },
   },
   watch: {

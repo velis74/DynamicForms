@@ -139,6 +139,10 @@ class APIConsumerLogic {
       actions: this.actions,
     };
   }
+
+  delete() {
+    console.log('rest delete', this);
+  }
 }
 
 export default APIConsumerLogic;

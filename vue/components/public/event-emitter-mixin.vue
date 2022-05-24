@@ -4,27 +4,43 @@ import _ from 'lodash';
 export default {
   name: 'EventEmitterMixin',
   emits: ['value-changed'],
-  data() { return { dfEventEmitter: false }; },
+  data() {
+    return { dfEventHandler: false };
+  },
   computed: {
     parentEmitter() {
-      let parent = this.$parent;
-      while (parent && parent.dfEventEmitter !== true) parent = parent.$parent;
-      return parent;
+      return this.getParentEmitter();
     },
   },
   methods: {
+    getParentEmitter(getPayload = false) {
+      let parent = this.$parent;
+      let payload = null;
+      while (parent && parent.dfEventHandler !== true) {
+        parent = parent.$parent;
+        if (parent.payload && !payload) {
+          payload = parent.payload;
+        }
+      }
+      if (getPayload) {
+        return payload;
+      }
+      return parent;
+    },
     emit(eventName, eventData) {
-      // If this component is an event emitter, emit. Also emit if this component has no parent that is an emitter
-      if (this.dfEventEmitter || !this.parentEmitter) this.$emit(eventName, eventData);
-      if (this.parentEmitter) {
-        // if there's yet a parent that is an emitter, have it emit the event as well
-        const oldValue = _.cloneDeep(this.payload);
-        oldValue[eventData.field] = eventData.oldValue;
-        console.log('a', { field: eventData.field.name, oldValue, newValue: this.payload });
-        this.parentEmitter.emit(
-          'value-changed',
-          { field: this.parentEmitter.fieldName, oldValue, newValue: this.payload },
-        );
+      if (this.parentEmitter && this.parentEmitter.handleEvent(
+        eventName,
+        {
+          eventData: _.cloneDeep(eventData),
+          payload: _.cloneDeep(this.getParentEmitter(true)),
+          consumer: this.parentEmitter.consumer,
+        },
+      )) {
+        return;
+      }
+      console.log(535353);
+      if (this.handleEvent) {
+        this.handleEvent(eventName, eventData);
       }
     },
   },
