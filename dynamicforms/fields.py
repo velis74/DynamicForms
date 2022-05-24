@@ -237,7 +237,7 @@ class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Dec
         kwargs.update(kw)
         kwargs['render_params'] = kwargs.get('render_params', None) or {}
         kwargs['render_params'].setdefault('form_component_name', 'DInput')
-        kwargs['render_params'].setdefault('input_type', 'text')
+        kwargs['render_params'].setdefault('input_type', 'number')
         kwargs['render_params'].setdefault('table', '#TableCellFloat')
         kwargs['render_params'].setdefault('table_show_zeroes', True)
         kwargs['render_params'].setdefault('step', '0.1')
