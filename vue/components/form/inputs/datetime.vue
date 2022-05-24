@@ -12,19 +12,11 @@
         :type="inputType"
         :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
         :format="displayFormat"
-        style="display: inline-block; float: left; width: 85%; border: 1px solid #e8e8e8; height: 2em;"
+        style="float: left; width: 85%; border: 1px solid #e8e8e8; height: 2rem;"
         input-style="vertical-align: sub; width: 100%;"
         @input="dateTimeInput"
       />
-      <div style="display: inline-block; float: left; width: 15%;">
-        <div
-          type="button"
-          style="border: none; justify-content: center;"
-          @click="clear"
-        >
-          <IonIcon class="datetime-delete-icon" name="trash-outline"/>
-        </div>
-      </div>
+      <InputClearButton style="display: inline-block; width: 1rem; margin-top: 0.5rem;" @clearButtonPressed="clear"/>
     </div>
   </vuetify-input>
 </template>
@@ -32,16 +24,16 @@
 <script>
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
-import IonIcon from 'vue-ionicon';
 
 import TranslationsMixin from '../../util/translations_mixin';
 
 import InputBase from './base';
+import InputClearButton from './clear_input_button';
 import VuetifyInput from './input_vuetify';
 
 export default {
   name: 'DDatetime',
-  components: { Datetime, IonIcon, VuetifyInput },
+  components: { Datetime, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return { datetimeFieldKey: Math.round(Math.random() * 1000) };
@@ -78,13 +70,4 @@ export default {
 
 <style scoped>
 @import '~vue-datetime/dist/vue-datetime.css';
-
-.datetime-delete-icon {
-  width: 1em;
-  top: 55%;
-  position: absolute;
-  margin: 0;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
 </style>
