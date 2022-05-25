@@ -130,6 +130,7 @@
     "transform": {
       ".*\\.(vue)$": "vue-jest"
     },
+    "transformIgnorePatterns": [ "node_modules/(?!(vue-ionicon))" ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/*.{js,vue}",
