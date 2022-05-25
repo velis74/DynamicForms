@@ -1,5 +1,10 @@
 <template>
-  <component :is="getThemedComponentName('Form')" v-bind="$props"/>
+  <div>
+    ------
+    {{ getThemedComponentName('Form') }}
+    {{ $props }}
+    <component :is="getThemedComponentName('Form')" v-bind="$props"/>
+  </div>
 </template>
 <script>
 import Form from '../form/form';

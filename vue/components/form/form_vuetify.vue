@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ title }}
+      {{ title }} ssss
+
+      {{ data }}
       <v-layout v-if="actions.formHeader().length" justify-end>
         <df-actions :actions="actions.formHeader()"/>
       </v-layout>

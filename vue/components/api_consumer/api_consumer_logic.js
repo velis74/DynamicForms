@@ -121,6 +121,7 @@ class APIConsumerLogic {
       rows: this.rows,
       loading: this.loading,
       actions: this.actions,
+      // if table support filter then it also needs form definnition
     };
   }
 
