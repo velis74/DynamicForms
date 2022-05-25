@@ -44,11 +44,11 @@ class APIConsumerLogic {
 
   async fetch(url, isTable) {
     let headers = {};
-    if (isTable) headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
+    if (isTable) headers = {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1};
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
-      return (await apiClient.get(url, { headers })).data;
+      return (await apiClient.get(url, {headers})).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;
@@ -77,7 +77,9 @@ class APIConsumerLogic {
     const UXDefinition = await this.getUXDefinition(null, true);
     this.pkName = UXDefinition.primary_key_name;
     this.titles = UXDefinition.titles;
-    UXDefinition.columns.forEach((column) => { this.fields[column.name] = column; });
+    UXDefinition.columns.forEach((column) => {
+      this.fields[column.name] = column;
+    });
     this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
     this.rows = new TableRows(this, UXDefinition.rows);
     this.setOrdering(
@@ -104,7 +106,7 @@ class APIConsumerLogic {
   }
 
   setOrdering(parameter, style, counter) {
-    this.ordering = { parameter: parameter || 'ordering', style, counter };
+    this.ordering = {parameter: parameter || 'ordering', style, counter};
   }
 
   title(which) {
@@ -140,8 +142,12 @@ class APIConsumerLogic {
     };
   }
 
-  delete() {
-    console.log('rest delete', this);
+  async deleteRow(tableRow) {
+    await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`).then(() => {
+      this.rows.deleteRow(tableRow[this.pkName]);
+    }).catch((err) => {
+      console.error(err);
+    });
   }
 }
 

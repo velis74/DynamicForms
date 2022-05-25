@@ -22,7 +22,7 @@ export default {
      */
     displayComponent: { type: Object, required: true, validator(value) { return ComponentDisplay.isDefined(value); } },
   },
-  data() { return { orderingCounter: this.consumer.ordering.counter.counter, dfEventHandler: true }; },
+  data() { return { orderingCounter: this.consumer.ordering.counter.counter }; },
   computed: {
     renderComponent() {
       switch (this.displayComponent) {
@@ -46,9 +46,8 @@ export default {
     },
   },
   methods: {
-    handleEvent(type, eventPayload) {
-      console.log('foo', Math.random(), type, eventPayload);
-      return true;
+    actionDelete(actionData, payload) {
+      this.consumer.deleteRow(payload);
     },
   },
   watch: {

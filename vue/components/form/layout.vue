@@ -36,7 +36,7 @@ export default {
     payload: { type: FormPayload, default: null },
     actions: { type: FilteredActions, default: null },
   },
-  data() { return { dfEventHandler: true, errors: {} }; },
+  data() { return { errors: {} }; },
   computed: {
     errorText() {
       const nonFieldError = 'non_field_errors';
