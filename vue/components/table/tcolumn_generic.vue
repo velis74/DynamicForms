@@ -70,9 +70,7 @@ export default {
     rowClick(event, eventsFilter, column) {
       if (this.thead && eventsFilter === 'ROW_CLICK' && column) {
         // A column in thead was clicked: adjust sorting
-        this.$refs.ordering.orderClick(event);
-        // defer handling the click to ordering indicator
-        console.log('row click');
+        this.$refs.ordering.orderClick(event); // defer handling the click to ordering indicator
       }
     },
   },

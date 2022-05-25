@@ -54,7 +54,7 @@ export default class TableRows {
     let wasModified = false;
     const pkName = this.logic.pkName;
     newRows.map((row) => {
-      const rowData = row instanceof TableRow ? row : new TableRow(row);
+      const rowData = new TableRow(row);
       const pk = rowData[pkName];
       const pkIdx = this.rowIndices[pk];
       if (pkIdx != null) {

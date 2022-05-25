@@ -65,7 +65,6 @@ export default {
     // eslint-disable-next-line no-unused-vars
     rowClick(event, eventsFilter, column) {
       // we're currently not processing any clicks outside column cells
-      console.log('row clicked');
     },
   },
 };
