@@ -32,7 +32,8 @@ export default {
 
       const functionName = this.getDispatchActionFunctionName(actionData);
       const handler = this.getHandler(functionName);
-      if (handler && handler[functionName](actionData, this.getHandler(functionName, true))) {
+      if (handler && handler[functionName]) {
+        handler[functionName](actionData, this.getHandler(functionName, true));
         return;
       }
       if (this[functionName]) {

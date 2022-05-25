@@ -44,11 +44,11 @@ class APIConsumerLogic {
 
   async fetch(url, isTable) {
     let headers = {};
-    if (isTable) headers = {'x-viewmode': 'TABLE_ROW', 'x-pagination': 1};
+    if (isTable) headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
-      return (await apiClient.get(url, {headers})).data;
+      return (await apiClient.get(url, { headers })).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;
@@ -106,7 +106,7 @@ class APIConsumerLogic {
   }
 
   setOrdering(parameter, style, counter) {
-    this.ordering = {parameter: parameter || 'ordering', style, counter};
+    this.ordering = { parameter: parameter || 'ordering', style, counter };
   }
 
   title(which) {

@@ -57,7 +57,6 @@ export default class TableRows {
       const rowData = row instanceof TableRow ? row : new TableRow(row);
       const pk = rowData[pkName];
       const pkIdx = this.rowIndices[pk];
-      console.log(pk, pkIdx);
       if (pkIdx != null) {
         this.data[pkIdx] = rowData;
         wasModified = true;
