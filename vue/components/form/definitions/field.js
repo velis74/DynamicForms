@@ -61,6 +61,7 @@ function RenderParams(params) {
 
 export default class FormField {
   constructor(fieldDef) {
+    console.log(fieldDef, 'demodemo11');
     // Below we circumvent having to declare an internal variable which property getters would be reading from
     Object.defineProperties(this, {
       fieldDef: { get() { return fieldDef; }, enumerable: false },

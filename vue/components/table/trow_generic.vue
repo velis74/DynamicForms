@@ -19,6 +19,7 @@
       :row-data="rowData"
       :thead="thead"
       :actions="actions"
+      :filter-row="(filterDefinition || {columns: {}}).columns[column.name]"
     />
   </div>
 </template>
@@ -29,6 +30,7 @@ import { ObserveVisibility } from 'vue-observe-visibility';
 import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
+import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render_measure';
 
 export default {
@@ -41,9 +43,8 @@ export default {
     rowData: { type: Object, required: true },
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     actions: { type: FilteredActions, default: null },
+    filterDefinition: { type: TableFilterRow, default: null },
   },
-  // beforeMount() { console.log('beforeMount', this.rowData.id); },
-  // beforeUpdate() { console.log('beforeUpdate', this.rowData.id); },
   computed: {
     rowInfiniteStyle() {
       // For rows not currently rendered, we set a fixed width & height. Height is 10 if it hadn't been computed yet
@@ -61,6 +62,11 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     rowClick(event, eventsFilter, column) {
+      console.log(event, eventsFilter, column);
+      if (this.filterDefinition) {
+        // eslint-disable-next-line no-useless-return
+        return;
+      }
       // we're currently not processing any clicks outside column cells
     },
   },

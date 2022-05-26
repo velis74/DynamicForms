@@ -54,6 +54,8 @@ export default {
       return {
         get value() { return _.cloneDeep(self.payload[self.field.name]); },
         setValue: function setValue(newValue) {
+          console.log(Math.random(), self.payload[self.field.name], newValue);
+
           const oldValue = _.cloneDeep(self.payload[self.field.name]);
           self.payload[`set${self.field.name}Value`](newValue);
           self.emit('value-changed', { field: self.field.name, oldValue, newValue: self.payload[self.field.name] });

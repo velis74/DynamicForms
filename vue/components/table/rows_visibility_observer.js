@@ -9,7 +9,6 @@
  *
  * This mixin is intended to be used in tbody. it expects the root element to be the parent div with items as rows
  */
-// import _ from 'lodash';
 
 function findAnyVisibleRow(parent) {
   const viewPortHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);

@@ -2,6 +2,7 @@ import FilteredActions from '../actions/filtered_actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
+import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api_client';
 import getObjectFromPath from '../util/get_object_from_path';
@@ -40,6 +41,7 @@ class APIConsumerLogic {
       style: null,
       counter: 0,
     };
+    this.filterDefinition = null;
   }
 
   async fetch(url, isTable) {
@@ -88,11 +90,14 @@ class APIConsumerLogic {
     this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
     this.actions = new FilteredActions(UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
+    this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
   async getFormDefinition(pkValue) {
     if (this.formLayout == null) {
       const UXDefinition = await this.getUXDefinition(pkValue, false);
+      // eslint-disable-next-line no-debugger
+      // debugger;
       this.requestedPKValue = pkValue;
       this.pkName = UXDefinition.primary_key_name;
       this.titles = UXDefinition.titles;
@@ -121,7 +126,7 @@ class APIConsumerLogic {
       rows: this.rows,
       loading: this.loading,
       actions: this.actions,
-      // if table support filter then it also needs form definnition
+      filterDefinition: this.filterDefinition,
     };
   }
 
