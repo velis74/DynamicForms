@@ -4,7 +4,10 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
-        <VuetifyActions :actions="actions.header()"/>
+        <v-app-bar :flat="true" style="background-color: inherit; max-height: 3rem;">
+          <v-spacer/>
+          <VuetifyActions :actions="actions.header()"/>
+        </v-app-bar>
         <VuetifyTHead
           :rendered-columns="responsiveColumns"
           :filter-definition="filterDefinition"
@@ -41,9 +44,9 @@ export default {
 
 <style scoped>
 .nodata {
-  min-height:  4em;
+  min-height: 4em;
   line-height: 4em;
-  text-align:  center;
-  font-size:   200%;
+  text-align: center;
+  font-size: 200%;
 }
 </style>

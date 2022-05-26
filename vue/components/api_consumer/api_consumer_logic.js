@@ -79,7 +79,9 @@ class APIConsumerLogic {
     const UXDefinition = await this.getUXDefinition(null, true);
     this.pkName = UXDefinition.primary_key_name;
     this.titles = UXDefinition.titles;
-    UXDefinition.columns.forEach((column) => { this.fields[column.name] = column; });
+    UXDefinition.columns.forEach((column) => {
+      this.fields[column.name] = column;
+    });
     this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
     this.rows = new TableRows(this, UXDefinition.rows);
     this.setOrdering(
@@ -96,8 +98,6 @@ class APIConsumerLogic {
   async getFormDefinition(pkValue) {
     if (this.formLayout == null) {
       const UXDefinition = await this.getUXDefinition(pkValue, false);
-      // eslint-disable-next-line no-debugger
-      // debugger;
       this.requestedPKValue = pkValue;
       this.pkName = UXDefinition.primary_key_name;
       this.titles = UXDefinition.titles;
@@ -144,6 +144,14 @@ class APIConsumerLogic {
       loading: this.loading,
       actions: this.actions,
     };
+  }
+
+  async deleteRow(tableRow) {
+    await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`).then(() => {
+      this.rows.deleteRow(tableRow[this.pkName]);
+    }).catch((err) => {
+      console.error(err);
+    });
   }
 }
 

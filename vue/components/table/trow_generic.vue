@@ -53,6 +53,9 @@ export default {
         `width: 1px; height: ${this.rowData.dfControlStructure.measuredHeight || 10}px`
       );
     },
+    payload() {
+      return this.rowData;
+    },
   },
   methods: {
     onMeasure(refName, maxWidth, maxHeight) {
