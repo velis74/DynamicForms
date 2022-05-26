@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import TableRow from './row';
 
 export default class TableRows {
@@ -51,13 +53,10 @@ export default class TableRows {
   updateRows(newRows) {
     let wasModified = false;
     const pkName = this.logic.pkName;
-
-    // ind[item.id] = idx;
     newRows.map((row) => {
       const rowData = new TableRow(row);
       const pk = rowData[pkName];
       const pkIdx = this.rowIndices[pk];
-
       if (pkIdx != null) {
         this.data[pkIdx] = rowData;
         wasModified = true;
@@ -71,29 +70,12 @@ export default class TableRows {
     if (wasModified) this.drawSeq++;
   }
 
-  /*
-  function updateRowFromForm(table, tableRows) {
-    return (rowData) => {
-      const rowId = rowData.id;
-      if (rowId) {
-        apiClient
-          .get(table.detail_url.replace('--record_id--', rowId), { headers: { 'x-viewmode': 'TABLE_ROW' } })
-          .then((response) => {
-            // first we map existing row ids to respective array indexes
-            tableRows.updateRows([response.data]);
-          })
-          .catch((err) => { console.error(err); })
-          .finally(() => { table.loading = false; });
-      }
-    };
+  reIndex() {
+    this.rowIndices = _.invert(_.mapValues(this.data, (row) => row[this.logic.pkName]));
   }
 
-  function deleteRow(res, tableRows) {
-    return (rowId, idIndices) => {
-      const indices = idIndices || getRowIndices(tableRows);
-      tableRows.splice(indices[rowId], 1);
-      res.drawSeq++;
-    };
+  deleteRow(tableRowId) {
+    this.data.splice(this.rowIndices[tableRowId], 1);
+    this.reIndex();
   }
-  */
 }

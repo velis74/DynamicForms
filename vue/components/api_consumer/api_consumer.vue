@@ -45,6 +45,11 @@ export default {
       }
     },
   },
+  methods: {
+    actionDelete(actionData, payload) {
+      this.consumer.deleteRow(payload);
+    },
+  },
   watch: {
     'consumer.ordering': {
       handler() {
