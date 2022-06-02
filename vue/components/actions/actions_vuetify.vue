@@ -1,11 +1,11 @@
 <template>
-  <v-row v-if="actions != null && actions.length > 0" align="end" justify="end">
+  <v-row v-if="actions != null && actions.length > 0" justify="end">
     <v-btn
       v-for="(action,idx) in actions"
       :key="idx"
       :elevation="0"
-      style="margin: 0.5rem 0 0.5rem 0.5rem;"
       @click="dispatchAction(action)"
+      :class="action.position === 'HEADER' || action.position === 'FORM_FOOTER' ? 'ms-3 my-2' : 'ms-3 my-1'"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
       <span v-if="displayIcon(action) && displayLabel(action)" style="width: .5rem"/>
