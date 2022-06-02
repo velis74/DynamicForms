@@ -48,6 +48,7 @@ export default {
   methods: {
     actionDelete(actionData, payload) {
       this.consumer.deleteRow(payload);
+      return true;
     },
   },
   watch: {

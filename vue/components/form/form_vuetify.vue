@@ -9,9 +9,9 @@
     <v-card-text>
       <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions"/>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="vuetify-form-actions">
       <v-layout justify-end>
-        <df-actions :actions="actions.formFooter()" style="margin-right: 0.5rem;"/>
+        <df-actions :actions="actions.formFooter()"/>
       </v-layout>
     </v-card-actions>
   </v-card>
@@ -29,3 +29,9 @@ export default {
   mixins: [Form],
 };
 </script>
+
+<style>
+  .vuetify-form-actions {
+    margin-right: 1em;
+  }
+</style>

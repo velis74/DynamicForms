@@ -4,10 +4,7 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
-        <v-app-bar :flat="true" style="background-color: inherit; max-height: 3rem;">
-          <v-spacer/>
-          <VuetifyActions :actions="actions.header()"/>
-        </v-app-bar>
+        <VuetifyActions :actions="actions.header()"/>
         <VuetifyTHead :rendered-columns="responsiveColumns" :row-data="theadRowData" :actions="actions"/>
         <VuetifyTBody
           :data-columns="dataColumns"
