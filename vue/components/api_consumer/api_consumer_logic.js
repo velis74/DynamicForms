@@ -42,6 +42,7 @@ class APIConsumerLogic {
       counter: 0,
     };
     this.filterDefinition = null;
+    this.filterData = {};
   }
 
   async fetch(url, isTable) {
@@ -50,7 +51,11 @@ class APIConsumerLogic {
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
-      return (await apiClient.get(url, { headers })).data;
+      let requestUrl = url;
+      if (Object.keys(this.filterData).length !== 0) {
+        requestUrl = this.formatUrlWithOrderParam(`${this.baseURL}.json`);
+      }
+      return (await apiClient.get(requestUrl, { headers, params: this.filterData })).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;
@@ -59,14 +64,17 @@ class APIConsumerLogic {
     }
   }
 
-  async reload() {
+  formatUrlWithOrderParam(url) {
+    let requestUrl = url;
     const orderingTransformationFunction = getObjectFromPath(this.ordering_style);
     const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue(orderingTransformationFunction);
     const order = orderingValue.length ? `${this.ordering.parameter}=${orderingValue}` : '';
+    if (order.length) requestUrl = `${url}?${order}`;
+    return requestUrl;
+  }
 
-    let url = `${this.baseURL}.json`;
-    if (order.length) url = `${url}?${order}`;
-    this.rows = new TableRows(this, await this.fetch(url, true));
+  async reload() {
+    this.rows = new TableRows(this, await this.fetch(this.formatUrlWithOrderParam(`${this.baseURL}.json`), true));
   }
 
   async getUXDefinition(pkValue, isTable) {
@@ -152,6 +160,12 @@ class APIConsumerLogic {
     }).catch((err) => {
       console.error(err);
     });
+  }
+
+  async filter(filterData) {
+    // eslint-disable-next-line max-len,no-unused-expressions
+    filterData.newValue ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];
+    await this.reload();
   }
 }
 

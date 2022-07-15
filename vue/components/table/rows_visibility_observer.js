@@ -108,8 +108,7 @@ export default {
       } else {
         lastVisible = search(children, firstVisible, 1, viewPortHeight);
       }
-      const pageSize = lastVisible - firstVisible;
-      // console.log(startWith, firstVisible, lastVisible);
+      const pageSize = this.rows.data.length === 1 ? 1 : lastVisible - firstVisible;
       this.rows.data.forEach((row, index) => {
         const isShowing = index > firstVisible - pageSize && index < lastVisible + pageSize;
         if (row.dfControlStructure.isShowing !== isShowing) row.setIsShowing(isShowing);

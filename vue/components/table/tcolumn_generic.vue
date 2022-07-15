@@ -19,7 +19,6 @@
         :actions="actions"
       />
     </div>
-
     <!-- but maybe the field component is actually a row start / end actions field -->
     <!--Actions
       v-else-if="['#actions-row_start', '#actions-row_end'].includes(column.name)"
@@ -28,18 +27,23 @@
       :actions="actions.filter(column.name.substr(9).toUpperCase())"
     /-->
     <!-- or it's just a decorated text and not a component -->
-    <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
+    <div v-else-if="!filterRow" v-html="column.renderDecoratorFunction(rowData, thead)"/>
     <!-- we finish up with any field end actions -->
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_END', column.name)"/-->
-    <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering" @click.native="order"/>
-    <div>
+    <template v-if="filterRow">
+      <div style="display: flex;">
+        <div v-html="column.renderDecoratorFunction(rowData, thead)"/>
+        <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering" @click.native="order"/>
+      </div>
       <FormField
         v-if="filterRow"
         :field="filterRow.formFieldInstance"
         :payload="payload"
         :errors="{}"
+        style="padding: 0; margin: 0;"
       />
-    </div>
+    </template>
+    <OrderingIndicator v-else-if="thead" ref="ordering" :ordering="column.ordering" @click.native="order"/>
     <df-actions v-if="!thead" :actions="actions.fieldEnd(column.name)"/>
     <df-actions v-if="!thead && column.name === '#actions-row_end'" :actions="actions.rowEnd()"/>
   </div>
