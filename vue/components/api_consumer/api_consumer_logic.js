@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import FilteredActions from '../actions/filtered_actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormLayout from '../form/definitions/layout';
@@ -45,14 +47,14 @@ class APIConsumerLogic {
     this.filterData = {};
   }
 
-  async fetch(url, isTable) {
+  async fetch(url, isTable, filter = false) {
     let headers = {};
     if (isTable) headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
       let requestUrl = url;
-      if (Object.keys(this.filterData).length !== 0) {
+      if (filter) {
         requestUrl = this.formatUrlWithOrderParam(`${this.baseURL}.json`);
       }
       return (await apiClient.get(requestUrl, { headers, params: this.filterData })).data;
@@ -73,8 +75,9 @@ class APIConsumerLogic {
     return requestUrl;
   }
 
-  async reload() {
-    this.rows = new TableRows(this, await this.fetch(this.formatUrlWithOrderParam(`${this.baseURL}.json`), true));
+  async reload(filter = false) {
+    this.rows = new TableRows(this,
+      await this.fetch(this.formatUrlWithOrderParam(`${this.baseURL}.json`), true, filter));
   }
 
   async getUXDefinition(pkValue, isTable) {
@@ -164,8 +167,8 @@ class APIConsumerLogic {
 
   async filter(filterData) {
     // eslint-disable-next-line max-len,no-unused-expressions
-    filterData.newValue ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];
-    await this.reload();
+    !_.includes(['', undefined, null], filterData.newValue) ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];
+    await this.reload(true);
   }
 }
 
