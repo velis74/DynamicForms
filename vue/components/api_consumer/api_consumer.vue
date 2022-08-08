@@ -52,6 +52,7 @@ export default {
     },
     actionValuechanged(actionData) {
       this.consumer.filter(actionData);
+      return true;
     },
   },
   watch: {
