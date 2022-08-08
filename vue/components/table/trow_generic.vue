@@ -65,10 +65,6 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     rowClick(event, eventsFilter, column) {
-      if (this.filterDefinition) {
-        // eslint-disable-next-line no-useless-return
-        return;
-      }
       // we're currently not processing any clicks outside column cells
     },
   },
