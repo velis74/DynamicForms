@@ -1,6 +1,6 @@
 <template>
   <v-checkbox
-    v-model="value"
+    v-model="boolValue"
     :indeterminate="indeterminate"
     :false-value="false"
     :true-value="true"
@@ -29,12 +29,24 @@ export default {
       indeterminate: this.field.allowNull && (this.value === undefined || this.value === null),
     };
   },
+  computed: {
+    boolValue: {
+      get: function get() {
+        return this.internalValue;
+      },
+      // eslint-disable-next-line no-unused-vars
+      set: function set(newVal) {},
+    },
+  },
   mounted() {
     if (this.value) {
       this.internalValue = true;
+      return;
     }
     if (this.value === undefined || this.value === null) {
       this.internalValue = null;
+    } else {
+      this.internalValue = false;
     }
   },
   methods: {
@@ -51,13 +63,11 @@ export default {
           this.internalValue = true;
           this.indeterminate = false;
         }
-        this.value = _.clone(this.internalValue);
+        this.boolValue = _.clone(this.internalValue);
       } else {
-        this.value = _.clone(newValue);
+        this.boolValue = _.clone(newValue);
       }
-      if (oldVal !== this.value) {
-        this.$emit('onValueConfirmed', true);
-      }
+      this.payload.setValue(this.boolValue);
     },
   },
 };

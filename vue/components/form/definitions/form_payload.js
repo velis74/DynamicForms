@@ -5,7 +5,6 @@ import ColumnDisplay from '../../classes/display_mode';
 export default class FormPayload {
   constructor(data, layout) {
     const properties = {};
-
     Object.values(layout.fields).forEach((field) => {
       if (field.visibility === ColumnDisplay.SUPPRESS) return;
       if (field.readOnly) {

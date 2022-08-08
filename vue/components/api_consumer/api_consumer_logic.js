@@ -1,7 +1,10 @@
+import _ from 'lodash';
+
 import FilteredActions from '../actions/filtered_actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
+import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api_client';
 import getObjectFromPath from '../util/get_object_from_path';
@@ -40,15 +43,21 @@ class APIConsumerLogic {
       style: null,
       counter: 0,
     };
+    this.filterDefinition = null;
+    this.filterData = {};
   }
 
-  async fetch(url, isTable) {
+  async fetch(url, isTable, filter = false) {
     let headers = {};
     if (isTable) headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
-      return (await apiClient.get(url, { headers })).data;
+      let requestUrl = url;
+      if (filter) {
+        requestUrl = this.formatUrlWithOrderParam(`${this.baseURL}.json`);
+      }
+      return (await apiClient.get(requestUrl, { headers, params: this.filterData })).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;
@@ -57,14 +66,18 @@ class APIConsumerLogic {
     }
   }
 
-  async reload() {
+  formatUrlWithOrderParam(url) {
+    let requestUrl = url;
     const orderingTransformationFunction = getObjectFromPath(this.ordering_style);
     const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue(orderingTransformationFunction);
     const order = orderingValue.length ? `${this.ordering.parameter}=${orderingValue}` : '';
+    if (order.length) requestUrl = `${url}?${order}`;
+    return requestUrl;
+  }
 
-    let url = `${this.baseURL}.json`;
-    if (order.length) url = `${url}?${order}`;
-    this.rows = new TableRows(this, await this.fetch(url, true));
+  async reload(filter = false) {
+    this.rows = new TableRows(this,
+      await this.fetch(this.formatUrlWithOrderParam(`${this.baseURL}.json`), true, filter));
   }
 
   async getUXDefinition(pkValue, isTable) {
@@ -90,6 +103,7 @@ class APIConsumerLogic {
     this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
     this.actions = new FilteredActions(UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
+    this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
   async getFormDefinition(pkValue) {
@@ -123,6 +137,7 @@ class APIConsumerLogic {
       rows: this.rows,
       loading: this.loading,
       actions: this.actions,
+      filterDefinition: this.filterDefinition,
     };
   }
 
@@ -148,6 +163,12 @@ class APIConsumerLogic {
     }).catch((err) => {
       console.error(err);
     });
+  }
+
+  async filter(filterData) {
+    // eslint-disable-next-line max-len,no-unused-expressions
+    !_.includes(['', undefined, null], filterData.newValue) ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];
+    await this.reload(true);
   }
 }
 

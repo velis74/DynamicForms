@@ -6,6 +6,7 @@ import ColumnDisplay from '../classes/display_mode';
 import IndexedArray from '../classes/indexed_array';
 import TranslationsMixin from '../util/translations_mixin';
 
+import TableFilterRow from './definitions/filterrow';
 import { ResponsiveLayouts } from './definitions/responsive_layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
@@ -32,6 +33,7 @@ export default {
     rows: { type: TableRows, required: true },
     loading: { type: Boolean, default: false },
     actions: { type: FilteredActions, default: null },
+    filterDefinition: { type: TableFilterRow, default: null },
   },
   data() { return { containerWidth: null, resizeObserver: null }; },
   computed: {

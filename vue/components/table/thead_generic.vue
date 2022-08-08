@@ -5,6 +5,7 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
+      :filter-definition="filterDefinition"
       thead
     />
     <div class="df-separator"/>
@@ -14,6 +15,7 @@
 import FilteredActions from '../actions/filtered_actions';
 import IndexedArray from '../classes/indexed_array';
 
+import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import RenderMeasured from './render_measure';
 import GenericTRow from './trow_generic';
@@ -26,6 +28,7 @@ export default {
     renderedColumns: { type: IndexedArray, required: true },
     rowData: { type: TableRow, required: true },
     actions: { type: FilteredActions, default: null },
+    filterDefinition: { type: TableFilterRow, default: null },
   },
   methods: {
     onMeasure(refName, maxWidth, maxHeight) {

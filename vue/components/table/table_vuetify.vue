@@ -5,7 +5,12 @@
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
         <VuetifyActions :actions="actions.header()"/>
-        <VuetifyTHead :rendered-columns="responsiveColumns" :row-data="theadRowData" :actions="actions"/>
+        <VuetifyTHead
+          :rendered-columns="responsiveColumns"
+          :row-data="theadRowData"
+          :actions="actions"
+          :filter-definition="filterDefinition"
+        />
         <VuetifyTBody
           :data-columns="dataColumns"
           :rendered-columns="responsiveColumns"
