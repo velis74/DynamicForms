@@ -6,7 +6,6 @@
       </v-btn-toggle>
       <!-- <Form form-p-k="new" :data="data" :show-form="showForm" :show-table="showTable"/> -->
     </v-row>
-    {{ componentName }}
     <component :is="componentName" v-if="componentName" v-bind="data"/>
   </div>
 </template>
