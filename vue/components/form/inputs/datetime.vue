@@ -68,6 +68,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import '~vue-datetime/dist/vue-datetime.css';
+
+.vdatetime-calendar__month {
+  white-space: normal;
+}
 </style>

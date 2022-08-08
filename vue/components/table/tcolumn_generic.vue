@@ -10,7 +10,7 @@
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
     <!-- then the field component itself -->
     <df-actions v-if="!thead" :actions="actions.fieldStart(column.name)"/>
-    <div v-if="column.renderComponentName">
+    <div v-if="column.renderComponentName && !filterRow">
       <component
         :is="column.renderComponentName"
         :row-data="rowData"
