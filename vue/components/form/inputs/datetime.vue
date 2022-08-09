@@ -14,6 +14,7 @@
         :format="displayFormat"
         style="float: left; width: 85%; border: 1px solid #e8e8e8; height: 2rem;"
         input-style="vertical-align: sub; width: 100%;"
+        value-zone="local"
         @input="dateTimeInput"
       />
       <InputClearButton style="display: inline-block; width: 1rem; margin-top: 0.5rem;" @clearButtonPressed="clear"/>
