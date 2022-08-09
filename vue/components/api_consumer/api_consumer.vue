@@ -50,6 +50,10 @@ export default {
       this.consumer.deleteRow(payload);
       return true;
     },
+    actionValuechanged(actionData) {
+      this.consumer.filter(actionData);
+      return true;
+    },
   },
   watch: {
     'consumer.ordering': {
