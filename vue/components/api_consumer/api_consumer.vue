@@ -40,19 +40,11 @@ export default {
       switch (this.displayComponent) {
       case ComponentDisplay.TABLE:
         return this.consumer.tableDefinition;
+        // TODO: what about form and dialog? Where is this APIConsumer even used?
+        // TODO: And why isn't APIConsumer used on the page which showcases the three input modes. What's there instead?
       default:
         throw Error('Unknown component display type');
       }
-    },
-  },
-  methods: {
-    actionDelete(actionData, payload) {
-      this.consumer.deleteRow(payload);
-      return true;
-    },
-    actionValuechanged(actionData) {
-      this.consumer.filter(actionData);
-      return true;
     },
   },
   watch: {
@@ -63,6 +55,16 @@ export default {
         }
       },
       deep: true,
+    },
+  },
+  methods: {
+    actionDelete(actionData, payload) {
+      this.consumer.deleteRow(payload);
+      return true;
+    },
+    actionValuechanged(actionData) {
+      this.consumer.filter(actionData);
+      return true;
     },
   },
 };

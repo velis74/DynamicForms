@@ -5,11 +5,11 @@
     @click.stop="(event) => rowClick(event, 'ROW_CLICK', column)"
     @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', column)"
   >
-    <df-actions v-if="!thead && column.name === '#actions-row_start'" :actions="actions.rowStart()"/>
+    <df-actions v-if="!thead && column.name === '#actions-row_start'" :actions="actions.rowStart" class="actions"/>
     <!-- first we render any field start actions -->
     <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
     <!-- then the field component itself -->
-    <df-actions v-if="!thead" :actions="actions.fieldStart(column.name)"/>
+    <df-actions v-if="!thead" :actions="actions.fieldStart(column.name)" class="actions"/>
     <div v-if="column.renderComponentName && !filterRow">
       <component
         :is="column.renderComponentName"
@@ -44,15 +44,15 @@
       />
     </template>
     <OrderingIndicator v-else-if="thead" ref="ordering" :ordering="column.ordering" @click.native="order"/>
-    <df-actions v-if="!thead" :actions="actions.fieldEnd(column.name)"/>
-    <df-actions v-if="!thead && column.name === '#actions-row_end'" :actions="actions.rowEnd()"/>
+    <df-actions v-if="!thead" :actions="actions.fieldEnd(column.name)" class="actions"/>
+    <df-actions v-if="!thead && column.name === '#actions-row_end'" :actions="actions.rowEnd" class="actions"/>
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
 
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormField from '../form/field';
 import DfActions from '../public/df-actions';
@@ -100,12 +100,20 @@ export default {
     rowClick(event, eventsFilter, column) {
       if (this.thead && eventsFilter === 'ROW_CLICK' && column) {
         // A column in thead was clicked: adjust sorting
+        // TODO: predelaj na action-handler-mixin
         // this.$refs.ordering.orderClick(event); // defer handling the click to ordering indicator
       }
     },
     order(event) {
+      // TODO: predelaj na action-handler-mixin
       this.$refs.ordering.orderClick(event);
     },
   },
 };
 </script>
+
+<style scoped>
+.actions {
+  margin: -.25em 0; /* nullify the df-col margin to make the button align better with the data cells */
+}
+</style>

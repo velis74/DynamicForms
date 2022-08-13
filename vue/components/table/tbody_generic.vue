@@ -15,7 +15,7 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed_array';
 
 import TableRows from './definitions/rows';

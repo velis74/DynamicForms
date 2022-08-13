@@ -27,7 +27,7 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed_array';
 
 import TableFilterRow from './definitions/filterrow';
@@ -66,6 +66,8 @@ export default {
     // eslint-disable-next-line no-unused-vars
     rowClick(event, eventsFilter, column) {
       // we're currently not processing any clicks outside column cells
+      // TODO: predelaj na event emitter mixin
+      console.log('Row clicked...');
     },
   },
 };

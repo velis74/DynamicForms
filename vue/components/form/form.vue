@@ -1,5 +1,5 @@
 <script>
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form_payload';
 import FormLayoutClass from './definitions/layout';

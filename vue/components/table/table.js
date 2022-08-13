@@ -1,7 +1,7 @@
 import ResizeObserver from 'resize-observer-polyfill';
 import Vue from 'vue';
 
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import ColumnDisplay from '../classes/display_mode';
 import IndexedArray from '../classes/indexed_array';
 import TranslationsMixin from '../util/translations_mixin';

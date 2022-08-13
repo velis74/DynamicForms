@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed_array';
 
 import TableFilterRow from './definitions/filterrow';

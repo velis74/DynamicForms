@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import FilteredActions from '../actions/filtered_actions';
-import EventEmitterMixin from '../public/event-emitter-mixin';
+import ActionHandlerMixin from '../actions/action-handler-mixin';
+import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form_payload';
 import FormLayout from './definitions/layout';
@@ -30,7 +30,7 @@ import FormRow from './row';
 export default {
   name: 'FormLayout',
   components: { FormRow },
-  mixins: [EventEmitterMixin], // TODO: implement also formFieldChangeMixin
+  mixins: [ActionHandlerMixin], // TODO: implement also formFieldChangeMixin
   props: {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },

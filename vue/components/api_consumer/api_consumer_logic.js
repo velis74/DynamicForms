@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 import FormPayload from '../form/definitions/form_payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';

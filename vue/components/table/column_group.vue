@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import FilteredActions from '../actions/filtered_actions';
+import FilteredActions from '../actions/filtered-actions';
 
 import TableColumn from './definitions/column';
 import RenderMeasured from './render_measure';

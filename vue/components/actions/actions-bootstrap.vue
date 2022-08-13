@@ -1,10 +1,11 @@
 <template>
-  <div v-if="actions != null && actions.length > 0" class="dynamicforms-actioncontrol">
+  <div v-if="actions != null && actions.length > 0" class="dynamicforms-actioncontrol text-right">
     <b-button
-      v-for="action in actions"
-      :key="action.name + action.icon"
+      v-for="(action, idx) in actions"
+      :key="idx"
       :variant="buttonVariant(action)"
-      size="sm"
+      :class="idx === 0 ? '' : 'ml-3'"
+      :size="isSmallSize(action) ? 'xs' : 'sm'"
     >
       <IonIcon :class="`action-icon ${iconClass(action)}`" :name="action.icon"/>
       <span :class="marginClass(action)" style="width: .5rem"/>
@@ -16,12 +17,12 @@
 <script>
 import IonIcon from 'vue-ionicon';
 
-import Actions from './actions';
+import ActionsMixin from './actions-mixin';
 
 export default {
   name: 'BootstrapActions',
   components: { IonIcon },
-  mixins: [Actions],
+  mixins: [ActionsMixin],
   methods: {
     getVisibilityClass(visible) {
       return visible ? 'd-inline-block' : 'd-none';

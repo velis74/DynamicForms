@@ -6,7 +6,6 @@ class ActionsHandler {
     this.actions = actions;
     this.showModal = showModal; // method to call for showing medal dialog with item editor
     this.tableUuid = tableUuid;
-    this.filterCache = {}; // contains cached .filter results
     let cpnt = routerComponent;
     while (!cpnt.$router && cpnt.$parent) cpnt = cpnt.$parent;
     this.$router = cpnt.$router;
@@ -35,29 +34,6 @@ class ActionsHandler {
       }
       return action;
     });
-  }
-
-  /**
-   * filters actions to include only those rendering at given position
-   * @param position
-   * @param fieldName
-   * @returns {ActionsHandler}
-   */
-  filter(position, fieldName) {
-    const cacheKey = position + (fieldName ? `|${fieldName}` : '');
-    if (this.filterCache[cacheKey] === undefined) {
-      // noinspection JSUnresolvedVariable
-      this.filterCache[cacheKey] = new ActionsHandler(
-        Object.values(this.actions)
-          .filter((action) => action.position === position && (
-            action.field_name === null || action.field_name === fieldName))
-          .reduce((obj, item) => {
-            obj[item.name] = this.actions[item.name];
-            return obj;
-          }, {}), this.showModal, this.tableUuid, this,
-      );
-    }
-    return this.filterCache[cacheKey];
   }
 
   // eslint-disable-next-line class-methods-use-this

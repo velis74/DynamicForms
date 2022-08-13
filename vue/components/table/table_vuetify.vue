@@ -4,7 +4,7 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
-        <VuetifyActions :actions="actions.header()"/>
+        <VuetifyActions :actions="actions.header"/>
         <VuetifyTHead
           :rendered-columns="responsiveColumns"
           :row-data="theadRowData"
@@ -25,7 +25,7 @@
   </v-card>
 </template>
 <script>
-import VuetifyActions from '../actions/actions_vuetify';
+import VuetifyActions from '../actions/actions-vuetify';
 import LoadingIndicator from '../util/loading_indicator';
 
 import Table from './table';

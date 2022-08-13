@@ -1,4 +1,4 @@
-import BootstrapActions from './actions/actions_bootstrap';
+import BootstrapActions from './actions/actions-bootstrap';
 import BootstrapForm from './form/form_bootstrap';
 import FormLayout from './form/layout';
 import BootstrapModal from './modal/modal_api_vuetify';

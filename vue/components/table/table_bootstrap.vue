@@ -4,7 +4,7 @@
     <v-card-text>
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
-        <BootstrapActions :actions="actions.header()"/>
+        <BootstrapActions :actions="actions.header"/>
         <BootstrapTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
         <BootstrapTBody
           :data-columns="dataColumns"
@@ -20,7 +20,7 @@
   </v-card>
 </template>
 <script>
-import BootstrapActions from '../actions/actions_bootstrap';
+import BootstrapActions from '../actions/actions-bootstrap';
 import LoadingIndicator from '../util/loading_indicator';
 
 import Table from './table';

@@ -4,7 +4,7 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 import _ from 'lodash';
 
-import VuetifyActions from '../components/actions/actions_vuetify';
+import VuetifyActions from '../components/actions/actions-vuetify';
 import * as VuetifyComponents from '../components/vuetify';
 
 Vue.use(Vuetify);
@@ -39,7 +39,6 @@ const actionsCopy = [
     field_name: null,
     name: 'add',
     // eslint-disable-next-line max-len
-    action_js: 'dynamicforms.newRow(\'{% url url_reverse|add:\'-detail\' pk=\'new\' format=\'html\' %}\', \'record\', __TABLEID__);',
     action: null,
     label: '+ Add',
     title: 'Add new record',
@@ -71,7 +70,6 @@ const actionsCopy = [
     field_name: null,
     name: 'edit',
     // eslint-disable-next-line max-len
-    action_js: 'dynamicforms.editRow(\'{% url url_reverse|add:\'-detail\' pk=\'__ROWID__\' format=\'html\' %}\'.replace(\'__ROWID__\', $(event.target.parentElement).closest(\'tr[class="df-table-row"]\').attr(\'data-id\')), \'record\', __TABLEID__);',
     action: null,
     label: 'Edit',
     title: 'Edit record',
@@ -84,7 +82,6 @@ const actionsCopy = [
     field_name: null,
     name: 'delete',
     // eslint-disable-next-line max-len
-    action_js: 'dynamicforms.deleteRow(\'{% url url_reverse|add:\'-detail\' pk=row.id %}\', {{row.id}}, \'record\', __TABLEID__);',
     action: null,
     label: 'Delete',
     title: 'Delete record',
@@ -102,7 +99,6 @@ const actionsCopy = [
     position: 'FILTER_ROW_END',
     field_name: null,
     name: 'filter',
-    action_js: 'dynamicforms.defaultFilter(event);',
     action: null,
     label: 'Filter',
     title: 'Filter',

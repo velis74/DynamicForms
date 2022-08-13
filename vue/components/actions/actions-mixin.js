@@ -1,14 +1,14 @@
 import DisplayBreakpoints from '../util/display_breakpoints';
 
+import FilteredActions from './filtered-actions';
+
 export default {
-  props: { actions: { type: Array, default: null } },
+  props: { actions: { type: FilteredActions, default: null } },
   mixins: [DisplayBreakpoints],
   computed: {
     displayStyle() {
       const res = {};
-      const actionsLen = this.actions.length;
-      for (let actInd = 0; actInd < actionsLen; actInd++) {
-        const action = this.actions[actInd];
+      for (const action of this.actions) { // eslint-disable-line no-restricted-syntax
         let actionRes = {};
         if (action.displayStyle) {
           this.checkStyle('asButton', actionRes, action.displayStyle);
@@ -28,6 +28,7 @@ export default {
   methods: {
     checkStyle(attribute, actionRes, displayStyle) {
       let style;
+      // see also action.js about these breakpoints
       if (displayStyle.xl && displayStyle.xl[attribute] !== undefined && this.screen_breakpoints.xlOnly) {
         style = displayStyle.xl[attribute];
       } else if (displayStyle.lg && displayStyle.lg[attribute] !== undefined && this.screen_breakpoints.lgAndUp) {
@@ -53,21 +54,18 @@ export default {
       return this.displayStyle[action.name].asButton ? 'info' : 'link';
     },
     displayIcon(action) {
-      return this.displayStyle[action.name].showIcon && this.iconAvailable(action);
+      return this.displayStyle[action.name].showIcon && action.iconAvailable;
     },
     displayLabel(action) {
-      if (this.displayStyle[action.name].showLabel && this.labelAvailable(action)) return true;
-      return !(this.displayStyle[action.name].showIcon && this.iconAvailable(action));
+      if (this.displayStyle[action.name].showLabel && action.labelAvailable) return true;
+      return !(this.displayStyle[action.name].showIcon && action.iconAvailable);
     },
     labelText(action) {
-      if (this.labelAvailable(action)) return action.label;
+      if (action.labelAvailable) return action.label;
       return action.name;
     },
-    iconAvailable(action) {
-      return action.icon != null && action.icon.length > 0;
-    },
-    labelAvailable(action) {
-      return action.label !== null && action.label.length > 0;
+    isSmallSize(action) {
+      return action.position !== 'HEADER' && action.position !== 'FORM_FOOTER';
     },
   },
 };

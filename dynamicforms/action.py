@@ -10,9 +10,8 @@ from .settings import DYNAMICFORMS
 
 class ActionBase(object):
 
-    def __init__(self, action_js: Union[str, bool], name: str, serializer: Serializer = None, action=None):
+    def __init__(self, name: str, serializer: Serializer = None, action=None):
         """
-        :param action_js: JavaScript to execute when action is run
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
         :param serializer: bind to this serializer instance
         :param action: this is a dict specifying how the vue renderer should render the action. several modes are
@@ -23,9 +22,7 @@ class ActionBase(object):
         """
         assert name is not None, 'Action name must not be None'
         self.name = name
-        self.action_js = action_js
         self.action = action
-        assert self.action_js is not None, 'When declaring action, it must declare action JavaScript to execute'
         # serializer will be set when obtaining a resolved copy
         self.serializer = serializer
 
@@ -59,7 +56,7 @@ class ActionBase(object):
         return string
 
     def as_component_def(self):
-        return {k: getattr(self, k) for k in ('name', 'action_js', 'action')}
+        return {k: getattr(self, k) for k in ('name', 'action')}
 
 
 class TablePosition(IntEnum):
@@ -127,18 +124,18 @@ class RenderableActionMixin(object):
 
 class TableAction(ActionBase, RenderableActionMixin):
 
-    def __init__(self, position: TablePosition, label: str, action_js: str,
-                 title: Union[str, None] = None, icon: Union[str, None] = None, field_name: Union[str, None] = None,
+    def __init__(self, position: TablePosition, label: str, title: Union[str, None] = None,
+                 icon: Union[str, None] = None, field_name: Union[str, None] = None,
                  name: Union[str, None] = None, serializer: Serializer = None,
                  btn_classes: Union[str, dict, None] = None, action=None, display_style=None):
-        ActionBase.__init__(self, action_js, name, serializer, action=action)
+        ActionBase.__init__(self, name, serializer, action=action)
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes,
                                        display_style or self.def_display_style(table_position=position))
         self.position = position
         self.field_name = field_name
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return TableAction(self.position, self.label, self.action_js, self.title, self.icon, self.field_name, self.name,
+        return TableAction(self.position, self.label, self.title, self.icon, self.field_name, self.name,
                            serializer, self.btn_classes, action=self.action, display_style=self.display_style)
 
     def to_component_params(self, row_data, serializer):
@@ -164,7 +161,7 @@ class TableAction(ActionBase, RenderableActionMixin):
         ret = rowclick = rowrclick = ''
         stop_propagation = 'dynamicforms.stopEventPropagation(event);'
 
-        action_action = self.prepare_string(self.action_js)
+        action_action = self.prepare_string('')  # TODO maybe: self.action_js. more likely this just needs to be removed
         if self.position != TablePosition.HEADER:
             # We need to do this differently because of dynamic page loading for tables: each time the serializer
             # has a different UUID
@@ -227,9 +224,9 @@ class TableAction(ActionBase, RenderableActionMixin):
 
 class FieldChangeAction(ActionBase):
 
-    def __init__(self, tracked_fields: Iterable[str], action_js: str, name: Union[str, None] = None,
+    def __init__(self, tracked_fields: Iterable[str], name: Union[str, None] = None,
                  serializer: Serializer = None, action=None):
-        super().__init__(action_js, name, serializer, action=action)
+        super().__init__(name, serializer, action=action)
         self.tracked_fields = tracked_fields
         assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         if serializer:
@@ -274,7 +271,7 @@ class FieldChangeAction(ActionBase):
         raise Exception('Unknown reference type for Action tracked field (%r)' % ref)
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return FieldChangeAction(self.tracked_fields, self.action_js, self.name, serializer)
+        return FieldChangeAction(self.tracked_fields, self.name, serializer)
 
     def render(self, serializer: Serializer, **kwds):
         res = 'var action_func{0.action_id} = {0.action_js};\n'.format(self)
@@ -287,7 +284,7 @@ class FieldChangeAction(ActionBase):
 class FormInitAction(ActionBase):
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return FormInitAction(self.action_js, self.name, serializer, action=self.action)
+        return FormInitAction(self.name, serializer, action=self.action)
 
     def to_component_params(self, row_data, serializer):
         """
@@ -324,7 +321,7 @@ class FieldInitAction(FieldChangeAction):
         return self.name, None
 
     def copy_and_resolve_reference(self, serializer: Serializer):
-        return FieldInitAction(self.tracked_fields, self.action_js, self.name, serializer)
+        return FieldInitAction(self.tracked_fields, self.name, serializer)
 
     def render(self, serializer: Serializer, **kwds):
         # we need window.setTimeout because at the time of form generation, the initial fields value collection
@@ -344,11 +341,11 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         FormButtonTypes.CUSTOM: _('Custom'),
     }
 
-    def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None, action_js: str = None,
+    def __init__(self, btn_type: FormButtonTypes, label: str = None, btn_classes: str = None,
                  button_is_primary: bool = None, position: FormPosition = FormPosition.FORM_FOOTER,
                  name: Union[str, None] = None, serializer: Serializer = None, icon: Union[str, None] = None,
                  action=None, display_style=None):
-        ActionBase.__init__(self, action_js or False, name, serializer, action=action)
+        ActionBase.__init__(self, name, serializer, action=action)
         title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         RenderableActionMixin.__init__(self, label, title, icon, btn_classes,
@@ -389,13 +386,13 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         return res
 
     def copy_and_resolve_reference(self, serializer):
-        return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.action_js, self.button_is_primary,
+        return FormButtonAction(self.btn_type, self.label, self.btn_classes, self.button_is_primary,
                                 self.position, self.name, serializer)
 
     def render(self, serializer: Serializer, position: FormPosition = None, **kwds):
         if self.btn_type == FormButtonTypes.CANCEL and position == 'form':
             return ''
-        action_js = self.action_js
+        action_js = None  # TODO self.action_js
         button_name = ('name="btn-%s"' % self.name) if self.name else ''
         if isinstance(action_js, str):
             action_js = self.prepare_string(action_js)
@@ -436,26 +433,19 @@ class Actions(object):
         if add_default_crud:
             self.actions.append(
                 TableAction(TablePosition.HEADER, _('+ Add'), title=_('Add new record'), name='add',
-                            icon='add-circle-outline',
-                            action_js="dynamicforms.newRow('{% url url_reverse|add:'-detail' pk='new' format='html' %}'"
-                                      ", 'record', __TABLEID__);")
+                            icon='add-circle-outline')
             )
             self.actions.append(
                 TableAction(TablePosition.ROW_CLICK, _('Edit'), title=_('Edit record'), name='edit',
-                            icon='pencil-outline',
-                            action_js="dynamicforms.editRow('{% url url_reverse|add:'-detail' pk='__ROWID__' "
-                                      "format='html' %}'.replace('__ROWID__', $(event.target.parentElement).closest("
-                                      "'tr[class=\"df-table-row\"]').attr('data-id')), 'record', __TABLEID__);")
+                            icon='pencil-outline')
             )
             self.actions.append(
                 TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
-                            icon='trash-outline',
-                            action_js="dynamicforms.deleteRow('{% url url_reverse|add:'-detail' pk=row.id %}', "
-                                      "{{row.id}}, 'record', __TABLEID__);",
-                            ))
+                            icon='trash-outline')
+            )
         if add_default_filter:
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',
-                                            icon='search-outline', action_js="dynamicforms.defaultFilter(event);"))
+                                            icon='search-outline'))
 
         if add_form_buttons:
             self.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))

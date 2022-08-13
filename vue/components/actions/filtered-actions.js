@@ -1,15 +1,31 @@
+import Action from './action';
+
 class FilteredActions {
   constructor(actions) {
-    this.actions = actions;
+    this.actions = Object.keys(actions).reduce((res, actionName) => {
+      const action = actions[actionName];
+      res[actionName] = action instanceof Action ? action : new Action(action);
+      return res;
+    }, {});
     this.filterCache = {}; // contains cached .filter results
   }
 
-  /**
-   * returns list of action objects
-   * @returns [Action]
-   */
-  get list() {
+  get actionsList() {
     return Object.values(this.actions);
+  }
+
+  get length() {
+    return this.actionsList.length;
+  }
+
+  * [Symbol.iterator]() {
+    for (const action of this.actionsList) {
+      yield action;
+    }
+  }
+
+  hasAction(action) {
+    return this.actionsList.some((a) => a.uniqueId === action.uniqueId);
   }
 
   /**
@@ -25,7 +41,7 @@ class FilteredActions {
       this.filterCache[cacheKey] = new FilteredActions(
         Object.values(this.actions)
           .filter((action) => action.position === position && (
-            action.field_name == null || action.field_name === fieldName))
+            action.fieldName == null || action.fieldName === fieldName))
           .reduce((obj, item) => {
             obj[item.name] = this.actions[item.name];
             return obj;
@@ -35,39 +51,39 @@ class FilteredActions {
     return this.filterCache[cacheKey];
   }
 
-  header() {
-    return this.filter('HEADER').list;
+  get header() {
+    return this.filter('HEADER');
   }
 
-  rowStart() {
-    return this.filter('ROW_START').list;
+  get rowStart() {
+    return this.filter('ROW_START');
   }
 
-  rowEnd() {
-    return this.filter('ROW_END').list;
+  get rowEnd() {
+    return this.filter('ROW_END');
   }
 
   fieldAll(fieldName) {
     const res = this.filter('FIELD_START', fieldName);
     const add = this.filter('FIELD_END', fieldName);
     Object.assign(res.actions, add.actions);
-    return res;
+    return new FilteredActions(res);
   }
 
   fieldStart(fieldName) {
-    return this.filter('FIELD_START', fieldName).list;
+    return this.filter('FIELD_START', fieldName);
   }
 
   fieldEnd(fieldName) {
-    return this.filter('FIELD_END', fieldName).list;
+    return this.filter('FIELD_END', fieldName);
   }
 
-  formHeader() {
-    return this.filter('FORM_HEADER').list;
+  get formHeader() {
+    return this.filter('FORM_HEADER');
   }
 
-  formFooter() {
-    return this.filter('FORM_FOOTER').list;
+  get formFooter() {
+    return this.filter('FORM_FOOTER');
   }
 }
 

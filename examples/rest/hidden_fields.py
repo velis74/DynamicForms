@@ -14,9 +14,9 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     }
 
     actions = Actions(
-        FieldChangeAction(['note'], 'examples.action_hiddenfields_note', name='field_note_change'),
-        FieldChangeAction(['unit'], 'examples.action_hiddenfields_unit', name='field_unit_change'),
-        FormInitAction('examples.hide_fields_on_show("{{ serializer.uuid }}");', name='form_init'),
+        FieldChangeAction(['note'], name='field_note_change'),  # TODO action_js = 'examples.action_hiddenfields_note'
+        FieldChangeAction(['unit'], name='field_unit_change'),  # TODO action_js = 'examples.action_hiddenfields_unit'
+        FormInitAction(name='form_init'),  # TODO action_js = 'examples.hide_fields_on_show("{{ serializer.uuid }}");',
         add_default_crud=True, add_default_filter=False
     )
 

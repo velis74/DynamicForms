@@ -13,7 +13,7 @@
 <script>
 import _ from 'lodash';
 
-import EventEmitterMixin from '../public/event-emitter-mixin';
+import ActionHandlerMixin from '../actions/action-handler-mixin';
 
 import FormPayload from './definitions/form_payload';
 import DCheckbox from './inputs/checkbox';
@@ -36,7 +36,7 @@ export default {
     DPlaceholder,
     DSelect,
   },
-  mixins: [EventEmitterMixin],
+  mixins: [ActionHandlerMixin],
   props: {
     field: { type: Object, required: true },
     payload: { type: FormPayload, required: true },
