@@ -2,8 +2,8 @@
   <b-card>
     <template #header>
       {{ title }}
-      <v-layout v-if="actions.formHeader().length" justify-end>
-        <df-actions :actions="actions.formHeader()"/>
+      <v-layout v-if="actions.formHeader.length" justify-end>
+        <df-actions :actions="actions.formHeader"/>
       </v-layout>
     </template>
     <b-card-text>
@@ -12,7 +12,7 @@
     <template #footer>
       <b-row class="text-right">
         <b-col>
-          <df-actions :actions="actions.formFooter()"/>
+          <df-actions :actions="actions.formFooter"/>
         </b-col>
       </b-row>
     </template>

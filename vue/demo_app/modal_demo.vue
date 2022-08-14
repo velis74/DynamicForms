@@ -12,35 +12,46 @@
         <p>This modal is created as a template in this demo page.</p>
         <p>
           It should be trivial to insert any markup you wish.
-          <b>This bold</b> is just for testing whether everything works
+          <b>This bold</b> is just for testing whether everything works.
+          This counter too: {{ counter }}
         </p>
       </div>
-      <div slot="actions">This won't be a div, but an Actions component when it's done</div>
+      <div slot="actions" style="flex: 1">
+        <df-actions :actions="templateDialogActions"/>
+      </div>
     </df-modal>
   </div>
 </template>
 
 <script>
+import Action from '../components/actions/action';
+import FilteredActions from '../components/actions/filtered-actions';
 import DialogSize from '../components/classes/dialog_size';
 import { DfModal, ModalView } from '../components/modal';
-
-/*
-// verjetno ne bo potrebno?
-import Modal from '';
-
-Vue.use(Modal);
-*/
+import { DfActions } from '../components/public';
 
 export default {
   name: 'ModalDemo',
-  components: { DfModal, ModalView },
-  data() { return { showTemplate: false }; },
+  components: { DfModal, ModalView, DfActions },
+  data() {
+    return {
+      showTemplate: false,
+      templateDialogActions: new FilteredActions([Action.closeAction()]),
+      counter: 1,
+    };
+  },
   computed: { DialogSize() { return DialogSize; } },
   methods: {
     async btnClick(which, level) {
       switch (which) {
       case 'template':
         this.showTemplate = !this.showTemplate;
+        if (this.showTemplate) {
+          const intervalId = window.setInterval(() => {
+            this.counter++;
+            if (!this.showTemplate) window.clearInterval(intervalId);
+          }, 2500);
+        }
         break;
       case 'procedural': {
         const res = await this.$dfModal.yesNo(
@@ -70,6 +81,10 @@ export default {
       default:
         break;
       }
+    },
+    actionClose() { // action, payload, extraData) {
+      this.showTemplate = false;
+      return true;
     },
   },
 };

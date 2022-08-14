@@ -2,8 +2,8 @@
   <v-card>
     <v-card-title>
       {{ title }}
-      <v-layout v-if="actions.formHeader().length" justify-end>
-        <df-actions :actions="actions.formHeader()"/>
+      <v-layout v-if="actions.formHeader.length" justify-end>
+        <df-actions :actions="actions.formHeader"/>
       </v-layout>
     </v-card-title>
     <v-card-text>
@@ -11,7 +11,7 @@
     </v-card-text>
     <v-card-actions class="vuetify-form-actions">
       <v-layout justify-end>
-        <df-actions :actions="actions.formFooter()"/>
+        <df-actions :actions="actions.formFooter"/>
       </v-layout>
     </v-card-actions>
   </v-card>

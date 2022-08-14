@@ -76,4 +76,14 @@ class Action {
   }
 }
 
+Action.closeAction = function closeAction() {
+  return new Action({
+    name: 'close',
+    label: 'Close', // TODO: needs translation
+    icon: 'close-outline',
+    displayStyle: { asButton: true, showLabel: true, showIcon: true },
+    position: 'FORM_FOOTER',
+  });
+};
+
 export default Action;

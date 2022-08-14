@@ -12,8 +12,13 @@ export default {
     };
   },
   render() {
+    console.log(this);
     if (this.value) {
-      // TODO: For some reason Vue thinks this creates an infinite update loop vs passing just this.$slots
+      // TODO: something here causes the DfModal component to rerender. This is triggered by simply creating
+      //  the params object. If I only copied the $slots, everything would be fine. The problem now is that I get
+      //  rerenders correctly when something changes in the using DOM, but incorrectly because I construct the params
+      //  object new each time. I need to somehow find out what Vue thinks changed in THIS component when in reality
+      //  all I wanted to change is the global modal...
       const params = {
         title: this.$slots.title,
         body: this.$slots.body,
@@ -21,9 +26,10 @@ export default {
         options: { size: this.size },
       };
       this.pushedDialog = this.$dfModal.fromRenderFunctions(this.pushedDialog, params);
-      return null;
+    } else {
+      if (this.pushedDialog) this.$dfModal.popDialog(this.pushedDialog);
+      this.pushedDialog = null;
     }
-    this.pushedDialog = null;
     return null;
   },
 };
