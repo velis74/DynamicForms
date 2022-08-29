@@ -9,7 +9,9 @@
         <slot name="body"/>
       </v-card-text>
       <v-card-actions>
-        <slot name="actions"/>
+        <div style="flex:1">
+          <slot name="actions"/>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -35,10 +37,14 @@ export default {
     computedWidth() {
       if (this.computedFullScreen) return 'unset';
       switch (this.size) {
-      case DialogSize.SMALL: return 400;
-      case DialogSize.LARGE: return 800;
-      case DialogSize.X_LARGE: return 1140;
-      default: return 'unset';
+      case DialogSize.SMALL:
+        return 400;
+      case DialogSize.LARGE:
+        return 800;
+      case DialogSize.X_LARGE:
+        return 1140;
+      default:
+        return 'unset';
       }
     },
     computedFullScreen() {

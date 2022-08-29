@@ -1,4 +1,4 @@
 import DfModal from './modal';
-import ModalView from './modal_view';
+import ModalView from './modal-view';
 
 export { DfModal, ModalView };

@@ -11,12 +11,12 @@
       <div slot="body">
         <p>This modal is created as a template in this demo page.</p>
         <p>
-          It should be trivial to insert any markup you wish.
-          <b>This bold</b> is just for testing whether everything works.
-          This counter too: {{ counter }}
+          It should be trivial to insert any markup you wish.<br>
+          <b>This bold</b> is just for testing whether everything works.<br>
+          This counter too: {{ counter }}<br>
         </p>
       </div>
-      <div slot="actions" style="flex: 1">
+      <div slot="actions">
         <df-actions :actions="templateDialogActions"/>
       </div>
     </df-modal>
@@ -56,24 +56,34 @@ export default {
       case 'procedural': {
         const res = await this.$dfModal.yesNo(
           'Procedural modal dialog',
-          'This modal was shown by calling a method from your code.\nWe\'re currently waiting for you to click one' +
-          ' of the buttons',
+          'This modal was shown by calling a method from your code.\nPlease click one of the buttons.\n' +
+          'In the mean time, the code is waiting and will proceed execution when you decide on one of the buttons',
         );
-        await this.$dfModal.message('Result', `You clicked the "${res.label}" button`);
+        await this.$dfModal.message('Result', `You clicked the "${res.action.label}" button`);
         break;
       }
       case 'nested': {
         const suggestedSize = [DialogSize.SMALL, DialogSize.DEFAULT, DialogSize.LARGE][Math.floor(Math.random() * 3)];
-        console.log(suggestedSize);
         await this.$dfModal.message(
           'Nested dialogs example',
           `This is dialog nesting ${level}\n` +
           'Click "Nest" to generate another dialog',
-          [
+          new FilteredActions([
             // this.$modal.button('close')
-            { name: 'nest', label: 'Nest', action: () => { this.btnClick('nested', level + 1); } },
-            { name: 'close' },
-          ],
+            new Action({
+              name: 'nest',
+              label: 'Nest',
+              position: 'FORM_FOOTER',
+              handlerWithPayload: {
+                handler: () => {
+                  this.btnClick('nested', level + 1);
+                  return true;
+                },
+                payload: null,
+              },
+            }),
+            Action.closeAction(),
+          ]),
           { size: suggestedSize },
         );
         break;

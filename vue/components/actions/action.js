@@ -56,6 +56,14 @@ class Action {
     // any non-string or empty string must resolve as null for fieldName
     const fieldName = !_.isString(data.field_name) || data.field_name.length === 0 ? null : data.field_name;
 
+    const handlerName = `action${_.startCase(_.camelCase(_.toLower(data.name)))}`;
+    let handlerWithPayload = null;
+    if (data.handlerWithPayload) {
+      handlerWithPayload = { handler: {}, payload: data.handlerWithPayload.payload };
+      // here we transform a function into the exact structure needed by action-handler-mixin
+      handlerWithPayload.handler[handlerName] = data.handlerWithPayload.handler;
+    }
+
     Object.defineProperties(this, {
       name: { get() { return data.name; }, enumerable: true },
       uniqueId: { get() { return uniqueId; }, enumerable: false },
@@ -67,6 +75,8 @@ class Action {
       icon: { get() { return icon; }, enumerable: true },
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
+
+      handlerWithPayload: { get() { return handlerWithPayload; }, enumerable: true },
       // elementType & bindAttrs, entire action.action concept:
       //   action.py && actionsHandler.decorateActions, added by brontes, modified by velis
       //   not sure this is necessary: I have only found one instance of action declaration in python and
@@ -81,6 +91,26 @@ Action.closeAction = function closeAction() {
     name: 'close',
     label: 'Close', // TODO: needs translation
     icon: 'close-outline',
+    displayStyle: { asButton: true, showLabel: true, showIcon: true },
+    position: 'FORM_FOOTER',
+  });
+};
+
+Action.yesAction = function yesAction() {
+  return new Action({
+    name: 'yes',
+    label: 'Yes', // TODO: needs translation
+    icon: 'thumbs-up-outline',
+    displayStyle: { asButton: true, showLabel: true, showIcon: true },
+    position: 'FORM_FOOTER',
+  });
+};
+
+Action.noAction = function noAction() {
+  return new Action({
+    name: 'no',
+    label: 'No', // TODO: needs translation
+    icon: 'thumbs-down-outline',
     displayStyle: { asButton: true, showLabel: true, showIcon: true },
     position: 'FORM_FOOTER',
   });

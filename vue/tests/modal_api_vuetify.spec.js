@@ -4,7 +4,7 @@ import Vuetify from 'vuetify';
 
 import DialogSize from '../components/classes/dialog_size';
 // eslint-disable-next-line camelcase
-import modal_api_vuetify from '../components/modal/modal_api_vuetify';
+import modal_api_vuetify from '../components/modal/modal-api-vuetify';
 import * as VuetifyComponents from '../components/vuetify';
 import VuetifyViewMode from '../demo_app/vuetify/view_mode';
 

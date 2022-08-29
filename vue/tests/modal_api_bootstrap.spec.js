@@ -11,7 +11,7 @@ import * as BootstrapComponents from '../components/bootstrap';
 // eslint-disable-next-line camelcase
 import DialogSize from '../components/classes/dialog_size';
 // eslint-disable-next-line camelcase
-import modal_api_bootstrap from '../components/modal/modal_api_bootstrap';
+import modal_api_bootstrap from '../components/modal/modal-api-bootstrap';
 
 Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 

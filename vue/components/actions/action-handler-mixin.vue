@@ -18,18 +18,25 @@ export default {
      * @param extraData: object - e.g. { fieldName: 'field' }
      */
     dispatchAction(action, extraData) {
-      const actionDFName = `action${_.startCase(_.camelCase(_.toLower(action.name)))}`;
+      let actionDFName = `action${_.startCase(_.camelCase(_.toLower(action.name)))}`;
 
       function getHandlersWithPayload(self) {
+        // first, if action has a specific handler specified, let's just return that and be done with it
+        if (action.handlerWithPayload) return [action.handlerWithPayload];
         // WARNING: It is unlikely, but possible that a parent would handle the event, but not have a payload prop
         let parent = self;
-        let payload = null; // for some reason this got lost on this line, so I replaced it with self
+        let payload = null; // for some reason "this" got lost on this line, so I replaced it with self
         const res = [];
         while (parent != null) {
           if (parent.payload !== undefined) payload = parent.payload;
           if (parent[actionDFName]) res.unshift({ handler: parent, payload });
 
+          // stop looking for action handler if the component has actions declared, but current action is not among them
+          // please note that placing the if here actually still considers the component as a possible handler even
+          // though it clearly does not have the action declared.
+          // however, modal-view-api relies on this particular "oversight" so that it can run processActionsGeneric()
           if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
+
           parent = parent.$parent;
         }
         return res;
@@ -37,9 +44,14 @@ export default {
 
       const handlers = getHandlersWithPayload(this);
       if (!handlers.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
-        console.warn(
-          `[unprocessed] Action ${this.$options.name}.${actionDFName}()`,
-        );
+        const actualActionName = actionDFName;
+        actionDFName = 'processActionsGeneric';
+        const hndlrs = getHandlersWithPayload(this);
+        if (!hndlrs.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
+          console.warn(
+            `[unprocessed] Action ${this.$options.name}.${actualActionName}()`,
+          );
+        }
       }
     },
   },
