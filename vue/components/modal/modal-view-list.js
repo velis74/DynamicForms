@@ -1,21 +1,10 @@
 import _ from 'lodash';
 
-import FilteredActions from '../actions/filtered-actions';
-
 let idGenerator = 0;
 
 export default {
   data() {
-    return {
-      dialogList: [],
-      // actions is declared so that the action-handler-mixin stops looking for action executors here
-      //  this way actions declared with modal-view-api are executed here and only here
-      //  if we didn't do this, declaring actionXxx handler anywhere above here would result in that handler being used
-      // TODO: the entire concept of action handlers might be a bit counterintuitive since we're not specifying
-      //  precise handlers for precise actions. Instead we just declare a handler which might get called for an action
-      //  it knows nothing about (except that it has the same name).
-      actions: new FilteredActions([]),
-    };
+    return { dialogList: [] };
   },
   methods: {
     currentDialog() {
@@ -38,12 +27,10 @@ export default {
       }
       const self = this;
       dialogDef.close = () => self.popDialog(dialogDef.dialogId);
-      const promise = {};
-      promise.promise = new Promise((resolve, reject) => {
-        promise.resolve = resolve;
-        promise.reject = reject;
+      dialogDef.promise = new Promise((resolve, reject) => {
+        dialogDef.resolvePromise = resolve;
+        dialogDef.rejectPromise = reject;
       });
-      dialogDef.promise = promise;
       return dialogDef.dialogId;
     },
     popDialog(existingDialogId) {
@@ -54,15 +41,6 @@ export default {
           this.dialogList[this.dialogList.length - 1].topOfTheStack = true;
         }
       }
-    },
-    processActionsGeneric(action, payload, extraData) {
-      if (this.dialogList.length) {
-        const currentDialogDef = this.dialogList[this.dialogList.length - 1];
-        currentDialogDef.promise.resolve({ action, payload, extraData, dialog: currentDialogDef });
-        currentDialogDef.close();
-        return true;
-      }
-      return false;
     },
   },
 };

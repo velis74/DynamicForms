@@ -28,14 +28,11 @@ export default {
         let payload = null; // for some reason "this" got lost on this line, so I replaced it with self
         const res = [];
         while (parent != null) {
+          // stop looking for action handler if the component has actions declared, but current action is not among them
+          if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
+
           if (parent.payload !== undefined) payload = parent.payload;
           if (parent[actionDFName]) res.unshift({ handler: parent, payload });
-
-          // stop looking for action handler if the component has actions declared, but current action is not among them
-          // please note that placing the if here actually still considers the component as a possible handler even
-          // though it clearly does not have the action declared.
-          // however, modal-view-api relies on this particular "oversight" so that it can run processActionsGeneric()
-          if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
 
           parent = parent.$parent;
         }

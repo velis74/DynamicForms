@@ -56,13 +56,18 @@ class Action {
     // any non-string or empty string must resolve as null for fieldName
     const fieldName = !_.isString(data.field_name) || data.field_name.length === 0 ? null : data.field_name;
 
-    const handlerName = `action${_.startCase(_.camelCase(_.toLower(data.name)))}`;
-    let handlerWithPayload = null;
-    if (data.handlerWithPayload) {
-      handlerWithPayload = { handler: {}, payload: data.handlerWithPayload.payload };
-      // here we transform a function into the exact structure needed by action-handler-mixin
-      handlerWithPayload.handler[handlerName] = data.handlerWithPayload.handler;
+    function decorateHandlerWithPayload(hwp) {
+      const handlerName = `action${_.startCase(_.camelCase(_.toLower(data.name)))}`;
+      let res = null;
+      if (hwp) {
+        res = { handler: {}, payload: hwp.payload };
+        // here we transform a function into the exact structure needed by action-handler-mixin
+        res.handler[handlerName] = hwp.handler;
+      }
+      return res;
     }
+
+    let handlerWithPayload = decorateHandlerWithPayload(data.handlerWithPayload);
 
     Object.defineProperties(this, {
       name: { get() { return data.name; }, enumerable: true },
@@ -76,7 +81,11 @@ class Action {
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
 
-      handlerWithPayload: { get() { return handlerWithPayload; }, enumerable: true },
+      handlerWithPayload: {
+        get() { return handlerWithPayload; },
+        set(value) { handlerWithPayload = decorateHandlerWithPayload(value); },
+        enumerable: true,
+      },
       // elementType & bindAttrs, entire action.action concept:
       //   action.py && actionsHandler.decorateActions, added by brontes, modified by velis
       //   not sure this is necessary: I have only found one instance of action declaration in python and
@@ -86,33 +95,36 @@ class Action {
   }
 }
 
-Action.closeAction = function closeAction() {
+Action.closeAction = function closeAction(data) {
   return new Action({
     name: 'close',
     label: 'Close', // TODO: needs translation
     icon: 'close-outline',
     displayStyle: { asButton: true, showLabel: true, showIcon: true },
     position: 'FORM_FOOTER',
+    ...data, // any properties in data should overwrite properties in the constant
   });
 };
 
-Action.yesAction = function yesAction() {
+Action.yesAction = function yesAction(data) {
   return new Action({
     name: 'yes',
     label: 'Yes', // TODO: needs translation
     icon: 'thumbs-up-outline',
     displayStyle: { asButton: true, showLabel: true, showIcon: true },
     position: 'FORM_FOOTER',
+    ...data, // any properties in data should overwrite properties in the constant
   });
 };
 
-Action.noAction = function noAction() {
+Action.noAction = function noAction(data) {
   return new Action({
     name: 'no',
     label: 'No', // TODO: needs translation
     icon: 'thumbs-down-outline',
     displayStyle: { asButton: true, showLabel: true, showIcon: true },
     position: 'FORM_FOOTER',
+    ...data, // any properties in data should overwrite properties in the constant
   });
 };
 

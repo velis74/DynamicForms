@@ -1,6 +1,12 @@
 <template>
   <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
-  <v-dialog v-model="doShow" :width="computedWidth" :max-width="computedWidth" :fullscreen="computedFullScreen">
+  <v-dialog
+    v-model="doShow"
+    :width="computedWidth"
+    :max-width="computedWidth"
+    :fullscreen="computedFullScreen"
+    persistent
+  >
     <v-card>
       <v-card-title>
         <slot name="title"/>
