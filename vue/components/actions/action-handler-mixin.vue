@@ -25,7 +25,7 @@ export default {
         if (action.handlerWithPayload) return [action.handlerWithPayload];
         // WARNING: It is unlikely, but possible that a parent would handle the event, but not have a payload prop
         let parent = self;
-        let payload = null; // for some reason "this" got lost on this line, so I replaced it with self
+        let payload = action.payload; // for some reason "this" got lost on this line, so I replaced it with self
         const res = [];
         while (parent != null) {
           // stop looking for action handler if the component has actions declared, but current action is not among them

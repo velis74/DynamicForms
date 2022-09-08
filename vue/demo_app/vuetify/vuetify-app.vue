@@ -38,6 +38,7 @@
     </v-navigation-drawer>
 
     <v-main>
+      <ModalView/>
       <slot name="main-component"/>
     </v-main>
   </v-app>
@@ -47,6 +48,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
 
+import { ModalView } from '../../components/modal';
 import * as VuetifyComponents from '../../components/vuetify';
 
 import VuetifyViewMode from './view_mode';
@@ -60,6 +62,7 @@ const vuetify = new Vuetify({});
 export default {
   name: 'VuetifyApp',
   vuetify,
+  components: { ModalView },
   props: {
     title: { type: String, required: true },
     themes: { type: Array, required: true },

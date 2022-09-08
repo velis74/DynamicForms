@@ -62,11 +62,15 @@ export default {
         } else if (this.showForm) {
           await this.consumer.getFormDefinition('new');
           this.data = this.consumer.formDefinition;
-        } /* else {
-          TODO: uncomment when modal has fromURL() method
-          await DynamicForms.dialog.fromURL(`${this.url}/new.componentdef`, 'new', this.uuid);
-          this.setViewMode('table');
-        } */
+        } else if (this.showDialog) {
+          await this.consumer.getFormDefinition('new');
+          const resultAction = await this.$dfModal.fromFormDefinition(this.consumer.formDefinition);
+          if (resultAction.action.name === 'submit') {
+            this.consumer.saveForm();
+          }
+          this.viewMode = 'form';
+          this.setViewMode();
+        }
       } finally {
         this.loading = false;
       }

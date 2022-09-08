@@ -26,6 +26,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+    <ModalView/>
     <slot name="main-component"/>
   </div>
 </template>
@@ -34,6 +35,7 @@ import { BootstrapVue } from 'bootstrap-vue';
 import Vue from 'vue';
 
 import * as BootstrapComponents from '../../components/bootstrap';
+import { ModalView } from '../../components/modal';
 
 import BootstrapViewMode from './view_mode';
 
@@ -44,6 +46,7 @@ Object.values(BootstrapComponents).map((component) => Vue.component(component.na
 Vue.use(BootstrapVue);
 export default {
   name: 'BootstrapApp',
+  components: { ModalView },
   props: {
     title: { type: String, required: true },
     themes: { type: Array, required: true },

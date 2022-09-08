@@ -11,6 +11,9 @@ function processSlot(slot, content, createElement, actionsView) {
     // the slot is FilteredActions. Need to construct a DfActions component
     return createElement(actionsView, { slot, props: { actions: content } }, []);
   }
+  if (content && content.componentName && content.props) {
+    return createElement(content.componentName, { slot, props: content.props }, []);
+  }
   // we have slots as vnodes
   return createElement('template', { slot }, [content]);
 }

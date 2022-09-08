@@ -101,8 +101,8 @@ export default {
         Array.prototype.slice.call(document.getElementsByTagName('script')),
       ), (s) => {
         if ((s.href && _.includes(s.href, `.${theme}.css`)) ||
-              (s.src && _.includes(s.src, `.${theme}.js`)) ||
-              (s.href && _.includes(s.href, `.${theme}.js`))) {
+          (s.src && _.includes(s.src, `.${theme}.js`)) ||
+          (s.href && _.includes(s.href, `.${theme}.js`))) {
           document.getElementsByTagName('head')[0].removeChild(s);
           removed.push(s);
         }

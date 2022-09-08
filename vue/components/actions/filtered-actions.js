@@ -1,13 +1,18 @@
 import Action from './action';
 
 class FilteredActions {
-  constructor(actions) {
+  constructor(actions, payload) {
     this.actions = Object.keys(actions).reduce((res, actionName) => {
       const action = actions[actionName];
-      res[actionName] = action instanceof Action ? action : new Action(action);
+      res[actionName] = action instanceof Action ? action : new Action(action, this);
       return res;
     }, {});
     this.filterCache = {}; // contains cached .filter results
+
+    // usually payload will be provided in a component higher up, but sometimes actions are standalone and need
+    // their own parameters, or maybe they are detached in component hierarchy (like with the dialog). This is when
+    // the payload member is populated and then used by action execution plugin
+    Object.defineProperties(this, { payload: { get() { return payload; }, enumerable: true } });
   }
 
   get actionsList() {

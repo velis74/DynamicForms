@@ -6,7 +6,7 @@ const ACTION_POSITIONS = [
 ];
 
 class Action {
-  constructor(data) {
+  constructor(data, parent) {
     const uniqueId = ++uniqueIdCounter;
 
     if (!_.isString(data.name) || !/^[a-zA-Z-_]+$/.test(data.name)) {
@@ -81,6 +81,7 @@ class Action {
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
 
+      payload: { get() { return parent.payload; }, enumerable: true },
       handlerWithPayload: {
         get() { return handlerWithPayload; },
         set(value) { handlerWithPayload = decorateHandlerWithPayload(value); },

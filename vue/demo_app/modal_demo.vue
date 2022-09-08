@@ -5,7 +5,6 @@
       <v-btn @click="btnClick('procedural')">Procedural</v-btn>
       <v-btn @click="btnClick('nested', 1)">Nested</v-btn>
     </v-row>
-    <ModalView/>
     <df-modal v-model="showTemplate">
       <div slot="title">Modal as template</div>
       <div slot="body">
@@ -27,12 +26,12 @@
 import Action from '../components/actions/action';
 import FilteredActions from '../components/actions/filtered-actions';
 import DialogSize from '../components/classes/dialog_size';
-import { DfModal, ModalView } from '../components/modal';
+import { DfModal } from '../components/modal';
 import { DfActions } from '../components/public';
 
 export default {
   name: 'ModalDemo',
-  components: { DfModal, ModalView, DfActions },
+  components: { DfModal, DfActions },
   data() {
     return {
       showTemplate: false,
@@ -93,6 +92,7 @@ export default {
       }
     },
     actionClose() { // action, payload, extraData) {
+      // handles the close action of the template-based dialog
       this.showTemplate = false;
       return true;
     },

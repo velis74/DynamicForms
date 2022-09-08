@@ -4,6 +4,7 @@ import FilteredActions from '../actions/filtered-actions';
 import ModalViewList from './modal-view-list';
 
 function createHandler(dialogDef) {
+  const payloadVal = dialogDef?.body?.componentName ? dialogDef?.body?.props?.payload : null;
   return {
     handlerWithPayload: {
       handler: function handler(action, payload, extraData) {
@@ -11,6 +12,7 @@ function createHandler(dialogDef) {
         dialogDef.close();
         return true;
       },
+      payload: payloadVal,
     },
   };
 }
@@ -20,6 +22,16 @@ export default {
   methods: {
     fromRenderFunctions(existingDialog, dfDialog) {
       return this.pushDialog(dfDialog, existingDialog);
+    },
+    fromFormDefinition(formDefinition) {
+      const layout = formDefinition.layout;
+      const payload = formDefinition.payload;
+      const actions = formDefinition.actions;
+      return this.message(
+        formDefinition.title,
+        { componentName: formDefinition.layout.componentName, props: { layout, payload, actions } },
+        formDefinition.actions.formFooter,
+      );
     },
     message(title, message, actions, options) {
       const dialogDef = {

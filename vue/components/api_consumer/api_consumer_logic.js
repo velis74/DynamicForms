@@ -86,6 +86,11 @@ class APIConsumerLogic {
     return this.fetch(`${url}.componentdef`, isTable);
   }
 
+  async getRecord(pkValue) {
+    const url = `${this.baseURL}/${pkValue}.json`;
+    return (await apiClient.get(url)).data;
+  }
+
   async getFullDefinition() {
     const UXDefinition = await this.getUXDefinition(null, true);
     this.pkName = UXDefinition.primary_key_name;
@@ -116,6 +121,10 @@ class APIConsumerLogic {
       this.formData = new FormPayload(UXDefinition.record, this.formLayout);
       this.actions = new FilteredActions(UXDefinition.actions);
       // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
+    } else {
+      // reread the current record
+      const record = await this.getRecord(this.pkValue);
+      this.formData = new FormPayload(record, this.formLayout);
     }
   }
 
@@ -158,11 +167,22 @@ class APIConsumerLogic {
   }
 
   async deleteRow(tableRow) {
-    await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`).then(() => {
-      this.rows.deleteRow(tableRow[this.pkName]);
-    }).catch((err) => {
-      console.error(err);
-    });
+    await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`);
+    this.rows.deleteRow(tableRow[this.pkName]);
+  }
+
+  async saveForm() {
+    let url = `${this.baseURL}/`;
+    let res;
+
+    if (this.pkValue !== 'new') {
+      url += `${this.pkValue}/`;
+      res = await apiClient.put(url, this.formData);
+    } else {
+      res = await apiClient.post(url, this.formData);
+    }
+    // TODO: update any table here too, either add the new record or modify the existing one
+    console.warn('table processing not done yet: here we should append / update the table row', res);
   }
 
   async filter(filterData) {

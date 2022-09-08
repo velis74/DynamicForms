@@ -68,13 +68,13 @@ class NewMixin(object):
 class PutPostMixin(object):
     """
     Provides support for when there is no record id in URL when calling PUT
-    (First empty form is loaded. Than user loads existing data to this form and updates it... - Perform PUT action)
+    (First empty form is loaded. Then user loads existing data to this form and updates it... - Perform PUT action)
 
     or
 
     Provides support for when there is record id in URL when calling POST
-    (First form for some existing record is loaded. Than user wants to create new record for it.
-    - deletes redord ID and perform POST action)
+    (First form for some existing record is loaded. Then user wants to create new record for it.
+    - deletes record ID and perform POST action)
     """
 
     # When there is no record id in URL when calling PUT, this function will be called
