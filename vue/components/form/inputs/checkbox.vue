@@ -23,51 +23,34 @@ import InputBase from './base';
 export default {
   name: 'DCheckbox',
   mixins: [InputBase, TranslationsMixin],
-  data() {
-    return {
-      internalValue: false,
-      indeterminate: this.field.allowNull && (this.value === undefined || this.value === null),
-    };
-  },
+  data() { return { internalValue: false }; },
   computed: {
+    indeterminate() {
+      return this.field.allowNull && (this.internalValue == null);
+    },
     boolValue: {
-      get: function get() {
-        return this.internalValue;
-      },
-      // eslint-disable-next-line no-unused-vars
-      set: function set(newVal) {},
+      get: function get() { return !!this.internalValue; },
+      set: function set(newVal) { console.log(this.value, newVal); },
     },
   },
   mounted() {
     if (this.value) {
       this.internalValue = true;
-      return;
-    }
-    if (this.value === undefined || this.value === null) {
+    } else if (this.value == null) {
       this.internalValue = null;
     } else {
       this.internalValue = false;
     }
   },
   methods: {
-    change(newValue) {
+    change() {
       const oldVal = _.clone(this.internalValue);
-      if (this.field.allowNull) {
-        if (oldVal === true) {
-          this.indeterminate = true;
-          this.internalValue = null;
-        } else if ((oldVal === null || oldVal === undefined) && this.indeterminate && newValue) {
-          this.indeterminate = false;
-          this.internalValue = false;
-        } else if (oldVal === false && newValue === true) {
-          this.internalValue = true;
-          this.indeterminate = false;
-        }
-        this.boolValue = _.clone(this.internalValue);
-      } else {
-        this.boolValue = _.clone(newValue);
-      }
-      this.payload.setValue(this.boolValue);
+      if (oldVal === true) {
+        this.internalValue = this.field.allowNull ? null : false;
+      } else if (oldVal == null) {
+        this.internalValue = false;
+      } else if (oldVal === false) this.internalValue = true;
+      this.payload.setValue(this.internalValue);
     },
   },
 };
