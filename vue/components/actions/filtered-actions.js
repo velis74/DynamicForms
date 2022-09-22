@@ -68,6 +68,14 @@ class FilteredActions {
     return this.filter('ROW_END');
   }
 
+  get rowClick() {
+    return this.filter('ROW_CLICK');
+  }
+
+  get rowRightClick() {
+    return this.filter('ROW_RIGHT_CLICK');
+  }
+
   fieldAll(fieldName) {
     const res = this.filter('FIELD_START', fieldName);
     const add = this.filter('FIELD_END', fieldName);

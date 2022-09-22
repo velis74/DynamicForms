@@ -12,12 +12,12 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
     @parameterized.expand(['html', 'component'])
     def test_basic_fields(self, renderer):
         self.browser.get(self.live_server_url + '/basic-fields.' + renderer)
-        # Go to basic-fields html and check if there's a "+ Add" button
+        # Go to basic-fields html and check if there's a "Add" button
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btn = header.find_element(By.NAME, 'btn-add')
         md_btn = header.find_element(By.NAME, 'btn-modal_dialog')
-        self.assertEqual(self.get_element_text(add_btn), '+ Add')
+        self.assertEqual(self.get_element_text(add_btn), 'Add')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
@@ -37,7 +37,7 @@ class BasicFieldsTest(WaitingStaticLiveServerTestCase):
             alert.accept()
             self.wait_for_modal_dialog_disapear(modal_serializer_id)
 
-        # Add a new record via the "+ Add" button and go back to model_single.html to check if the record had been added
+        # Add a new record via the "Add" button and go back to model_single.html to check if the record had been added
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()
         time.sleep(1)

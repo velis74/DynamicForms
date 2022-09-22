@@ -66,6 +66,23 @@ export default {
       this.consumer.filter(actionData);
       return true;
     },
+    async actionAdd() {
+      await this.consumer.dialogForm('new', this.$dfModal);
+      return true;
+    },
+    async actionEdit(actionData, payload, extraData) {
+      if (extraData.thead) return false;
+      await this.consumer.dialogForm(payload[this.consumer.pkName], this.$dfModal);
+      return true;
+    },
+    actionSort(action, payload, extraData) {
+      // This is the default handler for ordering
+      if (extraData.thead && action.position === 'ROW_CLICK' && extraData.column) {
+        extraData.column.ordering.handleColumnHeaderClick(extraData.event);
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>

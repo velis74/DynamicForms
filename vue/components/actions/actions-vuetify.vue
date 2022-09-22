@@ -6,7 +6,7 @@
       :elevation="0"
       :class="idx === 0 ? '' : 'ms-3'"
       :small="isSmallSize(action)"
-      @click="dispatchAction(action)"
+      @click="(event) => dispatchAction(action, { event })"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
       <span v-if="displayIcon(action) && displayLabel(action)" style="width: .5rem"/>

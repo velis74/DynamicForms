@@ -7,7 +7,7 @@
       </v-layout>
     </template>
     <b-card-text>
-      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions"/>
+      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions" :errors="errors"/>
     </b-card-text>
     <template #footer>
       <b-row class="text-right">

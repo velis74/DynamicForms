@@ -63,11 +63,7 @@ export default {
           await this.consumer.getFormDefinition('new');
           this.data = this.consumer.formDefinition;
         } else if (this.showDialog) {
-          await this.consumer.getFormDefinition('new');
-          const resultAction = await this.$dfModal.fromFormDefinition(this.consumer.formDefinition);
-          if (resultAction.action.name === 'submit') {
-            this.consumer.saveForm();
-          }
+          await this.consumer.dialogForm('new', this.$dfModal);
           this.viewMode = 'form';
           this.setViewMode();
         }

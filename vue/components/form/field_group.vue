@@ -5,7 +5,7 @@
         {{ def.title }}
       </div>
       <div class="card-body">
-        <FormLayout :uuid="def.uuid" :record="data" :rows="def.layout.rows"/>
+        <FormLayout :uuid="def.uuid" :record="data" :rows="def.layout.rows" :errors="errors"/>
       </div>
       <div v-if="def.footer" class="card-footer">
         {{ def.footer }}

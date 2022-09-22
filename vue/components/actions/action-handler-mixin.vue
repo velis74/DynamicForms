@@ -17,7 +17,14 @@ export default {
      * @param action: Action
      * @param extraData: object - e.g. { fieldName: 'field' }
      */
-    dispatchAction(action, extraData) {
+    async dispatchAction(action, extraData) {
+      if (action instanceof FilteredActions) {
+        // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
+        // there is one action or many: we just execute them all
+        for (const act of action) {
+          this.dispatchAction(act, extraData);
+        }
+      }
       let actionDFName = `action${_.startCase(_.camelCase(_.toLower(action.name)))}`;
 
       function getHandlersWithPayload(self) {

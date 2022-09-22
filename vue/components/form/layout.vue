@@ -35,8 +35,8 @@ export default {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
     actions: { type: FilteredActions, default: null },
+    errors: { type: Object, default: () => {} },
   },
-  data() { return { errors: {} }; },
   computed: {
     errorText() {
       const nonFieldError = 'non_field_errors';

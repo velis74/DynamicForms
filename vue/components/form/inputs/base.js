@@ -14,6 +14,7 @@ export default {
       get: function get() { return this.payload.value; },
       set: function set(newVal) {
         if (this.isNumber) {
+          // TODO this is to be moved to input.vue. It has nothing to do here.
           if (this.isValidNumber(newVal)) {
             this.payload.setValue(Number(newVal));
             return;

@@ -1,5 +1,5 @@
 <template>
-  <FormLayout :layout="layout" :payload="payload" @value-changed="valueChanged"/>
+  <FormLayout :layout="layout" :payload="payload" :errors="errors" @value-changed="valueChanged"/>
 </template>
 
 <script>
@@ -12,6 +12,7 @@ export default {
   props: {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
+    errors: { type: Object, default: () => {} },
   },
   data() {
     return { oldPayload: this.payload.deepClone() };

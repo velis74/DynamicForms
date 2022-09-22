@@ -6,6 +6,7 @@ import ColumnOrdering from './column_ordering';
 export default class TableColumn {
   constructor(initialData, orderingArray) {
     this._maxWidth = 0;
+    initialData.ordering = initialData.ordering || '';
     this.ordering = new ColumnOrdering(initialData.ordering, orderingArray, this);
     this.layout = null;
 

@@ -29,7 +29,7 @@ export default {
       const actions = formDefinition.actions;
       return this.message(
         formDefinition.title,
-        { componentName: formDefinition.layout.componentName, props: { layout, payload, actions } },
+        { componentName: formDefinition.layout.componentName, props: { layout, payload, actions, errors: {} } },
         formDefinition.actions.formFooter,
       );
     },

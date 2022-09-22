@@ -9,8 +9,8 @@
     ref="row"
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => rowClick(event, 'ROW_CLICK', null)"
-    @mouseup.right="rowClick($event,'ROW_RIGHTCLICK', null)"
+    @click.stop="(event) => dispatchAction(actions.rowClick, { thead, event })"
+    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { thead, event })"
   >
     <GenericColumn
       v-for="column in renderedColumns.items"
@@ -19,7 +19,7 @@
       :row-data="rowData"
       :thead="thead"
       :actions="actions"
-      :filter-row="(filterDefinition || {columns: {}}).columns[column.name]"
+      :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
     />
   </div>
 </template>
@@ -27,16 +27,18 @@
 <script>
 import { ObserveVisibility } from 'vue-observe-visibility';
 
+import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed_array';
 
+import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render_measure';
 
 export default {
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
-  mixins: [RenderMeasured],
+  mixins: [RenderMeasured, ActionHandlerMixin],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
@@ -46,6 +48,7 @@ export default {
     filterDefinition: { type: TableFilterRow, default: null },
   },
   computed: {
+    TableColumn() { return TableColumn; },
     rowInfiniteStyle() {
       // For rows not currently rendered, we set a fixed width & height. Height is 10 if it hadn't been computed yet
       return (
@@ -62,12 +65,6 @@ export default {
       if (this.rowData.dfControlStructure.isShowing) {
         this.rowData.setMeasuredHeight(maxHeight);
       }
-    },
-    // eslint-disable-next-line no-unused-vars
-    rowClick(event, eventsFilter, column) {
-      // we're currently not processing any clicks outside column cells
-      // TODO: predelaj na event emitter mixin
-      console.log('Row clicked...');
     },
   },
 };

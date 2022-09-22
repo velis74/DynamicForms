@@ -37,7 +37,7 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
             btn_text = self.get_element_text(add_btn.find_element(By.TAG_NAME, 'span'))
         else:
             btn_text = self.get_element_text(add_btn)
-        self.assertEqual(btn_text, "+ Add")
+        self.assertEqual(btn_text, "Add")
 
         add_btn.click()
         dialog, modal_serializer_id = self.wait_for_modal_dialog()

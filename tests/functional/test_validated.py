@@ -68,13 +68,14 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
     @parameterized.expand(['html', 'component'])
     def test_validated_list(self, renderer='component'):
         self.browser.get(self.live_server_url + '/validated.' + renderer)
-        # Go to validated html and check if there's a "+ Add" button
+        # Go to validated html and check if there's a "Add" button
 
         header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
         add_btns = header.find_elements(By.CLASS_NAME, 'btn')
-        self.assertEqual(self.get_element_text(add_btns[0]), '+ Add (refresh record)')
-        self.assertEqual(self.get_element_text(add_btns[1]), '+ Add (refresh table)')
-        self.assertEqual(self.get_element_text(add_btns[2]), '+ Add (no refresh)')
+        # TODO: Jure 9.9.2022 - I think these three buttons are no longer there... Just a standard add
+        self.assertEqual(self.get_element_text(add_btns[0]), 'Add (refresh record)')
+        self.assertEqual(self.get_element_text(add_btns[1]), 'Add (refresh table)')
+        self.assertEqual(self.get_element_text(add_btns[2]), 'Add (no refresh)')
 
         # Check if there's a "no data" table row
         rows = self.get_table_body()
@@ -85,7 +86,7 @@ class ValidatedFormTest(WaitingStaticLiveServerTestCase):
         # Following a test for modal dialog... we could also do a test for page-editing (not with dialog)          #
         # ---------------------------------------------------------------------------------------------------------#
 
-        # Add a new record via the "+ Add (record refresh)" button and go back to model_single.html to check if the
+        # Add a new record via the "Add (record refresh)" button and go back to model_single.html to check if the
         # record had been added
         # Test Add action with refreshType='record'
         add_btns[0].click()

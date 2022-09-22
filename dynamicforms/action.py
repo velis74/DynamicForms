@@ -432,7 +432,7 @@ class Actions(object):
         self.actions = list(args)  # type: List[ActionBase]
         if add_default_crud:
             self.actions.append(
-                TableAction(TablePosition.HEADER, _('+ Add'), title=_('Add new record'), name='add',
+                TableAction(TablePosition.HEADER, _('Add'), title=_('Add new record'), name='add',
                             icon='add-circle-outline')
             )
             self.actions.append(
@@ -442,6 +442,9 @@ class Actions(object):
             self.actions.append(
                 TableAction(TablePosition.ROW_END, label=_('Delete'), title=_('Delete record'), name='delete',
                             icon='trash-outline')
+            )
+            self.actions.append(
+                TableAction(TablePosition.ROW_CLICK, _('Sort'), title=_('Sort by column'), name='sort')
             )
         if add_default_filter:
             self.actions.append(TableAction(TablePosition.HEADER, label=_('Filter'), title=_('Filter'), name='filter',

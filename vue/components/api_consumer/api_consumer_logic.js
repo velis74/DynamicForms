@@ -185,6 +185,15 @@ class APIConsumerLogic {
     console.warn('table processing not done yet: here we should append / update the table row', res);
   }
 
+  async dialogForm(pk, dfModal) {
+    await this.getFormDefinition(pk);
+    const resultAction = await dfModal.fromFormDefinition(this.formDefinition);
+    if (resultAction.action.name === 'submit') {
+      await this.saveForm();
+      // TODO: catch 400 here and show the dialog again
+    }
+  }
+
   async filter(filterData) {
     // eslint-disable-next-line max-len,no-unused-expressions
     !_.includes(['', undefined, null], filterData.newValue) ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];

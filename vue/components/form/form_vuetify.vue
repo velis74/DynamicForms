@@ -7,7 +7,7 @@
       </v-layout>
     </v-card-title>
     <v-card-text>
-      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions"/>
+      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions" :errors="errors"/>
     </v-card-text>
     <v-card-actions class="vuetify-form-actions">
       <v-layout justify-end>

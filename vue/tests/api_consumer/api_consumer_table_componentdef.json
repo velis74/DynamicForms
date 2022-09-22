@@ -288,7 +288,7 @@
       "field_name": null,
       "name": "add",
       "action": null,
-      "label": "+ Add",
+      "label": "Add",
       "title": "Add new record",
       "icon": "add-circle-outline",
       "classes": null

@@ -40,7 +40,7 @@ const actionsCopy = [
     name: 'add',
     // eslint-disable-next-line max-len
     action: null,
-    label: '+ Add',
+    label: 'Add',
     title: 'Add new record',
     icon: 'add-outline',
     classes: null,
@@ -144,7 +144,7 @@ describe('actionsVuetify', () => {
 
   it('checks if add action is correctly rendered', async () => {
     const htmlCode = mountComponent();
-    expect(htmlCode.match(/<span>\+ Add<\/span>/g))
+    expect(htmlCode.match(/<span>Add<\/span>/g))
       .not
       .toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
@@ -208,7 +208,7 @@ describe('Check if visibility flags work as expected', () => {
       const htmlCode = await constructTest(true, true, true);
       // preveriš, če se je v add knofu pokazala ikona IN labela
       const iconIsThere = (htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g));
-      const labelIsThere = (htmlCode.match(/<span>\+ Add<\/span>/g));
+      const labelIsThere = (htmlCode.match(/<span>Add<\/span>/g));
       expect(iconIsThere)
         .not
         .toBeNull();
@@ -231,7 +231,7 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, true, false);
       // preveriš, če se je v add knofu pokazala samo labela
-      const labelIsThere = (htmlCode.match(/<span>\+ Add<\/span>/g));
+      const labelIsThere = (htmlCode.match(/<span>Add<\/span>/g));
       expect(labelIsThere)
         .not
         .toBeNull();
@@ -289,7 +289,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.breakpoint;
     expect(breakpoints.xs).toBe(true);
-    expect(htmlCode.match(/<span>\+ Add<\/span>/g))
+    expect(htmlCode.match(/<span>Add<\/span>/g))
       .toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
       .not
@@ -302,7 +302,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.breakpoint;
     expect(breakpoints.md).toBe(true);
-    expect(htmlCode.match(/<span>\+ Add<\/span>/g))
+    expect(htmlCode.match(/<span>Add<\/span>/g))
       .not
       .toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
@@ -315,7 +315,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.breakpoint;
     expect(breakpoints.lg).toBe(true);
-    expect(htmlCode.match(/<span>\+ Add<\/span>/g))
+    expect(htmlCode.match(/<span>Add<\/span>/g))
       .not
       .toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))

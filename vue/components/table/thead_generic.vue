@@ -5,6 +5,14 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
+      thead
+    />
+    <GenericTRow
+      v-if="filterDefinition"
+      :rendered-columns="renderedColumns"
+      :data-columns="[]"
+      :row-data="rowData"
+      :actions="actions"
       :filter-definition="filterDefinition"
       thead
     />
