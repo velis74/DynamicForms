@@ -13,10 +13,10 @@
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 
-import TranslationsMixin from '../../util/translations_mixin';
+import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import VuetifyInput from './input_vuetify';
+import VuetifyInput from './input-vuetify';
 
 export default {
   name: 'DFWidgetCKEditor',

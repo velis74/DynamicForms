@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import TranslationsMixin from '../../util/translations_mixin';
+import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
 

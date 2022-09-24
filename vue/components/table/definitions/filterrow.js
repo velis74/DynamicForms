@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import DisplayMode from '../../classes/display_mode';
-import IndexedArray from '../../classes/indexed_array';
+import DisplayMode from '../../classes/display-mode';
+import IndexedArray from '../../classes/indexed-array';
 import FormField from '../../form/definitions/field';
 
 import TableColumns from './columns';

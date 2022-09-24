@@ -26,11 +26,11 @@
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
 
-import TranslationsMixin from '../../util/translations_mixin';
+import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import InputClearButton from './clear_input_button';
-import VuetifyInput from './input_vuetify';
+import InputClearButton from './clear-input-button';
+import VuetifyInput from './input-vuetify';
 
 export default {
   name: 'DDatetime',

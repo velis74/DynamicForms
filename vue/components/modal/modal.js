@@ -1,4 +1,4 @@
-import DialogSize from '../classes/dialog_size';
+import DialogSize from '../classes/dialog-size';
 
 import ModalRenderer from './modal-renderer';
 

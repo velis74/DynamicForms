@@ -34,10 +34,10 @@
  */
 import Multiselect from 'vue-multiselect';
 
-import TranslationsMixin from '../../util/translations_mixin';
+import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import VuetifyInput from './input_vuetify';
+import VuetifyInput from './input-vuetify';
 
 export default {
   name: 'DSelect',

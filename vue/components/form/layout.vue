@@ -23,7 +23,7 @@
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
-import FormPayload from './definitions/form_payload';
+import FormPayload from './definitions/form-payload';
 import FormLayout from './definitions/layout';
 import FormRow from './row';
 

@@ -3,7 +3,7 @@
 </template>
 <script>
 import Form from '../form/form';
-import ThemeMixin from '../util/theme_mixin';
+import ThemeMixin from '../util/theme-mixin';
 
 export default {
   name: 'DfForm',

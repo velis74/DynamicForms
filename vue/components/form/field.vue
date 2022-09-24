@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 
-import FormPayload from './definitions/form_payload';
+import FormPayload from './definitions/form-payload';
 import DCheckbox from './inputs/checkbox';
 import DCKEditor from './inputs/ckeditor';
 import DDateTime from './inputs/datetime';

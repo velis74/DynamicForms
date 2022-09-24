@@ -1,5 +1,5 @@
 import FilteredActions from '../actions/filtered-actions';
-import ThemeMixin from '../util/theme_mixin';
+import ThemeMixin from '../util/theme-mixin';
 
 function processSlot(slot, content, createElement, actionsView) {
   if (content == null) return null;

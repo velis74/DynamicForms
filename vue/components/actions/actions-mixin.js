@@ -1,4 +1,4 @@
-import DisplayBreakpoints from '../util/display_breakpoints';
+import DisplayBreakpoints from '../util/display-breakpoints';
 
 import FilteredActions from './filtered-actions';
 

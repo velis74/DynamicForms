@@ -3,7 +3,7 @@
 </template>
 <script>
 import ActionsMixin from '../actions/actions-mixin';
-import ThemeMixin from '../util/theme_mixin';
+import ThemeMixin from '../util/theme-mixin';
 
 export default {
   name: 'DfActions',

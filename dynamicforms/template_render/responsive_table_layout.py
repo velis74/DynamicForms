@@ -6,7 +6,7 @@ all columns in one row. When this is detected, a layout will be selected that ca
 
 when all layouts are too wide, the most narrow one will be chosen.
 
-This file has a counterpart in responsive_layout.js
+This file has a counterpart in responsive-layout.js
 """
 from typing import List, Optional, TYPE_CHECKING, Union
 

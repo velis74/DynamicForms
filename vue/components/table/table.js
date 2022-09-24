@@ -2,17 +2,17 @@ import ResizeObserver from 'resize-observer-polyfill';
 import Vue from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
-import ColumnDisplay from '../classes/display_mode';
-import IndexedArray from '../classes/indexed_array';
-import TranslationsMixin from '../util/translations_mixin';
+import ColumnDisplay from '../classes/display-mode';
+import IndexedArray from '../classes/indexed-array';
+import TranslationsMixin from '../util/translations-mixin';
 
 import TableFilterRow from './definitions/filterrow';
-import { ResponsiveLayouts } from './definitions/responsive_layout';
+import { ResponsiveLayouts } from './definitions/responsive-layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
-import RenderMeasured from './render_measure';
-import TableStyle from './table_style';
-import GenericColumn from './tcolumn_generic';
+import RenderMeasured from './render-measure';
+import TableStyle from './table-style';
+import GenericColumn from './tcolumn-generic';
 
 // Global registration is necessary: previous dynamic import was super-slow
 Vue.component(GenericColumn.name, GenericColumn);
@@ -20,7 +20,7 @@ Vue.component(GenericColumn.name, GenericColumn);
 /**
  * Base Table (mixin): provides logic for table component.
  *
- * See table_bootstrap.vue & table_vuetify.vue for respective component declarations
+ * See table-bootstrap.vue & table-vuetify.vue for respective component declarations
  */
 export default {
   mixins: [RenderMeasured, TableStyle, TranslationsMixin],

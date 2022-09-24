@@ -3,7 +3,7 @@
 </template>
 <script>
 import Table from '../table/table';
-import ThemeMixin from '../util/theme_mixin';
+import ThemeMixin from '../util/theme-mixin';
 
 export default {
   name: 'DfTable',

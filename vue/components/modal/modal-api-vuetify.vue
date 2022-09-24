@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import DialogSize from '../classes/dialog_size';
+import DialogSize from '../classes/dialog-size';
 
 export default {
   name: 'VuetifyModal',

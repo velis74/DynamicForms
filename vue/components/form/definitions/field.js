@@ -11,7 +11,7 @@
  */
 import Vue from 'vue';
 
-import DisplayMode from '../../classes/display_mode';
+import DisplayMode from '../../classes/display-mode';
 
 // Checks if we are in development mode
 const IS_DEVELOPMENT = (

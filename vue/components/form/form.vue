@@ -1,7 +1,7 @@
 <script>
 import FilteredActions from '../actions/filtered-actions';
 
-import FormPayload from './definitions/form_payload';
+import FormPayload from './definitions/form-payload';
 import FormLayoutClass from './definitions/layout';
 
 export default {

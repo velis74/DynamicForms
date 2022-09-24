@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import FormPayload from './definitions/form_payload';
+import FormPayload from './definitions/form-payload';
 import FormField from './field';
 
 export default {
