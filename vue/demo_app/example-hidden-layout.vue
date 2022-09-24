@@ -39,9 +39,10 @@ export default {
     unitVisible() {
       return this.layout.fields.unit.visibility === DisplayMode.FULL;
     },
-    valueChanged(payload) {
-      // Tracking value-changed events emitted by the Layout is one of two ways of catering for dynamic field visibility
+    actionValueChanged(payload) {
+      // Creating a value-changed handler is one of two ways of catering for dynamic field visibility
       //   Watching variables is another. See watch handler above
+      //   Note that 'unit' will also be handled by the "payload" watch above
       if (payload.field === 'unit') this.unitChanged(payload.newValue.unit);
     },
     noteChanged(newValue) {

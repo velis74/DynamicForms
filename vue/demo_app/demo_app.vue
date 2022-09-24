@@ -22,7 +22,7 @@ import VueRouter from 'vue-router';
 
 import APIConsumerLoader from '../components/api_consumer/api_consumer_loader';
 
-import ExampleHiddenLayout from './example_hidden_layout';
+import ExampleHiddenLayout from './example-hidden-layout';
 import ModalDemo from './modal_demo';
 import NamedComponentLoader from './named_component_loader';
 

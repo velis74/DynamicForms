@@ -57,7 +57,7 @@ export default {
           const oldValue = _.cloneDeep(self.payload[self.field.name]);
           self.payload[`set${self.field.name}Value`](newValue);
           self.dispatchAction(
-            { field: self.field.name, oldValue, newValue: self.payload[self.field.name], name: 'valueChanged' },
+            { field: self.field.name, oldValue, newValue: self.payload[self.field.name], name: 'value-changed' },
           );
         },
       };

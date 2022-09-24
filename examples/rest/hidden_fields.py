@@ -1,5 +1,5 @@
 from dynamicforms import serializers
-from dynamicforms.action import Actions, FieldChangeAction, FormInitAction
+from dynamicforms.action import Actions
 from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields
@@ -14,9 +14,9 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     }
 
     actions = Actions(
-        FieldChangeAction(['note'], name='field_note_change'),  # TODO action_js = 'examples.action_hiddenfields_note'
-        FieldChangeAction(['unit'], name='field_unit_change'),  # TODO action_js = 'examples.action_hiddenfields_unit'
-        FormInitAction(name='form_init'),  # TODO action_js = 'examples.hide_fields_on_show("{{ serializer.uuid }}");',
+        # FieldChangeAction(['note'], name='field-note-change'),  # action_js = 'examples.action_hiddenfields_note'
+        # FieldChangeAction(['unit'], name='field-unit-change'),  # action_js = 'examples.action_hiddenfields_unit'
+        # FormInitAction(name='form_init'),  # action_js = 'examples.hide_fields_on_show("{{ serializer.uuid }}");',
         add_default_crud=True, add_default_filter=False
     )
 

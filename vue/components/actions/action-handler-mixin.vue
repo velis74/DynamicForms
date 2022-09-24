@@ -25,7 +25,7 @@ export default {
           this.dispatchAction(act, extraData);
         }
       }
-      let actionDFName = `action${_.startCase(_.camelCase(_.toLower(action.name)))}`;
+      let actionDFName = `action${_.upperFirst(_.camelCase(_.toLower(action.name)))}`;
 
       function getHandlersWithPayload(self) {
         // first, if action has a specific handler specified, let's just return that and be done with it

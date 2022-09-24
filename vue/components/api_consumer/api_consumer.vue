@@ -62,7 +62,7 @@ export default {
       this.consumer.deleteRow(payload);
       return true;
     },
-    actionValuechanged(actionData) {
+    actionValueChanged(actionData) {
       this.consumer.filter(actionData);
       return true;
     },
