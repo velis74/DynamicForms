@@ -29,7 +29,7 @@ export default {
       return this.field.allowNull && (this.internalValue == null);
     },
     boolValue: {
-      get: function get() { return !!this.internalValue; },
+      get: function get() { return this.internalValue; },
       set: function set(newVal) { console.log(this.value, newVal); },
     },
   },
