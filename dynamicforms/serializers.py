@@ -243,7 +243,6 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         models.FloatField: fields.FloatField,
         models.ImageField: fields.ImageField,
         models.IntegerField: fields.IntegerField,
-        models.NullBooleanField: fields.NullBooleanField,
         models.PositiveIntegerField: fields.IntegerField,
         models.PositiveSmallIntegerField: fields.IntegerField,
         models.SlugField: fields.SlugField,

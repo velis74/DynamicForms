@@ -55,11 +55,6 @@ render_params = ClassAssemblyDict({
         field_class='form-check-input position-checkbox-static', label_class='form-check-label',
         container_class='form-check form-group'
     ),
-    fields.NullBooleanField: dict(
-        table='df-tablecell-bool', input_type='checkbox', form_component_name='DCheckbox',
-        field_class='form-check-input position-checkbox-static', label_class='form-check-label',
-        container_class='form-check form-group'
-    ),
     fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
     fields.ChoiceField: dict(form_component_name='DSelect', multiple=False, allow_tags='%allow_tags'),
     fields.MultipleChoiceField: dict(multiple=True),
@@ -172,10 +167,6 @@ class Command(BaseCommand):
                     if hasattr(cls, '__init__'):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
-
-                            if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
-                                # BooleanField and NullBooleanField don't like this one
-                                continue
 
                             parm_str = parm.name
                             if parm_str == 'self' or parm.kind in (parm.VAR_KEYWORD, parm.VAR_POSITIONAL):

@@ -25,26 +25,7 @@ class BooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.Boo
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
-                 alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        kwargs['render_params'] = kwargs.get('render_params', None) or {}
-        kwargs['render_params'].setdefault('form_component_name', 'DCheckbox')
-        kwargs['render_params'].setdefault('input_type', 'checkbox')
-        kwargs['render_params'].setdefault('table', 'df-tablecell-bool')
-        kwargs['render_params'].setdefault('field_class', 'form-check-input position-checkbox-static')
-        kwargs['render_params'].setdefault('label_class', 'form-check-label')
-        kwargs['render_params'].setdefault('container_class', 'form-check form-group')
-        super().__init__(**kwargs)
-
-
-class NullBooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
-
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
-                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
                  display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '',
                  alignment: FieldAlignment = FieldAlignment.LEFT, render_params: Optional[Dict] = None, **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
