@@ -28,7 +28,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     )
 
     boolean_field = fields.BooleanField()
-    nullboolean_field = fields.BooleanField()
+    nullboolean_field = fields.BooleanField(allow_null=True)
     char_field = fields.CharField()
     email_field = fields.EmailField()
     slug_field = fields.SlugField()

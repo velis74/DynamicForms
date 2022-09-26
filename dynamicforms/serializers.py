@@ -232,6 +232,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         models.AutoField: fields.IntegerField,
         models.BigIntegerField: fields.IntegerField,
         models.BooleanField: fields.BooleanField,
+        models.NullBooleanField: fields.BooleanField,
         models.CharField: fields.CharField,
         models.CommaSeparatedIntegerField: fields.CharField,
         models.DateField: fields.DateField,
