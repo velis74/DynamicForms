@@ -61,7 +61,7 @@ class Action {
       const handlerName = `action${_.startCase(_.camelCase(_.toLower(data.name)))}`;
       let res = null;
       if (hwp) {
-        res = { handler: {}, payload: hwp.payload };
+        res = { handler: {}, payload: hwp.payload, generated: hwp.generated ?? null };
         // here we transform a function into the exact structure needed by action-handler-mixin
         res.handler[handlerName] = hwp.handler;
       }

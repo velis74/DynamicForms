@@ -13,6 +13,7 @@ function createHandler(dialogDef) {
         return true;
       },
       payload: payloadVal,
+      generated: true,
     },
   };
 }
@@ -42,7 +43,7 @@ export default {
       if (actions) {
         // any actions that don't have special handlers, create the default handler that closes the dialog
         for (const action of actions) {
-          if (!action.handlerWithPayload) {
+          if (!action.handlerWithPayload || action.handlerWithPayload?.generated) {
             action.handlerWithPayload = createHandler(dialogDef).handlerWithPayload;
           }
         }
