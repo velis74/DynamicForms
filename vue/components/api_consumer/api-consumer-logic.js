@@ -35,6 +35,7 @@ class APIConsumerLogic {
     this.formLayout = null;
     this.formComponent = 'FormLayout'; // component responsible for rendering the form layout
     this.actions = {};
+    this.ux_def = {};
     this.rows = [];
     this.formData = {};
     this.requestedPKValue = null;
@@ -113,19 +114,18 @@ class APIConsumerLogic {
 
   async getFormDefinition(pkValue) {
     if (this.formLayout == null) {
-      const UXDefinition = await this.getUXDefinition(pkValue, false);
+      this.ux_def = await this.getUXDefinition(pkValue, false);
       this.requestedPKValue = pkValue;
-      this.pkName = UXDefinition.primary_key_name;
-      this.titles = UXDefinition.titles;
-      this.formLayout = new FormLayout(UXDefinition.dialog);
-      this.formData = new FormPayload(UXDefinition.record, this.formLayout);
-      this.actions = new FilteredActions(UXDefinition.actions);
+      this.pkName = this.ux_def.primary_key_name;
+      this.titles = this.ux_def.titles;
       // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
     } else {
       // reread the current record
-      const record = await this.getRecord(this.pkValue);
-      this.formData = new FormPayload(record, this.formLayout);
+      this.ux_def.record = await this.getRecord(pkValue);
     }
+    this.formLayout = new FormLayout(this.ux_def.dialog);
+    this.formData = new FormPayload(this.ux_def.record, this.formLayout);
+    this.actions = new FilteredActions(this.ux_def.actions);
   }
 
   setOrdering(parameter, style, counter) {
