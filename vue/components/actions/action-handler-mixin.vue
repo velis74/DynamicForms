@@ -54,12 +54,10 @@ export default {
       }
 
       const handlers = getHandlersWithPayload(this);
-      console.log('HERE');
       if (!await this.asyncSome(
         handlers,
         async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
       )) {
-        console.log('HERE2');
         const actualActionName = actionDFName;
         actionDFName = 'processActionsGeneric';
         const hndlrs = getHandlersWithPayload(this);
@@ -67,7 +65,6 @@ export default {
           hndlrs,
           async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
         )) {
-          console.log('HERE3');
           console.warn(
             `[unprocessed] Action ${this.$options.name}.${actualActionName}()`,
           );
