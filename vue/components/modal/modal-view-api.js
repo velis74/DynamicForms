@@ -13,7 +13,6 @@ function createHandler(dialogDef) {
         return true;
       },
       payload: payloadVal,
-      generated: true,
     },
   };
 }
