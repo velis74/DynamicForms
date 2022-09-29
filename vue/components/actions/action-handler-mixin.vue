@@ -6,6 +6,13 @@ import FilteredActions from './filtered-actions';
 export default {
   name: 'ActionHandlerMixin',
   methods: {
+    async asyncSome(arr, fun) {
+      for (const e of arr) {
+        // eslint-disable-next-line no-await-in-loop
+        if (await fun(e)) return true;
+      }
+      return false;
+    },
     /**
      * Action is handled by a specific function on a component. First parent component which has this function
      * defined executes this function with arguments actionData, payload. Payload is a computed variable, for payload
@@ -47,11 +54,20 @@ export default {
       }
 
       const handlers = getHandlersWithPayload(this);
-      if (!handlers.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
+      console.log('HERE');
+      if (!await this.asyncSome(
+        handlers,
+        async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
+      )) {
+        console.log('HERE2');
         const actualActionName = actionDFName;
         actionDFName = 'processActionsGeneric';
         const hndlrs = getHandlersWithPayload(this);
-        if (!hndlrs.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
+        if (!await this.asyncSome(
+          hndlrs,
+          async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
+        )) {
+          console.log('HERE3');
           console.warn(
             `[unprocessed] Action ${this.$options.name}.${actualActionName}()`,
           );
