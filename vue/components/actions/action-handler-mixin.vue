@@ -46,12 +46,26 @@ export default {
         return res;
       }
 
+      async function asyncSome(arr, fun) {
+        for (const e of arr) {
+          // eslint-disable-next-line no-await-in-loop
+          if (await fun(e)) return true;
+        }
+        return false;
+      }
+
       const handlers = getHandlersWithPayload(this);
-      if (!handlers.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
+      if (!await asyncSome(
+        handlers,
+        async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
+      )) {
         const actualActionName = actionDFName;
         actionDFName = 'processActionsGeneric';
         const hndlrs = getHandlersWithPayload(this);
-        if (!hndlrs.some((handler) => (handler.handler[actionDFName](action, handler.payload, extraData)))) {
+        if (!await asyncSome(
+          hndlrs,
+          async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
+        )) {
           console.warn(
             `[unprocessed] Action ${this.$options.name}.${actualActionName}()`,
           );
