@@ -51,11 +51,11 @@ export default {
         let parent = self;
         while (parent != null) {
           // eslint-disable-next-line no-underscore-dangle
-          if (parent.$options._componentTag === 'df-form' ||
+          if (parent.$options.name === 'DfForm' ||
           // eslint-disable-next-line no-underscore-dangle
-            parent.$options._componentTag === 'df-table' ||
+            parent.$options.name === 'DfTable' ||
           // eslint-disable-next-line no-underscore-dangle
-            parent.$options._componentTag === 'FormLayout'
+            parent.$options.name === 'FormLayout'
           ) {
             parent.$emit(...emitData);
             return;
@@ -78,35 +78,22 @@ export default {
         ...getHandlersWithPayload(this, 'processActionsGeneric'),
       ];
 
-      if (!await asyncSome(
+      const actionHandled = await asyncSome(
         handlers,
         async (handler) => {
           lastExecutedHandler = handler;
           return (handler.handler[actionDFName] ??
             handler.handler.processActionsGeneric)(action, handler.payload, extraData);
         },
-      )) {
-        // no handler was executed
-        if (lastExecutedHandler) {
-          // means we know some handlers were executed, return first one
-          lastExecutedHandler = handlers.shift();
-        }
-        // if there were no executions, lastExecutedHandler evaluates into undefined
-        const emitData = [
-          'action-executed',
-          { action, handler: lastExecutedHandler?.payload, extraData, actionHandled: false },
-        ];
-
-        emitEvent(this, emitData);
-        return;
+      );
+      if (!actionHandled && lastExecutedHandler) {
+        // means action wasn't handled but some handlers were executed, return first handler
+        lastExecutedHandler = handlers.shift();
       }
-      // handler was executed
-      const emitData = [
+      emitEvent(this, [
         'action-executed',
-        { action, handler: lastExecutedHandler.payload, extraData, actionHandled: true },
-      ];
-
-      emitEvent(this, ...emitData);
+        { action, handler: lastExecutedHandler?.payload, extraData, actionHandled },
+      ]);
     },
   },
 };
