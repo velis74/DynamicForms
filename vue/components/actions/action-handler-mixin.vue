@@ -25,9 +25,9 @@ export default {
           this.dispatchAction(act, extraData);
         }
       }
-      let actionDFName = `action${_.upperFirst(_.camelCase(_.toLower(action.name)))}`;
+      const actionDFName = `action${_.upperFirst(_.camelCase(_.toLower(action.name)))}`;
 
-      function getHandlersWithPayload(self) {
+      function getHandlersWithPayload(self, actionName) {
         // first, if action has a specific handler specified, let's just return that and be done with it
         if (action.handlerWithPayload) return [action.handlerWithPayload];
         // WARNING: It is unlikely, but possible that a parent would handle the event, but not have a payload prop
@@ -39,11 +39,26 @@ export default {
           if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
 
           if (parent.payload !== undefined) payload = parent.payload;
-          if (parent[actionDFName]) res.unshift({ handler: parent, payload });
+          if (parent[actionName]) res.unshift({ handler: parent, payload });
 
           parent = parent.$parent;
         }
         return res;
+      }
+
+      function emitEvent(self, emitData) {
+        self.$emit(...emitData);
+        let parent = self;
+        while (parent != null) {
+          if (parent.$options.name === 'DfForm' ||
+            parent.$options.name === 'DfTable' ||
+            parent.$options.name === 'FormLayout'
+          ) {
+            parent.$emit(...emitData);
+            return;
+          }
+          parent = parent.$parent;
+        }
       }
 
       async function asyncSome(arr, fun) {
@@ -54,23 +69,28 @@ export default {
         return false;
       }
 
-      const handlers = getHandlersWithPayload(this);
-      if (!await asyncSome(
+      let lastExecutedHandler;
+      const handlers = [
+        ...getHandlersWithPayload(this, actionDFName),
+        ...getHandlersWithPayload(this, 'processActionsGeneric'),
+      ];
+
+      const actionHandled = await asyncSome(
         handlers,
-        async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
-      )) {
-        const actualActionName = actionDFName;
-        actionDFName = 'processActionsGeneric';
-        const hndlrs = getHandlersWithPayload(this);
-        if (!await asyncSome(
-          hndlrs,
-          async (handler) => (handler.handler[actionDFName](action, handler.payload, extraData)),
-        )) {
-          console.warn(
-            `[unprocessed] Action ${this.$options.name}.${actualActionName}()`,
-          );
-        }
+        async (handler) => {
+          lastExecutedHandler = handler;
+          return (handler.handler[actionDFName] ??
+            handler.handler.processActionsGeneric)(action, handler.payload, extraData);
+        },
+      );
+      if (!actionHandled && lastExecutedHandler) {
+        // means action wasn't handled but some handlers were executed, return first handler
+        lastExecutedHandler = handlers.shift();
       }
+      emitEvent(this, [
+        'action-executed',
+        { action, handler: lastExecutedHandler?.payload, extraData, actionHandled },
+      ]);
     },
   },
 };
