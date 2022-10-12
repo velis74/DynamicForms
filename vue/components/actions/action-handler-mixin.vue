@@ -50,11 +50,8 @@ export default {
         self.$emit(...emitData);
         let parent = self;
         while (parent != null) {
-          // eslint-disable-next-line no-underscore-dangle
           if (parent.$options.name === 'DfForm' ||
-          // eslint-disable-next-line no-underscore-dangle
             parent.$options.name === 'DfTable' ||
-          // eslint-disable-next-line no-underscore-dangle
             parent.$options.name === 'FormLayout'
           ) {
             parent.$emit(...emitData);
