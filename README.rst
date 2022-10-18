@@ -101,9 +101,8 @@ examples/models.py  (excerpt)
        description = models.CharField(max_length=20, help_text='Item description')
 
 
-If you want filter in list view just set serializers property show_filter value to True. Filter will be applied if user
-press enter in filter field. If you want to have filter button in list header, call Actions with
-add_default_filter = True.
+Filter will be applied if user press enter in filter field. If you want to have filter button in list header,
+call Actions with add_default_filter = True.
 
 examples/rest/filter.py
 
@@ -121,7 +120,6 @@ examples/rest/filter.py
            'edit': 'Editing object',
        }
        actions = Actions(add_default_crud=True, add_default_filter=True)
-       show_filter = True
 
        class Meta:
            model = Filter
