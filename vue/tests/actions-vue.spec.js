@@ -1,4 +1,4 @@
-import {mount, shallowMount} from '@vue/test-utils';
+import {mount} from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import Vue from 'vue';
 import Vuetify from 'vuetify';

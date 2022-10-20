@@ -53,8 +53,6 @@ class FilteredActions {
           }, {}),
       );
     }
-    // console.log(position);
-    // console.log(this.actions);
     return this.filterCache[cacheKey];
   }
 
