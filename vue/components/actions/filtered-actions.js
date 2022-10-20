@@ -53,6 +53,8 @@ class FilteredActions {
           }, {}),
       );
     }
+    // console.log(position);
+    // console.log(this.actions);
     return this.filterCache[cacheKey];
   }
 
@@ -79,8 +81,8 @@ class FilteredActions {
   fieldAll(fieldName) {
     const res = this.filter('FIELD_START', fieldName);
     const add = this.filter('FIELD_END', fieldName);
-    Object.assign(res.actions, add.actions);
-    return new FilteredActions(res);
+    const actions = [...res.actionsList, ...add.actionsList];
+    return new FilteredActions(actions);
   }
 
   fieldStart(fieldName) {

@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import {mount, shallowMount} from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import VuetifyActions from '../components/actions/actions-vuetify';
 import * as VuetifyComponents from '../components/vuetify';
+import FilteredActions from "../components/actions/filtered-actions";
 
 Vue.use(Vuetify);
 Object.values(VuetifyComponents)
@@ -33,8 +34,8 @@ jest.mock('axios', () => ({
   },
 }));
 
-const actionsCopy = [
-  {
+const actionsCopy = {
+  add: {
     position: 'FILTER_ROW_END',
     field_name: null,
     name: 'add',
@@ -65,7 +66,7 @@ const actionsCopy = [
       },
     },
   },
-  {
+  edit: {
     position: 'ROW_CLICK',
     field_name: null,
     name: 'edit',
@@ -77,7 +78,7 @@ const actionsCopy = [
     classes: null,
     displayStyle: null,
   },
-  {
+  delete: {
     position: 'ROW_END',
     field_name: null,
     name: 'delete',
@@ -95,7 +96,7 @@ const actionsCopy = [
       },
     },
   },
-  {
+  filter: {
     position: 'FILTER_ROW_END',
     field_name: null,
     name: 'filter',
@@ -112,13 +113,13 @@ const actionsCopy = [
       },
     },
   },
-];
+};
 
 describe('actionsVuetify', () => {
   function mountComponent() {
-    const test = mount(VuetifyActions, {
+    return mount(VuetifyActions, {
       propsData: {
-        actions: _.cloneDeep(actionsCopy),
+        actions: new FilteredActions(actionsCopy),
       },
       parentComponent: {
         name: 'DemoApp',
@@ -130,9 +131,7 @@ describe('actionsVuetify', () => {
         IonIcon: { template: '<div class="mocked-ionicon"/>' }
       },
       vuetify: new Vuetify(),
-    });
-    // Checks if buttons have been rendered
-    return test.html();
+    }).html();
   }
 
   it('checks if four buttons were rendered', async () => {
@@ -186,8 +185,8 @@ describe('Check if visibility flags work as expected', () => {
 
   async function constructTest(asButton, showLabel, showIcon, clearLabelText) {
     const actions = _.cloneDeep(actionsCopy);
-    if (clearLabelText === true) actions[0].label = null;
-    actions[0].displayStyle = {
+    if (clearLabelText === true) actions.add.label = null;
+    actions.add.displayStyle = {
       xs: {
         asButton,
         showLabel,
@@ -196,7 +195,7 @@ describe('Check if visibility flags work as expected', () => {
     };
 
     const test = mount(VuetifyActions, {
-      propsData: { actions },
+      propsData: { actions: new FilteredActions(actions) },
       stubs: { IonIcon: { template: '<div class="mocked-ionicon"/>' } },
     });
     await flushPromises();
@@ -263,10 +262,9 @@ describe('Check if visibility flags work as expected', () => {
 
 describe('Check if actions components are responsive', () => {
   function mountComponent() {
-    const test = mount(VuetifyActions, {
+    return mount(VuetifyActions, {
       propsData: {
-        actions: _.cloneDeep(actionsCopy)
-          .splice(0),
+        actions: new FilteredActions([actionsCopy.add]),
       },
       parentComponent: {
         name: 'DemoApp',
@@ -279,8 +277,6 @@ describe('Check if actions components are responsive', () => {
       },
       vuetify: new Vuetify(),
     });
-    // Checks if buttons have been rendered
-    return test;
   }
 
   it('checks if xs breakpoint renders correctly', async () => {
@@ -329,7 +325,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.breakpoint;
     expect(breakpoints.xl).toBe(true);
-    expect(htmlCode.match(/<span>\+ Add<\/span>/g))
+    expect(htmlCode.match(/<span>Add<\/span>/g))
       .not
       .toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
