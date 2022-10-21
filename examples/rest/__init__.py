@@ -10,7 +10,6 @@ from .choice_allow_tags_fields import ChoiceAllowTagsFieldsViewSet
 from .document import DocumentsViewset
 from .hidden_fields import HiddenFieldsViewSet
 from .page_load import PageLoadViewSet
-from .refresh_types import RefreshTypesViewSet
 from .relation import RelationViewset
 from .single_dialog import SingleDialogViewSet
 from .validated import ValidatedViewSet
@@ -25,7 +24,6 @@ router.register(r'relation', RelationViewset, 'relation')
 router.register(r'validated', ValidatedViewSet, 'validated')
 router.register(r'page-load', PageLoadViewSet, 'page-load')
 router.register(r'filter', FilterViewSet, 'filter')
-router.register(r'refresh-types', RefreshTypesViewSet, 'refresh-types')
 router.register(r'single-dialog', SingleDialogViewSet, 'single-dialog')
 router.register(r'write-only-fields', WriteOnlyFieldsViewSet, 'write-only-fields')
 router.register(r'choice-allow-tags-fields', ChoiceAllowTagsFieldsViewSet, 'choice-allow-tags-fields')
