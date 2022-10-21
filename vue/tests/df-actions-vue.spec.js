@@ -39,7 +39,7 @@ describe('df-actions', () => {
           VuetifyActions: { template: '<div class="vuetifyactions"/>' }
         }
       }).html())
-    .toContain('<div class="vuetifyactions"/>')
+    .toContain('vuetifyactions')
   });
 });
 
