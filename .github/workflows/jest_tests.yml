@@ -10,6 +10,8 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-      - run: npm install
-      - run: npm test
+          node-version: '14.20.1'
+      - name: Install Dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
