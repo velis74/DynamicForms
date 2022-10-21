@@ -1,4 +1,5 @@
 import FilteredActions from '../components/actions/filtered-actions';
+import _ from "lodash";
 
 describe('ButtonTesting', () => {
   it('Check if label / icon on button works', () => {
@@ -20,28 +21,28 @@ describe('ButtonTesting', () => {
 
     expect(myActions.filterCache).toStrictEqual({});
 
-    function simpleTest(actionsList, expectedCount, expectedNames, expectedCacheKey) {
-      expect(actionsList.length).toEqual(expectedCount);
-      for (let i = 0; i < expectedCount; i++) {
-        expect(actionsList[i].name).toEqual(expectedNames[i]);
+    function simpleTest(actions, expectedNames, expectedCacheKey) {
+      expect(actions.length).toEqual(expectedNames.length);
+      for (let action of _.zip(actions.actionsList, expectedNames)) {
+        expect(action[0].name).toEqual(action[1]);
       }
       expect(myActions.filterCache[expectedCacheKey]).toBeDefined();
     }
 
-    simpleTest(myActions.header, 1, ['head'], 'HEADER');
-    simpleTest(myActions.rowStart, 1, ['rstart'], 'ROW_START');
-    simpleTest(myActions.rowEnd, 1, ['rend'], 'ROW_END');
-    simpleTest(myActions.fieldStart('description'), 1, ['description_help'], 'FIELD_START|description');
-    simpleTest(myActions.fieldEnd('description'), 1, ['description_lookup'], 'FIELD_END|description');
-    simpleTest(myActions.fieldEnd('datum'), 1, ['datum_lookup'], 'FIELD_END|datum');
+    simpleTest(myActions.header, ['head'], 'HEADER');
+    simpleTest(myActions.rowStart, ['rstart'], 'ROW_START');
+    simpleTest(myActions.rowEnd, ['rend'], 'ROW_END');
+    simpleTest(myActions.fieldStart('description'),['description_help'], 'FIELD_START|description');
+    simpleTest(myActions.fieldEnd('description'), ['description_lookup'], 'FIELD_END|description');
+    simpleTest(myActions.fieldEnd('datum'), ['datum_lookup'], 'FIELD_END|datum');
 
-    fAct = myActions.fieldAll('description').list;
-    simpleTest(fAct, 2, ['description_help', 'description_lookup'], 'FIELD_START|description');
+    fAct = myActions.fieldAll('description');
+    simpleTest(fAct, ['description_help', 'description_lookup'], 'FIELD_START|description');
     expect(myActions.filterCache['FIELD_END|description']).toBeDefined();
 
     fAct = myActions.fieldEnd('field_without_actions');
-    simpleTest(fAct, 0, [], 'FIELD_END|field_without_actions');
+    simpleTest(fAct, [], 'FIELD_END|field_without_actions');
     expect(fAct[0]).toBeUndefined();
-    expect(myActions.filterCache['FIELD_END|field_without_actions'].list.length).toEqual(0);
+    expect(myActions.filterCache['FIELD_END|field_without_actions'].length).toEqual(0);
   });
 });
