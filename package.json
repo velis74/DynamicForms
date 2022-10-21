@@ -24,7 +24,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^33.0.0",
     "@ckeditor/ckeditor5-vue2": "^1.0.5",
-    "axios": ">=0.25.0",
+    "axios": "<1.0.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
     "dompurify": ">=2.3.4",
