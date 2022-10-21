@@ -9,8 +9,6 @@ class CalculatedCssClassForTableRowSerializer(FilterSerializer):
         'edit': 'Editing object',
     }
 
-    show_filter = True
-
     def get_row_css_style(self, obj):
         if obj:
             return 'color:gold;font-weight:bold;background-color:steelblue;' if \

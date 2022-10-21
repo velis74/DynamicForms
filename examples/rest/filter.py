@@ -13,7 +13,6 @@ class FilterSerializer(serializers.ModelSerializer):
         'edit': 'Editing object',
     }
     actions = Actions(add_default_filter=True, add_default_crud=True, add_form_buttons=True)
-    show_filter = True
 
     name = NameTestField(
         label='Name field',

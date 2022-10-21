@@ -14,8 +14,6 @@ class PageLoadSerializer(serializers.ModelSerializer):
     actions = Actions(
         add_default_crud=True, add_default_filter=True)
 
-    show_filter = True
-
     def get_row_css_style(self, obj):
         return 'color: darkred'
 
