@@ -154,7 +154,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             'responsive_table_layouts': self.get_responsive_table_layouts_def(),
             'actions': self.render_actions.as_action_def(),
             'record': None if self.parent else self.data,
-            'filter': self.filter_serializer_component_params() if self.show_filter else None,
+            'filter': self.filter_serializer_component_params(),
             'dialog': self.get_dialog_def(),
             'detail_url': self.reverse_url if not self.is_filter else None,
             'ordering_parameter': getattr(self.context['view'], 'ordering_parameter', 'ordering'),

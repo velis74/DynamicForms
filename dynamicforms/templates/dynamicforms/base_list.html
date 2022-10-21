@@ -17,9 +17,6 @@
       {% endif %}{% endfor %}
     {% render_table_commands serializer "thead_rowend" %}
   </tr>
-  {% if serializer.show_filter %}
-    {% render_form serializer.filter_data form_template=DYNAMICFORMS.table_filter_base_template %}
-  {% endif %}
   </thead>
   <tbody>
 {% endif %}
@@ -36,9 +33,6 @@
   {% render_table_commands serializer "onrowclick" %}
   {#TODO: Unit test: check if on_click & on_right_click declare properly, when table rows dynamically load#}
   <script type="application/javascript">
-    {% if serializer.show_filter %}
-      dynamicforms.registerFilterRowKeypress("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html'%}");
-    {% endif %}
     dynamicforms.paginatorInitTable("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
     dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
     dynamicforms.getInitialOrdering("{{ serializer.uuid }}");

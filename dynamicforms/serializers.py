@@ -23,8 +23,6 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         'edit': '',
     }
 
-    show_filter = False  # When true, filter row is shown for list view
-
     def __init__(self, *args, is_filter: bool = False, **kwds):
         self.master = None
         self.is_filter = is_filter
