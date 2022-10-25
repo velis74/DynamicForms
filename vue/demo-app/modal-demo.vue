@@ -1,6 +1,5 @@
 <template>
   <div>
-    <df-actions :actions="testActions"/>
     <v-row justify="center" class="my-4">
       <v-btn @click="btnClick('template')">Template</v-btn>
       <v-btn @click="btnClick('procedural')">Procedural</v-btn>
@@ -37,16 +36,6 @@ export default {
     return {
       showTemplate: false,
       templateDialogActions: new FilteredActions([Action.closeAction()]),
-      testActions: new FilteredActions({
-        // We have removed all properties non-essential for the FilteredActions class
-        head: { position: 'HEADER', field_name: null, name: 'head' },
-        rstart: { position: 'ROW_START', field_name: null, name: 'rstart' },
-        rend: { position: 'ROW_END', field_name: null, name: 'rend' },
-        add: { position: 'FILTER_ROW_END', field_name: null, name: 'add' },
-        description_help: { position: 'FIELD_START', field_name: 'description', name: 'description_help' },
-        description_lookup: { position: 'FIELD_END', field_name: 'description', name: 'description_lookup' },
-        datum_lookup: { position: 'FIELD_END', field_name: 'datum', name: 'datum_lookup' },
-      }),
       counter: 1,
     };
   },
