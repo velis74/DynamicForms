@@ -5,7 +5,7 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
-      thead
+      :row-type="labelType"
     />
     <GenericTRow
       v-if="filterDefinition"
@@ -14,7 +14,7 @@
       :row-data="rowData"
       :actions="actions"
       :filter-definition="filterDefinition"
-      thead
+      :row-type="filterType"
     />
     <div class="df-separator"/>
   </div>
@@ -26,12 +26,13 @@ import IndexedArray from '../classes/indexed-array';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import RenderMeasured from './render-measure';
+import RowTypesMixin from './row-types-mixin';
 import GenericTRow from './trow-generic';
 
 export default {
   name: 'GenericTHead',
   components: { GenericTRow },
-  mixins: [RenderMeasured],
+  mixins: [RenderMeasured, RowTypesMixin],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     rowData: { type: TableRow, required: true },

@@ -2,8 +2,8 @@
   <div
     ref="column"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass(column)}`"
-    @click.stop="(event) => dispatchAction(actions.rowClick, { column, event, thead })"
-    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { column, event, thead })"
+    @click.stop="(event) => dispatchAction(actions.rowClick, { column, event, rowType })"
+    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { column, event, rowType })"
   >
     <template v-if="filterRow">
       <FormField
@@ -69,13 +69,13 @@ import ColumnGroup from './column-group';
 import TableColumn from './definitions/column';
 import OrderingIndicator from './ordering-indicator';
 import RenderMeasured from './render-measure';
+import RowTypesMixin from './row-types-mixin';
 
 export default {
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, DfActions, FormField, ...TableCells },
-  mixins: [RenderMeasured, ActionHandlerMixin],
+  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
   props: {
-    thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
     actions: { type: FilteredActions, default: null },
