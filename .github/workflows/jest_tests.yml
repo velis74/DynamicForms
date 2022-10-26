@@ -12,6 +12,6 @@ jobs:
         with:
           node-version: '14.20.1'
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: Run tests
         run: npm test
