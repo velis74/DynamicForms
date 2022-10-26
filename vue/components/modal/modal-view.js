@@ -1,5 +1,7 @@
 import Vue from 'vue';
 
+import requestTracker from '../util/request-tracker';
+
 import ModalRenderer from './modal-renderer';
 import ModalViewAPI from './modal-view-api';
 
@@ -21,6 +23,7 @@ export default {
       }
       if (!Vue.prototype.$dfModal) {
         Object.defineProperty(Vue.prototype, '$dfModal', { get() { return this?.$root.modalRootInstance; } });
+        requestTracker.dfModal = vue.modalRootInstance;
       }
     },
   },
