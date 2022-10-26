@@ -42,5 +42,11 @@ export default {
         }
       }
     },
+    isCurrentDialogPromise(promise) {
+      return this.currentDialog() && this.currentDialog().promise == promise;
+    },
+    getDialogDefFromPromise(promise) {
+      return _.find(this.dialogList, { promise });
+    },
   },
 };
