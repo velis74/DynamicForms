@@ -17,7 +17,6 @@ venv/
 media
 /node_modules
 /coverage
-/package-lock.json
 /dynamicforms/static/ckeditor5/
 /dynamicforms/vue/node_modules/
 /dynamicforms/vue/package-lock.json
