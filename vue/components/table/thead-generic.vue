@@ -5,7 +5,7 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
-      :row-type="labelType"
+      :row-type="labelRowType"
     />
     <GenericTRow
       v-if="filterDefinition"
@@ -14,7 +14,7 @@
       :row-data="rowData"
       :actions="actions"
       :filter-definition="filterDefinition"
-      :row-type="filterType"
+      :row-type="filterRowType"
     />
     <div class="df-separator"/>
   </div>

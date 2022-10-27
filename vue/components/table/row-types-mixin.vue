@@ -1,15 +1,14 @@
 <script>
-import RowTypes from './row-types';
+import RowTypesEnum from './row-types-enum';
 
 export default {
   name: 'RowTypes',
-  props: { rowType: { type: Number, default: RowTypes.Data } },
+  props: { rowType: { type: Number, default: RowTypesEnum.Data } },
   computed: {
-    filterType() { return RowTypes.Filter; },
-    labelType() { return RowTypes.Label; },
-    dataType() { return RowTypes.Data; },
-    headerTypes() { return [RowTypes.Label, RowTypes.Filter]; },
-    thead() { return this.headerTypes.includes(this.rowType); },
+    filterRowType() { return RowTypesEnum.Filter; },
+    labelRowType() { return RowTypesEnum.Label; },
+    dataRowType() { return RowTypesEnum.Data; },
+    thead() { return [RowTypesEnum.Label, RowTypesEnum.Filter].includes(this.rowType); },
   },
 };
 </script>
