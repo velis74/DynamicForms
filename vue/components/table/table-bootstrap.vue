@@ -2,7 +2,9 @@
   <v-card>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
+      <!-- eslint-disable vue/no-v-text-v-html-on-component -->
       <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
+      <!-- eslint-enable -->
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
         <BootstrapActions :actions="actions.header"/>
         <BootstrapTHead :rendered-columns="responsiveColumns" :row-data="theadRowData"/>
