@@ -1,4 +1,4 @@
-import {mount} from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import VuetifyActions from '../components/actions/actions-vuetify';
 import * as VuetifyComponents from '../components/vuetify';
-import FilteredActions from "../components/actions/filtered-actions";
+import FilteredActions from '../components/actions/filtered-actions';
 
 Vue.use(Vuetify);
 Object.values(VuetifyComponents)
@@ -17,9 +17,13 @@ jest.mock('axios', () => ({
     interceptors: {
       request: {
         use: () => {
-        }
-      }
-    }
+        },
+      },
+      response: {
+        use: () => {
+        },
+      },
+    },
   }),
   get: async (url) => {
     console.warn('juhuhu');
