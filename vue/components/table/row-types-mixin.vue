@@ -3,7 +3,15 @@ import RowTypesEnum from './row-types-enum';
 
 export default {
   name: 'RowTypes',
-  props: { rowType: { type: Number, default: RowTypesEnum.Data } },
+  props: {
+    rowType: {
+      type: Object,
+      default: () => RowTypesEnum.Data,
+      validator(value) {
+        return RowTypesEnum.isDefined(value);
+      },
+    },
+  },
   computed: {
     filterRowType() { return RowTypesEnum.Filter; },
     labelRowType() { return RowTypesEnum.Label; },

@@ -1,7 +1,11 @@
-const RowTypesEnum = {
-  Filter: 0,
-  Label: 1,
-  Data: 2,
-};
+import Enum from 'enum';
 
-export default RowTypesEnum;
+const RowTypesEnum = new Enum({
+  Label: 0,
+  Filter: 1,
+  Data: 2,
+}, { freeze: false });
+
+RowTypesEnum.headerRows = () => [RowTypesEnum.Label, RowTypesEnum.Filter];
+
+export default Object.freeze(RowTypesEnum);
