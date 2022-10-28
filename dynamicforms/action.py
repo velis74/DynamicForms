@@ -227,8 +227,8 @@ class FieldChangeAction(ActionBase):
     def __init__(self, tracked_fields: Iterable[str], name: Union[str, None] = None,
                  serializer: Serializer = None, action=None):
         super().__init__(name, serializer, action=action)
-        self.tracked_fields = tracked_fields
-        assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
+        self.tracked_fields = tracked_fields or []
+        # assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         if serializer:
             self.tracked_fields = [self._resolve_reference(f) for f in self.tracked_fields]
 
@@ -246,7 +246,7 @@ class FieldChangeAction(ActionBase):
         return self.name, None
 
     def as_component_def(self):
-        res = dict(tracked_fields=list(self.tracked_fields))
+        res = dict(position='VALUE_CHANGED', tracked_fields=list(self.tracked_fields))
         res.update(ActionBase.as_component_def(self))
         return res
 
@@ -453,6 +453,8 @@ class Actions(object):
         if add_form_buttons:
             self.actions.append(FormButtonAction(btn_type=FormButtonTypes.CANCEL, name='cancel'))
             self.actions.append(FormButtonAction(btn_type=FormButtonTypes.SUBMIT, name='submit'))
+
+        self.actions.append(FieldChangeAction(None, 'value_changed'))
 
     def get_resolved_copy(self, serializer) -> 'Actions':
         """

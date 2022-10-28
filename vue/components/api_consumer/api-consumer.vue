@@ -62,8 +62,8 @@ export default {
       this.consumer.deleteRow(payload);
       return true;
     },
-    actionValueChanged(actionData) {
-      this.consumer.filter(actionData);
+    actionValueChanged(actionData, payload, extradata) {
+      this.consumer.filter(actionData, extradata);
       return true;
     },
     async actionAdd() {

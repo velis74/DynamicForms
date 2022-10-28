@@ -194,9 +194,9 @@ class APIConsumerLogic {
     }
   }
 
-  async filter(filterData) {
+  async filter(action, extraData) {
     // eslint-disable-next-line max-len,no-unused-expressions
-    !_.includes(['', undefined, null], filterData.newValue) ? this.filterData[filterData.field] = filterData.newValue : delete this.filterData[filterData.field];
+    !_.includes(['', undefined, null], extraData.newValue) ? this.filterData[extraData.field] = extraData.newValue : delete this.filterData[extraData.field];
     await this.reload(true);
   }
 }

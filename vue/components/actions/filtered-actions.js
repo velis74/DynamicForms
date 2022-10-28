@@ -98,6 +98,10 @@ class FilteredActions {
   get formFooter() {
     return this.filter('FORM_FOOTER');
   }
+
+  get valueChanged() {
+    return this.filter('VALUE_CHANGED');
+  }
 }
 
 export default FilteredActions;

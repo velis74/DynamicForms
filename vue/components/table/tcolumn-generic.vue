@@ -9,7 +9,8 @@
       <FormField
         v-if="filterRow.formFieldInstance"
         :field="filterRow.formFieldInstance"
-        :payload="payload"
+        :payload="rowData"
+        :actions="actions"
         :errors="{}"
         style="padding: 0; margin: 0;"
       />
@@ -56,11 +57,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
-import FormPayload from '../form/definitions/form-payload';
 import FormField from '../form/field';
 import DfActions from '../public/df-actions';
 
@@ -84,13 +82,6 @@ export default {
   computed: {
     columnClass() {
       return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col';
-    },
-    payload() {
-      if (this.filterRow) {
-        const keys = _.keys(this.rowData);
-        return new FormPayload(_.zipObject(keys, _.map(keys, () => null)), { fields: [this.column] });
-      }
-      return null;
     },
   },
   methods: {

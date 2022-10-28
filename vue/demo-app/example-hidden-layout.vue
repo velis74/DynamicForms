@@ -1,5 +1,5 @@
 <template>
-  <FormLayout :layout="layout" :payload="payload" :errors="errors" @value-changed="valueChanged"/>
+  <FormLayout :layout="layout" :payload="payload" :errors="errors"/>
 </template>
 
 <script>
@@ -39,11 +39,11 @@ export default {
     unitVisible() {
       return this.layout.fields.unit.visibility === DisplayMode.FULL;
     },
-    actionValueChanged(payload) {
+    actionValueChanged(action, payload, extradata) {
       // Creating a value-changed handler is one of two ways of catering for dynamic field visibility
       //   Watching variables is another. See watch handler above
       //   Note that 'unit' will also be handled by the "payload" watch above
-      if (payload.field === 'unit') this.unitChanged(payload.newValue.unit);
+      if (extradata.field === 'unit') this.unitChanged(extradata.newValue.unit);
     },
     noteChanged(newValue) {
       this.layout.fields.unit.setVisibility(newValue !== 'abc');
