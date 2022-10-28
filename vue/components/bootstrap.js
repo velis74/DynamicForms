@@ -3,5 +3,6 @@ import BootstrapForm from './form/form-bootstrap';
 import FormLayout from './form/layout';
 import BootstrapModal from './modal/modal-api-vuetify';
 import BootstrapTable from './table/table-bootstrap';
+import LoadingIndicator from './util/loading-indicator';
 
-export { BootstrapTable, BootstrapActions, BootstrapForm, BootstrapModal, FormLayout };
+export { BootstrapTable, BootstrapActions, BootstrapForm, BootstrapModal, FormLayout, LoadingIndicator };
