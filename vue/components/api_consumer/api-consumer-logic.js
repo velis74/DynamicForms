@@ -115,7 +115,6 @@ class APIConsumerLogic {
   async getFormDefinition(pkValue) {
     if (this.formLayout == null) {
       this.ux_def = await this.getUXDefinition(pkValue, false);
-      this.requestedPKValue = pkValue;
       this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
       // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
@@ -123,6 +122,7 @@ class APIConsumerLogic {
       // reread the current record
       this.ux_def.record = await this.getRecord(pkValue);
     }
+    this.requestedPKValue = pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
     this.formData = new FormPayload(this.ux_def.record, this.formLayout);
     this.actions = new FilteredActions(this.ux_def.actions);
