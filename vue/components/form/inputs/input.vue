@@ -43,7 +43,9 @@ export default {
         res.push((value) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`));
       }
       if (this.isNumber) {
-        res.push((value) => (this.isValidNumber(value) ? true : 'Not a valid number'));
+        // if null is allowed then null and undefined should not trigger invalid number
+        res.push((value) => (this.isValidNumber(value) || (this.field.allowNull && value == null) ? true :
+          'Not a valid number'));
       }
       return res;
     },
