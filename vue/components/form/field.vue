@@ -3,6 +3,7 @@
     <component
       :is="field.componentName"
       :field="field"
+      :actions="actions"
       :payload="proceduralPayload"
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
@@ -14,6 +15,7 @@
 import _ from 'lodash';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
+import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
 import DCheckbox from './inputs/checkbox';
@@ -39,6 +41,7 @@ export default {
   mixins: [ActionHandlerMixin],
   props: {
     field: { type: Object, required: true },
+    actions: { type: FilteredActions, default: null },
     payload: { type: FormPayload, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
@@ -57,7 +60,8 @@ export default {
           const oldValue = _.cloneDeep(self.payload[self.field.name]);
           self.payload[`set${self.field.name}Value`](newValue);
           self.dispatchAction(
-            { field: self.field.name, oldValue, newValue: self.payload[self.field.name], name: 'value-changed' },
+            self.actions.valueChanged,
+            { field: self.field.name, oldValue, newValue: self.payload[self.field.name] },
           );
         },
       };

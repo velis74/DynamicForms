@@ -3,6 +3,7 @@ import _ from 'lodash';
 import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
 import FormField from '../../form/definitions/field';
+import FormPayload from '../../form/definitions/form-payload';
 
 import TableColumns from './columns';
 import TableRow from './row';
@@ -27,9 +28,9 @@ export default class TableFilterRow { // eslint-disable-line max-classes-per-fil
       const fieldPayload = fields[v.name];
       fieldPayload.help_text = null;
       fieldPayload.label = null;
-      const fField = new FormField(fieldPayload);
-      v.formFieldInstance = fField;
+      v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);
+    this.payload = new FormPayload(record, { fields: this.columns });
   }
 }
