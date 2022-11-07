@@ -57,7 +57,7 @@ export default {
       );
     },
     payload() {
-      return this.rowData;
+      return this.filterDefinition ? this.filterDefinition.payload : this.rowData;
     },
   },
   methods: {
