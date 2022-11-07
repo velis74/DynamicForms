@@ -141,7 +141,7 @@ class AdvancedFields(models.Model):
 
     @property
     def readonly_field(self):
-        return self.hidden_field > timezone.now() - timezone.timedelta(days=1)
+        return self.hidden_field > timezone.now() - timezone.timedelta(days=1) if self.hidden_field else False
 
     """ListField and DictField not supported in HTML forms in DRF"""
     # list_field = models.?
@@ -203,6 +203,7 @@ class CalendarRecurrence(models.Model):
     def get_holidays(self):
         # not implemented yet
         return set()
+
 
 class CalendarEvent(models.Model):
     title = models.CharField(max_length=80, verbose_name=_('Title'), null=False, blank=False)
