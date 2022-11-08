@@ -181,8 +181,11 @@ class APIConsumerLogic {
     } else {
       res = await apiClient.post(url, this.formData);
     }
-    // TODO: update any table here too, either add the new record or modify the existing one
-    console.warn('table processing not done yet: here we should append / update the table row', res);
+
+    // reload the whole table
+    await this.reload(true);
+
+    return res;
   }
 
   async dialogForm(pk, dfModal) {
