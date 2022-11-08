@@ -193,7 +193,6 @@ class APIConsumerLogic {
   }
 
   async filter(filterData = null) {
-    // eslint-disable-next-line max-len,no-unused-expressions
     if (filterData) this.filterData = filterData;
     await this.reload(true);
   }
