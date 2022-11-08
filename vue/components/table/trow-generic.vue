@@ -9,15 +9,15 @@
     ref="row"
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => dispatchAction(actions.rowClick, { thead, event })"
-    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { thead, event })"
+    @click.stop="(event) => dispatchAction(actions.rowClick, { rowType, event })"
+    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { rowType, event })"
   >
     <GenericColumn
       v-for="column in renderedColumns.items"
       :key="column.name"
       :column="column"
       :row-data="filterDefinition ? filterDefinition.payload : rowData"
-      :thead="thead"
+      :row-type="rowType"
       :actions="actions"
       :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
     />
@@ -34,16 +34,16 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render-measure';
+import RowTypesMixin from './row-types-mixin';
 
 export default {
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
-  mixins: [RenderMeasured, ActionHandlerMixin],
+  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
-    thead: { type: Boolean, default: false }, // is this row rendered in thead section
     actions: { type: FilteredActions, default: null },
     filterDefinition: { type: TableFilterRow, default: null },
   },

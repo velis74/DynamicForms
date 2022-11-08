@@ -37,7 +37,7 @@ function generateStyle(uniqueId, responsiveColumns) {
   }
 
   #${uniqueId} .df-col { 
-    margin: .5em .25em; 
+    padding: .5em .25em; 
   }
   
   #${uniqueId} .df-col.ordering { 

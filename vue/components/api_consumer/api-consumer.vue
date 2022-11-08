@@ -5,6 +5,7 @@
 </template>
 <script>
 import { DfForm, DfModal, DfTable } from '../public';
+import RowTypesEnum from '../table/row-types-enum';
 
 import APIConsumerLogic from './api-consumer-logic';
 import ComponentDisplay from './component-display';
@@ -71,13 +72,13 @@ export default {
       return true;
     },
     async actionEdit(actionData, payload, extraData) {
-      if (extraData.thead) return false;
+      if (extraData.rowType !== RowTypesEnum.Data) return false;
       await this.consumer.dialogForm(payload[this.consumer.pkName], this.$dfModal);
       return true;
     },
     actionSort(action, payload, extraData) {
       // This is the default handler for ordering
-      if (extraData.thead && action.position === 'ROW_CLICK' && extraData.column) {
+      if (extraData.rowType === RowTypesEnum.Label && action.position === 'ROW_CLICK' && extraData.column) {
         extraData.column.ordering.handleColumnHeaderClick(extraData.event);
         return true;
       }
