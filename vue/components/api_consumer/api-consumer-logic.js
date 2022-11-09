@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import FilteredActions from '../actions/filtered-actions';
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
@@ -197,9 +195,8 @@ class APIConsumerLogic {
     }
   }
 
-  async filter(action, extraData) {
-    // eslint-disable-next-line max-len,no-unused-expressions
-    !_.includes(['', undefined, null], extraData.newValue) ? this.filterData[extraData.field] = extraData.newValue : delete this.filterData[extraData.field];
+  async filter(filterData = null) {
+    if (filterData) this.filterData = filterData;
     await this.reload(true);
   }
 }
