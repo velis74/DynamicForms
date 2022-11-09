@@ -23,7 +23,7 @@ import LayoutMixin from './layout.mixin';
 import FormRow from './row';
 
 export default {
-  name: 'FormLayout',
+  name: 'VuetifyFormLayout',
   components: { FormRow },
   mixins: [LayoutMixin],
 };

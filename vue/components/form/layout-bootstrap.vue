@@ -24,7 +24,7 @@ import FormLayoutMixin from './layout.mixin';
 import FormRow from './row';
 
 export default {
-  name: 'FormLayout',
+  name: 'BootstrapFormLayout',
   components: { FormRow },
   mixins: [FormLayoutMixin],
 };
