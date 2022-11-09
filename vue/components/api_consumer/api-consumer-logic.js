@@ -201,13 +201,13 @@ class APIConsumerLogic {
     if (resultAction.action.name === 'submit') {
       await this.saveForm().catch((data) => {
         // Include form error and field errors
-        error = { non_field_errors: `${data.response.status} ${data.response.statusText}`, ...data.response.data };
+        error = { ...data.response.data };
       });
     }
     // propagate error to the next dialog
     this.errors = error;
     // open new dialog if needed
-    if (error && error.non_field_errors) await this.dialogForm(pk, dfModal, this.formData);
+    if (error && Object.keys(error).length) await this.dialogForm(pk, dfModal, this.formData);
   }
 
   async filter(action, extraData) {

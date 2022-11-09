@@ -1,35 +1,11 @@
-<template>
-  <v-form>
-    <!-- we start with any form-level error messages, if there are any -->
-    <slot name="form-error">
-      <div v-if="errorText" class="alert alert-danger">
-        <small class="text-danger">{{ errorText }}</small>
-      </div>
-    </slot>
-    <template v-for="(row, idx) in layout.rows">
-      <FormRow
-        :is="row.componentName"
-        :key="`${idx}${row.renderKey}`"
-        :columns="row.columns"
-        :payload="payload"
-        :errors="errors"
-        :any-field-visible="row.anyVisible"
-      />
-    </template>
-  </v-form>
-</template>
-
-<script>
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
 import FormLayout from './definitions/layout';
-import FormRow from './row';
 
 export default {
-  name: 'FormLayout',
-  components: { FormRow },
+  name: 'FormLayoutMixin',
   mixins: [ActionHandlerMixin], // TODO: implement also formFieldChangeMixin
   props: {
     layout: { type: FormLayout, required: true },
@@ -59,4 +35,3 @@ export default {
     // eventBus.$off(`formEvents_${this.uuid}`);
   },
 };
-</script>

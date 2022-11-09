@@ -18,7 +18,7 @@
 export default {
   name: 'FormFieldGroup',
   components: {
-    FormLayout: () => import('./layout'),
+    FormLayout: () => import('./layout-vuetify'),
     // DFWidgetInput,
     // DFWidgetPassword,
     // DFWidgetCKEditor,
