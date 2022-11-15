@@ -2,8 +2,11 @@
   <v-form>
     <!-- we start with any form-level error messages, if there are any -->
     <slot name="form-error">
-      <div v-if="errorText">
-        <small class="red--text">{{ errorText }}</small>
+      <div v-if="nonFieldErrors">
+        <!-- eslint-disable vue/require-v-for-key -->
+        <template v-for="error in nonFieldErrors">
+          <small class="red--text">{{ error }}</small>
+        </template>
       </div>
     </slot>
     <template v-for="(row, idx) in layout.rows">

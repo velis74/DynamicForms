@@ -14,7 +14,7 @@ export default {
     errors: { type: Object, default: () => {} },
   },
   computed: {
-    errorText() {
+    nonFieldErrors() {
       const nonFieldError = 'non_field_errors';
       try {
         if (this.errors && this.errors[nonFieldError]) return this.errors[nonFieldError];

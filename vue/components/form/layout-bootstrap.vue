@@ -2,8 +2,10 @@
   <v-form>
     <!-- we start with any form-level error messages, if there are any -->
     <slot name="form-error">
-      <div v-if="errorText" class="alert alert-danger">
-        <small class="text-danger">{{ errorText }}</small>
+      <div v-if="nonFieldErrors" class="alert alert-danger">
+        <template v-for="error in nonFieldErrors">
+          <small class="text-danger">{{ error }}</small>
+        </template>
       </div>
     </slot>
     <template v-for="(row, idx) in layout.rows">
