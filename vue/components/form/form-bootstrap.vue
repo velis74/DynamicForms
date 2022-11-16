@@ -23,7 +23,7 @@
 import { DfActions } from '../public';
 
 import Form from './form';
-import FormLayout from './layout';
+import FormLayout from './layout-bootstrap';
 
 export default {
   name: 'BootstrapForm',

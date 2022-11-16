@@ -1,8 +1,17 @@
 import VuetifyActions from './actions/actions-vuetify';
 import VuetifyForm from './form/form-vuetify';
-import FormLayout from './form/layout';
+import VuetifyFormLayout from './form/layout-vuetify';
 import VuetifyModal from './modal/modal-api-vuetify';
+import FormLayout from './public/df-layout';
 import VuetifyTable from './table/table-vuetify';
 import LoadingIndicator from './util/loading-indicator';
 
-export { FormLayout, VuetifyTable, VuetifyForm, VuetifyActions, VuetifyModal, LoadingIndicator };
+export {
+  FormLayout,
+  LoadingIndicator,
+  VuetifyActions,
+  VuetifyForm,
+  VuetifyFormLayout,
+  VuetifyModal,
+  VuetifyTable,
+};

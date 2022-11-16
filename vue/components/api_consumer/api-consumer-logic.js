@@ -32,6 +32,7 @@ class APIConsumerLogic {
     this.formFields = {};
     this.formLayout = null;
     this.formComponent = 'FormLayout'; // component responsible for rendering the form layout
+    this.errors = {};
     this.actions = {};
     this.ux_def = {};
     this.rows = [];
@@ -161,6 +162,7 @@ class APIConsumerLogic {
       payload: this.formData,
       loading: this.loading,
       actions: this.actions,
+      errors: this.errors,
     };
   }
 
@@ -186,13 +188,24 @@ class APIConsumerLogic {
     return res;
   }
 
-  async dialogForm(pk, dfModal) {
+  async dialogForm(pk, dfModal, formData = null) {
     await this.getFormDefinition(pk);
-    const resultAction = await dfModal.fromFormDefinition(this.formDefinition);
-    if (resultAction.action.name === 'submit') {
-      await this.saveForm();
-      // TODO: catch 400 here and show the dialog again
+    // if dialog is reopened use the old form's data
+    if (formData !== null) {
+      this.formData = formData;
     }
+    const resultAction = await dfModal.fromFormDefinition(this.formDefinition);
+    let error = {};
+    if (resultAction.action.name === 'submit') {
+      await this.saveForm().catch((data) => {
+        // Include form error and field errors
+        error = { ...data.response.data };
+      });
+    }
+    // propagate error to the next dialog
+    this.errors = error;
+    // open new dialog if needed
+    if (error && Object.keys(error).length) await this.dialogForm(pk, dfModal, this.formData);
   }
 
   async filter(filterData = null) {
