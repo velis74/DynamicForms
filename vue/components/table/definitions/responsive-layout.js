@@ -2,6 +2,7 @@
 // TODO: speed - currently there's way too much DOM
 
 // eslint-disable-next-line max-classes-per-file
+import _ from 'lodash';
 import Vue from 'vue';
 
 import DisplayMode from '../../classes/display-mode';
@@ -122,15 +123,9 @@ export class ResponsiveLayouts {
   }
 
   recalculate(containerWidth) {
-    for (let i = 0; i < this.layouts.length; i++) {
-      //  we're assuming each consecutive layout is narrower than the previous one
-      if (this.layouts[i].totalWidth <= containerWidth) {
-        // console.log(`layout ${i}: ${this.layouts[i].totalWidth} <= ${containerWidth}`);
-        return this.layouts[i];
-      }
-    }
-    // return last layout (one column) even if it is too wide still
-    // console.log(`layout ${this.layouts.length - 1}: none <= ${containerWidth}`);
-    return this.layouts[this.layouts.length - 1];
+    return this.layouts.find((layout) => {
+      layout.totalWidth = _.sum(layout.columns.map((el) => el.maxWidth ?? 0));
+      return layout.totalWidth <= containerWidth;
+    }) ?? this.layouts[-1];
   }
 }

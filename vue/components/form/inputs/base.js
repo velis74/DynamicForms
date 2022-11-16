@@ -1,11 +1,13 @@
 import _ from 'lodash';
 
+import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
 
 export default {
   props: {
     field: { type: FormField, required: true },
     payload: { type: Object, required: true },
+    actions: { type: FilteredActions, default: null },
     errors: { type: null, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
   },

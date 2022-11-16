@@ -86,7 +86,6 @@ export default class TableColumn {
 
   setMaxWidth(value) {
     if (value > this._maxWidth) {
-      if (this.layout) this.layout.totalWidth += value - (this._maxWidth || 0);
       this._maxWidth = value;
     }
   }

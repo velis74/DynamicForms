@@ -3,7 +3,7 @@ import _ from 'lodash';
 let uniqueIdCounter = 0;
 const ACTION_POSITIONS = [
   'HEADER', 'ROW_START', 'ROW_END', 'FIELD_START', 'FIELD_END', 'FORM_HEADER', 'FORM_FOOTER',
-  'ROW_CLICK', 'ROW_RIGHT_CLICK',
+  'ROW_CLICK', 'ROW_RIGHT_CLICK', 'VALUE_CHANGED',
 ];
 
 class Action {
