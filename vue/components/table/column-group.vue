@@ -8,6 +8,7 @@
         :row-data="rowData"
         :thead="thead"
         :actions="actions"
+        :row-type="$parent.$props.rowType"
       />
     </div>
   </div>

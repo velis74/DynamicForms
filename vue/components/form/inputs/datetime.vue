@@ -51,7 +51,7 @@ export default {
           newVal = this.inputType === 'date' ?
             DateTime.fromISO(newVal).toFormat('yyyy-MM-dd') : DateTime.fromISO(newVal).toFormat('HH:mm:ss');
         }
-        this.payload.setValue(newVal);
+        this.payload.setValue(newVal || null);
       },
     },
     displayFormat() {

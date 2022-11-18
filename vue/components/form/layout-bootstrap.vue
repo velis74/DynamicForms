@@ -3,6 +3,7 @@
     <!-- we start with any form-level error messages, if there are any -->
     <slot name="form-error">
       <div v-if="nonFieldErrors" class="alert alert-danger">
+        <!-- eslint-disable vue/require-v-for-key -->
         <template v-for="error in nonFieldErrors">
           <small class="text-danger">{{ error }}</small>
         </template>
