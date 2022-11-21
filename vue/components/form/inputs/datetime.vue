@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import 'vue-datetime/dist/vue-datetime.min.css';
+
 import { DateTime } from 'luxon';
 import { Datetime } from 'vue-datetime';
 
@@ -70,8 +72,6 @@ export default {
 </script>
 
 <style>
-@import '~vue-datetime/dist/vue-datetime.css';
-
 .vdatetime-calendar__month {
   white-space: normal;
 }
