@@ -4,11 +4,10 @@
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "scripts": {
-    "dev": "vite",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "serve": "vite",
+    "build": "vite build",
+    "test": "vitest run --coverage",
+    "lint": "eslint --exec lint"
   },
   "main": "./vue/dynamicforms.js",
   "keywords": [
@@ -43,8 +42,8 @@
     "vuetify": "^2.4.0"
   },
   "devDependencies": {
+    "@vitest/coverage-c8": "^0.25.2",
     "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-unit-jest": "^4.5.0",
     "@vue/cli-service": "^4.5.15",
     "@vue/test-utils": "^1.3.0",
     "cache-loader": "^4.1.0",
@@ -58,9 +57,7 @@
     "vite-plugin-vue2": "^2.0.2",
     "vitest": "^0.25.2",
     "vue-cli-plugin-vuetify": "~2.4.5",
-    "vue-jest": "^3.0.7",
-    "vuetify-loader": "^1.7.0",
-    "webpack": "^4.46.0"
+    "vuetify-loader": "^1.7.0"
   },
   "vue": {
     "outputDir": "./dynamicforms/static/vue/",

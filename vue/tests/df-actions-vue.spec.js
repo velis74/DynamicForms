@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
+import { describe, it, expect } from 'vitest';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 
@@ -10,7 +11,7 @@ import DfActions from '../components/public/df-actions';
 Vue.use(Vuetify);
 
 const fieldName = 'field-name';
-const action_definitions = {
+const actionDefinitions = {
   // We have removed all properties non-essential for the FilteredActions class
   head: { position: 'HEADER', field_name: null, name: 'head' },
   rowStart: { position: 'ROW_START', field_name: null, name: 'rowStart' },
@@ -23,7 +24,7 @@ const action_definitions = {
   formFooter: { position: 'FORM_FOOTER', field_name: null, name: 'formFooter' },
 };
 
-const filtered_actions = new FilteredActions(action_definitions);
+const filteredActions = new FilteredActions(actionDefinitions);
 
 describe('df-actions', () => {
   it('check if dfactions renders vuetifyactions', async () => {
@@ -43,7 +44,7 @@ describe('df-actions', () => {
 });
 
 describe('vuetify-actions', () => {
-  const get_actions = (type) => shallowMount(VuetifyActions, {
+  const getActions = () => shallowMount(VuetifyActions, {
     parentComponent: {
       name: 'DemoApp',
       data() {
@@ -53,7 +54,7 @@ describe('vuetify-actions', () => {
   });
 
   it('create empty vuetify actions', async () => {
-    const action = get_actions();
+    const action = getActions();
     expect(action.exists()).toBe(true);
     const htmlCode = action.html();
     expect(htmlCode).not.toBeNull();
@@ -63,13 +64,13 @@ describe('vuetify-actions', () => {
 
   it('check whatever vuetify actions are generated', async () => {
     // create actions with filtered actions object
-    const actions = get_actions();
-    await actions.setProps({ actions: filtered_actions });
+    const actions = getActions();
+    await actions.setProps({ actions: filteredActions });
     // actions should be enveloped in the div
     expect(actions.html()).toContain('div');
 
     // create them with an array
-    const actions1 = get_actions();
+    const actions1 = getActions();
     await actions1.setProps({ actions: [Action.closeAction()] });
     // actions should be enveloped in the div
     expect(actions1.html()).toContain('div');
@@ -77,48 +78,48 @@ describe('vuetify-actions', () => {
 
   it('test each filtered action to be rendered', async () => {
     // header action
-    const actions = get_actions();
-    await actions.setProps({ actions: filtered_actions.header });
-    expect(actions.html()).toContain(action_definitions.head.name);
+    const actions = getActions();
+    await actions.setProps({ actions: filteredActions.header });
+    expect(actions.html()).toContain(actionDefinitions.head.name);
     // row start action
-    await actions.setProps({ actions: filtered_actions.rowStart });
-    expect(actions.html()).toContain(action_definitions.rowStart.name);
+    await actions.setProps({ actions: filteredActions.rowStart });
+    expect(actions.html()).toContain(actionDefinitions.rowStart.name);
     // row start action
-    await actions.setProps({ actions: filtered_actions.rowEnd });
-    expect(actions.html()).toContain(action_definitions.rowEnd.name);
+    await actions.setProps({ actions: filteredActions.rowEnd });
+    expect(actions.html()).toContain(actionDefinitions.rowEnd.name);
     // row click action
-    await actions.setProps({ actions: filtered_actions.rowClick });
-    expect(actions.html()).toContain(action_definitions.rowClick.name);
+    await actions.setProps({ actions: filteredActions.rowClick });
+    expect(actions.html()).toContain(actionDefinitions.rowClick.name);
     // row right click action
-    await actions.setProps({ actions: filtered_actions.rowRightClick });
-    expect(actions.html()).toContain(action_definitions.rowRightClick.name);
+    await actions.setProps({ actions: filteredActions.rowRightClick });
+    expect(actions.html()).toContain(actionDefinitions.rowRightClick.name);
     // field start action
-    await actions.setProps({ actions: filtered_actions.fieldStart(fieldName) });
-    expect(actions.html()).toContain(action_definitions.fieldStart.name);
+    await actions.setProps({ actions: filteredActions.fieldStart(fieldName) });
+    expect(actions.html()).toContain(actionDefinitions.fieldStart.name);
     // field end action
-    await actions.setProps({ actions: filtered_actions.fieldEnd(fieldName) });
-    expect(actions.html()).toContain(action_definitions.fieldEnd.name);
+    await actions.setProps({ actions: filteredActions.fieldEnd(fieldName) });
+    expect(actions.html()).toContain(actionDefinitions.fieldEnd.name);
     // field all action
-    await actions.setProps({ actions: filtered_actions.fieldAll(fieldName) });
-    expect(actions.html()).toContain(action_definitions.fieldStart.name);
-    expect(actions.html()).toContain(action_definitions.fieldEnd.name);
+    await actions.setProps({ actions: filteredActions.fieldAll(fieldName) });
+    expect(actions.html()).toContain(actionDefinitions.fieldStart.name);
+    expect(actions.html()).toContain(actionDefinitions.fieldEnd.name);
     // form header action
-    await actions.setProps({ actions: filtered_actions.formHeader });
-    expect(actions.html()).toContain(action_definitions.formHeader.name);
+    await actions.setProps({ actions: filteredActions.formHeader });
+    expect(actions.html()).toContain(actionDefinitions.formHeader.name);
     // form footer action
-    await actions.setProps({ actions: filtered_actions.formFooter });
-    expect(actions.html()).toContain(action_definitions.formFooter.name);
+    await actions.setProps({ actions: filteredActions.formFooter });
+    expect(actions.html()).toContain(actionDefinitions.formFooter.name);
 
     // render all
-    await actions.setProps({ actions: filtered_actions });
-    expect(actions.html()).toContain(action_definitions.head.name);
-    expect(actions.html()).toContain(action_definitions.rowStart.name);
-    expect(actions.html()).toContain(action_definitions.rowEnd.name);
-    expect(actions.html()).toContain(action_definitions.rowClick.name);
-    expect(actions.html()).toContain(action_definitions.rowRightClick.name);
-    expect(actions.html()).toContain(action_definitions.fieldStart.name);
-    expect(actions.html()).toContain(action_definitions.fieldEnd.name);
-    expect(actions.html()).toContain(action_definitions.formHeader.name);
-    expect(actions.html()).toContain(action_definitions.formFooter.name);
+    await actions.setProps({ actions: filteredActions });
+    expect(actions.html()).toContain(actionDefinitions.head.name);
+    expect(actions.html()).toContain(actionDefinitions.rowStart.name);
+    expect(actions.html()).toContain(actionDefinitions.rowEnd.name);
+    expect(actions.html()).toContain(actionDefinitions.rowClick.name);
+    expect(actions.html()).toContain(actionDefinitions.rowRightClick.name);
+    expect(actions.html()).toContain(actionDefinitions.fieldStart.name);
+    expect(actions.html()).toContain(actionDefinitions.fieldEnd.name);
+    expect(actions.html()).toContain(actionDefinitions.formHeader.name);
+    expect(actions.html()).toContain(actionDefinitions.formFooter.name);
   });
 });

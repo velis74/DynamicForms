@@ -1,8 +1,10 @@
+import { vi, describe, it, expect } from 'vitest';
+
 import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
 
 import * as mockComponentDef from './api-consumer-table-componentdef.json';
 
-jest.mock('axios', () => {
+vi.mock('axios', () => {
   const res = {
     get: async (url) => {
       if (url.includes('failure')) throw Error('Refusing to return definition');
@@ -10,11 +12,11 @@ jest.mock('axios', () => {
     },
     create: () => res,
     interceptors: {
-      request: { use: jest.fn(), eject: jest.fn() },
-      response: { use: jest.fn(), eject: jest.fn() },
+      request: { use: vi.fn(), eject: vi.fn() },
+      response: { use: vi.fn(), eject: vi.fn() },
     },
   };
-  return res;
+  return { default: res };
 });
 
 describe('APIConsumerLogic', () => {

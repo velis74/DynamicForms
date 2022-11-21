@@ -1,5 +1,7 @@
+import _ from 'lodash';
+import { describe, it, expect } from 'vitest';
+
 import FilteredActions from '../components/actions/filtered-actions';
-import _ from "lodash";
 
 describe('ButtonTesting', () => {
   it('Check if label / icon on button works', () => {
@@ -23,7 +25,7 @@ describe('ButtonTesting', () => {
 
     function simpleTest(actions, expectedNames, expectedCacheKey) {
       expect(actions.length).toEqual(expectedNames.length);
-      for (let action of _.zip(actions.actionsList, expectedNames)) {
+      for (const action of _.zip(actions.actionsList, expectedNames)) {
         expect(action[0].name).toEqual(action[1]);
       }
       expect(myActions.filterCache[expectedCacheKey]).toBeDefined();
@@ -32,7 +34,7 @@ describe('ButtonTesting', () => {
     simpleTest(myActions.header, ['head'], 'HEADER');
     simpleTest(myActions.rowStart, ['rstart'], 'ROW_START');
     simpleTest(myActions.rowEnd, ['rend'], 'ROW_END');
-    simpleTest(myActions.fieldStart('description'),['description_help'], 'FIELD_START|description');
+    simpleTest(myActions.fieldStart('description'), ['description_help'], 'FIELD_START|description');
     simpleTest(myActions.fieldEnd('description'), ['description_lookup'], 'FIELD_END|description');
     simpleTest(myActions.fieldEnd('datum'), ['datum_lookup'], 'FIELD_END|datum');
 

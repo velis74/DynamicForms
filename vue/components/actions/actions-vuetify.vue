@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import './actions.css';
+
 import IonIcon from 'vue-ionicon';
 
 import ActionHandlerMixin from './action-handler-mixin';
@@ -27,7 +29,3 @@ export default {
   mixins: [ActionsMixin, ActionHandlerMixin],
 };
 </script>
-
-<style scoped>
-  @import "actions.css";
-</style>

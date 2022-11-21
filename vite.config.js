@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import { createVuePlugin as vue2 } from 'vite-plugin-vue2';
 import Components from 'unplugin-vue-components/vite';
@@ -70,5 +71,24 @@ export default defineConfig({
   //       }
   //     }
   //   }
+  },
+  build: {
+    lib: {
+      entry: resolve(__dirname, "./vue/main.js"),
+      fileName: 'js/dynamicforms.[hash:8].js',
+      name: 'dynamicforms.[name]'
+    },
+    rollupOptions: {
+      external: ["vue"],
+      output: {
+        globals: {
+          vue: "Vue"
+        }
+      }
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
   }
 });
