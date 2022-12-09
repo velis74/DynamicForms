@@ -9,10 +9,10 @@
         </template>
       </div>
     </slot>
-    <template v-for="(row, idx) in layout.rows">
+    <!-- eslint-disable vue/no-v-for-template-key -->
+    <template v-for="(row, idx) in layout.rows" :key="`${idx}${row.renderKey}`">
       <FormRow
         :is="row.componentName"
-        :key="`${idx}${row.renderKey}`"
         :columns="row.columns"
         :payload="payload"
         :errors="errors"

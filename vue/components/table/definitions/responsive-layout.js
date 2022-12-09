@@ -3,7 +3,7 @@
 
 // eslint-disable-next-line max-classes-per-file
 import _ from 'lodash';
-import Vue from 'vue';
+import { reactive } from 'vue';
 
 import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
@@ -119,7 +119,7 @@ export class ResponsiveLayouts {
   pushLayout(layout) {
     // For some reason, Vue will not decorate totalWidth property when used from table.js.
     // Making the layout observable will
-    this.layouts.push(Vue.observable(layout));
+    this.layouts.push(reactive(layout));
   }
 
   recalculate(containerWidth) {

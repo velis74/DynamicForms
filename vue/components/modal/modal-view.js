@@ -1,6 +1,6 @@
-import Vue from 'vue';
-
-import requestTracker from '../util/request-tracker';
+// import Vue from 'vue';
+//
+// import requestTracker from '../util/request-tracker';
 
 import ModalRenderer from './modal-renderer';
 import ModalViewAPI from './modal-view-api';
@@ -21,10 +21,10 @@ export default {
         vue.modalRootInstance = this;
         this.isPrimary = true;
       }
-      if (!Vue.prototype.$dfModal) {
-        Object.defineProperty(Vue.prototype, '$dfModal', { get() { return this?.$root.modalRootInstance; } });
-        requestTracker.dfModal = vue.modalRootInstance;
-      }
+      // if (!Vue.prototype.$dfModal) {
+      //   Object.defineProperty(Vue.prototype, '$dfModal', { get() { return this?.$root.modalRootInstance; } });
+      //   requestTracker.dfModal = vue.modalRootInstance;
+      // }
     },
   },
   render(el) {

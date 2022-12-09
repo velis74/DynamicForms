@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import { reactive } from 'vue';
 
 export default {
   name: 'TableCellFloat',
@@ -23,7 +23,7 @@ export default {
 
       // if config does not exist yet or if rows actually changed (table was reprovisioned with another one)
       if (!config || config.orgRows !== componentWithRows.rows) {
-        config = Vue.observable({
+        config = reactive({
           maxDecimals: 0,
           decimalChar: 1.1.toLocaleString().substring(1, 2),
           orgRows: componentWithRows.rows,

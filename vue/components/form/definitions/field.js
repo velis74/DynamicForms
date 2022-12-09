@@ -9,13 +9,11 @@
  *
  * So, right now we aren't doing anything about that!
  */
-import Vue from 'vue';
-
 import DisplayMode from '../../classes/display-mode';
 
 // Checks if we are in development mode
 const IS_DEVELOPMENT = (
-  Vue.config.devtools === true || window.webpackHotUpdate || process.env.NODE_ENV === 'development'
+  window.webpackHotUpdate || process.env.NODE_ENV === 'development'
 );
 
 function wrapInProxy(renderParams) {
@@ -26,7 +24,8 @@ function wrapInProxy(renderParams) {
       }
       if (!(['toJSON', 'constructor', 'render', 'state', '_isVue'].includes(prop) || typeof prop === 'symbol')) {
         // these are called by Vue internals when inspecting in Vue devtools
-        console.error(`RenderParams doesn't have property named ${prop.toString()}`);
+        // TODO: ce odkomentiras, se bo usulo mio logov
+        // console.error(`RenderParams doesn't have property named ${prop.toString()}`);
       }
       return target[prop];
     },

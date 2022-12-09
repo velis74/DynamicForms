@@ -32,7 +32,6 @@
 /**
  * TODO: the field does not look like a Vuetify field: label is on left
  */
-import 'vue-multiselect/dist/vue-multiselect.min.css';
 import Multiselect from 'vue-multiselect';
 
 import TranslationsMixin from '../../util/translations-mixin';
@@ -121,3 +120,5 @@ export default {
   },
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

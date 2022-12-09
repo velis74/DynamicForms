@@ -9,7 +9,7 @@ export default {
       case 'bootstrap':
         return BootstrapBreakpoints;
       case 'vuetify':
-        return this.$vuetify.breakpoint;
+        return this.$vuetify.display;
       default:
         return {};
       }

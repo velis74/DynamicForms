@@ -3,9 +3,10 @@
     <v-btn
       v-for="(action,idx) in actions"
       :key="idx"
+      variant="tonal"
       :elevation="0"
       :class="idx === 0 ? '' : 'ms-3'"
-      :small="isSmallSize(action)"
+      :size="isSmallSize(action) ? 'small' : 'default'"
       @click="(event) => dispatchAction(action, { event })"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>

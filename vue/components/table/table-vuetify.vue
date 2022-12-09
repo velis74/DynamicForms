@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <!-- eslint-disable vue/no-v-text-v-html-on-component -->

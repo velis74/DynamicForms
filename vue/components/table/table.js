@@ -1,5 +1,4 @@
 import ResizeObserver from 'resize-observer-polyfill';
-import Vue from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 import ColumnDisplay from '../classes/display-mode';
@@ -12,10 +11,6 @@ import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
 import RenderMeasured from './render-measure';
 import TableStyle from './table-style';
-import GenericColumn from './tcolumn-generic';
-
-// Global registration is necessary: previous dynamic import was super-slow
-Vue.component(GenericColumn.name, GenericColumn);
 
 /**
  * Base Table (mixin): provides logic for table component.

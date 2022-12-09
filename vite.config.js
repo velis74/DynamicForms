@@ -1,11 +1,12 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import { createVuePlugin as vue2 } from 'vite-plugin-vue2';
-import Components from 'unplugin-vue-components/vite';
-import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
+import vue from '@vitejs/plugin-vue';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import eslint from 'vite-plugin-eslint';
 
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const axiosRedirectConfig = () => ({
   name: 'serverProxy',
   configureServer(server) {
@@ -29,9 +30,7 @@ const axiosRedirectConfig = () => ({
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   plugins: [
-    vue2({
-      jsx: true,
-    }),
+    vue({ template: transformAssetUrls }),
     {
       ...eslint({
         failOnWarning: false,
@@ -40,37 +39,27 @@ export default defineConfig({
       apply: 'serve',
       enforce: 'post'
     },
-    Components({
-      resolvers: [VuetifyResolver()]
-    }),
+    vuetify({ autoImport: true }),
     axiosRedirectConfig()
   ],
   resolve: {
-    alias: [
-      {
-        find: /^~(.*)$/,
-        replacement: 'node_modules/$1',
-      },
-    ],
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '~': fileURLToPath(new URL('./node_modules', import.meta.url)),
+    },
     extensions: [
-      ".js",
-      ".vue",
-      ".json"
+      '.js',
+      '.vue',
+      '.json',
+      '.css'
     ],
   },
   server: {
     port: 8080,
-  //   proxy: {
-  //     "^.*\.(json|componentdef)": {
-  //       "target": "http://localhost:8000",
-  //       changeOrigin: true,
-  //       "secure": false,
-  //       rewrite: path => {
-  //         console.log(path);
-  //         return path;
-  //       }
-  //     }
-  //   }
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: ['..'],
+    },
   },
   build: {
     lib: {
@@ -79,10 +68,14 @@ export default defineConfig({
       name: 'dynamicforms.[name]'
     },
     rollupOptions: {
-      external: ["vue"],
       output: {
-        globals: {
-          vue: "Vue"
+        manualChunks: {
+          vue: ['vue', 'vue-router'],
+          vuetify: [
+            'vuetify',
+            'vuetify/components',
+            'vuetify/directives',
+          ],
         }
       }
     },

@@ -11,56 +11,18 @@
     </template>
   </component>
 </template>
+
 <script>
 /**
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
 import _ from 'lodash';
-import Vue from 'vue';
-import VueRouter from 'vue-router';
 
-import APIConsumerLoader from '../components/api_consumer/api-consumer-loader';
-
-import ExampleHiddenLayout from './example-hidden-layout';
-import ModalDemo from './modal-demo';
-import NamedComponentLoader from './named-component-loader';
-
-Vue.use(VueRouter);
-Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout);
-
-const routes = [
-  { title: 'Validated', path: '/validated', component: APIConsumerLoader },
-  { title: 'Hidden fields', path: '/hidden-fields', component: APIConsumerLoader },
-  { title: 'Basic fields', path: '/basic-fields', component: APIConsumerLoader },
-  { title: 'Advanced fields', path: '/advanced-fields', component: APIConsumerLoader },
-  { title: 'Page loading', path: '/page-load', component: APIConsumerLoader },
-  { title: 'Filtering', path: '/filter', component: APIConsumerLoader },
-  { title: 'Actions overview', path: '/actions-overview', component: APIConsumerLoader },
-  { title: 'Custom CSS per row', path: '/calculated-css-class-for-table-row', component: APIConsumerLoader },
-  // { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
-  // { path: '/choice-allow-tags-fields', component: PageLoader },
-  // { path: '/calendar', component: Calendar },
-  // { path: '/documents', component: PageLoader },
-  { title: 'Modal dialogs', path: '/modal', component: ModalDemo },
-  {
-    title: 'The three view-modes',
-    path: '/view-mode',
-    component: NamedComponentLoader,
-    props: { componentName: 'ViewMode', componentNameAddTemplateName: true, componentProps: {} },
-  },
-];
-const router = new VueRouter({ routes });
+import routes from '../routes';
 
 export default {
   name: 'DemoApp',
-  router,
-  components: {
-    // eslint-disable-next-line import/extensions
-    BootstrapApp: () => import(/* webpackChunkName: "bootstrap" */ './bootstrap/bootstrap-app.vue'),
-    // eslint-disable-next-line import/extensions
-    VuetifyApp: () => import(/* webpackChunkName: "vuetify" */ './vuetify/vuetify-app.vue'),
-  },
   data: () => ({
     title: '',
     // eslint-disable-next-line max-len
@@ -73,7 +35,7 @@ export default {
   }),
   computed: {
     examples() {
-      return routes.map((route) => ({ title: route.title, path: route.path }));
+      return routes.map((route) => ({ title: route.meta.title, path: route.path }));
     },
     themeComponent() {
       switch (this.theme) {

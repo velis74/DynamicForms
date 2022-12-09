@@ -3,6 +3,7 @@
     :id="field.uuid"
     v-model="value"
     :type="inputType"
+    variant="underlined"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
     :placeholder="field.placeholder"
@@ -15,6 +16,7 @@
     :disabled="field.readOnly"
 
     v-bind="baseBinds"
+    :messages="[]"
   />
 </template>
 

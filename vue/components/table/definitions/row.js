@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { reactive } from 'vue';
 
 export default class TableRow { // eslint-disable-line max-classes-per-file
   constructor(rowData) {
@@ -6,7 +6,7 @@ export default class TableRow { // eslint-disable-line max-classes-per-file
     delete rowData.df_control_data;
     Object.assign(this, rowData);
 
-    this.dfControlStructure = Vue.observable({
+    this.dfControlStructure = reactive({
       measuredHeight: null, // will be filled out when it is rendered into DOM
       isShowing: true, // row is currently in ViewPort and should fully render
       componentName: 'GenericTRow', // default row renderer

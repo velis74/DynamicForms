@@ -6,7 +6,7 @@
     :error-count="baseBinds['error-count']"
   >
     <div style="width: 100%;">
-      <datetime
+      <datepicker
         :key="datetimeFieldKey"
         v-model="value"
         :type="inputType"
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-import 'vue-datetime/dist/vue-datetime.min.css';
+import 'vue3-datetime/dist/vue3-datetime.min.css';
 
+import Datepicker from '@vuepic/vue-datepicker';
 import { DateTime } from 'luxon';
-import { Datetime } from 'vue-datetime';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
@@ -36,7 +36,7 @@ import VuetifyInput from './input-vuetify';
 
 export default {
   name: 'DDatetime',
-  components: { Datetime, VuetifyInput, InputClearButton },
+  components: { Datepicker, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return { datetimeFieldKey: Math.round(Math.random() * 1000) };

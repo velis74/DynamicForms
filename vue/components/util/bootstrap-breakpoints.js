@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Vue from 'vue';
+import { reactive } from 'vue';
 
 const state = {};
 
@@ -42,4 +42,4 @@ function onResize() {
 window.onresize = _.debounce(onResize, 100);
 onResize();
 
-export default Vue.observable(state);
+export default reactive(state);
