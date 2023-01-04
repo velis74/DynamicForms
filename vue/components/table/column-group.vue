@@ -14,14 +14,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import FilteredActions from '../actions/filtered-actions';
 
 import TableColumn from './definitions/column';
 import RenderMeasured from './render-measure';
 import RowTypesMixin from './row-types-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'ColumnGroup',
   mixins: [RenderMeasured, RowTypesMixin],
   props: {
@@ -31,11 +33,11 @@ export default {
     actions: { type: FilteredActions, default: null },
   },
   methods: {
-    onMeasure(refName, maxWidth) {
+    onMeasure(refName: string, maxWidth: number) {
       if (refName === 'column') {
         this.column.setMaxWidth(maxWidth);
       }
     },
   },
-};
+});
 </script>

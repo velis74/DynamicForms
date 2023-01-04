@@ -4,10 +4,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import IonIcon from 'vue-ionicon';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DInputClearButton',
   components: { IonIcon },
   methods: {
@@ -15,5 +16,5 @@ export default {
       this.$emit('clearButtonPressed');
     },
   },
-};
+});
 </script>

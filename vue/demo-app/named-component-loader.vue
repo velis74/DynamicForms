@@ -2,10 +2,12 @@
   <component :is="componentFinalName" :v-bind="componentProps" @title-change="(title) => $emit('title-change', title)"/>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ThemeMixin from '../components/util/theme-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'NamedComponentLoader',
   mixins: [ThemeMixin],
   props: {
@@ -19,5 +21,5 @@ export default {
       return (this.componentNameAddTemplateName ? this.theme.name.capitalised : '') + this.componentName;
     },
   },
-};
+});
 </script>

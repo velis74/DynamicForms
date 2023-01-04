@@ -28,18 +28,19 @@
   </vuetify-input>
 </template>
 
-<script>
+<script lang="ts">
 /**
  * TODO: the field does not look like a Vuetify field: label is on left
  */
+import { defineComponent } from 'vue';
 import Multiselect from 'vue-multiselect';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import VuetifyInput from './input-vuetify';
+import VuetifyInput from './input-vuetify.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DSelect',
   components: { Multiselect, VuetifyInput },
   mixins: [InputBase, TranslationsMixin],
@@ -118,7 +119,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

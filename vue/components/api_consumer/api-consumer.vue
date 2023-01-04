@@ -3,14 +3,16 @@
     <component :is="renderComponent" v-bind="renderComponentData"/>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import { DfForm, DfModal, DfTable } from '../public';
 import RowTypesEnum from '../table/row-types-enum';
 
 import APIConsumerLogic from './api-consumer-logic';
 import ComponentDisplay from './component-display';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'APIConsumer',
   components: { DfModal, DfForm, DfTable },
   props: {
@@ -85,5 +87,5 @@ export default {
       return false;
     },
   },
-};
+});
 </script>

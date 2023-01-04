@@ -2,10 +2,10 @@
   <div :key="config.maxDecimals" v-html="displayValue"/>
 </template>
 
-<script>
-import { reactive } from 'vue';
+<script lang="ts">
+import { defineComponent, reactive } from 'vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'TableCellFloat',
   props: {
     rowData: { type: Object, required: true },
@@ -56,5 +56,5 @@ export default {
       return res;
     },
   },
-};
+});
 </script>

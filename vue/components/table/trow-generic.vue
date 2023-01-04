@@ -24,10 +24,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin';
+import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
@@ -36,7 +37,7 @@ import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render-measure';
 import RowTypesMixin from './row-types-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
   mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
@@ -67,5 +68,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

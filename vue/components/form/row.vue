@@ -13,11 +13,13 @@
   </v-row>
 </template>
 
-<script>
-import FormPayload from './definitions/form-payload';
-import FormField from './field';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import FormPayload from './definitions/form-payload';
+import FormField from './field.vue';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'FormRow',
   components: { FormField },
   props: {
@@ -32,7 +34,7 @@ export default {
       return this.columns.filter((col) => col.isVisible);
     },
   },
-};
+});
 </script>
 
 <style scoped>

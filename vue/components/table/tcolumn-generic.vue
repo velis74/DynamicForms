@@ -56,20 +56,22 @@
   </div>
 </template>
 
-<script>
-import ActionHandlerMixin from '../actions/action-handler-mixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
 import FilteredActions from '../actions/filtered-actions';
-import FormField from '../form/field';
-import DfActions from '../public/df-actions';
+import FormField from '../form/field.vue';
+import DfActions from '../public/df-actions.vue';
 
 import * as TableCells from './cell-renderers';
-import ColumnGroup from './column-group';
+import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
-import OrderingIndicator from './ordering-indicator';
+import OrderingIndicator from './ordering-indicator.vue';
 import RenderMeasured from './render-measure';
 import RowTypesMixin from './row-types-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, DfActions, FormField, ...TableCells },
   mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
@@ -96,7 +98,7 @@ export default {
       return res;
     },
   },
-};
+});
 </script>
 
 <style scoped>

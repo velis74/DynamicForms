@@ -46,10 +46,12 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import { ModalView } from '../../components/modal';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyApp',
   components: { ModalView },
   props: {
@@ -59,5 +61,5 @@ export default {
   },
   emits: ['theme-changed'],
   data: () => ({ drawer: false }),
-};
+});
 </script>

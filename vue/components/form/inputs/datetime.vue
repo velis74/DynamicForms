@@ -10,7 +10,7 @@
         :key="datetimeFieldKey"
         v-model="value"
         :type="inputType"
-        :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
+        :phrases="{ ok: gettext('Ok'), cancel: gettext('Cancel') }"
         :format="displayFormat"
         style="float: left; width: 85%; border: 1px solid #e8e8e8; height: 2rem;"
         input-style="vertical-align: sub; width: 100%;"
@@ -22,19 +22,20 @@
   </vuetify-input>
 </template>
 
-<script>
+<script lang="ts">
 import 'vue3-datetime/dist/vue3-datetime.min.css';
 
 import Datepicker from '@vuepic/vue-datepicker';
 import { DateTime } from 'luxon';
+import { defineComponent } from 'vue';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import InputClearButton from './clear-input-button';
-import VuetifyInput from './input-vuetify';
+import InputClearButton from './clear-input-button.vue';
+import VuetifyInput from './input-vuetify.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DDatetime',
   components: { Datepicker, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
@@ -68,7 +69,7 @@ export default {
       this.datetimeFieldKey = Math.round(Math.random() * 1000);
     },
   },
-};
+});
 </script>
 
 <style>

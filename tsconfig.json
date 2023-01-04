@@ -1,0 +1,5 @@
+{
+  "extends": "./node_modules/eslint-config-velis/tsconfig.json",
+  "include": ["vue/**/*"],
+  "exclude": ["dist", "coverage", "dynamicforms", "node_modules"]
+}

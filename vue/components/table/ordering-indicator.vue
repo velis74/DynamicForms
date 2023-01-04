@@ -17,11 +17,13 @@
   </svg>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ColumnOrdering from './definitions/column-ordering';
 import OrderingDirection from './definitions/column-ordering-direction';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'OrderingIndicator',
   props: { ordering: { type: ColumnOrdering, required: true } },
   methods: {
@@ -32,5 +34,5 @@ export default {
     showSegmentNo() { return this.ordering.isOrdered && this.ordering.direction !== OrderingDirection.UNORDERED; },
     drawSeq() { return this.ordering.changeCounter.counter; },
   },
-};
+});
 </script>

@@ -12,7 +12,8 @@
     />
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { ObserveVisibility } from 'vue-observe-visibility';
 
 import FilteredActions from '../actions/filtered-actions';
@@ -20,9 +21,9 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableRows from './definitions/rows';
 import RowsVisibilityObserver from './rows-visibility-observer';
-import GenericTRow from './trow-generic';
+import GenericTRow from './trow-generic.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericTBody',
   directives: { 'observe-visibility': ObserveVisibility },
   components: { GenericTRow },
@@ -34,5 +35,5 @@ export default {
     rows: { type: TableRows, required: true },
     actions: { type: FilteredActions, default: null },
   },
-};
+});
 </script>

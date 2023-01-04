@@ -11,9 +11,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyInput',
   props: {
     label: { default: null, type: String },
@@ -21,7 +22,7 @@ export default {
     errorCount: { default: 0, type: Number },
     messages: { default: () => [], type: Array },
   },
-};
+});
 </script>
 
 <style scoped>

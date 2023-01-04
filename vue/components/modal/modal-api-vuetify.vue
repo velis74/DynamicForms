@@ -23,10 +23,12 @@
   </v-dialog>
 </template>
 
-<script>
-import DialogSize from '../classes/dialog-size';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import DialogSize from './dialog-size';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyModal',
   props: {
     show: { type: Boolean, default: () => false },
@@ -54,11 +56,11 @@ export default {
       }
     },
     computedFullScreen() {
-      if (this.size === DialogSize.SMALL && !this.$vuetify.breakpoint.smAndUp) return true;
-      if (this.size === DialogSize.LARGE && !this.$vuetify.breakpoint.lgAndUp) return true;
-      if (this.size === DialogSize.X_LARGE && !this.$vuetify.breakpoint.xlOnly) return true;
+      if (this.size === DialogSize.SMALL && !this.$vuetify.display.smAndUp) return true;
+      if (this.size === DialogSize.LARGE && !this.$vuetify.display.lgAndUp) return true;
+      if (this.size === DialogSize.X_LARGE && !this.$vuetify.display.xl) return true;
       return false;
     },
   },
-};
+});
 </script>

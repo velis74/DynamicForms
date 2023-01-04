@@ -11,22 +11,23 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import _ from 'lodash';
+import { defineComponent } from 'vue';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin';
+import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
 import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
-import DCheckbox from './inputs/checkbox';
-import DCKEditor from './inputs/ckeditor';
-import DDateTime from './inputs/datetime';
-import DFile from './inputs/file';
-import DInput from './inputs/input';
-import DPlaceholder from './inputs/placeholder';
-import DSelect from './inputs/select';
+import DCheckbox from './inputs/checkbox.vue';
+import DCKEditor from './inputs/ckeditor.vue';
+import DDateTime from './inputs/datetime.vue';
+import DFile from './inputs/file.vue';
+import DInput from './inputs/input.vue';
+import DPlaceholder from './inputs/placeholder.vue';
+import DSelect from './inputs/select.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'FormField',
   components: {
     DCheckbox,
@@ -67,7 +68,7 @@ export default {
       };
     },
   },
-};
+});
 </script>
 
 <style>

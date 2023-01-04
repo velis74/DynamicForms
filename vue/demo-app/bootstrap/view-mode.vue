@@ -12,7 +12,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
 import { DfForm, DfTable } from '../../components/public';
 
@@ -20,7 +22,7 @@ import { DfForm, DfTable } from '../../components/public';
 // import DynamicForms from '../dynamicforms';
 // import actionHandlerMixin from '../mixins/actionHandlerMixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'BootstrapViewMode',
   components: { DfForm, DfTable },
   emits: ['title-change', 'load-route'],
@@ -82,5 +84,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

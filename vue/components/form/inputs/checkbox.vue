@@ -13,14 +13,15 @@
   />
 </template>
 
-<script>
+<script lang="ts">
 import _ from 'lodash';
+import { defineComponent } from 'vue';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DCheckbox',
   mixins: [InputBase, TranslationsMixin],
   data() { return { internalValue: false }; },
@@ -53,5 +54,5 @@ export default {
       this.payload.setValue(this.internalValue);
     },
   },
-};
+});
 </script>

@@ -30,21 +30,21 @@
     <slot name="main-component"/>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { BootstrapVue } from 'bootstrap-vue';
-import Vue from 'vue';
+import Vue, { defineComponent } from 'vue';
 
-import * as BootstrapComponents from '../../components/bootstrap';
+// import * as BootstrapComponents from '../../components/bootstrap';
 import { ModalView } from '../../components/modal';
 
-import BootstrapViewMode from './view-mode';
+import BootstrapViewMode from './view-mode.vue';
 
 Vue.component(BootstrapViewMode.name, BootstrapViewMode);
 
 Object.values(BootstrapComponents).map((component) => Vue.component(component.name, component));
 
 Vue.use(BootstrapVue);
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'BootstrapApp',
   components: { ModalView },
   props: {
@@ -53,7 +53,7 @@ export default {
     examples: { type: Array, required: true },
   },
   emits: ['theme-changed'],
-};
+});
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@
   <FormLayout :layout="layout" :payload="payload" :errors="errors"/>
 </template>
 
-<script>
+<script lang="ts">
 import DisplayMode from '../components/classes/display-mode';
 import FormPayload from '../components/form/definitions/form-payload';
 import FormLayout from '../components/form/definitions/layout';

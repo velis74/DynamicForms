@@ -19,7 +19,9 @@
     <div class="df-separator"/>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
@@ -27,9 +29,9 @@ import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import RenderMeasured from './render-measure';
 import RowTypesMixin from './row-types-mixin';
-import GenericTRow from './trow-generic';
+import GenericTRow from './trow-generic.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericTHead',
   components: { GenericTRow },
   mixins: [RenderMeasured, RowTypesMixin],
@@ -44,5 +46,5 @@ export default {
       this.rowData.setMeasuredHeight(maxHeight);
     },
   },
-};
+});
 </script>

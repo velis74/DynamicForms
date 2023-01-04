@@ -5,21 +5,23 @@
     :error-messages="baseBinds['error-messages']"
     :error-count="baseBinds['error-count']"
   >
-  <!--    <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>-->
-  TODO
+    <!--    <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>-->
+    TODO
   </vuetify-input>
 </template>
 
-<script>
+<script lang="ts">
 // import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 // import CKEditor from '@ckeditor/ckeditor5-vue2';
+
+import { defineComponent } from 'vue';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
 // import VuetifyInput from './input-vuetify';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DFWidgetCKEditor',
   // components: { ckeditor: CKEditor.component, VuetifyInput },
   mixins: [InputBase, TranslationsMixin],
@@ -29,7 +31,7 @@ export default {
   //     editorConfig: {}, // The configuration of the editor.
   //   };
   // },
-};
+});
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@
   <div v-html="displayValue"/>
 </template>
 
-<script>
+<script lang="ts">
 import { DateTime } from 'luxon';
 
 export default {

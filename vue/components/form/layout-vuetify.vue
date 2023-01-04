@@ -21,13 +21,15 @@
     </template>
   </v-form>
 </template>
-<script>
-import LayoutMixin from './layout.mixin';
-import FormRow from './row';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import LayoutMixin from './layout.mixin';
+import FormRow from './row.vue';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyFormLayout',
   components: { FormRow },
   mixins: [LayoutMixin],
-};
+});
 </script>

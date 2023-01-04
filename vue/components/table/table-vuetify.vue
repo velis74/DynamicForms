@@ -26,19 +26,21 @@
     </v-card-text>
   </v-card>
 </template>
-<script>
-import VuetifyActions from '../actions/actions-vuetify';
-import LoadingIndicator from '../util/loading-indicator';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import VuetifyActions from '../actions/actions-vuetify.vue';
+import LoadingIndicator from '../util/loading-indicator.vue';
 
 import Table from './table';
-import VuetifyTBody from './tbody-generic';
-import VuetifyTHead from './thead-generic';
+import VuetifyTBody from './tbody-generic.vue';
+import VuetifyTHead from './thead-generic.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyTable',
   components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody },
   mixins: [Table],
-};
+});
 </script>
 
 <style scoped>

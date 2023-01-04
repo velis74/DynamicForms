@@ -14,11 +14,13 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'FormFieldGroup',
   components: {
-    FormLayout: () => import('../public/df-layout'),
+    FormLayout: () => import('../public/df-layout.vue'), // TODO: ensure a global declaration, this is too slow
     // DFWidgetInput,
     // DFWidgetPassword,
     // DFWidgetCKEditor,
@@ -35,7 +37,7 @@ export default {
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
   },
-};
+});
 </script>
 
 <style>

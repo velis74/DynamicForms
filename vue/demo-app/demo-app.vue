@@ -12,21 +12,23 @@
   </component>
 </template>
 
-<script>
+<script lang="ts">
 /**
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
 import _ from 'lodash';
+import { defineComponent } from 'vue';
 
 import routes from '../routes';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DemoApp',
   data: () => ({
     title: '',
     // eslint-disable-next-line max-len
-    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
+    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ?
+      localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
     themeData: {
       bootstrap: [],
@@ -93,5 +95,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

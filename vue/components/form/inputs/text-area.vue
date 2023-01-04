@@ -8,7 +8,7 @@
       :class="def.render_params.field_class"
       :name="def.name"
       :aria-describedby="def.help_text && showLabelOrHelpText ? def.name + '-help' : null"
-       :placeholder="def.placeholder"
+      :placeholder="def.placeholder"
 
       :pattern="def.render_params.pattern"
       :min="def.render_params.min"
@@ -24,10 +24,12 @@
   </InputBase>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import InputBase from './base';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DTextArea',
   components: { InputBase },
   props: {
@@ -44,5 +46,5 @@ export default {
       set: function set(newVal) { this.data[this.def.name] = newVal; } // eslint-disable-line
     },
   },
-};
+});
 </script>
