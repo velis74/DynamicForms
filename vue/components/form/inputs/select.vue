@@ -49,7 +49,6 @@ export default /* #__PURE__ */ defineComponent({
       selected: null,
       disabled: false,
       required: false,
-      selenium: true, // todo: this should be set globally, not per-component. and declared at top of html itself
     };
   },
   computed: {
@@ -80,7 +79,7 @@ export default /* #__PURE__ */ defineComponent({
   },
   watch: {
     selected: function selectedChanged() {
-      this.value = this.result; // eslint-disable-line vue/no-mutating-props
+      this.value = this.result;
     },
   },
   mounted: function mounted() {
@@ -89,29 +88,19 @@ export default /* #__PURE__ */ defineComponent({
     } else {
       this.result = this.value;
     }
-    if (this.selenium) {
-      window[`setSelectValue ${this.field.uuid}`] = (value) => {
-        this.result = value;
-      };
-    }
-  },
-  destroyed: function destroyed() {
-    if (this.selenium) {
-      delete window[`setSelectValue ${this.field.uuid}`];
-    }
   },
   methods: {
     onSelect() {
-      this.value = this.result; // eslint-disable-line vue/no-mutating-props
+      this.value = this.result;
     },
     onInput(inp) {
       if (inp === null) {
-        this.value = this.result; // eslint-disable-line vue/no-mutating-props
+        this.value = this.result;
       }
     },
     onTag(newTag) {
       const newTagObj = { id: newTag, text: newTag };
-      this.field.choices.push(newTagObj); // eslint-disable-line vue/no-mutating-props
+      this.field.choices.push(newTagObj);
       if (this.multiple) {
         this.selected.push(newTagObj);
       } else {
