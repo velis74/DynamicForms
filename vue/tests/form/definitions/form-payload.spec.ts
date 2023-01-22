@@ -31,7 +31,10 @@ const fieldDefinitions = {
 };
 
 describe('FormPayload', () => {
-  // eslint-disable-next-line no-undef
+  it('Check if calling constructor without parameters produces an empty FormPayload', () => {
+    const ds = new FormPayload();
+    expect(Object.keys(ds).length).toEqual(0);
+  });
   it('Check if a basic data sample parses and properly sets up the fields', () => {
     const ds = new FormPayload(fieldValues, new FormLayout(fieldDefinitions));
 

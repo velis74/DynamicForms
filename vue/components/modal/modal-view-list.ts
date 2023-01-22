@@ -9,16 +9,20 @@ import DialogDefinition from './dialog-definition';
 class DialogList {
   public list: DialogDefinition[];
 
-  public current: Ref<DialogDefinition | null>;
+  private currentRef: Ref<DialogDefinition | null>;
 
   constructor() {
     this.list = [];
-    this.current = ref(null);
+    this.currentRef = ref(null);
   }
 
   setCurrent() {
     const newValue = this.list.length ? this.list[this.list.length - 1] : null;
-    if (this.current.value !== newValue) this.current.value = newValue;
+    if (this.currentRef.value !== newValue) this.currentRef.value = newValue;
+  }
+
+  get current(): DialogDefinition | null {
+    return this.currentRef.value;
   }
 
   push(dialogDef: DialogDefinition, existingDialogId?: number): number {
@@ -67,7 +71,7 @@ class DialogList {
   }
 
   isCurrentDialogPromise(promise: Promise<any>) {
-    return this.current && this.current.value?.promise === promise;
+    return this.current?.promise === promise;
   }
 
   getDialogDefFromPromise(promise: Promise<any>) {

@@ -30,7 +30,7 @@ export default defineComponent({
     return { uniqueId };
   },
   render() {
-    const curDlg = dialogList.current.value;
+    const curDlg = dialogList.current;
     const curDlgKey = curDlg?.dialogId;
     // only render if we're the first instance of ModalView
     if (!curDlg || instances.indexOf(this.uniqueId) !== 0) return h('div', { key: curDlgKey });
