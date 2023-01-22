@@ -42,7 +42,7 @@ export default /* #__PURE__ */ defineComponent({
   mixins: [ActionHandlerMixin],
   props: {
     field: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     payload: { type: FormPayload, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },

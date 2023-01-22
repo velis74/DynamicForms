@@ -8,6 +8,7 @@
       :field="column"
       :payload="payload"
       :errors="errors"
+      :actions="actions"
     />
     <slot name="after-columns"/>
   </v-row>
@@ -22,6 +23,7 @@ import FormField from './field.vue';
 export default /* #__PURE__ */ defineComponent({
   name: 'FormRow',
   components: { FormField },
+  inject: ['actions'],
   props: {
     columns: { type: Array, required: true },
     payload: { type: FormPayload, default: null },

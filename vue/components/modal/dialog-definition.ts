@@ -1,6 +1,7 @@
 import { VNode } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
+
 import DialogMessage = Dialogs.DialogMessage;
 import DialogOptions = Dialogs.DialogOptions;
 

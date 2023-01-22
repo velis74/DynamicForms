@@ -13,7 +13,7 @@ export default /* #__PURE__ */ defineComponent({
     pkValue: { type: null, required: true }, // value of primary key (used to assemble GET/PUT URLs)
     layout: { type: FormLayoutClass, required: true }, // layout definition
     payload: { type: FormPayload, required: true }, // form data
-    actions: { type: FilteredActions, default: null }, // form actions
+    actions: { type: FilteredActions, required: true }, // form actions
     errors: { type: Object, default: () => {} }, // form errors (usually after a 400 response)
   },
 });

@@ -1,9 +1,12 @@
+import _ from 'lodash';
+
 import Action, { defaultActionHandler } from '../actions/action';
 import FilteredActions from '../actions/filtered-actions';
 
 import DialogDefinition from './dialog-definition';
 import DialogSize from './dialog-size';
 import dialogList from './modal-view-list';
+
 import DialogMessage = Dialogs.DialogMessage;
 import DialogOptions = Dialogs.DialogOptions;
 import DialogTitle = Dialogs.DialogTitle;
@@ -32,7 +35,8 @@ const dfModal = {
     if (actions) {
       // any actions that don't have special handlers, create the default handler that closes the dialog
       for (const action of actions) {
-        if (!action[`action${action.name}`]) action[`action${action.name}`] = defaultActionHandler;
+        const actionName = `${_.startCase(_.camelCase(_.toLower(action.name)))}`;
+        if (!action[`action${actionName}`]) action[`action${actionName}`] = defaultActionHandler;
       }
     }
     const dialogDef = new DialogDefinition(

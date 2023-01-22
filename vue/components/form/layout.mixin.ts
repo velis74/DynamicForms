@@ -9,10 +9,13 @@ import FormLayout from './definitions/layout';
 export default /* #__PURE__ */ defineComponent({
   name: 'FormLayoutMixin',
   mixins: [ActionHandlerMixin], // TODO: implement also formFieldChangeMixin
+  provide() {
+    return { actions: this.actions };
+  },
   props: {
     layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     errors: { type: Object, default: () => {} },
   },
   computed: {

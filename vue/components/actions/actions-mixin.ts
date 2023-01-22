@@ -4,13 +4,14 @@ import DisplayBreakpoints from '../util/breakpoints-display';
 
 import Action from './action';
 import FilteredActions from './filtered-actions';
+
 import BreakpointJSON = Actions.BreakpointJSON;
 import BreakpointsJSON = Actions.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({
   mixins: [DisplayBreakpoints],
-  props: { actions: { type: FilteredActions, default: null } },
+  props: { actions: { type: FilteredActions, required: true } },
   computed: {
     displayStyle() {
       const res: BreakpointJSON = {};

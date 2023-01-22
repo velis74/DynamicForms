@@ -7,7 +7,7 @@ export default {
   props: {
     field: { type: FormField, required: true },
     payload: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     errors: { type: null, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
   },

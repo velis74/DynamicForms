@@ -4,6 +4,7 @@ import { ComponentPublicInstance, defineComponent } from 'vue';
 
 import Action from './action';
 import FilteredActions from './filtered-actions';
+
 import ActionHandler = Actions.ActionHandler;
 import ActionHandlerExtraData = Actions.ActionHandlerExtraData;
 import FormPayload = APIConsumer.FormPayload;
@@ -89,7 +90,7 @@ export default /* #__PURE__ */ defineComponent({
         ...getHandlersWithPayload(action, this, actionDFName),
         ...getHandlersWithPayload(action, this, 'processActionsGeneric'),
       ];
-      console.log('handlers', handlers);
+      // console.log('handlers', handlers, 'action', action);
       const actionHandled = await asyncSome(
         handlers,
         async (handler: HandlerWithPayload) => {

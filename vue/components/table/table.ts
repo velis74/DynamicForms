@@ -28,7 +28,7 @@ export default /* #__PURE__ */ defineComponent({
     columnDefs: { type: Object, required: true },
     rows: { type: TableRows, required: true },
     loading: { type: Boolean, default: false },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
   },
   data() { return { containerWidth: null, resizeObserver: null as ResizeObserver | null }; },

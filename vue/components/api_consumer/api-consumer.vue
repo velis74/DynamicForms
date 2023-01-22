@@ -70,12 +70,12 @@ export default /* #__PURE__ */ defineComponent({
       return true;
     },
     async actionAdd() {
-      await this.consumer.dialogForm('new', this.$dfModal);
+      await this.consumer.dialogForm('new');
       return true;
     },
     async actionEdit(actionData, payload, extraData) {
       if (extraData.rowType !== RowTypesEnum.Data) return false;
-      await this.consumer.dialogForm(payload[this.consumer.pkName], this.$dfModal);
+      await this.consumer.dialogForm(payload[this.consumer.pkName]);
       return true;
     },
     actionSort(action, payload, extraData) {

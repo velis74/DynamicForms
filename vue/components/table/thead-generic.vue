@@ -38,7 +38,7 @@ export default /* #__PURE__ */ defineComponent({
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     rowData: { type: TableRow, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
   },
   methods: {

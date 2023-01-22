@@ -1,6 +1,7 @@
 import FilteredActions from '../actions/filtered-actions';
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
+import dfModal from '../modal/modal-view-api';
 import TableColumns from '../table/definitions/columns';
 import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
@@ -230,7 +231,7 @@ class APIConsumerLogic {
     return res;
   }
 
-  async dialogForm(pk: PKValueType, dfModal, formData = null) {
+  async dialogForm(pk: PKValueType, formData = null) {
     await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
@@ -247,7 +248,7 @@ class APIConsumerLogic {
     // propagate error to the next dialog
     this.errors = error;
     // open new dialog if needed
-    if (error && Object.keys(error).length) await this.dialogForm(pk, dfModal, this.formData);
+    if (error && Object.keys(error).length) await this.dialogForm(pk, this.formData);
   }
 
   async filter(filterData = null) {

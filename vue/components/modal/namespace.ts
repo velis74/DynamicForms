@@ -8,6 +8,7 @@ namespace Dialogs {
 
   export interface DialogOptions {
     size: number; // from dialog-size.ts
+    provides: { [key: string]: any };
   }
 
   export interface CustomComponentMessage {

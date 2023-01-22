@@ -65,7 +65,7 @@ export default /* #__PURE__ */ defineComponent({
           await this.consumer.getFormDefinition('new');
           this.data = this.consumer.formDefinition;
         } else if (this.showDialog) {
-          await this.consumer.dialogForm('new', this.$dfModal);
+          await this.consumer.dialogForm('new');
           this.viewMode = 'form';
           this.setViewMode();
         }

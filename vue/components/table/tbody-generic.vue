@@ -33,7 +33,7 @@ export default /* #__PURE__ */ defineComponent({
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rows: { type: TableRows, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
   },
 });
 </script>

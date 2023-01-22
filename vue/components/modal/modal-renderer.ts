@@ -2,6 +2,7 @@ import { defineComponent, h, RenderFunction, resolveComponent } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 import ThemeMixin from '../util/theme-mixin';
+
 import CustomComponentMessage = Dialogs.CustomComponentMessage;
 import DialogMessage = Dialogs.DialogMessage;
 import DialogOptions = Dialogs.DialogOptions;

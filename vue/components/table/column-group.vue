@@ -30,7 +30,7 @@ export default /* #__PURE__ */ defineComponent({
     thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
   },
   methods: {
     onMeasure(refName: string, maxWidth: number) {

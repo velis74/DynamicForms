@@ -32,7 +32,7 @@ export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyModal',
   props: {
     show: { type: Boolean, default: () => false },
-    options: { type: Object, required: true },
+    options: { type: Object, required: true }, // dialogOptions
   },
   data() {
     return {

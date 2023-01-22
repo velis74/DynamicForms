@@ -78,7 +78,7 @@ export default /* #__PURE__ */ defineComponent({
   props: {
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterRow: { type: TableColumn, default: null },
   },
   computed: {
