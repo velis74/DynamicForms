@@ -85,7 +85,7 @@ class Layout(object):
         :param size: 'small', 'large' or ''
         :param header_classes: 'bg-info', ..., or ''
         """
-        self.rows = rows or []  # type: List[Row]
+        self.rows: List[Row] = rows or []
         self.columns = columns
         self.size = size
         self.header_classes = header_classes
