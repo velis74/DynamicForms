@@ -1,0 +1,16 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load dynamicforms %}
+{% block field_input %}
+  {% set_var templatename=DYNAMICFORMS.template|add:'field/checkbox_multiple.html' %}
+
+  {% for key, text in field.choices|items %}
+    <div class="form-check">
+      <input class={% extendtemplate template_name_var=templatename block="input_class" %}
+             type="checkbox" name="{{ field.name }}" value="{{ key }}"
+             {% if key|as_string in field.value|as_list_of_strings %}checked{% endif %}
+             {% if field.read_only %}disabled{% endif %}
+      >
+      <label class={% extendtemplate template_name_var=templatename block="label_class" %}>{{ text }}</label>
+    </div>
+  {% endfor %}
+{% endblock %}

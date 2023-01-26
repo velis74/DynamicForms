@@ -29,7 +29,7 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
         link_next = link_prev = ''
 
         if isinstance(data, dict) and 'next' in data and 'results' in data and \
-                isinstance(data['results'], (ReturnList, ReturnDict)):
+            isinstance(data['results'], (ReturnList, ReturnDict)):
             # This is in case of Pagination
             link_next = mark_safe(data.get('next', ''))
             link_prev = mark_safe(data.get('previous', ''))

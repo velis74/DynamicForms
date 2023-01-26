@@ -6,7 +6,7 @@
   {% for key, text in field.choices|items %}
     <div class="form-check">
       <input class={% extendtemplate template_name_var=templatename block="input_class" %}
-             type="checkbox" name="{{ field.name }}" value="{{ key }}"
+                 type="checkbox" name="{{ field.name }}" value="{{ key }}"
              {% if key|as_string in field.value|as_list_of_strings %}checked{% endif %}
              {% if field.read_only %}disabled{% endif %}
       >

@@ -1,0 +1,24 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load i18n dynamicforms %}
+{% trans "None" as none_choice %}
+
+{% block field_input %}
+  {% set_var templatename=DYNAMICFORMS.template|add:'field/radio.html' %}
+
+  {% if field.allow_null or field.allow_blank %}
+    <div class="form-check">
+      <input class="{% extendtemplate template_name_var=templatename block="input_class" only %}" type="radio" name="{{ field.name }}" value=""
+             {% if not field.value %}checked{% elif field.read_only %}disabled{% endif %}
+      >
+      <label class="{% extendtemplate template_name_var=templatename block="label_class" only %}">{{ none_choice }}</label>
+    </div>
+  {% endif %}
+
+  {% for key, text in field.choices|items %}
+    <div class="form-check">
+      <input class="{% extendtemplate template_name_var=templatename block="input_class" only %}" type="radio" name="{{ field.name }}" value="{{ key }}"
+             {% if key|as_string == field.value|as_string %}checked{% elif field.read_only %}disabled{% endif %}>
+      <label class="{% extendtemplate template_name_var=templatename block="label_class" only %}">{{ text }}</label>
+    </div>
+  {% endfor %}
+{% endblock %}

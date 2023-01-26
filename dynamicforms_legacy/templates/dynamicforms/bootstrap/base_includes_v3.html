@@ -1,0 +1,90 @@
+{% load static %}
+
+{% block ui_library_include %}
+  <link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap-3.4.1-dist/css/bootstrap-theme.min.css' %}">
+  <script src="{% static 'bootstrap-3.4.1-dist/js/bootstrap.min.js' %}"></script>
+{% endblock %}
+
+{% block additional_style %}
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     1.4rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  1.4rem;
+    height: 1.4rem;
+  }
+
+
+  .df-card {
+    /* display: inline-block; */
+    margin: 1em;
+  }
+
+  .ml-1 {
+    margin-left: .5em;
+  }
+
+  .float-right {
+    float: right;
+  }
+
+  .select2-container--bootstrap {
+    /* otherwise select2s are too narrow */
+    width: 100% !important;
+  }
+
+  .d-inline {
+    display: inline;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  /* md modifiers */
+  @media (min-width: 60em) {
+    .d-md-none {
+      display: none;
+    }
+    .d-md-inline {
+      display: inline;
+    }
+    .d-md-table-cell {
+      display: table-cell;
+    }
+  }
+
+  /* lg modifiers */
+  @media (min-width: 75em) {
+    .d-lg-none {
+      display: none;
+    }
+    .d-lg-inline {
+      display: inline;
+    }
+    .d-lg-table-cell {
+      display: table-cell;
+    }
+  }
+
+  /* xl modifiers */
+  @media (min-width: 90em) {
+    .d-xl-none {
+      display: none;
+    }
+    .d-xl-inline {
+      display: inline;
+    }
+    .d-xl-table-cell {
+      display: table-cell;
+    }
+  }
+{% endblock %}

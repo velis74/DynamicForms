@@ -1,0 +1,44 @@
+{% load dynamicforms %}
+
+{% set_var_conditional action_postfix='?df_render_type=dialog' condition_var=df_render_type compare='dialog' else_value='' %}
+{% if data.id %}
+  {% url url_reverse|add:'-detail' pk=data.id format='html' as form_action %}
+{% else %}
+  {% url url_reverse|add:'-list' format='html' as form_action %}
+{% endif %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'base_form.html' %}
+
+<form id="{{ serializer.uuid }}" class="dynamicforms-form" action="{{ form_action }}{{ action_postfix }}" method="POST">
+
+  {% extendtemplateblock template_name_var=templatename block="body"%}
+    {% block form_body %}
+      {% if data.id %}
+        {# This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH #}
+        <input type="hidden" name="data-dynamicforms-method" value="PUT"/>
+      {% endif %}
+      {% csrf_token %}
+      {% render_form serializer %}
+    {% endblock %}
+  {% endextendtemplateblock %}
+  {% if df_render_type != 'dialog' %}
+  {% extendtemplateblock template_name_var=templatename block="buttons"%}
+    {% block form_buttons %}
+      {% render_table_commands serializer 'form-buttons' button_position='form' %}
+    {% endblock %}
+  {% endextendtemplateblock %}
+  {% endif %}
+
+
+</form>
+{% block formend_includes %}{% endblock %}
+<script type="application/javascript">
+  dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
+
+  {# TODO Should this registration also be in the base_list.html? Probably not exactly there, but in the template that defines the editing table row.#}
+  {% block field_actions %}
+    {% render_table_commands serializer 'onfieldchange' %}
+  {% endblock %}
+
+  {% block scriptend-includes %}{% endblock %}
+</script>

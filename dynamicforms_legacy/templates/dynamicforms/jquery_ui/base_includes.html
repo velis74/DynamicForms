@@ -1,0 +1,225 @@
+{% load static %}
+{% block ui_library_include %}
+  <link href="{% static 'jquery_ui/css/jquery-ui.min.css' %}" rel="stylesheet">
+  <link href="{% static 'jquery_ui/css/jquery-ui.structure.min.css' %}" rel="stylesheet">
+  <link href="{% static 'jquery_ui/css/jquery-ui.theme.min.css' %}" rel="stylesheet">
+  <script src="{% static 'jquery_ui/js/jquery-ui.min.js' %}"></script>
+{% endblock %}
+
+{% block additional_style %}
+  fieldset {
+    border:  none;
+    padding: 0;
+  }
+
+  form fieldset {
+    border-spacing: .4em;
+  }
+
+  .ui-dialog .ui-state-error {
+    padding: .3em;
+  }
+
+  .ui-error-container {
+    margin-bottom: .8em;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table td {
+    border-top:    1px solid #ddd;
+    height:        2em;
+    padding-left:  .5em;
+    padding-right: .5em;
+  }
+
+  table tr:nth-child(even):not(.dynamicforms-filterrow) {
+    background: rgba(0, 0, 0, .1)
+  }
+
+  table tr:nth-child(odd) {
+    background: rgba(255, 255, 255, .1)
+  }
+
+  .ui-widget-overlay {
+    background: #aaaaaa;
+    opacity:    .3;
+  }
+
+  .add-btn {
+    float: right;
+  }
+
+  .dynamicforms-actioncontrol {
+    padding: 0 .25rem;
+    display: inline-block;
+  }
+
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     .675rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  .75rem;
+    height: .75rem;
+  }
+
+  .dynamicforms-inputs {
+    width:      100%;
+    box-sizing: border-box;
+  }
+
+  .dynamicforms-table-col {
+    display: table-cell;
+  }
+
+  .dynamicforms-filterrow {
+    height: 2.2em;
+  }
+
+  .df-card {
+    display: inline-block;
+    margin:  1em;
+    clear:   both;
+  }
+
+  .help-block {
+    font-size: 75%;
+    opacity:   .5;
+  }
+
+  .dynamicforms-label {
+    display: table-cell;
+  }
+
+  .dynamicforms-table-row {
+    display: table-row;
+  }
+
+  .input-icons {
+    position: relative;
+  }
+
+  .input-icons span {
+    position:  absolute;
+    transform: translate(-50%, -50%);
+    top:       60%;
+    right:     0;
+  }
+
+  .progress-bar .ui-dialog-titlebar-close {
+    display: none;
+  }
+
+  .progress-bar .indeterminate .ui-progressbar-value {
+    position:  relative;
+    animation: progress-indeterminate 3s linear infinite;
+  }
+
+  {% include DYNAMICFORMS.template_root|add:'rtf_field_style.html' %}
+
+  {% with primary_color='#007bff' secondary_color='#6c757d' success_color='#28a745' danger_color='#dc3545' warning_color='#ffc107' info_color='#17a2b8' %}
+
+      .alert {
+        position: relative;
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+      }
+
+      .text-primary {
+        color: {{ primary_color }};
+      }
+
+      .bg-primary {
+        background-color: {{ primary_color }} !important;
+      }
+
+      .alert-primary {
+        color: #004085;
+        background-color: #cce5ff;
+        border-color: #b8daff;
+      }
+
+      .text-secondary {
+        color: {{ secondary_color }};
+      }
+
+      .bg-secondary {
+        background-color: {{ secondary_color }} !important;
+      }
+
+      .alert-secondary {
+        color: #383d41;
+        background-color: #e2e3e5;
+        border-color: #d6d8db;
+      }
+
+      .text-success {
+        color: {{ success_color }};
+      }
+
+      .bg-success {
+        background-color: {{ success_color }} !important;
+      }
+
+      .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+      }
+
+      .text-danger {
+        color: {{ danger_color }};
+      }
+
+      .bg-danger {
+        background-color: {{ danger_color }} !important;
+      }
+
+      .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+
+      .text-warning {
+        color: {{ warning_color }};
+      }
+
+      .bg-warning {
+        background-color: {{ warning_color }} !important;
+      }
+
+      .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+      }
+
+      .text-info {
+        color: {{ info_color }};
+      }
+
+      .bg-info {
+        background-color: {{ info_color }} !important;
+      }
+
+      .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+      }
+
+  {% endwith %}
+
+{% endblock %}

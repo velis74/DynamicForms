@@ -1,0 +1,51 @@
+{% load static dynamicforms %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'base_includes.html' %}
+
+
+{% if include_libs != False %}
+  <script src="{% static 'jquery_ui/js/jquery-3.3.1.min.js' %}"></script>
+  {% extendtemplate template_name_var=templatename block="ui_library_include" %}
+  <script src="{% static 'ckeditor-df/ckeditor.js' %}"></script>
+
+{% endif %}
+<script src="{% static 'dynamicforms/dynamicforms.js' %}"></script>
+<script type="application/javascript">
+  dynamicforms.DYNAMICFORMS = {{ DYNAMICFORMS|json }};
+  dynamicforms.csrf_token   = '{{ csrf_token }}';
+</script>
+
+{% if DYNAMICFORMS.use_select2 %}
+  {% include DYNAMICFORMS.select2_include %}
+{% endif %}
+
+<style>
+  .dynamicforms-filterrow label, .dynamicforms-filterrow span[id*="help-"] {
+    display: none !important;
+  }
+
+  input[type=number] {
+    max-width: 8em;
+  }
+
+  /* ordering indicators in table header */
+  th.ordering {
+    cursor:      pointer;
+    user-select: none;
+  }
+
+  @keyframes progress-indeterminate {
+    from {
+      left:  -25%;
+      width: 25%;
+    }
+    to {
+      left:  100%;
+      width: 25%;
+    }
+  }
+
+  {% extendtemplate template_name_var=templatename block="additional_style" %}
+
+</style>
+

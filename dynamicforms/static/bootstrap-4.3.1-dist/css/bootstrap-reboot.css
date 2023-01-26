@@ -12,9 +12,9 @@
 }
 
 html {
-  font-family: sans-serif;
-  line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
+  font-family:                 sans-serif;
+  line-height:                 1.15;
+  -webkit-text-size-adjust:    100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
@@ -23,13 +23,13 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  text-align: left;
+  margin:           0;
+  font-family:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size:        1rem;
+  font-weight:      400;
+  line-height:      1.5;
+  color:            #212529;
+  text-align:       left;
   background-color: #fff;
 }
 
@@ -39,41 +39,41 @@ body {
 
 hr {
   box-sizing: content-box;
-  height: 0;
-  overflow: visible;
+  height:     0;
+  overflow:   visible;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin-top: 0;
+  margin-top:    0;
   margin-bottom: 0.5rem;
 }
 
 p {
-  margin-top: 0;
+  margin-top:    0;
   margin-bottom: 1rem;
 }
 
 abbr[title],
 abbr[data-original-title] {
-  text-decoration: underline;
-  -webkit-text-decoration: underline dotted;
-  text-decoration: underline dotted;
-  cursor: help;
-  border-bottom: 0;
+  text-decoration:                  underline;
+  -webkit-text-decoration:          underline dotted;
+  text-decoration:                  underline dotted;
+  cursor:                           help;
+  border-bottom:                    0;
   -webkit-text-decoration-skip-ink: none;
-  text-decoration-skip-ink: none;
+  text-decoration-skip-ink:         none;
 }
 
 address {
   margin-bottom: 1rem;
-  font-style: normal;
-  line-height: inherit;
+  font-style:    normal;
+  line-height:   inherit;
 }
 
 ol,
 ul,
 dl {
-  margin-top: 0;
+  margin-top:    0;
   margin-bottom: 1rem;
 }
 
@@ -90,7 +90,7 @@ dt {
 
 dd {
   margin-bottom: .5rem;
-  margin-left: 0;
+  margin-left:   0;
 }
 
 blockquote {
@@ -108,9 +108,9 @@ small {
 
 sub,
 sup {
-  position: relative;
-  font-size: 75%;
-  line-height: 0;
+  position:       relative;
+  font-size:      75%;
+  line-height:    0;
   vertical-align: baseline;
 }
 
@@ -123,23 +123,23 @@ sup {
 }
 
 a {
-  color: #007bff;
-  text-decoration: none;
+  color:            #007bff;
+  text-decoration:  none;
   background-color: transparent;
 }
 
 a:hover {
-  color: #0056b3;
+  color:           #0056b3;
   text-decoration: underline;
 }
 
 a:not([href]):not([tabindex]) {
-  color: inherit;
+  color:           inherit;
   text-decoration: none;
 }
 
 a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
-  color: inherit;
+  color:           inherit;
   text-decoration: none;
 }
 
@@ -152,13 +152,13 @@ code,
 kbd,
 samp {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
+  font-size:   1em;
 }
 
 pre {
-  margin-top: 0;
+  margin-top:    0;
   margin-bottom: 1rem;
-  overflow: auto;
+  overflow:      auto;
 }
 
 figure {
@@ -167,11 +167,11 @@ figure {
 
 img {
   vertical-align: middle;
-  border-style: none;
+  border-style:   none;
 }
 
 svg {
-  overflow: hidden;
+  overflow:       hidden;
   vertical-align: middle;
 }
 
@@ -180,11 +180,11 @@ table {
 }
 
 caption {
-  padding-top: 0.75rem;
+  padding-top:    0.75rem;
   padding-bottom: 0.75rem;
-  color: #6c757d;
-  text-align: left;
-  caption-side: bottom;
+  color:          #6c757d;
+  text-align:     left;
+  caption-side:   bottom;
 }
 
 th {
@@ -192,7 +192,7 @@ th {
 }
 
 label {
-  display: inline-block;
+  display:       inline-block;
   margin-bottom: 0.5rem;
 }
 
@@ -210,9 +210,9 @@ button,
 select,
 optgroup,
 textarea {
-  margin: 0;
+  margin:      0;
   font-family: inherit;
-  font-size: inherit;
+  font-size:   inherit;
   line-height: inherit;
 }
 
@@ -248,14 +248,14 @@ button::-moz-focus-inner,
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner {
-  padding: 0;
+  padding:      0;
   border-style: none;
 }
 
 input[type="radio"],
 input[type="checkbox"] {
   box-sizing: border-box;
-  padding: 0;
+  padding:    0;
 }
 
 input[type="date"],
@@ -267,26 +267,26 @@ input[type="month"] {
 
 textarea {
   overflow: auto;
-  resize: vertical;
+  resize:   vertical;
 }
 
 fieldset {
   min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
+  padding:   0;
+  margin:    0;
+  border:    0;
 }
 
 legend {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
+  display:       block;
+  width:         100%;
+  max-width:     100%;
+  padding:       0;
   margin-bottom: .5rem;
-  font-size: 1.5rem;
-  line-height: inherit;
-  color: inherit;
-  white-space: normal;
+  font-size:     1.5rem;
+  line-height:   inherit;
+  color:         inherit;
+  white-space:   normal;
 }
 
 progress {
@@ -299,7 +299,7 @@ progress {
 }
 
 [type="search"] {
-  outline-offset: -2px;
+  outline-offset:     -2px;
   -webkit-appearance: none;
 }
 
@@ -308,7 +308,7 @@ progress {
 }
 
 ::-webkit-file-upload-button {
-  font: inherit;
+  font:               inherit;
   -webkit-appearance: button;
 }
 
@@ -318,7 +318,7 @@ output {
 
 summary {
   display: list-item;
-  cursor: pointer;
+  cursor:  pointer;
 }
 
 template {
@@ -328,4 +328,5 @@ template {
 [hidden] {
   display: none !important;
 }
+
 /*# sourceMappingURL=bootstrap-reboot.css.map */

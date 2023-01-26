@@ -13,7 +13,7 @@
           style="{% extendtemplate template_name_var=templatename_fld block="select_style" %}"
   >
 
-   {% iter_options_bound field as iter_options %}
+    {% iter_options_bound field as iter_options %}
     {% for select in iter_options %}
       {% if select.start_option_group %}
         <optgroup label="{{ select.label }}">
@@ -29,39 +29,40 @@
     {% endfor %}
   </select>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
     {% extendtemplateblock template_name_var=templatename_fld block="script_use_select_2" %}
       {% block script_use_select_2_body %}
         {% load dynamicforms %}
-    // Check bootstrap version to set select2 theme
+        // Check bootstrap version to set select2 theme
         var sel2Conf = {
           // Attaches select2 to its form parent and enables input field (in dialog)
           dropdownParent: $('#{{ style.serializer.uuid }}'),
-          {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
+          {% if style.placeholder %}placeholder: "{{ style.placeholder }}", {% endif %}
           tags: {% if field.allow_tags %}true{% else %}false{% endif %}
           {% extendtemplate template_name_var=templatename_fld block="select2_additional_conf" %}
         };
 
         var $sel2 = $("#{{ field.uuid }}");
-        $sel2.data("sel2Conf", sel2Conf);
+        $sel2.data('sel2Conf', sel2Conf);
         $sel2.select2(sel2Conf);
 
-        $sel2.on("change", function (evt) {
+        $sel2.on('change', function (evt) {
           if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
             {#  If select2 is for filter#}
             $(evt.currentTarget).parents('table').each(function (key, value) {
               var id = value.getAttribute('id');
-              if (id.startsWith('list-'))
+              if (id.startsWith('list-')) {
                 setTimeout(function () {dynamicforms.filterData(id.replace('list-', ''));}, 1);
+              }
             });
           }
-        }).on("select2:opening", function (evt) {
-        dynamicforms.select2Opening(evt, $(this), null);
-      }).on('select2:unselecting', function () {
-        dynamicforms.select2Unselecting($(this));
-      });
+        }).on('select2:opening', function (evt) {
+          dynamicforms.select2Opening(evt, $(this), null);
+        }).on('select2:unselecting', function () {
+          dynamicforms.select2Unselecting($(this));
+        });
 
       {% endblock %}
     {% endextendtemplateblock %}
-    </script>
+  </script>
 {% endblock %}

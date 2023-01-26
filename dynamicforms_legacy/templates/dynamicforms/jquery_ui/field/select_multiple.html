@@ -1,0 +1,18 @@
+{% block select_class %}
+  ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs {% if errors %} ui-state-error{% endif %}
+{% endblock %}
+
+{% block select_style %}
+{% endblock %}
+
+{% block script_use_select_2 %}
+  {% if DYNAMICFORMS.use_select2 %}
+    window.setTimeout(function() {
+    {% block script_use_select_2_body %}{% endblock %}
+  }, 1);
+  {% endif %}
+{% endblock %}
+
+{% block select2_additional_conf %}
+//jojojo
+{% endblock %}

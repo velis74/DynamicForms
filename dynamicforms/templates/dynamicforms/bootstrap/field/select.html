@@ -8,14 +8,14 @@
 {% endblock %}
 
 {% block select_class %}
-form-control{% if errors %} is-invalid{% endif %}
+  form-control{% if errors %} is-invalid{% endif %}
 {% endblock %}
 
 {% block select_style %}
 {% endblock %}
 
 {% block end_copy_span %}
-  {% if field.enable_copy and DYNAMICFORMS.use_select2%}
+  {% if field.enable_copy and DYNAMICFORMS.use_select2 %}
     {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
       </span>
       <div class="input-group-append">

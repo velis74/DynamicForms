@@ -1,0 +1,31 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load dynamicforms %}
+{% block field_input %}
+  {% set_var templatename=DYNAMICFORMS.template|add:'field/input.html' %}
+  {% set_var base_templatename=DYNAMICFORMS.template_root|add:'field/input.html' %}
+
+  {% if field.password_field %}
+    <div class="{% extendtemplate template_name_var=templatename block="div_password_class" only %}">{% endif %}
+      <input id="{{ field.uuid }}" name="{{ field.name }}"
+       class="{% extendtemplate template_name_var=templatename block="input_class" input_type=style.input_type errors=field.errors only %}"
+       type="{{ style.input_type }}" {% if style.input_type in "datetime-local,time" %}step="
+        {% if field.time_step %}{{ field.time_step }}{% else %}1{% endif %}"{% endif %}
+       {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
+       {% if field.value is not None %}value="{{ field.value }}"{% endif %}
+       {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
+       {% if field.read_only %}readonly{% endif %}/>
+{% if field.password_field %}
+  {% extendtemplate template_name_var=templatename block="password_toggle" base_template=base_templatename %}
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block password_span %}
+{#  So it is not visible here. this part is just used in dynamicforms/"templatepack"/field/input.html#}
+  {% if password_span_visible %}
+    {% set_var templatename=DYNAMICFORMS.template|add:'field/input.html' %}
+    <span id="pwf-{{ field.uuid }}" class="{% extendtemplate template_name_var=templatename block="password_span_class" %}"
+       onclick="dynamicforms.stopEventPropagation(event); dynamicforms.togglePasswordField('{{ field.uuid }}')"></span>
+  {% endif %}
+{% endblock %}
+

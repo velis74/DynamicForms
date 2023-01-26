@@ -1,0 +1,23 @@
+{% load dynamicforms %}
+{#This template is extended by dynamicforms/modal_dialog_rest#}
+
+<div class="modal fade dynamicforms-dialog" id="dialog-{{ serializer.uuid }}" tabindex="-1" role="dialog"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered {{ dialog_classes }}" role="document">
+    <div class="modal-content">
+      <div class="modal-header {{ dialog_header_classes }}">
+        {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ title }}</h5>
+        {% endif %}
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {% if DYNAMICFORMS.bootstrap_version == 'v3' %}
+        <h4 class="modal-title" id="exampleModalLongTitle">{{ title }}</h4>
+        {% endif %}
+      </div>
+      <div class="modal-body">{% block body %}{% endblock %}</div>
+      <div class="modal-footer">{% block footer %}{% endblock %}</div>
+    </div>
+  </div>
+</div>

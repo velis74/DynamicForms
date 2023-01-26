@@ -1,0 +1,13 @@
+{% load dynamicforms %}
+{#This template is extended by dynamicforms/base_form#}
+
+{% block body %}
+  <div style="display: table">
+    <fieldset>
+    {% block form_body %}{% endblock %}
+    </fieldset>
+  </div>
+{% endblock %}
+{% block buttons %}
+  {% block form_buttons %}{% endblock %}
+{% endblock %}

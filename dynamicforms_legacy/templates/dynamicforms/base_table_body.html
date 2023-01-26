@@ -1,0 +1,46 @@
+{% load dynamicforms %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'base_table_body.html' %}
+
+{% for row in data %}
+  <tr class="df-table-row" data-id="{{ row.id }}"
+      {% if row.row_css_style %}style="{{ row.row_css_style }}"{% endif %}
+      {% if forloop.first %}data-next="{{ link_next }}"
+      data-previous="{{ link_prev }}" {% endif %}
+      {% for key, value in row|items %}
+        {% set_var column=serializer.fields|dict_item:key %}
+        {% if key in serializer.fields and column.display_table == DYNAMICFORMS.DisplayMode.HIDDEN %}
+      data-{{ key }}="{{ value }}"
+        {% endif %}
+      {% endfor %}
+  >
+    {% render_table_commands serializer "rowstart" %}
+    {% for key, column in serializer.fields.items %}
+      {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
+        {% dict_item_default var='value' d=row k=key default='' %}
+
+        {% set_var_conditional invisible=1 condition_var=column.display_table compare=DYNAMICFORMS.DisplayMode.INVISIBLE else_value=0 %}
+
+        <td {% extendtemplate template_name_var=templatename invisible=invisible table_classes=column.table_classes only %}
+        data-name="{{ key }}">
+          {% render_table_commands serializer "fieldleft" key %}
+          {% set_var klass=column|class_name %}
+            {% if klass == 'RTFField' %}
+                {{ value | handle_rtf_linebreaks }}
+            {% else %}
+                {{ value }}
+            {% endif %}
+          {% render_table_commands serializer "fieldright" key %}
+        </td>
+      {% endif %}
+    {% endfor %}
+    {% render_table_commands serializer "rowend" %}
+  </tr>
+{% empty %}
+  <tr data-title="NoData">
+    {% if columns_count == None %}
+      {% table_columns_count serializer as columns_count %}
+    {% endif %}
+    <td colspan="{{ columns_count }}" style="text-align: center">No data</td>
+  </tr>
+{% endfor %}

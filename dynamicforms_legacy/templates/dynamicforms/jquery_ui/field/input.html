@@ -1,0 +1,17 @@
+{#This template is included by dynamicforms/field/input.html#}
+{% block div_password_class %}
+  input-icons
+{% endblock %}
+
+{% block input_class %}
+  {% if input_type != "file" %}text ui-widget ui-corner-all dynamicforms-inputs{% else %} form-control-file{% endif %}{% if errors %} ui-state-error{% endif %}
+{% endblock %}
+
+{% block password_toggle %}
+  {% load dynamicforms %}
+  {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
+{% endblock %}
+
+{% block password_span_class %}
+ui-icon ui-icon-circle-check
+{% endblock %}

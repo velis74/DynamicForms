@@ -15,7 +15,7 @@
     </div>
   {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
     <span class="input-group-addon" style="background-color: transparent;"
-      onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
+          onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
       {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
     </span>
   {% endif %}
@@ -23,9 +23,9 @@
 
 {% block password_span_class %}
   {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
-input-group-text password-field
+    input-group-text password-field
   {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
-glyphicon glyphicon-eye-open
+    glyphicon glyphicon-eye-open
   {% endif %}
 
 {% endblock %}

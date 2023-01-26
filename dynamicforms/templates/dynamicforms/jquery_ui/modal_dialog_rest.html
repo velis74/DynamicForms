@@ -11,17 +11,17 @@
   <script type="text/javascript">
     var $dlgTmp = $('#dialog-tmp-{{ serializer.uuid }}');
     $dlgTmp.dialog({
-      title:       "{{ title }}",
-      modal:       true,
-      resizable:   true,
-      width:       'auto',
-      dialogClass: "modal",
-      close:       function (event, ui) { $dlgTmp.remove(); },
+      title: "{{ title }}",
+      modal: true,
+      resizable: true,
+      width: 'auto',
+      dialogClass: 'modal',
+      close: function (event, ui) { $dlgTmp.remove(); },
     });
 
-    $dlgTmp.parent().attr("id", "dialog-{{ serializer.uuid }}");
+    $dlgTmp.parent().attr('id', "dialog-{{ serializer.uuid }}");
 
     $dlgTmp.find('button').button();
-    $dlgTmp.find(".close-btn").click(function (event) { $dlgTmp.dialog('close'); });
+    $dlgTmp.find('.close-btn').click(function (event) { $dlgTmp.dialog('close'); });
   </script>
 </div>

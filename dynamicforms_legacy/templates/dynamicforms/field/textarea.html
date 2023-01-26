@@ -1,0 +1,13 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load dynamicforms %}
+{% block field_input %}
+  {% set_var templatename=DYNAMICFORMS.template|add:'field/textarea.html' %}
+
+  <textarea id="{{ field.uuid }}"
+            name="{{ field.name }}"
+            class="{% extendtemplate template_name_var=templatename errors=field.errors block="field_class" only %}"
+            {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
+            {% if style.rows %}rows="{{ style.rows }}"{% endif %}
+            {% if field.read_only %}readonly{% endif %}
+  >{% if field.value %}{{ field.value }}{% endif %}</textarea>
+{% endblock %}

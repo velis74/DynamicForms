@@ -1,0 +1,18 @@
+{% load dynamicforms %}
+
+{% field_to_serializer_and_data field %}
+{% get_data_template as data_template %}
+
+<div class="{{ DYNAMICFORMS.bs_card_class }} form-group">
+  <div class="{{ DYNAMICFORMS.bs_card_header }}">
+    {{ field.label }}
+    {% render_table_commands field.child 'header' %}
+  </div>
+  <div class="{{ DYNAMICFORMS.bs_card_body }}">
+    {% include data_template with serializer=serializer data=data %}
+    <!-- {{ serializer.context.view }} -->
+    <script type="application/javascript">
+    dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url serializer.template_context.url_reverse|add:'-list' format='html' %}");
+    </script>
+  </div>
+</div>

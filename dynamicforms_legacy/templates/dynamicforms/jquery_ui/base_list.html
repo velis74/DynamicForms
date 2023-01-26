@@ -1,0 +1,9 @@
+{% load dynamicforms %}
+{#This template is extended by dynamicforms/base_list#}
+
+{% block table_class %}
+  table
+{% endblock %}
+{% block th_definition %}
+ class="{{ table_classes }} {{ ordering }}" {% if invisible %}style="display: none"{% endif %}
+{% endblock %}

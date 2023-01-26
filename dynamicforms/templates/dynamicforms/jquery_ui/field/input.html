@@ -4,7 +4,8 @@
 {% endblock %}
 
 {% block input_class %}
-  {% if input_type != "file" %}text ui-widget ui-corner-all dynamicforms-inputs{% else %} form-control-file{% endif %}{% if errors %} ui-state-error{% endif %}
+  {% if input_type != "file" %}text ui-widget ui-corner-all dynamicforms-inputs{% else %} form-control-file{% endif %}
+  {% if errors %} ui-state-error{% endif %}
 {% endblock %}
 
 {% block password_toggle %}
@@ -13,5 +14,5 @@
 {% endblock %}
 
 {% block password_span_class %}
-ui-icon ui-icon-circle-check
+  ui-icon ui-icon-circle-check
 {% endblock %}

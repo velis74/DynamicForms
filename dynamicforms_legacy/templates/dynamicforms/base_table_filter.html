@@ -1,0 +1,44 @@
+{% load dynamicforms %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'base_table_filter.html' %}
+
+<tr class="dynamicforms-filterrow" id="{{ form.uuid }}">
+  {% render_table_commands form "filterrowstart" %}
+  {% for column in form %}
+    {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or  column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE%}
+      {% set_var_conditional invisible=1 condition_var=column.display_table compare=DYNAMICFORMS.DisplayMode.INVISIBLE else_value=0 %}
+      <th {% extendtemplate template_name_var=templatename invisible=invisible no_filter=column.style.no_filter only %}
+          data-name="{{ column.field_name }}">
+        {% render_field column style=style %}
+      </th>
+    {% endif %}{% endfor %}
+  {% render_table_commands form "filterrowend" %}
+</tr>
+<script type="application/javascript">
+  var $checkbox = $('.dynamicforms-filterrow input[type="checkbox"]')
+  $checkbox.addClass("position-static");
+  $checkbox.on("click", function () {
+    var $cb = $(this);
+
+    if ($cb.prop("readOnly")) {
+      $cb.prop({
+        checked:  false,
+        readOnly: false,
+      });
+    } else if (!$cb.prop("checked")) {
+      $cb.prop({
+        readOnly:      true,
+        indeterminate: true,
+      });
+    }
+  });
+  //Initialize checkbox
+  $checkbox.prop({
+    checked:       false,
+    readOnly:      true,
+    indeterminate: true,
+  });
+
+  var $form = $("#{{ form.uuid }}")
+  dynamicforms.serializeForm($form, 'final');
+</script>

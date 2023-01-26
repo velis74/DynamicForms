@@ -12,7 +12,7 @@
     {% include data_template with serializer=serializer data=data %}
     <!-- {{ serializer.context.view }} -->
     <script type="application/javascript">
-    dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url serializer.template_context.url_reverse|add:'-list' format='html' %}");
+      dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url serializer.template_context.url_reverse|add:'-list' format='html' %}");
     </script>
   </div>
 </div>

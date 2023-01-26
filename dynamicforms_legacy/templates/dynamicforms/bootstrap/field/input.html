@@ -1,0 +1,31 @@
+{#This template is included by dynamicforms/field/input.html#}
+{% block div_password_class %}
+  input-group
+{% endblock %}
+
+{% block input_class %}
+  {% if input_type != "file" %}form-control{% else %} form-control-file{% endif %}{% if errors %} is-invalid{% endif %}
+{% endblock %}
+
+{% block password_toggle %}
+  {% load dynamicforms %}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    <div class="input-group-append">
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
+    </div>
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+    <span class="input-group-addon" style="background-color: transparent;"
+      onclick="dynamicforms.togglePasswordField('{{ field.uuid }}')">
+      {% extendtemplate template_name_var=base_template block="password_span" password_span_visible=True %}
+    </span>
+  {% endif %}
+{% endblock %}
+
+{% block password_span_class %}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+input-group-text password-field
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+glyphicon glyphicon-eye-open
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% load static %}
+{% block ui_library_include %}
+  <link href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
+{% endblock %}
+
+{% block additional_style %}
+  .dynamicforms-actioncontrol .btn {
+    margin-top:    -.25rem;
+    margin-right:  .5rem;
+    padding:       .15rem .3rem;
+    font-size:     .675rem;
+    line-height:   1.1;
+    border-radius: .13rem;
+  }
+
+  .dynamicforms-actioncontrol .btn img {
+    margin: .05rem .25rem .05rem 0;
+    width:  .75rem;
+    height: .75rem;
+  }
+
+  .df-card {
+    display: inline-block;
+    margin: 1em;
+  }
+
+  .input-group.input-group-select2 {
+    flex-wrap: nowrap;
+  }
+
+  .select2-container--bootstrap4 {
+    /* otherwise select2s are too narrow */
+    width: 100% !important;
+  }
+
+  .input-group > .select2-container--bootstrap4 {
+    flex:  1 1 auto;
+  }
+
+  .input-group > .select2-container--bootstrap .select2-selection--single {
+    height:      100%;
+    line-height: inherit;
+    padding:     0.5rem 1rem;
+  }
+
+  .select2-copy-field {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static 'dynamicforms/icons/copy.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
+  }
+
+  .password-field {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static 'dynamicforms/icons/eye-outline.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
+  }
+
+  .password-field-slash {
+    display:             inline-block;
+    content:             "";
+    background-image:    url("{% static 'dynamicforms/icons/eye-off-outline.svg' %}");
+    background-repeat:   no-repeat;
+    background-size:     1rem 1rem;
+    background-color:    transparent;
+    background-position: center;
+  }
+{% endblock %}
+

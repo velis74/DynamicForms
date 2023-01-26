@@ -1,0 +1,7 @@
+{% block input_class %}
+  "form-check-input{% if not field.label %} position-static{% endif %}"
+{% endblock %}
+
+{% block label_class %}
+  "form-check-label {% if style.hide_label %}sr-only{% endif %}"
+{% endblock %}

@@ -1,0 +1,37 @@
+{% block start_copy_span %}
+{#  jQueryUI nima copy spana#}
+{% endblock %}
+
+{% block select_class %}
+ui-widget ui-widget-content ui-state-default ui-corner-all dynamicforms-inputs{% if errors %} ui-state-error{% endif %}
+{% endblock %}
+
+{% block select_style %}
+min-width: 6em
+{% endblock %}
+
+{% block end_copy_span %}
+{#  jQueryUI nima copy spana#}
+{% endblock %}
+
+{% block script_use_select_2 %}
+  {% if DYNAMICFORMS.use_select2 %}
+    window.setTimeout(function() {
+    {% block script_use_select_2_body %}{% endblock %}
+  }, 1);
+  {% else %}
+  // Selectmenus need to be created AFTER the dialog... So use the setTimeout because we don't know the dialog here.
+  window.setTimeout(function() {
+    $('#{{ field.uuid }}').selectmenu();
+  }, 1);
+  {% endif %}
+
+{% endblock %}
+
+{% block select2_additional_conf %}
+ , width: '100%',
+{% endblock %}
+
+{% block field_onchange_special_func %}
+  $('#{{ field.uuid }}').on('selectmenuselect', function () { dynamicforms.fieldChange('{{ field.uuid }}', 'final'); });
+{% endblock %}

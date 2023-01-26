@@ -1,0 +1,67 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load i18n dynamicforms %}
+{% block field_input %}
+  {% trans "No items to select." as no_items %}
+  {% set_var templatename_fld=DYNAMICFORMS.template|add:'field/select_multiple.html' %}
+
+  <select multiple id="{{ field.uuid }}"
+          class="{% extendtemplate template_name_var=templatename_fld block="select_class" errors=field.errors only %}
+                 {{ DYNAMICFORMS.select2_form_field_class }}"
+          name="{{ field.name }}"
+          {% if field.read_only %}disabled{% endif %}
+          {% if field.placeholder %}data-placeholder="{{ field.placeholder }}" {% endif %}
+          style="{% extendtemplate template_name_var=templatename_fld block="select_style" %}"
+  >
+
+   {% iter_options_bound field as iter_options %}
+    {% for select in iter_options %}
+      {% if select.start_option_group %}
+        <optgroup label="{{ select.label }}">
+          {% elif select.end_option_group %}
+        </optgroup>
+      {% else %}
+        <option value="{{ select.value }}"
+                {% if select.value|as_string in field.value|as_list_of_strings %}selected{% endif %}
+                {% if select.disabled %}disabled{% endif %}>{{ select.display_text }}</option>
+      {% endif %}
+    {% empty %}
+      <option>{{ no_items }}</option>
+    {% endfor %}
+  </select>
+
+    <script type="text/javascript">
+    {% extendtemplateblock template_name_var=templatename_fld block="script_use_select_2" %}
+      {% block script_use_select_2_body %}
+        {% load dynamicforms %}
+    // Check bootstrap version to set select2 theme
+        var sel2Conf = {
+          // Attaches select2 to its form parent and enables input field (in dialog)
+          dropdownParent: $('#{{ style.serializer.uuid }}'),
+          {% if style.placeholder %}placeholder:"{{ style.placeholder }}",{% endif %}
+          tags: {% if field.allow_tags %}true{% else %}false{% endif %}
+          {% extendtemplate template_name_var=templatename_fld block="select2_additional_conf" %}
+        };
+
+        var $sel2 = $("#{{ field.uuid }}");
+        $sel2.data("sel2Conf", sel2Conf);
+        $sel2.select2(sel2Conf);
+
+        $sel2.on("change", function (evt) {
+          if ($(evt.currentTarget).parents('tr.dynamicforms-filterrow').length) {
+            {#  If select2 is for filter#}
+            $(evt.currentTarget).parents('table').each(function (key, value) {
+              var id = value.getAttribute('id');
+              if (id.startsWith('list-'))
+                setTimeout(function () {dynamicforms.filterData(id.replace('list-', ''));}, 1);
+            });
+          }
+        }).on("select2:opening", function (evt) {
+        dynamicforms.select2Opening(evt, $(this), null);
+      }).on('select2:unselecting', function () {
+        dynamicforms.select2Unselecting($(this));
+      });
+
+      {% endblock %}
+    {% endextendtemplateblock %}
+    </script>
+{% endblock %}

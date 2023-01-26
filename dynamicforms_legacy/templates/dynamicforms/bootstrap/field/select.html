@@ -1,0 +1,46 @@
+{% load dynamicforms %}
+
+{% block start_copy_span %}
+  {% if enable_copy and use_select2 %}
+    <div class="input-group input-group-select2">
+    <span style="width: 100%">
+  {% endif %}
+{% endblock %}
+
+{% block select_class %}
+form-control{% if errors %} is-invalid{% endif %}
+{% endblock %}
+
+{% block select_style %}
+{% endblock %}
+
+{% block end_copy_span %}
+  {% if field.enable_copy and DYNAMICFORMS.use_select2%}
+    {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+      </span>
+      <div class="input-group-append">
+          <span id="copy-{{ field.uuid }}" class="input-group-text select2-copy-field"
+                onclick="dynamicforms.select2CopyValue('{{ field.uuid }}')"></span>
+      </div>
+    {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+      <span class="input-group-addon" style="background-color: transparent;"
+            onclick="dynamicforms.select2CopyValue('{{ field.uuid }}')">
+        <span id="copy-{{ field.uuid }}" class="glyphicon glyphicon-copy"></span></span>
+    {% endif %}
+    </div>
+  {% endif %}
+
+{% endblock %}
+
+{% block script_use_select_2 %}
+  {% if DYNAMICFORMS.use_select2 %}
+    {% block script_use_select_2_body %}{% endblock %}
+  {% endif %}
+{% endblock %}
+
+{% block select2_additional_conf %}
+  , theme: '{{ DYNAMICFORMS.select2_theme }}',
+{% endblock %}
+
+{% block field_onchange_special_func %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends DYNAMICFORMS.field_base_template %}
+{% load dynamicforms %}
+
+{% block container_definition %}
+  {% with 'checkbox' as input_type %}
+    {{ block.super }}
+  {% endwith %}
+{% endblock %}
+
+{% block field_input_label %}
+  {% set_var templatename=DYNAMICFORMS.template|add:'field/checkbox.html' %}
+
+  <input id="{{ field.uuid }}"
+         class={% extendtemplate template_name_var=templatename block="input_class" %}
+         type="checkbox"
+         name="{{ field.name }}"
+         value="true"
+         {% if field.read_only %}disabled{% endif %}
+         {% if field.value %}checked{% endif %}
+  />
+  {% if field.label %}
+    <label id="label-{{ field.uuid }}"
+           for="{{ field.name }}"
+           class={% extendtemplate template_name_var=templatename block="label_class" %}>
+      {{ field.label }}
+    </label>
+  {% endif %}
+{% endblock %}

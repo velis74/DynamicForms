@@ -1,4 +1,4 @@
-from dynamicforms import fields
+from dynamicforms_legacy import fields
 
 
 class NameTestField(fields.CharField):

@@ -1,0 +1,46 @@
+{% load static dynamicforms %}
+{% block ui_library_include %}
+  {% set_var sub_templatename='' %}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    {% set_var sub_templatename=DYNAMICFORMS.template|add:'base_includes_v4.html' %}
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+    {% set_var sub_templatename=DYNAMICFORMS.template|add:'base_includes_v3.html' %}
+  {% endif %}
+
+  {% extendtemplate template_name_var=sub_templatename block="ui_library_include" only %}
+
+{% endblock %}
+
+{% block additional_style %}
+  {% set_var sub_templatename='' %}
+  {% if DYNAMICFORMS.bootstrap_version == 'v4' %}
+    {% set_var sub_templatename=DYNAMICFORMS.template|add:'base_includes_v4.html' %}
+  {% elif DYNAMICFORMS.bootstrap_version == 'v3' %}
+    {% set_var sub_templatename=DYNAMICFORMS.template|add:'base_includes_v3.html' %}
+  {% endif %}
+
+  .dynamicforms-actioncontrol {
+    padding: 0 .25rem;
+  }
+
+
+  .dynamicforms-filterrow div {
+    margin: 0;
+  }
+
+  @media (max-width: 991px) {
+    .modal-lg {
+      max-width: calc(100% - 2em);
+    }
+  }
+
+  .progress-bar.indeterminate {
+    position:  relative;
+    animation: progress-indeterminate 3s linear infinite;
+  }
+
+  {% include DYNAMICFORMS.template_root|add:'rtf_field_style.html' %}
+
+  {% extendtemplate template_name_var=sub_templatename block="additional_style" only %}
+
+{% endblock %}
