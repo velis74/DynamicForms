@@ -1,10 +1,11 @@
-{% load static %}<!DOCTYPE html>
+{% load static dynamicforms %}<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   {% include DYNAMICFORMS.page_includes %}
   <title>{% block title %}{% endblock %}</title>
   <script src="{% static 'examples/examples.js' %}"></script>
+  <script src="{% url 'javascript-catalog' %}"></script>
   {% block head_extra %}{% endblock %}
   <style>
     /* side navigation bar */
@@ -87,17 +88,24 @@
     &#9776; <span id="page-title"></span>
   </div>
 </div>
+{% if DYNAMICFORMS.components %}
+  {% set_var page_format='component' %}
+{% else %}
+  {% set_var page_format='html' %}
+{% endif %}
+
 <div id="side-nav" class="sidenav">
-  <a href="{% url 'validated-list' format='html' %}">Validated</a>
-  <a href="{% url 'hidden-fields-list' format='html' %}">Hidden fields</a>
-  <a href="{% url 'basic-fields-list' format='html' %}">Basic fields</a>
-  <a href="{% url 'advanced-fields-list' format='html' %}">Advanced fields</a>
-  <a href="{% url 'page-load-list' format='html' %}">Page loading</a>
-  <a href="{% url 'filter-list' format='html' %}">Filter</a>
+  <a href="{% url 'validated-list' format=page_format %}">Validated</a>
+  <a href="{% url 'hidden-fields-list' format=page_format %}">Hidden fields</a>
+  <a href="{% url 'basic-fields-list' format=page_format %}">Basic fields</a>
+  <a href="{% url 'advanced-fields-list' format=page_format %}">Advanced fields</a>
+  <a href="{% url 'page-load-list' format=page_format %}">Page loading</a>
+  <a href="{% url 'filter-list' format=page_format %}">Filter</a>
   <a href="#" onclick="singleDialog()">Pop-up dialog</a>
   <a href="#" onclick="singleDialog()">Choice allow tags dialog</a>
-  <a href="{% url 'refresh-types-list' format='html' %}">Refresh types</a>
-  <a href="{% url 'calculated-css-class-for-table-row-list' format='html' %}">Row css style</a>
+  <a href="{% url 'refresh-types-list' format=page_format %}">Refresh types</a>
+  <a href="{% url 'calculated-css-class-for-table-row-list' format=page_format %}">Row css style</a>
+  <a href="#" onclick="switchRenderer()" style="text-wrap: normal">Switch to {% if DYNAMICFORMS.components %}template{% else %}component{% endif %} rendering</a>
 </div>
 <div id="sidenav-overlay" onclick="togglemenu()"></div>
 <div id="main">
@@ -111,7 +119,7 @@
     var $overlay  = $('#sidenav-overlay');
 
     if ($side_nav.width() == 0) {
-      $side_nav.width('15em');
+      $side_nav.width('20em');
       $overlay.show().animate({opacity: .33}, 500);
     }
     else {
@@ -122,9 +130,21 @@
     }
   }
 
+  function switchRenderer() {
+    {% if page_format == 'html' %}
+      this.location.href = this.location.href.replace('.html', '.component');
+    {% else %}
+      this.location.href = this.location.href.replace('.component', '.html');
+    {% endif %}
+  }
+
   function singleDialog() {
     togglemenu();
+    {% if page_format == 'html' %}
     dynamicforms.newRow("{% url 'single-dialog-detail' pk='new' format='html' %}");
+    {% else %}
+    dynamicforms.dialog.fromURL("{% url 'single-dialog-detail' pk='new' format='component' %}");
+    {% endif %}
   }
 
   function customSingleDialogBtn() {
@@ -148,7 +168,6 @@
   var testRefreshType = function () {
     alert("Custom function refresh type.");
   }
-
 </script>
 </body>
 </html>

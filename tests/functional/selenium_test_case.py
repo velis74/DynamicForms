@@ -2,6 +2,7 @@ import json
 import os
 import time
 from enum import Enum
+from typing import Iterable
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -14,8 +15,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from dynamicforms_legacy.dynamicforms_migration_mixin import add_filter, add_page_load, add_relation
-from dynamicforms_legacy.settings import DYNAMICFORMS
+from dynamicforms.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
 MAX_WAIT_ALERT = 5
@@ -80,15 +80,17 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def setUp(self):
         # When running tests through github actions sometimes tables are empty, even though they are filled up in
         # migrations initialisation
+        from examples.migrations import add_filter, add_page_load, add_relation
         from examples.models import Filter, PageLoad, Relation
-        if Filter.objects.count() == 0:
-            add_filter(None, None)
 
-        if PageLoad.objects.count() == 0:
-            add_page_load(None, None)
+        if not Filter.objects.count():
+            add_filter(Filter)
 
-        if Relation.objects.count() == 0:
-            add_relation(None, None)
+        if not PageLoad.objects.count():
+            add_page_load(PageLoad)
+
+        if not Relation.objects.count():
+            add_relation(Relation)
 
         self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
 
@@ -165,11 +167,17 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         self.browser.quit()
 
     def wait_for_new_element(self, element_id):
+        if not callable(element_id):
+            elid = element_id
+
+            def element_id():
+                return self.browser.find_element(By.ID, elid)
+
         start_time = time.time()
         while True:
             try:
                 time.sleep(0.01)
-                element = self.browser.find_element_by_id(element_id)
+                element = element_id()
                 self.assertIsNotNone(element)
                 return
             except (AssertionError, WebDriverException) as e:
@@ -182,7 +190,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             try:
                 time.sleep(0.01)
                 element = None
-                for el in self.browser.find_elements_by_class_name('modal'):
+                for el in self.browser.find_elements(By.CLASS_NAME, 'modal'):
                     if el.is_displayed():
                         element = el
                         break
@@ -191,6 +199,8 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
                     # The new dialog must not have same id as the old one
                     # if it does, this means that we're still looking at the old dialog - let's wait for it to go away
+                    if time.time() - start_time > MAX_WAIT:
+                        raise Exception('Timeout for old dialog to go away expired')
                     continue
                 self.assertTrue(element_id.startswith('dialog-'))
                 element_id = element_id.split('-', 1)[1]
@@ -216,7 +226,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.01)
-                if self.browser.find_element_by_id('dialog-{dialog_id}'.format(**locals())) is None:
+                if self.browser.find_element(By.ID, 'dialog-{dialog_id}'.format(**locals())) is None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException:
@@ -233,7 +243,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def check_error_text(self, dialog):
         error_text = None
         try:
-            error = dialog.find_element_by_class_name('text-danger')
+            error = dialog.find_element(By.CLASS_NAME, 'text-danger')
             if error is not None:
                 error_text = error.get_attribute('innerHTML')
         except WebDriverException:
@@ -257,7 +267,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             for cls in ['card-body', 'panel-body', 'ui-accordion-content']:
                 try:
-                    body = self.browser.find_element_by_class_name(cls)
+                    body = self.browser.find_element(By.CLASS_NAME, cls)
                     if body:
                         break
                 except NoSuchElementException:
@@ -266,13 +276,16 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             if body:
                 break
 
-        table = body.find_element_by_tag_name('table')
+        table = body.find_element(By.TAG_NAME, 'table')
         if whole_table:
             return table
 
         while True:
-            tbody = body.find_element_by_tag_name('table').find_element_by_tag_name('tbody')
-            rows = tbody.find_elements_by_tag_name('tr')
+            rows = table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
+            if not rows:
+                # component renders "no data" in tfoot
+                rows = table.find_element(By.TAG_NAME, 'tfoot').find_elements(By.TAG_NAME, 'tr')
+
             if expected_rows is not None and len(rows) != expected_rows:
                 self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')
                 time.sleep(0.01)
@@ -282,7 +295,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         return rows
 
     def select_option_for_select2(self, driver, element_id, text=None):
-        element = driver.find_element_by_xpath("//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
+        element = driver.find_element(By.XPATH, "//*[@id='{element_id}']/following-sibling::*[1]".format(**locals()))
         element.click()
 
         if text:
@@ -298,10 +311,12 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             a.perform()
 
     def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements_by_tag_name('td')
+        cells = row.find_elements(By.TAG_NAME, 'td')
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
-            if cell_values[i] is not None:
+            if callable(cell_values[i]):
+                cell_values[i](self.get_element_text(cells[i]))
+            elif cell_values[i] is not None:
                 self.assertEqual(self.get_element_text(cells[i]), cell_values[i])
         return cells
 
@@ -317,7 +332,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @staticmethod
     def get_field_id_by_name(dialog, name):
-        return dialog.find_element_by_name(name).get_attribute('id')
+        return dialog.find_element(By.NAME, name).get_attribute('id')
 
     @staticmethod
     def get_tag_name(el):
@@ -325,4 +340,23 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @staticmethod
     def get_element_text(el):
-        return el.text.strip()
+        tim = time.time()
+        while True:
+            res = el.text.strip()
+            if '…' not in res or time.time() > tim + MAX_WAIT:
+                break
+            time.sleep(.01)
+        return res
+
+    def clear_input(self, element):
+        element.click()
+        while len(element.get_attribute('value')):
+            element.send_keys(Keys.BACKSPACE)
+        element.clear()
+
+    def find_element_by_classes(self, classes: Iterable):
+        for cls in classes:
+            try:
+                return self.browser.find_element(By.CLASS_NAME, cls)
+            except NoSuchElementException:
+                pass

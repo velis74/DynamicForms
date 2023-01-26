@@ -1,11 +1,20 @@
+import threading
+
 from django.conf import settings as s
 from django.utils.translation import gettext_lazy as _
+from versio.version import Version
+from versio.version_scheme import Pep440VersionScheme
 
 from .struct import Struct
 
 DYNAMICFORMS_ROOT = 'dynamicforms/'
 DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + 'bootstrap/'
 DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + 'jquery_ui/'
+DYNAMICFORMS_VUE = DYNAMICFORMS_ROOT + 'vue/'
+
+
+COMPONENT_DEF_RENDERER_FORMAT = 'componentdef'
+COMPONENT_HTML_RENDERER_FORMAT = 'component'
 
 
 class Settings(Struct):
@@ -25,6 +34,10 @@ class Settings(Struct):
 
     # specifies text to be displayed in grid when field's value is null
     null_text_table = 'null'
+
+    preuploaded_file_margin_for_file_deletion_in_seconds: int = 86400  # 1 day
+
+    allow_anonymous_user_to_preupload_files = False
 
     def __init__(self, data=None, **kwds):
         kwds.setdefault('page_template', DYNAMICFORMS_ROOT + 'page.html')
@@ -46,6 +59,14 @@ class Settings(Struct):
     def DisplayMode(self):
         from .mixins import DisplayMode
         return {e.name: e.value for e in DisplayMode}  # A copy to be accessible in the templates
+
+    def _get_components(self):
+        return getattr(threading.current_thread(), 'is_component_renderer', False)
+
+    def _set_components(self, value):
+        threading.current_thread().is_component_renderer = value
+
+    components = property(_get_components, _set_components)
 
     # ****************************************************************************
     # These are constants, generated from settings. They are shortcuts for quick use in templates and are specific
@@ -83,6 +104,8 @@ class Settings(Struct):
 
     select2_include = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes_select2.html')
 
+    progress_dialog_title = _('Performing operation...')
+
 
 def if3_4(if3, if4):
     def inner(self):
@@ -111,8 +134,6 @@ class SettingsBootstrap(Settings):
     bs_card_header = property(if3_4('panel-heading df-card-header', 'card-header df-card-header'))
     bs_card_body = property(if3_4('panel-body df-card-body', 'card-body df-card-body'))
 
-    progress_dialog_title = _('Performing operation...')
-
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'btn ml-1')
     form_button_classes_cancel = property(lambda self: '')
@@ -126,8 +147,6 @@ class SettingsJqueryUI(Settings):
     def __init__(self, data=None, **kwds):
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
-
-    progress_dialog_title = _('Performing operation...')
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: 'ui-button ui-corner-all ui-widget')
@@ -163,32 +182,6 @@ def version_check(checked_version, min_version):
     :return: True when checked version is high enough
     """
 
-    def version_transform(ver):
-        version = ''
-        vn = va = ''
-        stage = 0
-        ver = '.' + (ver or '')
-        for c in ver:
-            if c == '.':
-                if vn or va:
-                    version += '{0:0>3}{1: <2}.'.format(vn, va)
-                vn = va = ''
-                stage = 0
-                continue
-            if c.isdigit():
-                pass
-            elif c.isalpha():
-                stage = max(1, stage)
-            else:
-                stage = max(2, stage)
-            if stage == 0:
-                vn += c
-            elif stage == 1:
-                va += c
-        if vn or va:
-            version += '{0:0>3}{1: <2}.'.format(vn, va)
-        return version[:-1]
-
-    if not checked_version:
+    if not checked_version or checked_version == 'None':
         return False
-    return version_transform(checked_version) >= version_transform(min_version)
+    return Version(checked_version, scheme=Pep440VersionScheme) >= Version(min_version, scheme=Pep440VersionScheme)

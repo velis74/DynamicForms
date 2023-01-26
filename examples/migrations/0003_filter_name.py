@@ -2,10 +2,10 @@
 
 from django.db import migrations, models
 
-from dynamicforms_legacy.dynamicforms_migration_mixin import DynamicformsMigrationMixin
+from . import add_filter, add_page_load, add_relation
 
 
-class Migration(DynamicformsMigrationMixin, migrations.Migration):
+class Migration(migrations.Migration):
     dependencies = [
         ('examples', '0002_auto_20190320_0823'),
     ]
@@ -17,4 +17,9 @@ class Migration(DynamicformsMigrationMixin, migrations.Migration):
             field=models.CharField(blank=True, help_text='Name field', max_length=20, null=True,
                                    verbose_name='Name field'),
         ),
+        migrations.RunPython(lambda apps, schema_editor: add_relation(apps.get_model('examples', 'Relation')),
+                             atomic=True),
+        migrations.RunPython(lambda apps, schema_editor: add_filter(apps.get_model('examples', 'Filter')), atomic=True),
+        migrations.RunPython(lambda apps, schema_editor: add_page_load(apps.get_model('examples', 'PageLoad')),
+                             atomic=True),
     ]

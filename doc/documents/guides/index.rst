@@ -9,5 +9,4 @@ Using DynamicForms
 .. todo:: Custom page template
 .. todo:: Custom dialog classes for dialog formatting
 .. todo:: SingleRecordViewSet
-.. todo:: Custom refresh types
 .. todo:: RenderMixin - parameters and what they do

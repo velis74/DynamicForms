@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 
+# Are we running unit tests
+TESTING = sys.argv[1:2] == ['test']
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,6 +29,25 @@ SECRET_KEY = '7*jikkyt=9!1n-p03id76ki_j15vkif$#^z@gl0!))eukn0n!r'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ALLOW_CREDENTIALS = DEBUG
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'content-disposition',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-pagination',
+    'x-viewmode',
+    'x-df-component-def',
+    'x-df-timestamp',
+]
 
 # Application definition
 
@@ -38,20 +60,25 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'dynamicforms_legacy',
+    'dynamicforms',
     'dynamicforms_dev',
     'examples',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if TESTING:
+    MIDDLEWARE.insert(0, 'tests.request_sync.RequestSyncMiddleware')
 
 ROOT_URLCONF = 'setup.urls'
 
@@ -67,6 +94,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dynamicforms.context_processors.add_dynamicforms_settings',
             ],
         },
     },
@@ -97,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
@@ -116,16 +144,19 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         'dynamicforms_legacy.renderers.TemplateHTMLRenderer',
+        'dynamicforms.renderers.ComponentHTMLRenderer',
+        'dynamicforms.renderers.ComponentDefRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': (
-        'dynamicforms_legacy.filters.FilterBackend',
+        'dynamicforms.filters.FilterBackend',
     )
 }
 
 DYNAMICFORMS = {
     # 'template': 'dynamicforms/jquery_ui/',
     'page_template': 'examples/page.html',
-    'testing': sys.argv[1:2] == ['test'],
+    'testing': TESTING,
+    'allow_anonymous_user_to_preupload_files': True,
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -1,10 +1,11 @@
-from dynamicforms_legacy import fields, serializers
-from dynamicforms_legacy.mixins import DisplayMode
-from dynamicforms_legacy.viewsets import ModelViewSet
+from dynamicforms import fields, serializers
+from dynamicforms.mixins import DisplayMode
+from dynamicforms.viewsets import ModelViewSet
 from examples.models import AdvancedFields
 
 
 class WriteOnlyFieldsSerializer(serializers.ModelSerializer):
+    template_context = dict(url_reverse='write-only-fields')
     form_titles = {
         'table': 'Write only fields list',
         'new': 'New write only fields object',
@@ -20,7 +21,6 @@ class WriteOnlyFieldsSerializer(serializers.ModelSerializer):
 
 
 class WriteOnlyFieldsViewSet(ModelViewSet):
-    template_context = dict(url_reverse='write-only-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()

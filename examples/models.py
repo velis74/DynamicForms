@@ -1,8 +1,12 @@
-from datetime import timedelta
+import datetime
+from datetime import time
+from enum import IntEnum
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from enumfields import EnumIntegerField
 
 
 class Validated(models.Model):
@@ -26,10 +30,10 @@ class Validated(models.Model):
     ))
     item_flags = models.CharField(max_length=4, blank=True, choices=(
         # this one will be a multi-choice field so you will need to override it in form
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-        ('D', 'D'),
+        ('A', 'Alpha'),
+        ('B', 'Beta'),
+        ('C', 'Cama'),
+        ('D', 'Delta'),
     ), validators=[
         RegexValidator(r'^[ABC]*$', 'Only options A-C may be chosen', 'regex')
     ])
@@ -49,7 +53,7 @@ class HiddenFields(models.Model):
     ), null=True, blank=True)
     int_fld = models.IntegerField(verbose_name='Quantity', null=True, blank=True)
     qty_fld = models.FloatField(verbose_name='Weight', null=True, blank=True,
-                                help_text='Fell free to use a decimal point / comma')
+                                help_text='Feel free to use a decimal point / comma')
     cst_fld = models.CharField(max_length=80, verbose_name='Comment', null=True, blank=True,
                                help_text='Enter additional info here')
     additional_text = models.CharField(max_length=80, null=True, blank=True,
@@ -63,7 +67,10 @@ class PageLoad(models.Model):
     description = models.CharField(max_length=20, help_text='Item description')
     choice = models.IntegerField(choices=((1, 'Choice 1'),
                                           (2, 'Choice 2'),
-                                          (3, 'Choice 3')), null=False, blank=False, default=1)
+                                          (3, 'Choice 3'),
+                                          (4, 'Choice 4'),
+                                          ),
+                                 null=False, blank=False, default=1)
 
 
 class Filter(models.Model):
@@ -80,6 +87,7 @@ class Filter(models.Model):
         (3, 'Choice 4'),), help_text='Integer field with choices', verbose_name='Integer field with choices')
     bool_field = models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')
     name = models.CharField(max_length=20, help_text='Name field', verbose_name='Name field', null=True, blank=True)
+    rtf_field = models.TextField(help_text="RTF Field", verbose_name="RTF Field", null=True, blank=True)
 
 
 class BasicFields(models.Model):
@@ -87,7 +95,7 @@ class BasicFields(models.Model):
     Shows basic available fields in DynamicForms
     """
     boolean_field = models.BooleanField(null=False, default=False)
-    nullboolean_field = models.BooleanField(null=True)
+    nullboolean_field = models.BooleanField(null=True, blank=True)
     char_field = models.CharField(null=True, max_length=32)
     email_field = models.EmailField(null=True)
     slug_field = models.SlugField(null=True)
@@ -133,7 +141,7 @@ class AdvancedFields(models.Model):
 
     @property
     def readonly_field(self):
-        return self.hidden_field > timezone.now() - timedelta(days=1)
+        return self.hidden_field > timezone.now() - timezone.timedelta(days=1) if self.hidden_field else False
 
     """ListField and DictField not supported in HTML forms in DRF"""
     # list_field = models.?
@@ -149,26 +157,14 @@ class AdvancedFields(models.Model):
     # string_related_field, which is always read_only is defined only in serializer
     # and primary_key_related_field is defined as its source
     primary_key_related_field = models.OneToOneField(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='primary'
+        Relation, on_delete=models.CASCADE, null=True, related_name='primary'
     )
     slug_related_field = models.ForeignKey(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='slug'
+        Relation, on_delete=models.CASCADE, null=True, related_name='slug'
     )
-    hyperlinked_related_field = models.ManyToManyField(
-        Relation,
-        related_name='hyper_related'
-    )
+    hyperlinked_related_field = models.ManyToManyField(Relation, related_name='hyper_related')
     hyperlinked_identity_field = models.ForeignKey(
-        Relation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='hyper_identity'
+        Relation, on_delete=models.CASCADE, null=True, related_name='hyper_identity'
     )
 
     def __str__(self):
@@ -181,3 +177,69 @@ class RefreshType(models.Model):
     """
     description = models.CharField(max_length=20, help_text='Item description')
     rich_text_field = models.TextField(blank=True, null=True)
+
+
+class Document(models.Model):
+    description = models.CharField(max_length=30, help_text='Document description')
+    file = models.FileField(upload_to='documents/', blank=False)
+
+
+class CalendarRecurrence(models.Model):
+    from .recurrence_utils import date_range as dr_func
+    from .recurrence_utils import Pattern
+
+    start_at = models.DateTimeField(verbose_name=_('Recurrence start'), null=False, blank=False)
+    end_at = models.DateTimeField(verbose_name=_('Recurrence end'), null=False, blank=False)
+    pattern = EnumIntegerField(Pattern, verbose_name=_('Pattern'), null=False, blank=False)
+    recur = models.JSONField(verbose_name=_('Recur parameters'), null=False, blank=False)
+
+    def date_range(self, cutoff_at: datetime.datetime):
+        recur = self.recur
+        if self.pattern == CalendarRecurrence.Pattern.Weekly:
+            recur = dict(self.recur)
+            recur['holidays'] = self.get_holidays()
+        return CalendarRecurrence.dr_func(self.start_at, self.end_at, cutoff_at, self.pattern, recur)
+
+    def get_holidays(self):
+        # not implemented yet
+        return set()
+
+
+class CalendarEvent(models.Model):
+    title = models.CharField(max_length=80, verbose_name=_('Title'), null=False, blank=False)
+    description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
+    colour = models.IntegerField(verbose_name='Colour', null=True, blank=True)
+    start_at = models.DateTimeField(verbose_name=_('Start'), null=False, blank=False)
+    end_at = models.DateTimeField(verbose_name=_('End'), null=False, blank=False)
+    recurrence = models.ForeignKey(CalendarRecurrence, verbose_name=_('Recurrence'), on_delete=models.PROTECT,
+                                   related_name='events', null=True, blank=True)
+
+    @property
+    def all_day(self):
+        return self.start_at.time() == 0 and self.end_at.time == time(23, 59, 59, 999999)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=('recurrence', 'start_at'))
+        ]
+
+
+class CalendarReminder(models.Model):
+    class RType(IntEnum):
+        Notification = 1
+        Email = 2
+
+    class Unit(IntEnum):
+        Seconds = 1
+        Minutes = 2
+        Hours = 3
+        Days = 4
+        Weeks = 5
+
+    REMINDER_TYPE_CHOICES = [(m.value, m.name) for m in RType]
+    UNIT_CHOICES = [(m.value, m.name) for m in Unit]
+
+    event = models.ForeignKey(CalendarEvent, on_delete=models.CASCADE, related_name='reminders')
+    type = models.IntegerField(verbose_name=_('Type'), choices=REMINDER_TYPE_CHOICES, null=False, blank=False)
+    quantity = models.IntegerField(verbose_name=_('Quantity'), null=False, blank=False)
+    unit = models.IntegerField(verbose_name=_('Unit'), choices=UNIT_CHOICES, null=False, blank=False)

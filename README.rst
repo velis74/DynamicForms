@@ -1,7 +1,9 @@
 What is DynamicForms?
 =====================
 
-DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders (and anything else DRF supports) giving you free choice of how to implement your project. 
+DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer
+/ ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders
+(and anything else DRF supports) giving you free choice of how to implement your project.
 
 It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
@@ -99,9 +101,8 @@ examples/models.py  (excerpt)
        description = models.CharField(max_length=20, help_text='Item description')
 
 
-If you want filter in list view just set serializers property show_filter value to True. Filter will be applied if user
-press enter in filter field. If you want to have filter button in list header, call Actions with
-add_default_filter = True.
+Filter will be applied if user press enter in filter field. If you want to have filter button in list header,
+call Actions with add_default_filter = True.
 
 examples/rest/filter.py
 
@@ -119,7 +120,6 @@ examples/rest/filter.py
            'edit': 'Editing object',
        }
        actions = Actions(add_default_crud=True, add_default_filter=True)
-       show_filter = True
 
        class Meta:
            model = Filter

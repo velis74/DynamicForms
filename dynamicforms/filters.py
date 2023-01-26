@@ -13,7 +13,6 @@ class FilterBackend(filters.DjangoFilterBackend):
     """
     Our own FilterBackend that also tries to read order from the pagination class's ordering field
     """
-
     def get_filterset_class(self, view, queryset=None):
 
         # here we look for any pagination class and its ordering attribute. if there is none, we sort by id
@@ -31,7 +30,7 @@ class FilterBackend(filters.DjangoFilterBackend):
                 return ListWithFields(list(self.param_map.keys()), [self.get_ordering_value(param) for param in value])
 
         class FilterSetApplied(filters.FilterSet):
-            ordering = MyOrderingFilter(
+            locals()[view.ordering_parameter] = MyOrderingFilter(
                 fields=[f.name for f in queryset.model._meta.fields if f.name not in ordering_excluded_fields]
             )
 

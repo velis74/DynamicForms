@@ -41,7 +41,7 @@ def populate_simple_fields():
         # noinspection PyStringFormat
         result.append(BasicFields.objects.create(
             boolean_field=bool(random.randint(0, 1)),
-            nullboolean_field=bool(random.randint(0, 1)),
+            nullboolean_field=bool(random.randint(0, 1)) if random.randint(0, 2) else None,
             char_field=''.join((random.choice(string.ascii_letters + string.digits + string.punctuation)
                                 for _ in range(random.randint(10, 20)))),
             email_field=random_name() + '.' + random_last_name() + '@' + random_domain(),
@@ -73,8 +73,8 @@ class CursorPaginationTest(TestCase):
 
     def fetch_first(self):
         segments = self.get_segments()
-        url = (reverse('basic-fields-list', args=['json'])
-               + '?ordering=' + ','.join(map(lambda x: x + '_field' if x not in ('id', 'pk') else x, segments)))
+        url = (reverse('basic-fields-list', args=['json']) +
+               '?ordering=' + ','.join(map(lambda x: x + '_field' if x not in ('id', 'pk') else x, segments)))
 
         def get_response(**kwargs):
             response = self.client.get(url, **kwargs)

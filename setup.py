@@ -5,12 +5,12 @@ import sys
 
 import setuptools
 
-from dynamicforms_legacy import __version__
+from dynamicforms import __version__
 
 
 def write_ver_to_init(version="''"):
     replacement = "__version__ = '%s'\n" % (version)
-    filename = 'dynamicforms_legacy/__init__.py'
+    filename = 'dynamicforms/__init__.py'
     for line in fileinput.input([filename], inplace=True):
         if line.strip().startswith('__version__'):
             line = replacement
@@ -18,11 +18,13 @@ def write_ver_to_init(version="''"):
 
 
 def get_version(version_arg):
+    from versio.version import Version
+    from versio.version_scheme import Simple3VersionScheme
     try:
         if version_arg == 'publish':
             print('Missing version argument.')
             sys.exit(1)
-        all(map(int, version_arg.split('.', 2)))
+        Version(version_arg, scheme=Simple3VersionScheme)
     except Exception:
         print('Invalid version format. Should be x.y.z (all numbers)')
         sys.exit(1)
@@ -59,7 +61,6 @@ if sys.argv[1] == 'publish':
     os.system('git push --tags')
     sys.exit()
 
-
 setuptools.setup(
     name="DynamicForms",
     version=version,
@@ -73,7 +74,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/velis74/DynamicForms",
-    packages=setuptools.find_packages(include=('dynamicforms_legacy',)),
+    packages=setuptools.find_packages(include=('dynamicforms',)),
     include_package_data=True,
     install_requires=requirements,
     python_requires='>=3.4',

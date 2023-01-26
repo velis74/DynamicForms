@@ -1,12 +1,22 @@
 from django.utils import timezone
+from rest_framework.fields import empty
 
-from dynamicforms_legacy import fields, serializers
-from dynamicforms_legacy.viewsets import ModelViewSet
+from dynamicforms import fields, serializers
+from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
+from dynamicforms.viewsets import ModelViewSet
 from ..models import AdvancedFields, Relation
-from .fields.df_file_field import DfFileField
+from .fields.df_file_field import DfFileField, DfPreloadedFileField
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, is_filter: bool = False, **kwds):
+        super().__init__(*args, is_filter=is_filter, **kwds)
+        if self.context.get('format') == COMPONENT_DEF_RENDERER_FORMAT:
+            # todo: THIS RELATIONSHIP IS NOT SUPPORTED IN VIEWMODE
+            self.fields.pop('string_related_field', None)
+
+    template_context = dict(url_reverse='advanced-fields')
     form_titles = {
         'table': 'Advanced fields list',
         'new': 'New advanced fields object',
@@ -82,7 +92,8 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     string_related_field = fields.StringRelatedField(source='primary_key_related_field')
     primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
     slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
-    file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False)
+    file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
+    file_field_two = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
 
     # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
@@ -97,7 +108,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
 
 class AdvancedFieldsViewset(ModelViewSet):
-    template_context = dict(url_reverse='advanced-fields')
     pagination_class = ModelViewSet.generate_paged_loader(30)
 
     queryset = AdvancedFields.objects.all()

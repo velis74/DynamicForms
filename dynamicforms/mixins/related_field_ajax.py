@@ -1,5 +1,7 @@
 from typing import Optional
 
+from django.urls import reverse
+
 
 class RelatedFieldAJAXMixin(object):
 
@@ -45,3 +47,19 @@ class RelatedFieldAJAXMixin(object):
             except:
                 return []
         return super().iter_options()
+
+    def as_component_def(self) -> dict:
+        try:
+            res = super().as_component_def()  # noqa
+        except AttributeError:
+            res = dict()
+        if self.url_reverse:
+            res.update(dict(ajax=dict(
+                url_reverse=reverse(self.url_reverse, kwargs=dict(format='json')),
+                placeholder=self.placeholder, additional_parameters=self.additional_parameters,
+                query_field=self.query_field
+            )))
+        else:
+            res.update(choices=map(lambda option: dict(id=option.value, text=option.display_text),
+                                   self.iter_options_bound(None)))
+        return res

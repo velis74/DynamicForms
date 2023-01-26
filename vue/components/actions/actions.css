@@ -1,0 +1,8 @@
+.action-icon {
+  width:  1.5em;
+  height: 1.5em
+}
+
+.dynamicforms-actioncontrol .btn-xs {
+  font-size: .675em; /* bootstrap-vue does not have an xs button */
+}

@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.utils.formats import localize
 from rest_framework.fields import DateField, TimeField
 
-from .render import RenderMixin
+from .field_render import FieldRenderMixin
 
 
 class NaturalDateTimeMixin(object):
@@ -59,11 +59,12 @@ class NaturalDateTimeMixin(object):
                     global_format = getattr(self, 'format', None)
                     setattr(self, 'format', output_format)
                     # noinspection PySuperArguments
-                    value = super(RenderMixin, self).to_representation(value)  # Skip RenderMixin
+                    value = super(FieldRenderMixin, self).to_representation(value)  # Skip RenderMixin
                     setattr(self, 'format', global_format)
                     return value or ''
 
-            return localize(value)
+            return localize(value) if getattr(self, 'is_rendering_to_html', False) else super().render_to_table(
+                value, row_data)
 
         return super().render_to_table(value, row_data)
 

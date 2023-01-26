@@ -2,7 +2,7 @@ import datetime
 import json
 
 import rest_framework.pagination as drf_p
-from django.db.models import DurationField, Q
+from django.db.models import DurationField, F, Q
 
 
 class CursorPagination(drf_p.CursorPagination):
@@ -34,16 +34,18 @@ class CursorPagination(drf_p.CursorPagination):
             current_position = None
 
         # Cursor pagination always enforces an ordering.
-        if reverse:
-            queryset = queryset.order_by(*drf_p._reverse_ordering(self.ordering))
-        else:
-            queryset = queryset.order_by(*self.ordering)
+        ordering = drf_p._reverse_ordering(self.ordering) if reverse else self.ordering
+        # Currently we force nulls_first in ascending order and nulls_last in descending order
+        ordering = [getattr(F(field.lstrip('-')), 'desc' if field.startswith('-') else 'asc')(
+            **{'nulls_last' if field.startswith('-') else 'nulls_first': True}) for field in ordering]
+        queryset = queryset.order_by(*ordering)
 
         # If we have a cursor with a fixed position then filter by that.
         if current_position is not None:
 
             def filter_segment(segment_len):
                 kwargs = {}
+                args = []
                 for idx in range(segment_len):
                     order = self.ordering[idx]
                     is_reversed = order.startswith('-')
@@ -59,22 +61,23 @@ class CursorPagination(drf_p.CursorPagination):
                             kwargs[order_attr] = attr_value
                     elif self.cursor.reverse != is_reversed:
                         if attr_value == self.NONE_VALUE:
-                            kwargs[order_attr + '__isnull'] = False
+                            # It is impossible to go lower than None... so we just omit this segment
+                            return None
                         else:
-                            kwargs[order_attr + '__lt'] = attr_value
+                            args.append(Q(**{order_attr + '__lt': attr_value}) | Q(**{order_attr + '__isnull': True}))
                     else:
                         if attr_value == self.NONE_VALUE:
-                            # It just doesn't go higher than None... so we use some impossible to reach filter
-                            kwargs['id'] = -1
+                            kwargs[order_attr + '__isnull'] = False
                         else:
                             kwargs[order_attr + '__gt'] = attr_value
 
-                return Q(**kwargs)
+                return Q(**kwargs) & Q(*args)
 
             fltr = Q()
             for seg_len in range(len(self.ordering)):
-                fltr = fltr | filter_segment(seg_len + 1)
-
+                new_segment = filter_segment(seg_len + 1)
+                if new_segment:
+                    fltr = fltr | new_segment
             queryset = queryset.filter(fltr)
 
         # If we have an offset cursor then offset the entire page by that amount.

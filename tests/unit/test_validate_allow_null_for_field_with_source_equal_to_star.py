@@ -13,7 +13,8 @@ class ValidateAllowNullForFieldWithSourceEqualToStarTest(APITestCase):
             datetime_field='2019-11-06T00:35:00.771476',
             int_field=5,
             int_choice_field=0,
-            bool_field=False
+            bool_field=False,
+            rtf_field='string value',
         )
 
     def __make_post_request(self, data):

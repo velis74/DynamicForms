@@ -6,6 +6,9 @@ from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
+from django.utils.dateparse import (
+    datetime_re, iso8601_duration_re, parse_datetime, parse_duration, parse_time, standard_duration_re, time_re
+)
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -14,7 +17,6 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.fields import BooleanField
-from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
 
 
@@ -38,9 +40,11 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        field_names = [(f.name + '_id') if isinstance(f, models.ForeignKey) else f.name
-            for f in self.get_queryset().model._meta.fields]
-        instantiation_params = {k: v for k, v in self.request.GET.items() if k in field_names}
+        field_names = [(f.name + '_id')
+                       if isinstance(f, models.ForeignKey) else f.name for f in self.get_queryset().model._meta.fields]
+        model = self.get_queryset().model
+        fld = model._meta.get_field
+        instantiation_params = {k: fld(k).to_python(v) for k, v in self.request.GET.items() if k in field_names}
         return self.get_queryset().model(**instantiation_params)
 
     # noinspection PyUnresolvedReferences
@@ -63,13 +67,13 @@ class NewMixin(object):
 class PutPostMixin(object):
     """
     Provides support for when there is no record id in URL when calling PUT
-    (First empty form is loaded. Than user loads existing data to this form and updates it... - Perform PUT action)
+    (First empty form is loaded. Then user loads existing data to this form and updates it... - Perform PUT action)
 
     or
 
     Provides support for when there is record id in URL when calling POST
-    (First form for some existing record is loaded. Than user wants to create new record for it.
-    - deletes redord ID and perform POST action)
+    (First form for some existing record is loaded. Then user wants to create new record for it.
+    - deletes record ID and perform POST action)
     """
 
     # When there is no record id in URL when calling PUT, this function will be called
@@ -114,6 +118,16 @@ class TemplateRendererMixin():
             self.template_context = getattr(self.serializer_class, 'template_context', {})
         super().__init__(*args, **kwds)
 
+    def get_serializer(self, *args, **kwargs):
+        serializer = super().get_serializer(*args, **kwargs)
+        if self.format_kwarg == 'component':
+            # view_mode support: set viewmode when DRF renderer is the component renderer
+            if isinstance(serializer, ListSerializer):
+                serializer.apply_component_context(self.request, self.paginator)
+            else:
+                serializer.apply_component_context(self.request, None)
+        return serializer
+
     # noinspection PyAttributeOutsideInit
     def initialize_request(self, request, *args, **kwargs):
         # Caution: just to be sure for any future debugging: the request parameter to this function is a WSGIRequest
@@ -131,57 +145,6 @@ class TemplateRendererMixin():
             request.META['HTTP_X_CSRFTOKEN'] = request.POST['csrfmiddlewaretoken']
         return super().initialize_request(request, *args, **kwargs)
 
-    def finalize_response(self, request, response, *args, **kwargs):
-        if not isinstance(response, Response):
-            return response
-
-        res = super().finalize_response(request, response, *args, **kwargs)
-
-        def get_query_params():
-            if request.query_params:
-                return '?' + '&'.join(['%s=%s' % (key, value) for key, value in request.query_params.items()])
-            return ''
-
-        if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
-            if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
-                if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
-                    isinstance(res.data['results'], (ReturnList, ReturnDict)):
-                    serializer = res.data['results'].serializer
-                else:
-                    try:
-                        serializer = res.data.serializer
-                    except AttributeError:
-                        # This happens when there's a ValidationError on LIST command
-                        res.accepted_renderer = JSONRenderer()
-                        return res
-
-                if isinstance(serializer, ListSerializer):
-                    serializer.child.render_type = self.render_type
-                else:
-                    serializer.render_type = self.render_type
-
-                if self.render_type in ('table', 'table rows'):
-                    serializer.data_template = self.template_name
-                elif self.render_type == 'dialog':
-                    serializer.data_template = DYNAMICFORMS.modal_dialog_rest_template
-                    res.template_name = DYNAMICFORMS.modal_dialog_rest_template
-                elif self.render_type == 'form':
-                    serializer.data_template = res.data.serializer.template_name
-                    res.template_name = res.data.serializer.template_name
-                else:
-                    if isinstance(serializer, ListSerializer):
-                        serializer.child.render_type = 'table'
-                        serializer.child.data_template = self.template_name
-                    else:
-                        serializer.render_type = 'form'
-                        serializer.data_template = serializer.template_name
-            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
-                self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action (only for 403)
-                if not request.is_ajax():
-                    res = redirect_to_login(request.path_info + get_query_params())
-        return res
-
 
 class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.ModelViewSet):
     """
@@ -196,16 +159,25 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
        * To render an existing record (for editing) use pk={record_id}.
 
     """
+    ordering_parameter = 'ordering'
+    ordering_style = None
+
+    @property
+    def paginator(self):
+        if self.request:
+            request = self.request
+            pagination_enabled = request.META.get('HTTP_X_PAGINATION', request.GET.get('x_df_pagination', False))
+            pagination_enabled = BooleanField().to_internal_value(pagination_enabled)
+            if isinstance(request.accepted_renderer, JSONRenderer) and not pagination_enabled:
+                # if pagination is disabled, we need to hide the paginator so that nothing breaks looking for it
+                return None
+        return super().paginator
 
     def paginate_queryset(self, queryset):
         """
         Return a single page of results, or `None` if pagination is disabled.
         """
         if self.paginator is None:
-            return None
-        # determine request format and handle pagination for json format
-        if isinstance(self.request.accepted_renderer, JSONRenderer) and not BooleanField().to_internal_value(
-            self.request.META.get('HTTP_X_PAGINATION', self.request.GET.get('x_df_pagination', False))):
             return None
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
 
@@ -239,6 +211,23 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                         break
         return res
 
+    def __get_time_resolution(self, value: str) -> dict:
+        try:
+            value = value.replace('Z', '')
+            resolution = getattr(time_re.match(value), 'lastgroup', '') or getattr(
+                datetime_re.match(value), 'lastgroup', '') or getattr(
+                standard_duration_re.match(value), 'lastgroup', '') or getattr(
+                iso8601_duration_re.match(value), 'lastgroup', '')
+            if resolution in ('second', 'microsecond', 'seconds', 'microseconds'):
+                return dict(seconds=1)
+            if resolution in ('hour', 'hours'):
+                return dict(hours=1)
+            if resolution in ('minute', 'minutes'):
+                return dict(minutes=1)
+        except:
+            pass
+        return {}
+
     # noinspection PyMethodMayBeStatic
     def filter_queryset_field(self, queryset, field, value):
         """
@@ -257,27 +246,48 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         if field not in (fld.name for fld in model_meta.get_fields()):
             return queryset
 
-        # TODO: this would probably be better moved into the fields themselves
-        if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
-            return queryset.filter(**{field + '__icontains': value})
-        if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
-            date_time = None
-            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S', settings.DATE_FORMAT, '%Y-%m-%d']:
-                try:
-                    date_time = datetime.strptime(value, date_time_fmt)
-                    break
-                except:
-                    pass
-            if date_time is None:
-                return queryset
-            date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
-            if len(value) <= 10:
+        try:
+            # TODO: this would probably be better moved into the fields themselves
+            if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
+                return queryset.filter(**{field + '__icontains': value})
+            if isinstance(model_meta.get_field(field), (models.DateTimeField,)):
+                date_time: datetime = parse_datetime(value.replace('Z', ''))
+                date_time.replace(microsecond=0)
+                date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
+                return queryset.filter(**{
+                    field + '__gte': date_time,
+                    field + '__lt': date_time + timedelta(**self.__get_time_resolution(value))
+                })
+            if isinstance(model_meta.get_field(field), (models.TimeField,)):
+                start = datetime.combine(
+                    datetime.now().date(),
+                    parse_time(value).replace(microsecond=0)
+                )
+                end = (start + timedelta(**self.__get_time_resolution(value))).time()
+                return queryset.filter(**{field + '__gte': start, field + '__lt': end})
+            if isinstance(model_meta.get_field(field), (models.DurationField,)):
+                duration = parse_duration(value)
+                duration = duration - timedelta(microseconds=duration.microseconds)
+                return queryset.filter(**{
+                    field + '__gte': duration,
+                    field + '__lt': duration + timedelta(**self.__get_time_resolution(value))
+                })
+            if isinstance(model_meta.get_field(field), (models.DateField,)):
+                date_time = None
+                for date_time_fmt in [settings.DATE_FORMAT, '%Y-%m-%d']:
+                    try:
+                        date_time = datetime.strptime(value, date_time_fmt)
+                        break
+                    except:
+                        pass
+                date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
                 return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(seconds=1)})
-        else:
-            if isinstance(model_meta.get_field(field), models.BooleanField):
-                value = (value == 'true')
-            return queryset.filter(**{field: value})
+            else:
+                if isinstance(model_meta.get_field(field), models.BooleanField):
+                    value = (value == 'true')
+                return queryset.filter(**{field: value})
+        except:
+            return queryset
 
     @staticmethod
     def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = 'id'):
@@ -317,9 +327,25 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                         cursor_url[0] = req_url[0]
                 cursor_url = ':'.join(cursor_url)
                 if request and isinstance(request.accepted_renderer, JSONRenderer) and \
-                    'x_df_pagination' not in cursor_url:
+                        'x_df_pagination' not in cursor_url:
                     cursor_url += '&x_df_pagination=1'
                 return cursor_url
+
+            def get_paginated_response(self, data):
+                # TODO: this is to be removed - we're getting component definitions through
+                #  ComponentHTMLRenderer.render_type=component-def
+                serializer = data.serializer
+                request = serializer.request
+                if request and isinstance(request.accepted_renderer, JSONRenderer) and \
+                        BooleanField().to_internal_value(request.META.get('HTTP_X_DF_COMPONENT_DEF', False)):
+                    # if component definition was requested, let's return that and not just the data
+                    serializer.apply_component_context(request, self)
+                    return Response(serializer.component_params(
+                        output_json=False, data=dict(
+                            next=self.get_next_link(), previous=self.get_previous_link(), results=data
+                        )
+                    ))
+                return super().get_paginated_response(data)
 
         return MyCursorPagination
 

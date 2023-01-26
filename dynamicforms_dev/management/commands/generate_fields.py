@@ -5,11 +5,79 @@ import typing
 import uuid
 
 from django.core.management.base import BaseCommand
-from rest_framework import fields, relations
+from rest_framework import fields, relations, serializers
+
+
+class ClassAssemblyDict:
+    """
+    Takes a dictionary with classes as keys.
+    Lookups against this object will traverse the object's inheritance hierarchy in method resolution order,
+    and assemble response from keys as defined in this dict. Any keys not found in higher MRO levels will be populated
+    from lower ones.
+    See e.g. EmailField and Field mappings below: EmailField will return a dict with three members,
+      two of them from Field mapping: dict(form_component_name='DInput', input_type='email', table='df-tablecell-plaintext'),
+    raises a KeyError if nothing matches
+    """
+
+    def __init__(self, mapping):
+        self.mapping = mapping
+
+    def __getitem__(self, base_class):
+        res = dict()
+        for cls in reversed(inspect.getmro(base_class)):
+            if cls in self.mapping:
+                res.update(self.mapping[cls])
+        if not res and base_class.__name__ != 'RTFField':
+            print('Class %s not found in lookup.' % base_class.__name__)
+        return res
+
+    def __setitem__(self, key, value):
+        self.mapping[key] = value
+
+
+render_params = ClassAssemblyDict({
+    fields.Field: dict(form_component_name='DInput', input_type='text', table='df-tablecell-plaintext'),
+    fields.EmailField: dict(input_type='email', table='df-tablecell-email'),
+    fields.URLField: dict(input_type='url', table='df-tablecell-link', pattern='https?://.*'),
+    fields.IntegerField: dict(input_type='number'),
+    fields.FloatField: dict(input_type='number', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
+    fields.DecimalField: dict(input_type='number', table='#TableCellFloat', table_show_zeroes=True, step='0.1'),
+    fields.DateTimeField: dict(input_type='datetime', form_component_name='DDateTime',
+                               table_format='dd.MM.yyyy HH:mm',
+                               form_format='dd.MM.yyyy HH:mm', table='#TableCellDateTime', ),
+    fields.DateField: dict(input_type='date', form_component_name='DDateTime', table_format='dd.MM.yyyy',
+                           form_format='dd.MM.yyyy', table='#TableCellDateTime', ),
+    fields.TimeField: dict(input_type='time', form_component_name='DDateTime', table_format='HH:mm',
+                           form_format='HH:mm', table='#TableCellDateTime', ),
+    serializers.FileField: dict(input_type='file', form_component_name='DFile', table='df-tablecell-file'),
+    fields.BooleanField: dict(
+        table='df-tablecell-bool', input_type='checkbox', form_component_name='DCheckbox',
+        field_class='form-check-input position-checkbox-static', label_class='form-check-label',
+        container_class='form-check form-group'
+    ),
+    fields.IPAddressField: dict(table='df-tablecell-ipaddr', minlength=7, maxlength=15, size=15),
+    fields.ChoiceField: dict(form_component_name='DSelect', multiple=False, allow_tags='%allow_tags'),
+    fields.MultipleChoiceField: dict(multiple=True),
+    relations.RelatedField: dict(form_component_name='DSelect', multiple=False),
+    relations.ManyRelatedField: dict(form_component_name='DSelect', multiple=True),
+    # TODO: The following two aren't taken care of yet for rendering in components
+    serializers.Serializer: dict(form_component_name='DFWidgetFieldset'),
+    serializers.ListSerializer: dict(form_component_name='DFWidgetListFieldset'),
+    fields.ListField: dict(form_component_name='DFWidgetListField'),
+    fields.DictField: dict(form_component_name='DFWidgetDictField'),
+    fields.FilePathField: dict(form_component_name='DSelect', multiple=False),
+    fields.JSONField: dict(form_component_name='DTextArea'),
+})
 
 
 class RTFField(object):
     pass
+
+
+def arepr(value):
+    if isinstance(value, str) and value.startswith('%'):
+        return value[1:]
+    return repr(value)
 
 
 class Command(BaseCommand):
@@ -21,9 +89,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from dynamicforms import action, mixins
-        from dynamicforms_legacy.mixins import (
-            ActionMixin, AllowTagsMixin, NullChoiceMixin, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
-            RenderMixin, SingleChoiceMixin
+        from dynamicforms.mixins import (
+            ActionMixin, ChoiceMixin, FieldAlignment, FieldRenderMixin, NullValueMixin, PasswordFieldMixin,
+            RelatedFieldAJAXMixin
         )
 
         with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
@@ -46,20 +114,29 @@ class Command(BaseCommand):
             field_mixins = [f.__name__ + 'Mixin' for f in field_list if f.__name__ + 'Mixin' in mixins.__dict__]
 
             print('import warnings', file=output)
-            print('from typing import Optional', file=output)
+            print('from typing import Dict, Optional', file=output)
             print('from uuid import UUID\n', file=output)
-            print('from rest_framework import fields, relations\n', file=output)
-            print('from .action import Actions', file=output)
 
+            print('from rest_framework import __version__ as drf_version', file=output)
+            print('from rest_framework import fields, relations', file=output)
+            print('from versio.version import Version', file=output)
+            print('from versio.version_scheme import Pep440VersionScheme\n', file=output)
+
+            print('from .action import Actions', file=output)
             print('from .mixins import (', file=output, end='')
             print('\n    '.join(
-                [''] +
-                textwrap.wrap(
-                    'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(
-                        field_mixins), 115)
+                [''] + textwrap.wrap(
+                    ', '.join(sorted(
+                        ('DFField, ActionMixin, FieldRenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, '
+                         'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, ' +
+                         ', '.join(field_mixins)).split(', '), key=str.casefold)),
+                    116)
             ), file=output)
             print(')', file=output)
+            print('\nassert DFField  # So that the linter does not complain', file=output)
+
+            print('\n\nclass AutoGeneratedField(dict):', file=output)
+            print('    pass', file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -70,9 +147,7 @@ class Command(BaseCommand):
                     if cls[1] == fields.Field:
                         break
                 if issubclass(field, fields.ChoiceField):
-                    param_classes.append((0, AllowTagsMixin))
-                    param_classes.append((0, NullChoiceMixin))
-                    param_classes.append((0, SingleChoiceMixin))
+                    param_classes.append((0, ChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
@@ -81,7 +156,7 @@ class Command(BaseCommand):
                     param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
-                param_classes.append((0, RenderMixin))
+                param_classes.append((0, FieldRenderMixin))
 
                 skip_depth = 0
                 for depth, cls in param_classes:
@@ -92,10 +167,6 @@ class Command(BaseCommand):
                     if hasattr(cls, '__init__'):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
-
-                            if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
-                                # BooleanField and NullBooleanField don't like this one
-                                continue
 
                             parm_str = parm.name
                             if parm_str == 'self' or parm.kind in (parm.VAR_KEYWORD, parm.VAR_POSITIONAL):
@@ -124,8 +195,8 @@ class Command(BaseCommand):
                                     parm_str += ': ' + p_an.__name__
                                 elif p_an == typing.Union[str, None]:
                                     parm_str += ': Optional[str]'
-                                elif p_an == typing.Union[dict, None]:
-                                    parm_str += ': Optional[dict]'
+                                elif p_an in (typing.Union[dict, None], typing.Union[typing.Dict, None]):
+                                    parm_str += ': Optional[Dict]'
                                 else:
                                     # if you get this error, you need to add the type to includes at the top
                                     # of this function and then implement the actual printing just above here
@@ -134,7 +205,15 @@ class Command(BaseCommand):
 
                             if p_def != inspect._empty:
                                 equals = ' = ' if ':' in parm_str else '='
-                                if isinstance(p_def, (str, int, float, bool,)) or p_def is None:
+                                if isinstance(p_def, FieldAlignment):
+                                    if issubclass(
+                                        field, (fields.IntegerField, fields.DecimalField, fields.DurationField)
+                                    ):
+                                        p_def = FieldAlignment.RIGHT
+                                    if issubclass(field, fields.FloatField):
+                                        p_def = FieldAlignment.DECIMAL
+                                    parm_str += equals + str(p_def)
+                                elif isinstance(p_def, (str, int, float, bool,)) or p_def is None:
                                     parm_str += equals + repr(p_def)
                                 elif p_def in (fields.empty,):
                                     parm_str += equals + '.'.join((p_def.__module__.split('.')[-1], p_def.__name__))
@@ -148,10 +227,45 @@ class Command(BaseCommand):
                         if had_kwds:
                             skip_depth = depth + 1
 
+                    # Here we tackle parameter declarations that are handled in code instead of constructor prototypes
+                    if cls == fields.CharField:
+                        field_params.append('allow_blank: bool = False')
+                        field_params.append('trim_whitespace: bool = True')
+                        field_params.append('min_length: Optional[int] = None')
+                        field_params.append('max_length: Optional[int] = None')
+                    elif cls == fields.UUIDField:
+                        field_params.append('format: str = \'hex_verbose\'')
+                    elif cls in (fields.IntegerField, fields.FloatField, fields.DurationField):
+                        field_params.append('max_value: int = None')
+                        field_params.append('min_value: int = None')
+                    elif cls == fields.ChoiceField:
+                        field_params.append(f'html_cutoff: int = fields.ChoiceField.html_cutoff')
+                        field_params.append(f'html_cutoff_text: str = fields.ChoiceField.html_cutoff_text')
+                        field_params.append('allow_blank: bool = False')
+                    elif cls == fields.MultipleChoiceField:
+                        field_params.append('allow_empty: bool = True')
+                    elif cls == fields.FileField:
+                        field_params.append('max_length: Optional[int] = None')
+                        field_params.append('allow_empty_file: bool = False')
+                    elif cls == fields.ListField:
+                        field_params.append('child=fields.ListField.child')
+                        field_params.append('allow_empty: bool = True')
+                        field_params.append('max_length: Optional[int] = None')
+                        field_params.append('min_length: Optional[int] = None')
+                    elif cls in (fields.ListField, fields.DictField):
+                        field_params.append('child=fields.DictField.child')
+                        field_params.append('allow_empty: bool = True')
+                    elif cls == fields.JSONField:
+                        field_params.append('binary: bool = False')
+                        field_params.append('encoder=None')
+                        field_params.append('decoder=None')
+                    elif cls == fields.ModelField:
+                        field_params.append('max_length: Optional[int] = None')
+
                 field_params.insert(0, 'self')
                 field_params.append('**kw')
                 field_params = textwrap.wrap((', '.join(field_params)).replace(': ', ':_').replace(' = ', '_=_'),
-                                             width=102 if field_class != 'HStoreField' else 98)
+                                             width=102 if field_class != 'HStoreField' else 98, break_on_hyphens=False)
 
                 # Special case indentation for HStoreField
                 if field_class != 'HStoreField':
@@ -171,15 +285,15 @@ class Command(BaseCommand):
                 # Add additional_inspects and new line
                 if additional_inspects:
                     print(textwrap.dedent(f"""
-
-                        {additional_inspects}"""), file=output)
+    
+                            {additional_inspects}"""), file=output)
                 else:
                     print(textwrap.dedent('\n'), file=output)
 
                 # Check if field has a dedicated mixin and add it to mixins
                 additional_mixin = field_class + 'Mixin, ' if field_class + 'Mixin' in field_mixins else ''
                 if issubclass(field, fields.ChoiceField):
-                    additional_mixin += 'AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoiceMixin, '
+                    additional_mixin += 'ChoiceMixin, EnableCopyMixin, '
                 if issubclass(field, (relations.RelatedField, relations.ManyRelatedField)):
                     additional_mixin += 'RelatedFieldAJAXMixin, '
                 if issubclass(field, fields.CharField):
@@ -201,7 +315,7 @@ class Command(BaseCommand):
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end='')
                 class_def = f'{hstore_field_indent}class {field_class}({additional_mixin}' + \
-                            f'RenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
+                            f'FieldRenderMixin, ActionMixin, FieldHelpTextMixin, {field_module}{drf_class}):'
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
                 class_def = textwrap.wrap(''.join(class_def[1:]),
@@ -232,7 +346,17 @@ class Command(BaseCommand):
                     indt(8) +
                     f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",
                     file=output)
-                print(indt(8) + f'kwargs.update(kw)', file=output)
+                print(indt(8) + 'kwargs.update(kw)', file=output)
+
+                if issubclass(field, fields.JSONField):
+                    print(indt(8) + "if Version(drf_version, scheme=Pep440VersionScheme) < "
+                                    "Version('3.12', scheme=Pep440VersionScheme):", file=output)
+                    print(indt(12) + "kwargs.pop('decoder', None)", file=output)
+
+                params = render_params[field]
+                print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                for key, value in params.items():
+                    print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {arepr(value)})", file=output)
 
                 print(indt(8) + f'super().__init__(**kwargs)', file=output)
 
