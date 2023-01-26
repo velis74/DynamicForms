@@ -8,6 +8,6 @@ from .views import index
 urlpatterns = [
     re_path(r'^$', index, name='index'),
     re_path(r'^', include(router.urls)),
-    re_path(r'^dynamicforms/', include('dynamicforms.urls')),
+    re_path(r'^dynamicforms/', include('dynamicforms_legacy.urls')),
     re_path(r'^api-docs/', include_docs_urls(title='Example API documentation')),
 ]

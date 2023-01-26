@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'dynamicforms',
+    'dynamicforms_legacy',
     'dynamicforms_dev',
     'examples',
 ]
@@ -115,10 +115,10 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'dynamicforms.renderers.TemplateHTMLRenderer',
+        'dynamicforms_legacy.renderers.TemplateHTMLRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': (
-        'dynamicforms.filters.FilterBackend',
+        'dynamicforms_legacy.filters.FilterBackend',
     )
 }
 

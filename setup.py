@@ -5,12 +5,12 @@ import sys
 
 import setuptools
 
-from dynamicforms import __version__
+from dynamicforms_legacy import __version__
 
 
 def write_ver_to_init(version="''"):
     replacement = "__version__ = '%s'\n" % (version)
-    filename = 'dynamicforms/__init__.py'
+    filename = 'dynamicforms_legacy/__init__.py'
     for line in fileinput.input([filename], inplace=True):
         if line.strip().startswith('__version__'):
             line = replacement
@@ -73,7 +73,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/velis74/DynamicForms",
-    packages=setuptools.find_packages(include=('dynamicforms',)),
+    packages=setuptools.find_packages(include=('dynamicforms_legacy',)),
     include_package_data=True,
     install_requires=requirements,
     python_requires='>=3.4',

@@ -1,0 +1,10 @@
+{% load dynamicforms %}
+{#This template is extended by dynamicforms/base_form#}
+
+{% block body %}
+  {% block form_body %}{% endblock %}
+{% endblock %}
+{% block buttons %}
+  <div class="form-group float-right">&nbsp; {% block form_buttons %}{% endblock %}
+  </div>
+{% endblock %}

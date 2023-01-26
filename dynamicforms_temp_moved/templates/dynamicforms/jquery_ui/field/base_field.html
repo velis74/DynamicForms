@@ -1,0 +1,16 @@
+{% block class_container %}
+  {% if errors %}ui-error-container{% endif %}
+  {% if hide_container %}ui-helper-hidden{% else %}dynamicforms-table-row{% endif %}
+{% endblock %}
+
+{% block class_label %}
+  dynamicforms-label{% if hide_label %} ui-helper-hidden{% endif %}
+{% endblock %}
+
+{% block class_span_error %}
+  ui-error-span dynamicforms-field-error-message
+{% endblock %}
+
+{% block class_span_help %}
+  help-block
+{% endblock %}

@@ -1,0 +1,11 @@
+{#This template is extended by dynamicforms/page#}
+{% load dynamicforms %}
+<div class="{{ DYNAMICFORMS.bs_card_class }} df-card">
+  <div class="{{ DYNAMICFORMS.bs_card_header }}">
+    {% block title_header %}{% endblock %}
+    {% block render_table_commands %}{% endblock %}
+  </div>
+  <div class="{{ DYNAMICFORMS.bs_card_body }}">
+    {% block page_body %}{% endblock %}
+  </div>
+</div>

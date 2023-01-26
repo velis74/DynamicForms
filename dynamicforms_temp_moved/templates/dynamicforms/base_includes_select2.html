@@ -1,0 +1,6 @@
+{% load static %}
+<link href="{% static "select2/select2-4.0.5/css/select2.min.css" %}" rel="stylesheet">
+{% if DYNAMICFORMS.select2_add_include %}
+  <link href="{% static DYNAMICFORMS.select2_add_include %}" rel="stylesheet">
+{% endif %}
+<script src="{% static "select2/select2-4.0.5/js/select2.min.js" %}"></script>

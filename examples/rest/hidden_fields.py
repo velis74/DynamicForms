@@ -1,6 +1,6 @@
-from dynamicforms import serializers
-from dynamicforms.action import Actions, FieldChangeAction, FormInitAction
-from dynamicforms.viewsets import ModelViewSet
+from dynamicforms_legacy import serializers
+from dynamicforms_legacy.action import Actions, FieldChangeAction, FormInitAction
+from dynamicforms_legacy.viewsets import ModelViewSet
 from ..models import HiddenFields
 
 
