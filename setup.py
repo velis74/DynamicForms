@@ -74,7 +74,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/velis74/DynamicForms",
-    packages=setuptools.find_packages(include=('dynamicforms',)),
+    packages=setuptools.find_packages(include=('dynamicforms')),
     include_package_data=True,
     install_requires=requirements,
     python_requires='>=3.4',

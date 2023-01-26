@@ -23,17 +23,6 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         super().__init__(**kwargs)
 
 
-class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
-
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
-                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        super().__init__(**kwargs)
-
-
 class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fields.CharField):
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
