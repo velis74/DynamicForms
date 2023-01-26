@@ -1,6 +1,6 @@
-from dynamicforms_legacy import fields, serializers
-from dynamicforms_legacy.mixins import DisplayMode
-from dynamicforms_legacy.viewsets import ModelViewSet
+from dynamicforms import fields, serializers
+from dynamicforms.mixins import DisplayMode
+from dynamicforms.viewsets import ModelViewSet
 from examples.models import AdvancedFields
 
 

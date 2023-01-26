@@ -16,6 +16,6 @@ Class reference
 
 .. autoclass:: dynamicforms.viewsets.ModelViewSet
    :members: template_context, get_queryset, filter_queryset, filter_queryset_field, generate_paged_loader
-   :exclude-members: initialize_request, finalize_response
+   :exclude-members: initialize_request
 
    .. automethod:: new_object

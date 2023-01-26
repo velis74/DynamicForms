@@ -11,7 +11,10 @@ const DialogSize = {
     return DialogSize.DEFAULT;
   },
 
-  isDefined(size: number) { return size >= 0 && size <= 3; },
+  isDefined(size: number | string) {
+    const check = (typeof size === 'number') ? size : DialogSize.fromString(size as string);
+    return check >= 0 && check <= 3;
+  },
 } as const;
 
 export default Object.freeze(DialogSize);

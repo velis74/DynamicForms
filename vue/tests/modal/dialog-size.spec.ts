@@ -11,6 +11,10 @@ describe('DialogSize', () => {
     expect(DialogSize.fromString('large')).toEqual(DialogSize.LARGE);
     expect(DialogSize.fromString('modal-xl')).toEqual(DialogSize.X_LARGE);
     expect(DialogSize.fromString('')).toEqual(DialogSize.DEFAULT);
+    expect(DialogSize.isDefined(2)).toEqual(true);
+    expect(DialogSize.isDefined(5)).toEqual(false);
+    expect(DialogSize.isDefined('modal-xl')).toEqual(true);
+    expect(DialogSize.isDefined('some unsupported string')).toEqual(true); // should be DEFAULT
     expect(t).toThrow(TypeError);
   });
 });

@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'dynamicforms.renderers.TemplateHTMLRenderer',
+        'dynamicforms_legacy.renderers.TemplateHTMLRenderer',
         'dynamicforms.renderers.ComponentHTMLRenderer',
         'dynamicforms.renderers.ComponentDefRenderer',
     ),
