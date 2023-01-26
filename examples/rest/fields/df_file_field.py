@@ -2,7 +2,7 @@ import os
 
 from django.utils.safestring import mark_safe
 
-from dynamicforms.fields import FileField
+from dynamicforms_legacy.fields import FileField
 
 
 class DfFileField(FileField):

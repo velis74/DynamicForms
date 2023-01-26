@@ -1,0 +1,17 @@
+{% block select_class %}
+  form-control {% if errors %}is-invalid{% endif %}
+{% endblock %}
+
+{% block select_style %}
+  width: 100%;
+{% endblock %}
+
+{% block script_use_select_2 %}
+  {% if DYNAMICFORMS.use_select2 %}
+    {% block script_use_select_2_body %}{% endblock %}
+  {% endif %}
+{% endblock %}
+
+{% block select2_additional_conf %}
+  , theme: '{{ DYNAMICFORMS.select2_theme }}'
+{% endblock %}

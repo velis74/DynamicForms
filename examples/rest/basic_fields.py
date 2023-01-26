@@ -1,8 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 
-from dynamicforms import fields, serializers
-from dynamicforms.action import Actions, TableAction, TablePosition
-from dynamicforms.viewsets import ModelViewSet
+from dynamicforms_legacy import fields, serializers
+from dynamicforms_legacy.action import Actions, TableAction, TablePosition
+from dynamicforms_legacy.viewsets import ModelViewSet
 from ..models import BasicFields
 
 

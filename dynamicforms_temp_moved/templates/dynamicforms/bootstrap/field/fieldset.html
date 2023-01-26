@@ -1,0 +1,21 @@
+{% load dynamicforms %}
+
+{% field_to_serializer_and_data field %}
+{% get_data_template as data_template %}
+
+<div class="{{ DYNAMICFORMS.bs_card_class }} form-group" id="container-{{ field.uuid }}">
+  <div class="{{ DYNAMICFORMS.bs_card_header }}">
+    {{ field.label }}
+  </div>
+  <div class="{{ DYNAMICFORMS.bs_card_body }}">
+    {% if field.errors %}
+      {% for error in field.errors %}
+        <span class="{% if DYNAMICFORMS.bootstrap_version == 'v3' %}help-block{% else %}invalid-feedback{% endif %}">
+          {{ error }}
+        </span>
+      {% endfor %}
+    {% endif %}
+
+    {% include data_template with form=serializer %}
+  </div>
+</div>

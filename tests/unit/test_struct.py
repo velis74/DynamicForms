@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from dynamicforms.struct import Struct, StructDefault
+from dynamicforms_legacy.struct import Struct, StructDefault
 
 
 class StructClassTest(TestCase):

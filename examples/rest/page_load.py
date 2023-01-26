@@ -1,5 +1,5 @@
-from dynamicforms import serializers, viewsets
-from dynamicforms.action import Actions
+from dynamicforms_legacy import serializers, viewsets
+from dynamicforms_legacy.action import Actions
 from ..models import PageLoad
 
 

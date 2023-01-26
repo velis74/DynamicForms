@@ -1,0 +1,25 @@
+{# TODO: Prestavi, da bo base povlekel podatke iz page-a #}
+{% extends DYNAMICFORMS.template_root|add:'base.html' %}
+{% load dynamicforms %}
+{% block title %}
+  {{ serializer.page_title }}
+{% endblock %}
+{% block body %}
+  {% get_data_template as data_template %}
+
+  {% set_var templatename=DYNAMICFORMS.template|add:'page.html' %}
+
+  {% extendtemplateblock template_name_var=templatename %}
+    {% block title_header %}
+      {{ serializer.page_title }}
+    {% endblock %}
+    {% block render_table_commands %}
+      {% if serializer.render_type == 'table' %}{% render_table_commands serializer 'header' %}{% endif %}
+    {% endblock %}
+    {% block page_body %}
+      {% include data_template with serializer=serializer data=data %}
+    {% endblock %}
+  {% endextendtemplateblock %}
+
+  {% include DYNAMICFORMS.template_root|add:"modal_dialog.html" %}
+{% endblock %}

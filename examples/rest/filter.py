@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 
-from dynamicforms import serializers, viewsets
-from dynamicforms.action import Actions, TableAction, TablePosition
+from dynamicforms_legacy import serializers, viewsets
+from dynamicforms_legacy.action import Actions, TableAction, TablePosition
 from examples.rest.fields.name_field import NameTestField
 from ..models import Filter
 

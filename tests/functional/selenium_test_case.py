@@ -14,8 +14,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from dynamicforms.dynamicforms_migration_mixin import add_filter, add_page_load, add_relation
-from dynamicforms.settings import DYNAMICFORMS
+from dynamicforms_legacy.dynamicforms_migration_mixin import add_filter, add_page_load, add_relation
+from dynamicforms_legacy.settings import DYNAMICFORMS
 
 MAX_WAIT = 10
 MAX_WAIT_ALERT = 5

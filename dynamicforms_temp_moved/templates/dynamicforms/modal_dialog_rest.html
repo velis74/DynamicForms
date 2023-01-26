@@ -1,0 +1,18 @@
+{% load dynamicforms %}
+
+{% if data.id %}
+  {% set_var title=serializer.form_titles.edit %}
+{% else %}
+  {% set_var title=serializer.form_titles.new %}
+{% endif %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'modal_dialog_rest.html' %}
+
+{% extendtemplateblock template_name_var=templatename %}
+  {% block body %}
+    {% include serializer.template_name with serializer=serializer data=data %}
+  {% endblock %}
+  {% block footer %}
+    {% render_table_commands serializer 'form-buttons' button_position='dialog' %}
+  {% endblock %}
+{% endextendtemplateblock %}

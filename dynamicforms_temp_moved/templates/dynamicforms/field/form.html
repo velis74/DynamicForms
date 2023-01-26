@@ -1,0 +1,18 @@
+{% load dynamicforms %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'field/form.html' %}
+
+{% if form.has_non_field_errors %}
+  {% for error in form.errors.non_field_errors %}
+    {% extendtemplateblock template_name_var=templatename block="error_panel" %}
+      {% block error_class %}text-danger{% endblock %}
+      {% block error_data %}{{ error }}{% endblock %}
+    {% endextendtemplateblock %}
+  {% endfor %}
+{% endif %}
+
+{% block form_inner %}
+  {% for field in form %}
+    {% render_field field style=style %}
+  {% endfor %}
+{% endblock %}
