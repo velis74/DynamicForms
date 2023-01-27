@@ -69,18 +69,6 @@ export default defineConfig({
       fileName: 'js/dynamicforms.[hash:8].js',
       name: 'dynamicforms.[name]',
     },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue', 'vue-router'],
-          vuetify: [
-            'vuetify',
-            'vuetify/components',
-            'vuetify/directives',
-          ],
-        },
-      },
-    },
   },
   test: {
     globals: true,
