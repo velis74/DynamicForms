@@ -56,7 +56,7 @@ if sys.argv[1] == 'publish':
     #  keyring set https://upload.pypi.org/legacy/ username  (it will ask for password)
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
-    os.system('git checkout dynamicforms/__init__.py')
+    os.system('git checkout dynamicforms_legacy/__init__.py')
     os.system('git tag -a %s -m \'version %s\'' % (version, version))
     os.system('git push --tags')
     sys.exit()
