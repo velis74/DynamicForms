@@ -11,6 +11,7 @@ significant interest, we will remove this module with 1.x release.
 
 0.70.x re-introduces `dynamicforms` module, but this time refactored to only provide .componentdef OPTIONS + payload
 data responses needed by the vue front-end library. This will hopefully be refactored to be more OpenAPI compatible.
+The new primary branch is now `main`.
 
 HTML renderers will no longer be supported and have been removed from the "new" dynamicforms module. It was too slow and
 required too many hacks to remain viable. So we moved to Vue. The components in 0.70 will be vue3, vuetify3, vite and
