@@ -1,7 +1,42 @@
+Notice to users of this library
+===============================
+
+Releases 0.50.x and 0.70.x are interim releases with which we prepare the stage for 1.x release.
+
+0.50.x moves all "existing" code to `dynamicforms_legacy` module. If you weren't following vue development branches,
+you will need to change all imports in python to this "new" module.
+
+This is done to keep legacy code still running as existing code is transitioned to vue-based approach. Unless there is
+significant interest, we will remove this module with 1.x release.
+
+0.70.x re-introduces `dynamicforms` module, but this time refactored to only provide .componentdef OPTIONS + payload
+data responses needed by the vue front-end library. This will hopefully be refactored to be more OpenAPI compatible.
+
+HTML renderers will no longer be supported and have been removed from the "new" dynamicforms module. It was too slow and
+required too many hacks to remain viable. So we moved to Vue. The components in 0.70 will be vue3, vuetify3, vite and
+typescript-compatible. We're in final stages of adapting to the new stack. Some inputs and some table functionality
+(e.g. sorting) isn't working yet.
+
+We're keeping the Bootstrap stubs too, but not actively developing to support seamless selection of the two frameworks.
+If there is interest to support CSS frameworks other than Vuetify, pull requests welcome. Hopefully the stubs should
+point the way on how to do it.
+
+Migration path is thus:
+
+* Upgrade to dynamicforms >= 0.50.3
+* replace all dynamicforms imports with dynamicforms_legacy
+* replace any javascript dynamicforms porgress calls with progress-legacy
+* all other javascript code remains the same (including the dynamicforms object with support functions)
+* check that everything still works
+* Upgrade dynamicforms to >= 0.70.1
+* Start migration to Vue front-end and the new backend
+
 What is DynamicForms?
 =====================
 
-DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders (and anything else DRF supports) giving you free choice of how to implement your project. 
+DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single
+DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders
+(and anything else DRF supports) giving you free choice of how to implement your project.
 
 It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
