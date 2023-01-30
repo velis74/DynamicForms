@@ -56,7 +56,7 @@ if sys.argv[1] == 'publish':
     #  keyring set https://upload.pypi.org/legacy/ username  (it will ask for password)
     os.system('twine upload dist/*')
     os.system('rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info')
-    os.system('git checkout dynamicforms_legacy/__init__.py')
+    os.system('git checkout dynamicforms/__init__.py')
     os.system('git tag -a %s -m \'version %s\'' % (version, version))
     os.system('git push --tags')
     sys.exit()
@@ -74,10 +74,10 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/velis74/DynamicForms",
-    packages=setuptools.find_packages(include=('dynamicforms')),
+    packages=setuptools.find_packages(include=('dynamicforms', 'dynamicforms_legacy')),
     include_package_data=True,
     install_requires=requirements,
-    python_requires='>=3.4',
+    python_requires='>=3.6',
     license='BSD-3-Clause',
     classifiers=[
         "Development Status :: 3 - Alpha",
