@@ -26,7 +26,29 @@ Migration path is thus:
 
 * Upgrade to dynamicforms >= 0.50.3
 * replace all dynamicforms imports with dynamicforms_legacy
-* replace any javascript dynamicforms porgress calls with progress-legacy
+* because of the rename, there is a bit of work required in settings.py so that Django can find the templates and
+   filters:
+
+   .. code-block:: python
+
+      from dynamicforms_legacy import __file__ as DYNAMICFORMS_BASEDIR_FILE
+      DYNAMICFORMS_BASEDIR = os.path.dirname(DYNAMICFORMS_BASEDIR_FILE)
+      ...
+      INSTALLED_APPS = [
+        ...
+        'dynamicforms_legacy'
+
+      TEMPLATES = [
+         ...
+              'DIRS': [
+                  os.path.join(DYNAMICFORMS_BASEDIR, 'templates'),
+         ...
+              'OPTIONS': {
+         ...
+                  'libraries': {
+                      'dynamicforms': 'dynamicforms_legacy.templatetags.dynamicforms',
+                  }
+* replace any javascript dynamicforms progress calls with progress-legacy
 * all other javascript code remains the same (including the dynamicforms object with support functions)
 * check that everything still works
 * Upgrade dynamicforms to >= 0.70.1
