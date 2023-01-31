@@ -21,8 +21,8 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
         add_form_buttons=True
     )
 
-    boolean_field = fields.BooleanField()
-    nullboolean_field = fields.NullBooleanField()
+    boolean_field = fields.BooleanField(allow_null=False)
+    nullboolean_field = fields.BooleanField(allow_null=True)
     char_field = fields.CharField()
     email_field = fields.EmailField()
     slug_field = fields.SlugField()

@@ -6,9 +6,9 @@ from rest_framework import fields, relations
 
 from .action import Actions
 from .mixins import (
-    ActionMixin, AllowTagsMixin, DateFieldMixin, DateTimeFieldMixin, DisplayMode, EnableCopyMixin, FieldHelpTextMixin,
-    FileFieldMixin, HiddenFieldMixin, NullChoiceMixin, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
-    RenderMixin, RTFFieldMixin, SingleChoiceMixin, TimeFieldMixin
+    ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, FieldHelpTextMixin,
+    PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, DateTimeFieldMixin, DateFieldMixin,
+    TimeFieldMixin, FileFieldMixin, HiddenFieldMixin, RTFFieldMixin
 )
 
 
@@ -16,18 +16,7 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
 
     def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
                  source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
-        kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
-        kwargs.update(kw)
-        super().__init__(**kwargs)
-
-
-class NullBooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.NullBooleanField):
-
-    def __init__(self, read_only=False, write_only=False, required=None, default=fields.empty, initial=fields.empty,
-                 source=None, label=None, help_text=None, style=None, error_messages=None, validators=None,
-                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 allow_null=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
                  display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
@@ -208,9 +197,9 @@ class ChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoice
                   FieldHelpTextMixin, fields.ChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
-                 table_classes: str = '', **kw):
+                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
+                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -220,9 +209,9 @@ class MultipleChoiceField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, Sing
                           FieldHelpTextMixin, fields.MultipleChoiceField):
     def __init__(self, choices, read_only=False, write_only=False, required=None, default=fields.empty,
                  initial=fields.empty, source=None, label=None, help_text=None, style=None, error_messages=None,
-                 validators=None, allow_null=False, allow_tags=False, actions: Actions = None, uuid: UUID = None,
-                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
-                 table_classes: str = '', **kw):
+                 validators=None, allow_null=False, allow_tags=False, single_choice_hide=False,
+                 actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
+                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)
@@ -233,8 +222,9 @@ class FilePathField(AllowTagsMixin, NullChoiceMixin, EnableCopyMixin, SingleChoi
     def __init__(self, path, match=None, recursive=False, allow_files=True, allow_folders=False, required=None,
                  read_only=False, write_only=False, default=fields.empty, initial=fields.empty, source=None,
                  label=None, help_text=None, style=None, error_messages=None, validators=None, allow_null=False,
-                 allow_tags=False, actions: Actions = None, uuid: UUID = None, display: DisplayMode = None,
-                 display_table: DisplayMode = None, display_form: DisplayMode = None, table_classes: str = '', **kw):
+                 allow_tags=False, single_choice_hide=False, actions: Actions = None, uuid: UUID = None,
+                 display: DisplayMode = None, display_table: DisplayMode = None, display_form: DisplayMode = None,
+                 table_classes: str = '', **kw):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}
         kwargs.update(kw)
         super().__init__(**kwargs)

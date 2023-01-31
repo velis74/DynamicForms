@@ -20,13 +20,13 @@ class Command(BaseCommand):
     #                         help='filename where to store the strings')
 
     def handle(self, *args, **options):
-        from dynamicforms import action, mixins
+        from dynamicforms_legacy import action, mixins
         from dynamicforms_legacy.mixins import (
             ActionMixin, AllowTagsMixin, NullChoiceMixin, NullValueMixin, PasswordFieldMixin, RelatedFieldAJAXMixin,
             RenderMixin, SingleChoiceMixin
         )
 
-        with open(os.path.abspath(os.path.join('dynamicforms/', 'fields.py')), 'w') as output:
+        with open(os.path.abspath(os.path.join('dynamicforms_legacy/', 'fields.py')), 'w') as output:
 
             field_list = []
             for obj in fields.__dict__.values():
@@ -56,8 +56,8 @@ class Command(BaseCommand):
                 [''] +
                 textwrap.wrap(
                     'ActionMixin, RenderMixin, DisplayMode, AllowTagsMixin, NullChoiceMixin, RelatedFieldAJAXMixin, ' +
-                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, ' + ', '.join(
-                        field_mixins), 115)
+                    'FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, SingleChoiceMixin, ' +
+                    ', '.join(field_mixins), 115)
             ), file=output)
             print(')', file=output)
 
@@ -92,10 +92,6 @@ class Command(BaseCommand):
                     if hasattr(cls, '__init__'):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
-
-                            if field_class in ('BooleanField', 'NullBooleanField') and parm.name == 'allow_null':
-                                # BooleanField and NullBooleanField don't like this one
-                                continue
 
                             parm_str = parm.name
                             if parm_str == 'self' or parm.kind in (parm.VAR_KEYWORD, parm.VAR_POSITIONAL):
