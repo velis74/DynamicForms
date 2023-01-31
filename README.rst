@@ -48,6 +48,11 @@ Migration path is thus:
                   'libraries': {
                       'dynamicforms': 'dynamicforms_legacy.templatetags.dynamicforms',
                   }
+      STATICFILES_DIRS = [
+          ...
+          os.path.join(DYNAMICFORMS_BASEDIR, 'static'),
+      ]
+
 * replace any javascript dynamicforms progress calls with progress-legacy
 * all other javascript code remains the same (including the dynamicforms object with support functions)
 * check that everything still works
