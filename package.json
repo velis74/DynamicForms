@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "serve": "vite",
     "build": "vite build",
     "test": "vitest run --coverage",
-    "lint": "eslint vue"
+    "lint": "eslint vue && vue-tsc --noEmit"
   },
-  "main": "./vue/dynamicforms.js",
   "keywords": [
     "vue",
     "dynamicforms",
@@ -21,6 +23,10 @@
     "url": "git@github.com:velis74/DynamicForms.git"
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
+  "peerDependencies": {
+    "vue": "^3.2.45",
+    "vuetify": "^3.0.1"
+  },
   "dependencies": {
     "@vuepic/vue-datepicker": "^3.5.3",
     "axios": "^1.2.0",
