@@ -4,7 +4,6 @@ import DemoApp from './demo-app';
 import dynamicForms from './plugins/dynamicForms';
 import vuetify from './plugins/vuetify';
 import router from './router';
-
 import 'vuetify/styles/main.css';
 
 const app = createApp(DemoApp);
