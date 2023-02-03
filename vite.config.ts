@@ -64,11 +64,23 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'es2015',
     lib: {
-      entry: resolve(__dirname, './vue/main.ts'),
-      fileName: 'js/dynamicforms.[hash:8].js',
+      entry: resolve(__dirname, './vue/dynamicforms.ts'),
+      formats: ['umd'],
+      fileName: 'src/dynamicforms.[hash:8]',
       name: 'dynamicforms.[name]',
     },
+    rollupOptions: {
+      external: ['vue', 'vue-router', 'vuetify'],
+      output: {
+        globals: {
+          vue: 'vue',
+          'vue-router': 'vue-router',
+          vuetify: 'vuetify'
+        }
+      }
+    }
   },
   test: {
     globals: true,
