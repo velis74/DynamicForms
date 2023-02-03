@@ -1,15 +1,16 @@
 import _ from 'lodash';
 
-import FilteredActions from '../components/actions/filtered-actions';
+import Action from '../../components/actions/action';
+import FilteredActions from '../../components/actions/filtered-actions';
 
-describe('ButtonTesting', () => {
-  it('Check if label / icon on button works', () => {
+describe('Actions', () => {
+  it('Basic instance creation tests', () => {
     const myActions = new FilteredActions({
       // We have removed all properties non-essential for the FilteredActions class
-      head: { position: 'HEADER', field_name: null, name: 'head' },
-      rstart: { position: 'ROW_START', field_name: null, name: 'rstart' },
-      rend: { position: 'ROW_END', field_name: null, name: 'rend' },
-      add: { position: 'FILTER_ROW_END', field_name: null, name: 'add' },
+      head: { position: 'HEADER', name: 'head' },
+      rstart: { position: 'ROW_START', name: 'rstart' },
+      rend: { position: 'ROW_END', name: 'rend' },
+      add: { position: 'FILTER_ROW_END', name: 'add' },
       description_help: { position: 'FIELD_START', field_name: 'description', name: 'description_help' },
       description_lookup: { position: 'FIELD_END', field_name: 'description', name: 'description_lookup' },
       datum_lookup: { position: 'FIELD_END', field_name: 'datum', name: 'datum_lookup' },
@@ -22,9 +23,9 @@ describe('ButtonTesting', () => {
 
     expect(myActions.filterCache).toStrictEqual({});
 
-    function simpleTest(actions, expectedNames, expectedCacheKey) {
+    function simpleTest(actions: FilteredActions, expectedNames: string[], expectedCacheKey: string) {
       expect(actions.length).toEqual(expectedNames.length);
-      for (const action of _.zip(actions.actionsList, expectedNames)) {
+      for (const action: Action of _.zip(actions.actionsList, expectedNames)) {
         expect(action[0].name).toEqual(action[1]);
       }
       expect(myActions.filterCache[expectedCacheKey]).toBeDefined();
