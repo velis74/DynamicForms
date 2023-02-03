@@ -67,8 +67,8 @@ export default defineConfig({
     target: 'es2015',
     lib: {
       entry: resolve(__dirname, './vue/dynamicforms.ts'),
-      formats: ['umd'],
-      fileName: 'src/dynamicforms.[hash:8]',
+      formats: ['umd', 'es'],
+      fileName: 'src/dynamicforms',
       name: 'dynamicforms.[name]',
     },
     rollupOptions: {

@@ -4,11 +4,20 @@
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
-    "dist"
+    "dist/*"
   ],
+  "main": "dist/src/dynamicforms.umd.js",
+  "module": "dist/src/dynamicforms.mjs",
+  "types": "./dist/dynamicforms.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/dynamicforms.umd.js",
+      "require": "./dist/src/dynamicforms.mjs"
+    }
+  },
   "scripts": {
     "serve": "vite",
-    "build": "vite build",
+    "build": "vite build && vue-tsc --emitDeclarationOnly",
     "test": "vitest run --coverage",
     "lint": "eslint vue && vue-tsc --noEmit"
   },
@@ -46,10 +55,10 @@
     "weekstart": "^1.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
     "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^1.27.1",
+    "@vitejs/plugin-vue": "^4.0.0",
     "@vitest/coverage-c8": "^0.28.3",
     "@vue/test-utils": "^2.2.4",
     "@vue/tsconfig": "^0.1.3",
