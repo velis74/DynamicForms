@@ -16,7 +16,7 @@ const ACTION_POSITIONS = [
 
 export function defaultActionHandler(action: Action, payload: FormPayload, extraData: ActionHandlerExtraData) {
   const dialog = extraData?.dialog;
-  console.log('Action execute:', action, payload, extraData);
+  // console.log('Action execute:', action, payload, extraData);
   if (dialog && dialog.resolvePromise && dialog.close) {
     dialog.resolvePromise({ action, payload, extraData, dialog });
     dialog.close();
