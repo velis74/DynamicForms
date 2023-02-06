@@ -83,6 +83,9 @@ export default defineConfig({
     }
   },
   test: {
+    deps: {
+      inline: ['vuetify']
+    },
     globals: true,
     environment: 'jsdom',
   },
