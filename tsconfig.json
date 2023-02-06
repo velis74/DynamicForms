@@ -5,11 +5,6 @@
     "dist",
     "coverage",
     "dynamicforms",
-    "node_modules",
-    "vue/tests"
+    "node_modules"
   ],
-  "compilerOptions": {
-    "declaration": true,
-    "outDir": "dist"
-  }
 }

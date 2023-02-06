@@ -15,7 +15,7 @@
   },
   "scripts": {
     "serve": "vite",
-    "build": "vite build && vue-tsc --emitDeclarationOnly",
+    "build": "vite build && vue-tsc --emitDeclarationOnly -p tsconfig.build.json",
     "test": "vitest run --coverage",
     "lint": "eslint vue && vue-tsc --noEmit"
   },
