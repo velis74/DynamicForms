@@ -67,7 +67,7 @@ export default defineConfig({
     target: 'es2015',
     lib: {
       entry: resolve(__dirname, './vue/dynamicforms.ts'),
-      formats: ['umd', 'es'],
+      formats: ['umd'],
       fileName: 'src/dynamicforms',
       name: 'dynamicforms.[name]',
     },

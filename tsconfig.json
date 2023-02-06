@@ -6,8 +6,7 @@
     "coverage",
     "dynamicforms",
     "node_modules",
-    "vue/tests",
-    "vue/demo-app"
+    "vue/tests"
   ],
   "compilerOptions": {
     "declaration": true,

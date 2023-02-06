@@ -7,12 +7,10 @@
     "dist/*"
   ],
   "main": "dist/src/dynamicforms.umd.js",
-  "module": "dist/src/dynamicforms.mjs",
   "types": "./dist/dynamicforms.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/src/dynamicforms.umd.js",
-      "require": "./dist/src/dynamicforms.mjs"
+      "import": "./dist/src/dynamicforms.umd.js"
     }
   },
   "scripts": {
