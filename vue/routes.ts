@@ -1,4 +1,5 @@
 import APIConsumerLoader from './components/api_consumer/api-consumer-loader.vue';
+import DfCalendar from './components/public/df-calendar.vue';
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
 
@@ -40,5 +41,12 @@ export default [
     component: NamedComponentLoader,
     props: { componentName: 'ViewMode', componentNameAddTemplateName: true, componentProps: {} },
     meta: { title: 'The three view-modes' },
+  },
+  {
+    name: 'Calendar Example',
+    path: '/calendar',
+    component: DfCalendar,
+    props: {},
+    meta: { title: 'Calendar Example' },
   },
 ];
