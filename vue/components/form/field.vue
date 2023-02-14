@@ -15,7 +15,7 @@
 import _ from 'lodash';
 import { defineComponent } from 'vue';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
+import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';

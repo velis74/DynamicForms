@@ -1,4 +1,3 @@
-<script lang="ts">
 import _ from 'lodash';
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
@@ -88,7 +87,7 @@ export default /* #__PURE__ */ defineComponent({
       let lastExecutedHandler;
       const handlers = [
         ...getHandlersWithPayload(action, this, actionDFName),
-        ...getHandlersWithPayload(action, this, 'processActionsGeneric'),
+        ...getHandlersWithPayload(action, this, 'DefaultProcessor'),
       ];
       // console.log('handlers', handlers, 'action', action);
       const actionHandled = await asyncSome(
@@ -96,15 +95,14 @@ export default /* #__PURE__ */ defineComponent({
         async (handler: HandlerWithPayload) => {
           lastExecutedHandler = handler;
           return (<ActionHandler>(handler.instance[handler.methodName] ??
-            handler.instance.processActionsGeneric))(action, handler.payload, ed);
+            handler.instance.actionDefaultProcessor))(action, handler.payload, ed);
         },
       );
       if (!actionHandled && lastExecutedHandler) {
         // means action wasn't handled but some handlers were executed, return first handler
         lastExecutedHandler = handlers.shift();
       }
-      emitEvent(this, ['action-executed', { action, handler: lastExecutedHandler?.payload, ed, actionHandled }]);
+      emitEvent(this, ['action-executed', { action, payload: lastExecutedHandler?.payload, ed, actionHandled }]);
     },
   },
 });
-</script>

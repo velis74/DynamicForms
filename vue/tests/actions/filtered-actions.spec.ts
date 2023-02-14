@@ -10,7 +10,7 @@ describe('Actions', () => {
       head: { position: 'HEADER', name: 'head' },
       rstart: { position: 'ROW_START', name: 'rstart' },
       rend: { position: 'ROW_END', name: 'rend' },
-      add: { position: 'FILTER_ROW_END', name: 'add' },
+      add: { position: 'ROW_END', name: 'add' },
       description_help: { position: 'FIELD_START', field_name: 'description', name: 'description_help' },
       description_lookup: { position: 'FIELD_END', field_name: 'description', name: 'description_lookup' },
       datum_lookup: { position: 'FIELD_END', field_name: 'datum', name: 'datum_lookup' },
@@ -19,7 +19,7 @@ describe('Actions', () => {
 
     expect(myActions.actions).toBeDefined();
     expect(myActions.actions.add).toBeDefined();
-    expect(myActions.actions.add.position).toBe('FILTER_ROW_END');
+    expect(myActions.actions.add.position).toBe('ROW_END');
 
     expect(myActions.filterCache).toStrictEqual({});
 

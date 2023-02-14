@@ -21,7 +21,7 @@ import { defineComponent } from 'vue';
 import './actions.css';
 import IonIcon from 'vue-ionicon';
 
-import ActionHandlerMixin from './action-handler-mixin.vue';
+import ActionHandlerMixin from './action-handler-mixin';
 import ActionsMixin from './actions-mixin';
 
 export default /* #__PURE__ */ defineComponent({

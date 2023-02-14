@@ -59,7 +59,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
+import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/field.vue';
 import DfActions from '../public/df-actions.vue';

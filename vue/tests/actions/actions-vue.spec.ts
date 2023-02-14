@@ -42,7 +42,7 @@ vi.mock('axios', () => ({
 
 const actionsCopy = {
   add: {
-    position: 'FILTER_ROW_END',
+    position: 'ROW_END',
     field_name: null,
     name: 'add',
     // eslint-disable-next-line max-len
@@ -103,7 +103,7 @@ const actionsCopy = {
     },
   },
   filter: {
-    position: 'FILTER_ROW_END',
+    position: 'ROW_END',
     field_name: null,
     name: 'filter',
     action: null,

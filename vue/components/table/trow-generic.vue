@@ -28,7 +28,7 @@
 import { defineComponent } from 'vue';
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin.vue';
+import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 

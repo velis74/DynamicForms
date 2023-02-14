@@ -102,7 +102,7 @@ class Action implements ActionJSON {
     // any non-string or empty string must resolve as null for fieldName
     const fieldName = !_.isString(fieldNameTemp) || fieldNameTemp.length === 0 ? null : fieldNameTemp;
 
-    const actionName = `${_.startCase(_.camelCase(_.toLower(data.name)))}`;
+    const actionName = `${_.upperFirst(_.camelCase(_.toLower(data.name)))}`;
     this[`action${actionName}`] = data[`action${actionName}`];
 
     Object.defineProperties(this, {
