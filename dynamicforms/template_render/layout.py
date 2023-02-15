@@ -72,7 +72,7 @@ class Row(object):
 class Layout(object):
     def __init__(
         self,
-        component_name: str = 'FormLayout',
+        component_name: str = 'df-form-layout',
         *rows: Row,
         columns: int = 1,
         size: str = '',

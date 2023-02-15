@@ -29,7 +29,7 @@ import { defineComponent } from 'vue';
 import DialogSize from './dialog-size';
 
 export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyModal',
+  name: 'VuetifyModalDialog',
   props: {
     show: { type: Boolean, default: () => false },
     options: { type: Object, required: true }, // dialogOptions

@@ -1,13 +1,10 @@
 import { shallowMount } from '@vue/test-utils';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
+import { createVuetify } from 'vuetify';
 
-import Action, { defaultActionHandler } from '../components/actions/action';
-import VuetifyActions from '../components/actions/actions-vuetify.vue';
-import FilteredActions from '../components/actions/filtered-actions';
-import DfActions from '../components/public/df-actions.vue';
-
-Vue.use(Vuetify);
+import Action, { defaultActionHandler } from '../../components/actions/action';
+import VuetifyActions from '../../components/actions/actions-vuetify.vue';
+import FilteredActions from '../../components/actions/filtered-actions';
+import DfActions from '../../components/public/df-actions.vue';
 
 const fieldName = 'field-name';
 const actionDefinitions = {
@@ -26,7 +23,7 @@ const actionDefinitions = {
 const filteredActions = new FilteredActions(actionDefinitions);
 
 describe('df-actions', () => {
-  it('check if dfactions renders vuetifyactions', async () => {
+  it('check if df-actions renders vuetify-actions', async () => {
     expect(
       shallowMount(DfActions, {
         parentComponent: {
@@ -35,14 +32,15 @@ describe('df-actions', () => {
             return { theme: 'vuetify' };
           },
         },
-        stubs: { VuetifyActions: { template: '<div class="vuetifyactions"></div>' } },
+        stubs: { VuetifyActions: { template: '<div class="vuetify-actions"></div>' } },
       }).html(),
     )
-      .toContain('<div class="vuetifyactions"></div>');
+      .toContain('<div class="vuetify-actions"></div>');
   });
 });
 
 describe('vuetify-actions', () => {
+  const vuetify = createVuetify();
   const getActions = () => shallowMount(VuetifyActions, {
     parentComponent: {
       name: 'DemoApp',
@@ -50,6 +48,7 @@ describe('vuetify-actions', () => {
         return { theme: 'vuetify' };
       },
     },
+    plugins: [vuetify],
   });
 
   it('create empty vuetify actions', async () => {

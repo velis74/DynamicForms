@@ -33,14 +33,11 @@ import { defineComponent } from 'vue';
 
 import Action, { defaultActionHandler } from '../components/actions/action';
 import FilteredActions from '../components/actions/filtered-actions';
-import { DfModal } from '../components/modal';
 import DialogSize from '../components/modal/dialog-size';
 import dfModal from '../components/modal/modal-view-api';
-import { DfActions } from '../components/public';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'ModalDemo',
-  components: { DfModal, DfActions },
   data() {
     return {
       showTemplate: false,

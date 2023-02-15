@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 
-import DisplayBreakpoints from '../util/breakpoints-display';
+import BreakpointsInterface from '../util/breakpoints-interface';
 
 import Action from './action';
 import FilteredActions from './filtered-actions';
@@ -10,7 +10,7 @@ import BreakpointsJSON = Actions.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({
-  mixins: [DisplayBreakpoints],
+  inject: ['displayBreakpoints'],
   props: { actions: { type: FilteredActions, required: true } },
   computed: {
     displayStyle() {
@@ -34,20 +34,21 @@ export default /* #__PURE__ */ defineComponent({
   },
   methods: {
     checkStyle(attribute: string, actionRes: BreakpointJSON, displayStyle: BreakpointsJSON) {
-      let style;
+      let style: any;
+      const dp = this.displayBreakpoints as BreakpointsInterface;
+      const getStyle = (s: BreakpointJSON | undefined) => (s && s[attribute] !== undefined ? s[attribute] : style);
       // see also action.ts about these breakpoints
-      if (displayStyle.xl && displayStyle.xl[attribute] !== undefined && this.screen_breakpoints.xlOnly) {
-        style = displayStyle.xl[attribute];
-      } else if (displayStyle.lg && displayStyle.lg[attribute] !== undefined && this.screen_breakpoints.lgAndUp) {
-        style = displayStyle.lg[attribute];
-      } else if (displayStyle.md && displayStyle.md[attribute] !== undefined && this.screen_breakpoints.mdAndUp) {
-        style = displayStyle.md[attribute];
-      } else if (displayStyle.sm && displayStyle.sm[attribute] !== undefined && this.screen_breakpoints.smAndUp) {
-        style = displayStyle.sm[attribute];
-      } else if (displayStyle.xs && displayStyle.xs[attribute] !== undefined) {
-        style = displayStyle.xs[attribute];
-      } else if (displayStyle[attribute] !== undefined) {
-        style = displayStyle[attribute];
+      if (dp.xlOnly) {
+        style = getStyle(displayStyle.xl);
+      } else if (dp.lgAndUp) {
+        style = getStyle(displayStyle.lg);
+      } else if (dp.mdAndUp) {
+        style = getStyle(displayStyle.md);
+      } else if (dp.smAndUp) {
+        style = getStyle(displayStyle.sm);
+      } else {
+        style = getStyle(displayStyle); // first we try to get base style
+        style = getStyle(displayStyle.xs); // then xs, if it exists. xs will overwrite the base declaration
       }
       actionRes[attribute] = style;
     },

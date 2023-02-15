@@ -72,7 +72,7 @@ class APIConsumerLogic {
     this.responsiveTableLayouts = null;
     this.formFields = {};
     this.formLayout = null;
-    this.formComponent = 'FormLayout';
+    this.formComponent = 'df-form-layout';
     this.errors = {};
     this.actions = {};
     this.ux_def = {};

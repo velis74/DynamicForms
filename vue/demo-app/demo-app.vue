@@ -1,15 +1,14 @@
 <template>
-  <component
-    :is="themeComponent"
+  <!-- @theme-changed="changeTheme"-->
+  <df-app
     :themes="themes"
     :examples="examples"
     :title="title"
-    @theme-changed="changeTheme"
   >
     <template #main-component>
       <router-view @title-change="setTitle"/>
     </template>
-  </component>
+  </df-app>
 </template>
 
 <script lang="ts">
@@ -17,7 +16,6 @@
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
-import _ from 'lodash';
 import { defineComponent } from 'vue';
 
 import routes from '../routes';
@@ -39,25 +37,18 @@ export default /* #__PURE__ */ defineComponent({
     examples() {
       return routes.map((route) => ({ title: route.meta.title, path: route.path }));
     },
-    themeComponent() {
-      switch (this.theme) {
-      case 'bootstrap':
-        return 'BootstrapApp';
-      case 'vuetify':
-        return 'VuetifyApp';
-      default:
-        throw new Error('Unknown theme');
-      }
-    },
   },
+  /*
   mounted() {
     this.resetResources(null);
   },
+  */
   methods: {
     setTitle(newTitle) {
       this.title = newTitle;
       document.title = `${newTitle} - DynamicForms`;
     },
+    /*
     removeResources(theme) {
       const removed = [];
       _.forEach(Array.prototype.slice.call(document.getElementsByTagName('link')).concat(
@@ -94,6 +85,7 @@ export default /* #__PURE__ */ defineComponent({
         this.theme = newTheme;
       }
     },
+    */
   },
 });
 </script>

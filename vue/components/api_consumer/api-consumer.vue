@@ -6,7 +6,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { DfForm, DfModal, DfTable } from '../public';
 import RowTypesEnum from '../table/row-types-enum';
 
 import APIConsumerLogic from './api-consumer-logic';
@@ -14,7 +13,6 @@ import ComponentDisplay from './component-display';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'APIConsumer',
-  components: { DfModal, DfForm, DfTable },
   props: {
     /**
      * Object containing the properties required to render at least one of the display components

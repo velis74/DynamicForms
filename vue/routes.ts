@@ -38,7 +38,7 @@ export default [
     name: 'The three view-modes',
     path: '/view-mode',
     component: NamedComponentLoader,
-    props: { componentName: 'ViewMode', componentNameAddTemplateName: true, componentProps: {} },
+    props: { componentName: 'DfViewMode', componentProps: {} },
     meta: { title: 'The three view-modes' },
   },
 ];

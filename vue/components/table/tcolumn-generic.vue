@@ -62,7 +62,6 @@ import { defineComponent } from 'vue';
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/field.vue';
-import DfActions from '../public/df-actions.vue';
 
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
@@ -73,7 +72,7 @@ import RowTypesMixin from './row-types-mixin';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'GenericColumn',
-  components: { ColumnGroup, OrderingIndicator, DfActions, FormField, ...TableCells },
+  components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
   mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
   props: {
     column: { type: TableColumn, required: true },

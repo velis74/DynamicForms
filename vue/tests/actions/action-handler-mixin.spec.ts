@@ -41,7 +41,7 @@ describe('ActionHandlerMixin with default action processor', () => {
   beforeEach(() => {
     wrapper = mount(component, {
       global: {
-        stubs: ['DfForm', 'DfTable', 'FormLayout'],
+        stubs: ['DfForm', 'DfTable', 'DfFormLayout'],
         plugins: [vuetify],
       },
     });
@@ -133,7 +133,7 @@ describe('ActionHandlerMixin without default action processor', () => {
   beforeEach(() => {
     wrapper = mount(component, {
       global: {
-        stubs: ['DfForm', 'DfTable', 'FormLayout'],
+        stubs: ['DfForm', 'DfTable', 'DfFormLayout'],
         plugins: [vuetify],
       },
     });

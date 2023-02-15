@@ -16,7 +16,6 @@
 import { defineComponent } from 'vue';
 
 import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
-import { DfForm, DfTable } from '../../components/public';
 
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';
@@ -24,7 +23,6 @@ import { DfForm, DfTable } from '../../components/public';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'BootstrapViewMode',
-  components: { DfForm, DfTable },
   emits: ['title-change', 'load-route'],
   data() {
     return {

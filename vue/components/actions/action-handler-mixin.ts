@@ -55,7 +55,7 @@ function emitEvent(
   self.$emit(...emitData);
   let parent = self;
   while (parent != null) {
-    if (['DfForm', 'DfTable', 'FormLayout'].indexOf(parent.$options.name as string) !== -1) {
+    if (['DfForm', 'DfTable', 'DfFormLayout'].indexOf(parent.$options.name as string) !== -1) {
       parent.$emit(...emitData);
       return;
     }

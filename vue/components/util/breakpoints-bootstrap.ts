@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { reactive } from 'vue';
 
-class StateType {
+import BreakpointsInterface from './breakpoints-interface';
+
+class StateType implements BreakpointsInterface {
   xs: number;
 
   sm: number;
@@ -85,4 +87,5 @@ function onResize() {
 window.onresize = _.debounce(onResize, 100);
 onResize();
 
-export default reactive(state);
+const displayBreakpoints = () => reactive(state) as BreakpointsInterface;
+export default displayBreakpoints;
