@@ -4,7 +4,6 @@ import { createVuetify } from 'vuetify';
 import Action, { defaultActionHandler } from '../../components/actions/action';
 import VuetifyActions from '../../components/actions/actions-vuetify.vue';
 import FilteredActions from '../../components/actions/filtered-actions';
-import DfActions from '../../components/public/df-actions.vue';
 
 const fieldName = 'field-name';
 const actionDefinitions = {
@@ -22,34 +21,15 @@ const actionDefinitions = {
 
 const filteredActions = new FilteredActions(actionDefinitions);
 
-describe('df-actions', () => {
-  it('check if df-actions renders vuetify-actions', async () => {
-    expect(
-      shallowMount(DfActions, {
-        parentComponent: {
-          name: 'DemoApp',
-          data() {
-            return { theme: 'vuetify' };
-          },
-        },
-        stubs: { VuetifyActions: { template: '<div class="vuetify-actions"></div>' } },
-      }).html(),
-    )
-      .toContain('<div class="vuetify-actions"></div>');
-  });
-});
-
 describe('vuetify-actions', () => {
   const vuetify = createVuetify();
-  const getActions = () => shallowMount(VuetifyActions, {
-    parentComponent: {
-      name: 'DemoApp',
-      data() {
-        return { theme: 'vuetify' };
-      },
-    },
-    plugins: [vuetify],
-  });
+
+  function getActions() {
+    return shallowMount(
+      VuetifyActions,
+      { propsData: { actions: new FilteredActions([]) }, plugins: [vuetify] },
+    );
+  }
 
   it('create empty vuetify actions', async () => {
     const action = getActions();
@@ -57,7 +37,7 @@ describe('vuetify-actions', () => {
     const htmlCode = action.html();
     expect(htmlCode).not.toBeNull();
 
-    expect(htmlCode).toStrictEqual('');
+    expect(htmlCode).toStrictEqual('<!--v-if-->');
   });
 
   it('check whatever vuetify actions are generated', async () => {
@@ -77,7 +57,7 @@ describe('vuetify-actions', () => {
   it('test each filtered action to be rendered', async () => {
     // header action
     const actions = getActions();
-    await actions.setProps({ actions: filteredActions.header });
+    await actions.setProps({ actions: new FilteredActions({ head: filteredActions.actions.head }) });
     expect(actions.html()).toContain(actionDefinitions.head.name);
     // row start action
     await actions.setProps({ actions: filteredActions.rowStart });

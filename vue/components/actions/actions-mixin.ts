@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue';
 
+import { useDisplay } from '../util/breakpoints';
 import BreakpointsInterface from '../util/breakpoints-interface';
 
 import Action from './action';
@@ -10,7 +11,6 @@ import BreakpointsJSON = Actions.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({
-  inject: ['displayBreakpoints'],
   props: { actions: { type: FilteredActions, required: true } },
   computed: {
     displayStyle() {
@@ -35,7 +35,7 @@ export default /* #__PURE__ */ defineComponent({
   methods: {
     checkStyle(attribute: string, actionRes: BreakpointJSON, displayStyle: BreakpointsJSON) {
       let style: any;
-      const dp = this.displayBreakpoints as BreakpointsInterface;
+      const dp = useDisplay() as BreakpointsInterface;
       const getStyle = (s: BreakpointJSON | undefined) => (s && s[attribute] !== undefined ? s[attribute] : style);
       // see also action.ts about these breakpoints
       if (dp.xlOnly) {

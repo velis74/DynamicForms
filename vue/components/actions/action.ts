@@ -111,7 +111,7 @@ class Action implements ActionJSON {
       position: { get() { return position; }, enumerable: true },
       fieldName: { get() { return fieldName; }, enumerable: true },
 
-      label: { get() { return label; }, enumerable: true },
+      label: { get() { return label || name; }, enumerable: true },
       labelAvailable: { get() { return label != null; }, enumerable: true },
       icon: { get() { return icon; }, enumerable: true },
       iconAvailable: { get() { return icon != null; }, enumerable: true },

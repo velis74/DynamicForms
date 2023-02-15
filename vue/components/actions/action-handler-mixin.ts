@@ -93,15 +93,15 @@ export default /* #__PURE__ */ defineComponent({
 
       let lastExecutedHandler;
       const handlers = [
-        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler><unknown>this, actionDFName),
-        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler><unknown>this, 'DefaultProcessor'),
+        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> this, actionDFName),
+        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> this, 'DefaultProcessor'),
       ];
       // console.log('handlers', handlers, 'action', action);
       const actionHandled = await asyncSome(
         handlers,
         async (handler: HandlerWithPayload) => {
           lastExecutedHandler = handler;
-          return (<ActionHandler>(handler.instance[handler.methodName as `action${string}`] ??
+          return (<ActionHandler> (handler.instance[handler.methodName as `action${string}`] ??
             handler.instance.actionDefaultProcessor))(action, handler.payload, ed);
         },
       );

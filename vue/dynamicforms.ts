@@ -2,7 +2,6 @@ import type { App } from 'vue';
 
 import * as apiconsumer from './components/api_consumer/index-temporary';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
-import displayBreakpoints from './components/util/breakpoints-vuetify';
 import * as VuetifyComponents from './components/vuetify';
 import VuetifyViewMode from './demo-app/vuetify/view-mode.vue';
 import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
@@ -33,6 +32,7 @@ export default function createDynamicForms(options: DynamicFormsOptions = defaul
   const ui = options.ui || 'vuetify';
 
   const install = (app: App) => {
+    app.provide('$df$ApplicationTheme', ui);
     switch (ui) {
     case 'vuetify':
       // check if Vuetify is installed
@@ -41,8 +41,6 @@ export default function createDynamicForms(options: DynamicFormsOptions = defaul
       app.component(unifyName(ui, VuetifyApp.name), VuetifyApp);
       app.component(unifyName(ui, VuetifyViewMode.name), VuetifyViewMode);
       Object.values(VuetifyComponents).map((component) => app.component(unifyName(ui, component.name), component));
-
-      app.provide('displayBreakpoints', () => displayBreakpoints);
       break;
     default:
       // issue a warning stating what are appropriate options
