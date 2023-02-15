@@ -13,7 +13,12 @@ const actions = {
   add: { position: 'ROW_END', name: 'add' },
   description_help: { position: 'FIELD_START', field_name: 'description', name: 'description_help' },
   description_lookup: { position: 'FIELD_END', field_name: 'description', name: 'description_lookup' },
-  datum_lookup: { position: 'FIELD_END', field_name: 'datum', name: 'datum_lookup', actionDatumLookup() { } },
+  datum_lookup: {
+    position: 'FIELD_END',
+    field_name: 'datum',
+    name: 'datum_lookup',
+    actionDatumLookup() { return false; },
+  },
 };
 
 describe('ActionHandlerMixin with default action processor', () => {
@@ -138,7 +143,7 @@ describe('ActionHandlerMixin without default action processor', () => {
     wrapper.unmount();
   });
 
-  it('dispatches an action and calls a handler function', async () => {
+  it('dispatches an action that has no handler', async () => {
     const dispatchActionSpy = vi.spyOn(wrapper.vm, 'dispatchAction');
     const testActions = new FilteredActions({ head: actions.head, rstart: actions.rstart });
 
@@ -148,4 +153,18 @@ describe('ActionHandlerMixin without default action processor', () => {
     expect(wrapper.emitted()['action-executed'])
       .toEqual([[{ action: testActions.actions.rstart, payload: undefined, ed: {}, actionHandled: false }]]);
   });
+
+  it(
+    'dispatches an action and calls the action-provided handler function that returns false for processed',
+    async () => {
+      const dispatchActionSpy = vi.spyOn(wrapper.vm, 'dispatchAction');
+      const testActions = new FilteredActions({ head: actions.head, datum_lookup: actions.datum_lookup });
+      const testAction = testActions.actions.datum_lookup;
+      await wrapper.vm.dispatchAction(testAction);
+      expect(dispatchActionSpy).toHaveBeenCalledTimes(1);
+      expect(dispatchActionSpy).toHaveBeenCalledWith(testAction);
+      expect(wrapper.emitted()['action-executed'])
+        .toEqual([[{ action: testAction, payload: undefined, ed: {}, actionHandled: false }]]);
+    },
+  );
 });

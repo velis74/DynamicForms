@@ -2,13 +2,17 @@ import _ from 'lodash';
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
 import Action from './action';
+import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
 
 import ActionHandler = Actions.ActionHandler;
 import ActionHandlerExtraData = Actions.ActionHandlerExtraData;
 import FormPayload = APIConsumer.FormPayload;
 
-type HandlerWithPayload = { instance: { [key: string]: ActionHandler }, methodName: string, payload: FormPayload };
+type ObjectWithActionHandler = { [key: `action${string}`]: ActionHandler };
+type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload };
+type ComponentWithActionsAndHandler =
+  ComponentPublicInstance & (InstanceType<typeof ActionsMixin> & ObjectWithActionHandler & { payload: any });
 
 async function asyncSome(arr: HandlerWithPayload[], fun: (handler: HandlerWithPayload) => Promise<boolean>) {
   for (const e of arr) {
@@ -20,7 +24,7 @@ async function asyncSome(arr: HandlerWithPayload[], fun: (handler: HandlerWithPa
 
 function getHandlersWithPayload(
   action: Action,
-  self: ComponentPublicInstance,
+  self: ComponentWithActionsAndHandler,
   actionName: string,
 ): HandlerWithPayload[] {
   // first, if action has a specific handler specified, let's just return that and be done with it
@@ -39,12 +43,15 @@ function getHandlersWithPayload(
     if (parent[`action${actionName}`]) {
       res.unshift({ instance: parent, methodName: `action${actionName}`, payload });
     }
-    parent = parent.$parent;
+    parent = parent.$parent as ComponentWithActionsAndHandler;
   }
   return res;
 }
 
-function emitEvent(self: ComponentPublicInstance, emitData: Object) {
+function emitEvent(
+  self: ComponentPublicInstance,
+  emitData: [string, { action: any, payload: any, ed: any, actionHandled: boolean }],
+) {
   self.$emit(...emitData);
   let parent = self;
   while (parent != null) {
@@ -52,7 +59,7 @@ function emitEvent(self: ComponentPublicInstance, emitData: Object) {
       parent.$emit(...emitData);
       return;
     }
-    parent = parent.$parent;
+    parent = parent.$parent as ComponentPublicInstance;
   }
 }
 
@@ -86,15 +93,15 @@ export default /* #__PURE__ */ defineComponent({
 
       let lastExecutedHandler;
       const handlers = [
-        ...getHandlersWithPayload(action, this, actionDFName),
-        ...getHandlersWithPayload(action, this, 'DefaultProcessor'),
+        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler><unknown>this, actionDFName),
+        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler><unknown>this, 'DefaultProcessor'),
       ];
       // console.log('handlers', handlers, 'action', action);
       const actionHandled = await asyncSome(
         handlers,
         async (handler: HandlerWithPayload) => {
           lastExecutedHandler = handler;
-          return (<ActionHandler>(handler.instance[handler.methodName] ??
+          return (<ActionHandler>(handler.instance[handler.methodName as `action${string}`] ??
             handler.instance.actionDefaultProcessor))(action, handler.payload, ed);
         },
       );
