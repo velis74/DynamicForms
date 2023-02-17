@@ -84,7 +84,7 @@ function onResize() {
   state.height = window.innerHeight;
 }
 
-window.onresize = _.debounce(onResize, 100);
+window.addEventListener('resize', () => _.debounce(onResize));
 onResize();
 
 const displayBreakpoints = () => reactive(state) as BreakpointsInterface;

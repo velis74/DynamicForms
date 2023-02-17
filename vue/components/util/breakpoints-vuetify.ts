@@ -76,7 +76,7 @@ function onResize() {
   state.xlOnly = widthVal >= state.xl;
 }
 
-window.onresize = _.debounce(onResize, 100);
+window.addEventListener('resize', () => _.debounce(onResize));
 
 function displayBreakpoints(): BreakpointsInterface {
   if (!state.xs) onResize();
