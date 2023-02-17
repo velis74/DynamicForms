@@ -7,14 +7,14 @@ import BreakpointsInterface from './breakpoints-interface';
 import { default as vuetifyBP } from './breakpoints-vuetify';
 
 // eslint-disable-next-line import/prefer-default-export
-export function useDisplay(): () => BreakpointsInterface {
+export function useDisplay(): BreakpointsInterface {
   const theme = inject('$df$ApplicationTheme') as string;
   switch (theme) {
   case 'vuetify':
-    return vuetifyBP;
+    return vuetifyBP();
   case 'bootstrap':
-    return bootstrapBP;
+    return bootstrapBP();
   default:
-    return vuetifyBP;
+    return vuetifyBP();
   }
 }

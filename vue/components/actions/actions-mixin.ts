@@ -23,9 +23,9 @@ export default /* #__PURE__ */ defineComponent({
           this.checkStyle('showLabel', actionRes, action.displayStyle);
         }
         actionRes = {
-          asButton: actionRes.asButton !== undefined ? actionRes.asButton : false,
-          showIcon: actionRes.showIcon !== undefined ? actionRes.showIcon : true,
-          showLabel: actionRes.showLabel !== undefined ? actionRes.showLabel : true,
+          asButton: actionRes.asButton != null ? actionRes.asButton : false,
+          showIcon: actionRes.showIcon != null ? actionRes.showIcon : true,
+          showLabel: actionRes.showLabel != null ? actionRes.showLabel : true,
         };
         res[action.name] = actionRes;
       }
@@ -34,19 +34,15 @@ export default /* #__PURE__ */ defineComponent({
   },
   methods: {
     checkStyle(attribute: string, actionRes: BreakpointJSON, displayStyle: BreakpointsJSON) {
-      let style: any;
+      let style: any = null;
       const dp = useDisplay() as BreakpointsInterface;
       const getStyle = (s: BreakpointJSON | undefined) => (s && s[attribute] !== undefined ? s[attribute] : style);
       // see also action.ts about these breakpoints
-      if (dp.xlOnly) {
-        style = getStyle(displayStyle.xl);
-      } else if (dp.lgAndUp) {
-        style = getStyle(displayStyle.lg);
-      } else if (dp.mdAndUp) {
-        style = getStyle(displayStyle.md);
-      } else if (dp.smAndUp) {
-        style = getStyle(displayStyle.sm);
-      } else {
+      if (dp.xlOnly) style = getStyle(displayStyle.xl);
+      if (style == null && dp.lgAndUp) style = getStyle(displayStyle.lg);
+      if (style == null && dp.mdAndUp) style = getStyle(displayStyle.md);
+      if (style == null && dp.smAndUp) style = getStyle(displayStyle.sm);
+      if (style == null) {
         style = getStyle(displayStyle); // first we try to get base style
         style = getStyle(displayStyle.xs); // then xs, if it exists. xs will overwrite the base declaration
       }
@@ -64,7 +60,7 @@ export default /* #__PURE__ */ defineComponent({
     },
     displayLabel(action: Action): boolean {
       if ((this.displayStyle[action.name] as BreakpointJSON).showLabel && action.labelAvailable) return true;
-      return !((this.displayStyle[action.name] as BreakpointJSON).showIcon && action.iconAvailable);
+      return !this.displayIcon(action);
     },
     labelText(action: Action): string {
       if (action.labelAvailable) return action.label as string;
