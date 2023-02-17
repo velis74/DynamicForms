@@ -15,13 +15,13 @@ describe('Initialization Tests', () => {
   });
 
   it('Hook DynamicForms to empty Create App', () => {
-    const app = createApp({});
+    const app = createApp({}); // eslint-disable-line vue/one-component-per-file
     const dynamicForms = createDynamicForms();
     expect(app.use(dynamicForms)).not.toBeNull();
   });
 
   it('Hook DynamicForms on an App that has Vuetify installed', () => {
-    const app = createApp({});
+    const app = createApp({}); // eslint-disable-line vue/one-component-per-file
     app.use(createVuetify());
     expect(app.use(createDynamicForms())).not.toBeNull();
   });

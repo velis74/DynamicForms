@@ -5,7 +5,7 @@
         {{ def.title }}
       </div>
       <div class="card-body">
-        <FormLayout :uuid="def.uuid" :record="data" :rows="def.layout.rows" :errors="errors"/>
+        <df-form-layout :uuid="def.uuid" :record="data" :rows="def.layout.rows" :errors="errors"/>
       </div>
       <div v-if="def.footer" class="card-footer">
         {{ def.footer }}
@@ -19,17 +19,6 @@ import { defineComponent } from 'vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormFieldGroup',
-  components: {
-    FormLayout: () => import('../public/df-layout.vue'), // TODO: ensure a global declaration, this is too slow
-    // DFWidgetInput,
-    // DFWidgetPassword,
-    // DFWidgetCKEditor,
-    // DFWidgetSelect,
-    // DFWidgetCheckbox,
-    // DFWidgetFile,
-    // DFWidgetPlaceholder,
-    // DFWidgetDatetime,
-  },
   props: {
     field: { type: Object, required: true },
     payload: { type: null, required: true },
