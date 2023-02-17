@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { createVuetify } from 'vuetify';
 
 import Action, { defaultActionHandler } from '../../components/actions/action';
@@ -20,14 +20,16 @@ const actionDefinitions = {
 };
 
 const filteredActions = new FilteredActions(actionDefinitions);
+const vuetify = createVuetify();
 
 describe('vuetify-actions', () => {
-  const vuetify = createVuetify();
-
   function getActions() {
-    return shallowMount(
+    return mount(
       VuetifyActions,
-      { propsData: { actions: new FilteredActions([]) }, plugins: [vuetify] },
+      {
+        propsData: { actions: new FilteredActions([]) },
+        global: { plugins: [vuetify] },
+      },
     );
   }
 
@@ -49,7 +51,9 @@ describe('vuetify-actions', () => {
 
     // create them with an array
     const actions1 = getActions();
-    await actions1.setProps({ actions: [Action.closeAction({ actionClose: defaultActionHandler })] });
+    await actions1.setProps(
+      { actions: new FilteredActions([Action.closeAction({ actionClose: defaultActionHandler })]) },
+    );
     // actions should be enveloped in the div
     expect(actions1.html()).toContain('div');
   });
@@ -59,6 +63,7 @@ describe('vuetify-actions', () => {
     const actions = getActions();
     await actions.setProps({ actions: new FilteredActions({ head: filteredActions.actions.head }) });
     expect(actions.html()).toContain(actionDefinitions.head.name);
+
     // row start action
     await actions.setProps({ actions: filteredActions.rowStart });
     expect(actions.html()).toContain(actionDefinitions.rowStart.name);

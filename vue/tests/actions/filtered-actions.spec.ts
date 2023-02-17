@@ -33,7 +33,7 @@ describe('Actions', () => {
 
     simpleTest(myActions.header, ['head'], 'HEADER');
     simpleTest(myActions.rowStart, ['rstart'], 'ROW_START');
-    simpleTest(myActions.rowEnd, ['rend'], 'ROW_END');
+    simpleTest(myActions.rowEnd, ['rend', 'add'], 'ROW_END');
     simpleTest(myActions.fieldStart('description'), ['description_help'], 'FIELD_START|description');
     simpleTest(myActions.fieldEnd('description'), ['description_lookup'], 'FIELD_END|description');
     simpleTest(myActions.fieldEnd('datum'), ['datum_lookup'], 'FIELD_END|datum');
