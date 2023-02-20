@@ -88,5 +88,6 @@ export default defineConfig({
     },
     globals: true,
     environment: 'jsdom',
+    useAtomics: true, // eliminates tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)
   },
 });
