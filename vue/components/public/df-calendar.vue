@@ -3,8 +3,9 @@
 </template>
 
 <script lang="ts">
+import type { CalendarOptions, DateSpanApi, EventDropArg, EventInput, EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
@@ -14,6 +15,8 @@ import SunCalc from 'suncalc';
 import { defineComponent } from 'vue';
 
 import ActionsMixin from '../actions/actions-mixin';
+import { APIConsumerLogic } from '../api_consumer/index-temporary';
+import apiClient from '../util/api-client';
 
 export default defineComponent({
   name: 'DfCalendar',
@@ -26,16 +29,14 @@ export default defineComponent({
       sunriseTime: '8:00',
       sunsetTime: '16:00',
       url: '/calendar-event',
+      apiConsumer: new APIConsumerLogic('/calendar-event'),
     };
   },
   computed: {
     defaultSubmitHeaders() {
       return { 'x-viewmode': 'FORM' };
     },
-    detail_url(): string {
-      return `${this.url}/--record_id--.json`;
-    },
-    calendarOptions(): any {
+    calendarOptions(): CalendarOptions {
       return {
         plugins: [dayGridPlugin, listPlugin, momentPlugin, momentTimezonePlugin, timeGridPlugin, interactionPlugin],
         headerToolbar: {
@@ -52,7 +53,7 @@ export default defineComponent({
         selectable: true,
         selectMirror: true,
         selectOverlap: false,
-        selectAllow(selectInfo) {
+        selectAllow(selectInfo: DateSpanApi) {
           return selectInfo.start.getDate() === selectInfo.end.getDate() &&
               selectInfo.start.getHours() >= 7 &&
               (selectInfo.end.getHours() < 21 ||
@@ -89,10 +90,10 @@ export default defineComponent({
       };
     },
   },
-  mounted() {
-    // this.$emit('title-change', window.gettext('Calendar example'));
-  },
   methods: {
+    detail_url(record_id: string): string {
+      return `${this.url}/${record_id}.json`;
+    },
     recalculateSun(dateInfo) {
       // console.log(dateInfo);
       const suncalc = SunCalc.getTimes(dateInfo.start, 46.05, -14.50);
@@ -102,38 +103,40 @@ export default defineComponent({
       this.sunsetTime = `${sunset.getHours()}:${String(sunset.getMinutes()).padStart(2, '0')}`;
       // console.log(suncalc, this.sunriseTime, this.sunsetTime);
     },
-    eventDataTransform(input) {
+    eventDataTransform(input: EventInput) {
       return { id: input.id, start: input.start_at, end: input.end_at, title: input.title };
     },
-    async addReservation(selectionInfo) {
+    async addReservation(selectionInfo: DateSpanApi) {
       // console.log(selectionInfo.start, selectionInfo.end, selectionInfo.allDay);
       const startAt = encodeURIComponent(selectionInfo.startStr);
       const endAt = encodeURIComponent(selectionInfo.endStr);
-      const dlgRes = await DynamicForms.dialog.fromURL(
-        `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`,
-        'new',
-        this.uuid,
-      );
-      const event = this.eventDataTransform(dlgRes.data);
-      selectionInfo.view.calendar.addEvent(event, true);
+      await this.apiConsumer.dialogForm('new', { start_at: startAt, end_at: endAt });
+      // const dlgRes = await DynamicForms.dialog.fromURL(
+      //   `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`,
+      //   'new',
+      //   this.uuid,
+      // );
+      // const event = this.eventDataTransform(dlgRes.data);
+      // selectionInfo.view.calendar.addEvent(event, true);
       // selectionInfo.view.calendar.refetchEvents();
-      console.log([event, event.start, dlgRes]);
+      // console.log([event, event.start, dlgRes]);
     },
-    async editReservation(clickInfo) {
+    async editReservation(clickInfo: EventClickArg) {
       // console.log(clickInfo.event);
       const eventId = clickInfo.event.id;
-      const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
-      switch (dlgRes && dlgRes.action ? dlgRes.action.name : null) {
-      case 'delete_dlg':
-        clickInfo.event.remove();
-        break;
-      case 'submit':
-        clickInfo.event.setDates(dlgRes.data.start_at, dlgRes.data.end_at);
-        clickInfo.event.setProp('title', dlgRes.data.title);
-        break;
-      default:
-        console.log(dlgRes);
-      }
+      await this.apiConsumer.dialogForm(eventId);
+      // const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
+      // switch (dlgRes && dlgRes.action ? dlgRes.action.name : null) {
+      // case 'delete_dlg':
+      //   clickInfo.event.remove();
+      //   break;
+      // case 'submit':
+      //   clickInfo.event.setDates(dlgRes.data.start_at, dlgRes.data.end_at);
+      //   clickInfo.event.setProp('title', dlgRes.data.title);
+      //   break;
+      // default:
+      //   console.log(dlgRes);
+      // }
     },
     actionDelete_dlgExecute(action, data, modal, params, promise) {
       // will be called from actionHandlerMixin
@@ -141,8 +144,8 @@ export default defineComponent({
       this.actionDeleteExecute(action, data, modal, params, promise);
       if (modal) modal.hide();
     },
-    async resizeReservation(resizeInfo) {
-      const url = this.detail_url.replace('--record_id--', resizeInfo.event.id);
+    async resizeReservation(resizeInfo: EventResizeDoneArg | EventDropArg) {
+      const url = this.detail_url(resizeInfo.event.id);
       try {
         await apiClient.patch(
           url,

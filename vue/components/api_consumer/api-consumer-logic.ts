@@ -77,7 +77,7 @@ class APIConsumerLogic {
     this.actions = {};
     this.ux_def = {};
     this.rows = [];
-    this.formData = {};
+    this.formData = {} as any;
     this.requestedPKValue = null;
     this.ordering = {
       parameter: 'ordering',
@@ -231,7 +231,7 @@ class APIConsumerLogic {
     return res;
   }
 
-  async dialogForm(pk: PKValueType, formData = null) {
+  async dialogForm(pk: PKValueType, formData: any = null) {
     await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
