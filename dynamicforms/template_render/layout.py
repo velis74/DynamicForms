@@ -147,5 +147,4 @@ class Group(Column):
             uuid=sub_serializer.uuid,
             layout=layout.as_component_def(sub_serializer, fields)
         )
-        res.pop('field', None)
         return res

@@ -57,7 +57,7 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
             Row('description'),
             Row('start_at', 'end_at'),
             Row('reminders'),
-            Row(Column('recurrence', width_classes='col-8'), Column('change_this_record_only', 'col-4')),
+            Row(Group('recurrence', width_classes='col-8'), Column('change_this_record_only', 'col-4')),
             columns=2, size='large'
         )
         exclude = ()
