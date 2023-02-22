@@ -3,7 +3,14 @@
 </template>
 
 <script lang="ts">
-import type { CalendarOptions, DateSpanApi, EventDropArg, EventInput, EventClickArg } from '@fullcalendar/core';
+import type {
+  CalendarOptions,
+  DateSpanApi,
+  DatesSetArg,
+  EventDropArg,
+  EventInput,
+  EventClickArg,
+} from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
@@ -94,7 +101,7 @@ export default defineComponent({
     detail_url(record_id: string): string {
       return `${this.url}/${record_id}.json`;
     },
-    recalculateSun(dateInfo) {
+    recalculateSun(dateInfo: DatesSetArg) {
       // console.log(dateInfo);
       const suncalc = SunCalc.getTimes(dateInfo.start, 46.05, -14.50);
       const sunrise = new Date(suncalc.sunrise.valueOf() - 30 * 60 * 1000);
