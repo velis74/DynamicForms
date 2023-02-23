@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { vi } from 'vitest';
 
 import Action from '../../components/actions/action';
 import FilteredActions from '../../components/actions/filtered-actions';
@@ -37,6 +38,7 @@ describe('Actions', () => {
     simpleTest(myActions.fieldStart('description'), ['description_help'], 'FIELD_START|description');
     simpleTest(myActions.fieldEnd('description'), ['description_lookup'], 'FIELD_END|description');
     simpleTest(myActions.fieldEnd('datum'), ['datum_lookup'], 'FIELD_END|datum');
+    simpleTest(myActions.valueChanged, [], 'VALUE_CHANGED');
 
     fAct = myActions.fieldAll('description');
     simpleTest(fAct, ['description_help', 'description_lookup'], 'FIELD_START|description');
@@ -46,5 +48,18 @@ describe('Actions', () => {
     simpleTest(fAct, [], 'FIELD_END|field_without_actions');
     expect(fAct[0]).toBeUndefined();
     expect(myActions.filterCache['FIELD_END|field_without_actions'].length).toEqual(0);
+
+    expect(myActions.hasAction(myActions.actions.head)).toBeTruthy();
+  });
+  it('Tests that actions without name are not accepted', () => {
+    const logSpy = vi.spyOn(console, 'error');
+    const myActions = new FilteredActions({
+      // We have removed all properties non-essential for the FilteredActions class
+      head: { position: 'HEADER' },
+    });
+    expect(myActions.actions).toBeDefined();
+    expect(Object.keys(myActions.actions).length).toEqual(0);
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy).toHaveBeenCalledWith('Action has no name and will not be added to the list', { position: 'HEADER' });
   });
 });
