@@ -9,7 +9,6 @@
       <FormField
         v-if="filterRow.formFieldInstance"
         :field="filterRow.formFieldInstance"
-        :payload="rowData"
         :actions="actions"
         :errors="{}"
         style="padding: 0; margin: 0;"
@@ -57,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
@@ -74,6 +73,9 @@ export default /* #__PURE__ */ defineComponent({
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
   mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
+  provide() {
+    return { payload: computed(() => this.rowData) };
+  },
   props: {
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },

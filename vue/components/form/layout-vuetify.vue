@@ -14,7 +14,6 @@
       <FormRow
         :is="row.componentName"
         :columns="row.columns"
-        :payload="payload"
         :errors="errors"
         :any-field-visible="row.anyVisible"
       />

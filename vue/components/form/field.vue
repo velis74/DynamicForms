@@ -2,9 +2,9 @@
   <v-col :class="cssClasses + columnClasses">
     <component
       :is="field.componentName"
+      v-model="payload[this.field.name]"
       :field="field"
       :actions="actions"
-      :payload="proceduralPayload"
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
     />
@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts">
-import _ from 'lodash';
 import { defineComponent } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
@@ -40,10 +39,10 @@ export default /* #__PURE__ */ defineComponent({
     DSelect,
   },
   mixins: [ActionHandlerMixin],
+  inject: { payload: { from: 'payload', default: {} as FormPayload } },
   props: {
     field: { type: Object, required: true },
     actions: { type: FilteredActions, required: true },
-    payload: { type: FormPayload, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
@@ -53,19 +52,20 @@ export default /* #__PURE__ */ defineComponent({
       const classes = this.field.widthClasses;
       return classes ? ` ${classes}` : '';
     },
-    proceduralPayload() {
-      const self = this;
-      return {
-        get value() { return _.cloneDeep(self.payload[self.field.name]); },
-        setValue: function setValue(newValue) {
-          const oldValue = _.cloneDeep(self.payload[self.field.name]);
-          self.payload[`set${self.field.name}Value`](newValue);
-          self.dispatchAction(
-            self.actions.valueChanged,
-            { field: self.field.name, oldValue, newValue: self.payload[self.field.name] },
-          );
-        },
-      };
+    fieldValue() {
+      return this.payload[this.field.name];
+    },
+  },
+  watch: {
+    fieldValue: {
+      handler(newValue: any, oldValue: any) {
+        this.dispatchAction(
+          this.actions.valueChanged,
+          { field: this.field.name, oldValue, newValue },
+        );
+      },
+      // in case there are a nested value in the future
+      deep: true,
     },
   },
 });

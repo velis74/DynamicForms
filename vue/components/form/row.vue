@@ -6,7 +6,6 @@
       v-for="(column, idx) in renderableColumns"
       :key="`${idx}${column.renderKey}`"
       :field="column"
-      :payload="payload"
       :errors="errors"
       :actions="actions"
     />
@@ -17,7 +16,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import FormPayload from './definitions/form-payload';
 import FormField from './field.vue';
 
 export default /* #__PURE__ */ defineComponent({
@@ -26,7 +24,6 @@ export default /* #__PURE__ */ defineComponent({
   inject: ['actions'],
   props: {
     columns: { type: Array, required: true },
-    payload: { type: FormPayload, default: null },
     errors: { type: Object, default: () => {} },
     anyFieldVisible: { type: Boolean, required: true },
   },
@@ -38,7 +35,3 @@ export default /* #__PURE__ */ defineComponent({
   },
 });
 </script>
-
-<style scoped>
-
-</style>
