@@ -43,11 +43,12 @@ export default defineComponent({
   },
   methods: {
     isValidNumber(num: any) {
-      const notValidValues: any[] = [undefined, Number.NaN, ''];
+      const notValidValues: any[] = [undefined, Number.NaN];
       if (!this.field.allowNull) {
         notValidValues.push(null);
+        notValidValues.push('');
       }
-      return !_.includes(notValidValues, num) && String(num) !== '' && !Number.isNaN(num) &&
+      return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
         !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
     },
   },
