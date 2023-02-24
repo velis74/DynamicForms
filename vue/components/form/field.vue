@@ -2,7 +2,7 @@
   <v-col :class="cssClasses + columnClasses">
     <component
       :is="field.componentName"
-      v-model="payload[this.field.name]"
+      v-model="fieldValue"
       :field="field"
       :actions="actions"
       :errors="errors && errors[field.name]"
@@ -52,8 +52,11 @@ export default /* #__PURE__ */ defineComponent({
       const classes = this.field.widthClasses;
       return classes ? ` ${classes}` : '';
     },
-    fieldValue() {
-      return this.payload[this.field.name];
+    fieldValue: {
+      get() { return this.payload[this.field.name]; },
+      set(value: any) {
+        this.payload[this.field.name] = value;
+      },
     },
   },
   watch: {
