@@ -90,12 +90,11 @@ export default class ColumnOrdering {
     changeCounter.counter++;
   }
 
-  calculateOrderingValue(transformationFunction) {
+  calculateOrderingValue() {
     // this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
     const cols = this.orderingArray.map((columnOrdering) => (
       { name: columnOrdering.column.name, direction: columnOrdering.direction }
     ));
-    if (transformationFunction) return transformationFunction(cols);
     return cols.map((o) => (o.direction === OrderingDirection.ASC ? '' : '-') + o.name);
   }
 }
