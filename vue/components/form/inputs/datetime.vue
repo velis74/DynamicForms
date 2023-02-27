@@ -47,14 +47,14 @@ export default /* #__PURE__ */ defineComponent({
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() { return this.payload.value; },
-      set: function set(newVal) {
+      get: function get() { return this.modelValue.value; },
+      set: function set(newVal: any) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign
           newVal = this.inputType === 'date' ?
             DateTime.fromISO(newVal).toFormat('yyyy-MM-dd') : DateTime.fromISO(newVal).toFormat('HH:mm:ss');
         }
-        this.payload.setValue(newVal);
+        this.$emit('update:modelValue', newVal);
       },
     },
     displayFormat() {
