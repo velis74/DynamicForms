@@ -1,30 +1,26 @@
 import _ from 'lodash';
+import { defineComponent } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
 
-export default {
+export default defineComponent({
   props: {
     field: { type: FormField, required: true },
-    payload: { type: Object, required: true },
     actions: { type: FilteredActions, required: true },
     errors: { type: null, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
+    modelValue: { type: undefined, required: true },
   },
+  emits: ['update:modelValue'],
   computed: {
     value: {
-      get: function get() { return this.payload.value; },
-      set: function set(newVal) {
-        if (this.isNumber) {
-          // TODO this is to be moved to input.vue. It has nothing to do here.
-          if (this.isValidNumber(newVal)) {
-            this.payload.setValue(Number(newVal));
-            return;
-          }
-          this.payload.setValue(undefined);
-          return;
+      get() { return this.modelValue; },
+      set(newValue: any) {
+        if (this.isNumber && this.isValidNumber(newValue)) {
+          this.$emit('update:modelValue', Number(newValue));
         }
-        this.payload.setValue(newVal);
+        this.$emit('update:modelValue', newValue);
       },
     },
 
@@ -46,13 +42,14 @@ export default {
     },
   },
   methods: {
-    isValidNumber(num) {
-      const notValidValues = [undefined, Number.NaN, ''];
+    isValidNumber(num: any) {
+      const notValidValues: any[] = [undefined, Number.NaN];
       if (!this.field.allowNull) {
         notValidValues.push(null);
+        notValidValues.push('');
       }
-      return !_.includes(notValidValues, num) && String(num) !== '' && !Number.isNaN(num) &&
+      return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
         !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
     },
   },
-};
+});

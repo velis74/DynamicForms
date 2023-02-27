@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
@@ -10,7 +10,7 @@ export default /* #__PURE__ */ defineComponent({
   name: 'FormLayoutMixin',
   mixins: [ActionHandlerMixin], // TODO: implement also formFieldChangeMixin
   provide() {
-    return { actions: this.actions };
+    return { actions: this.actions, payload: computed(() => this.payload) };
   },
   props: {
     layout: { type: FormLayout, required: true },

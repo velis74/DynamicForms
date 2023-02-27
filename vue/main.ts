@@ -11,5 +11,6 @@ const app = createApp(DemoApp);
 app.use(router);
 app.use(vuetify);
 app.use(dynamicForms);
+app.config.unwrapInjectedRef = true;
 
 app.mount('#app');
