@@ -1,20 +1,38 @@
+import { Ref, ref } from 'vue';
+
 import OrderingDirection from './column-ordering-direction';
 
 // This is a really stupid way of telling Vue that the other segments changed as well. It seems to be necessary because
 // nothing happened when I did this.orderingArray.splice(...)
-const changeCounter = { counter: 0 };
+const changeCounter = ref(0 as number);
+
+type TransformationFunction = (columns: any[]) => undefined;
 
 export default class ColumnOrdering {
+  direction: number; // OrderingDirection
+
+  changeCounter: number; // TODO: Jure 2.2023 not sure it's needed any more in Vue3?
+
+  column: any; // TableColumn
+
+  orderingArray!: ColumnOrdering[]; // reference to containing array
+
+  isOrderable!: boolean;
+
+  isOrdered!: boolean;
+
+  segment!: number;
+
   /**
    * Column ordering management utility
    *
    * @param orderingString: e.g. ordering asc seg-1
    * @param orderingArray: a common array (created in columns.js) containing all order segments
-   * @param column: reference to the column itself. Needed for error messages below
+   * @param column: TableColumn reference to the column itself. Needed for error messages below
    */
-  constructor(orderingString, orderingArray, column) {
-    this.direction = OrderingDirection.parseFromOrderingString(orderingString);
-    this.changeCounter = changeCounter;
+  constructor(orderingString: string, orderingArray: ColumnOrdering[], column: any) {
+    this.direction = OrderingDirection.fromString(orderingString);
+    this.changeCounter = 0;
     // First we determine where in the orderingArray we should insert this segment initially
     const ordrIdxMatch = /seg-(\d+)/.exec(orderingString);
     const initialSegment = ordrIdxMatch != null ? Number(ordrIdxMatch[1]) : 0;
@@ -49,7 +67,7 @@ export default class ColumnOrdering {
    * @param sequence: integer. if none is provided, existing sequence # will be used
    * or 1 if column was unsorted
    */
-  setSorted(direction, sequence) {
+  setSorted(direction: number, sequence?: number) {
     let seq = sequence || (this.segment > 0 ? this.segment : 1);
     if (seq > this.orderingArray.length + 1) seq = this.orderingArray.length + 1;
     if (!this.isOrderable) {
@@ -63,7 +81,7 @@ export default class ColumnOrdering {
     }
   }
 
-  handleColumnHeaderClick(event) {
+  handleColumnHeaderClick(event: KeyboardEvent) {
     if (!this.isOrderable) return; // don't do anything if this column is not sortable
     // const prevOrdering = [...this.orderingArray];
 
@@ -87,10 +105,10 @@ export default class ColumnOrdering {
       this.orderingArray.splice(0, this.orderingArray.length);
       this.setSorted(this.direction, 1);
     }
-    changeCounter.counter++;
+    this.changeCounter++;
   }
 
-  calculateOrderingValue(transformationFunction) {
+  calculateOrderingValue(transformationFunction: TransformationFunction) {
     // this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
     const cols = this.orderingArray.map((columnOrdering) => (
       { name: columnOrdering.column.name, direction: columnOrdering.direction }

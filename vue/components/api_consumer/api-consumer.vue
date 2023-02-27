@@ -48,16 +48,6 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
   },
-  watch: {
-    'consumer.ordering': {
-      handler() {
-        if (this.orderingCounter !== this.consumer.ordering.counter.counter) {
-          this.consumer.reload();
-        }
-      },
-      deep: true,
-    },
-  },
   methods: {
     actionDelete(actionData, payload) {
       this.consumer.deleteRow(payload);
@@ -79,7 +69,9 @@ export default /* #__PURE__ */ defineComponent({
     actionSort(action, payload, extraData) {
       // This is the default handler for ordering
       if (extraData.rowType === RowTypesEnum.Label && action.position === 'ROW_CLICK' && extraData.column) {
+        const oldChangeCounter = extraData.column.ordering.changeCounter;
         extraData.column.ordering.handleColumnHeaderClick(extraData.event);
+        if (oldChangeCounter !== extraData.column.ordering.changeCounter) this.consumer.reload();
         return true;
       }
       return false;
