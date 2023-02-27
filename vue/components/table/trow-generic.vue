@@ -16,7 +16,7 @@
       v-for="column in renderedColumns.items"
       :key="column.name"
       :column="column"
-      :row-data="filterDefinition ? filterDefinition.payload : rowData"
+      :row-data="payload"
       :row-type="rowType"
       :actions="actions"
       :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
