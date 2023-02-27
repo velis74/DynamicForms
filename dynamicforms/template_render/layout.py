@@ -72,8 +72,8 @@ class Row(object):
 class Layout(object):
     def __init__(
         self,
-        component_name: str = 'df-form-layout',
         *rows: Row,
+        component_name: str = 'df-form-layout',
         columns: int = 1,
         size: str = '',
         header_classes: str = ''
@@ -147,5 +147,4 @@ class Group(Column):
             uuid=sub_serializer.uuid,
             layout=layout.as_component_def(sub_serializer, fields)
         )
-        res.pop('field', None)
         return res

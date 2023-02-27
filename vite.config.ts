@@ -12,7 +12,7 @@ const axiosRedirectConfig = () => ({
   name: 'serverProxy',
   configureServer(server: any) {
     const filter = function filter(pathname: any, req: any) {
-      return typeof req.headers['x-df-axios'] !== 'undefined';
+      return typeof req.headers['x-df-axios'] !== 'undefined' || pathname.startsWith("/calendar-event");
     };
     server.middlewares.use(
       '/',
