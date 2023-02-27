@@ -1,10 +1,4 @@
-import { Ref, ref } from 'vue';
-
 import OrderingDirection from './column-ordering-direction';
-
-// This is a really stupid way of telling Vue that the other segments changed as well. It seems to be necessary because
-// nothing happened when I did this.orderingArray.splice(...)
-const changeCounter = ref(0 as number);
 
 type TransformationFunction = (columns: any[]) => undefined;
 
