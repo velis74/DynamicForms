@@ -3,7 +3,7 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-      <component :is="'style'" :key="tableStyle" scoped v-html="tableStyle"/>
+      <table-style :key="responsiveColumns.totalWidth" scoped :columns="responsiveColumns" :unique-id="uniqueId"/>
       <!-- eslint-enable -->
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
         <VuetifyActions :actions="actions.header"/>
@@ -33,12 +33,13 @@ import VuetifyActions from '../actions/actions-vuetify.vue';
 import LoadingIndicator from '../util/loading-indicator.vue';
 
 import Table from './table';
+import TableStyle from './table-style.vue';
 import VuetifyTBody from './tbody-generic.vue';
 import VuetifyTHead from './thead-generic.vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyTable',
-  components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody },
+  components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody, TableStyle },
   mixins: [Table],
 });
 </script>

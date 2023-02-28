@@ -11,15 +11,17 @@ import { ResponsiveLayouts } from './definitions/responsive-layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
 import RenderMeasured from './render-measure';
-import TableStyle from './table-style';
 
 /**
  * Base Table (mixin): provides logic for table component.
  *
  * See table-bootstrap.vue & table-vuetify.vue for respective component declarations
  */
+
+let uniqueIdGenerator = 0;
+
 export default /* #__PURE__ */ defineComponent({
-  mixins: [RenderMeasured, TableStyle, TranslationsMixin],
+  mixins: [RenderMeasured, TranslationsMixin],
   props: {
     pkName: { type: String, required: true },
     title: { type: String, required: true },
@@ -31,7 +33,9 @@ export default /* #__PURE__ */ defineComponent({
     actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
   },
-  data() { return { containerWidth: null, resizeObserver: null as ResizeObserver | null }; },
+  data() {
+    return { containerWidth: null, resizeObserver: null as ResizeObserver | null, uniqueId: uniqueIdGenerator++ };
+  },
   computed: {
     renderedColumns() {
       return new IndexedArray(this.columns.filter(
