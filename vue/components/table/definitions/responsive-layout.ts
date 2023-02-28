@@ -57,6 +57,12 @@ export class ColumnGroup extends TableColumn {
 }
 
 export class ResponsiveLayout {
+  totalWidth!: number;
+
+  columns: IndexedArray<TableColumn>;
+
+  rows: number;
+
   constructor(definition, renderedColumns) {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
     this.columns = new IndexedArray([]);
@@ -92,6 +98,8 @@ export class ResponsiveLayout {
 }
 
 export class ResponsiveLayouts {
+  layouts: ResponsiveLayout[];
+
   constructor(renderedColumns, responsiveTableLayoutsDef) {
     this.layouts = [];
 
@@ -126,7 +134,7 @@ export class ResponsiveLayouts {
     this.layouts.push(reactive(layout));
   }
 
-  recalculate(containerWidth) {
+  recalculate(containerWidth: number): ResponsiveLayout {
     return this.layouts.find((layout) => {
       layout.totalWidth = _.sum(layout.columns.map((el) => el.maxWidth ?? 0));
       return layout.totalWidth <= containerWidth;

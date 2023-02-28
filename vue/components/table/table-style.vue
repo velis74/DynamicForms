@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onUpdated } from 'vue';
+
 import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
@@ -13,10 +15,10 @@ import { ColumnGroup } from './definitions/responsive-layout';
  */
 const props = defineProps<{
   columns: IndexedArray<TableColumn>
-  uniqueId: number
+  uniqueId: string
 }>();
 
-function generateStyle(uniqueId: number, responsiveColumns: IndexedArray<TableColumn>) {
+function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableColumn>) {
   let style = `
   #${uniqueId} {
     position: relative; /* position ensures resize observer to work */
@@ -74,7 +76,12 @@ function generateStyle(uniqueId: number, responsiveColumns: IndexedArray<TableCo
   return style;
 }
 
-const tableStyle = generateStyle(props.uniqueId, props.columns);
+let tableStyle = generateStyle(props.uniqueId, props.columns);
+
+onUpdated(() => {
+  console.log('a');
+  tableStyle = generateStyle(props.uniqueId, props.columns);
+});
 /*
 export default {
   computed: { tableStyle() { return generateStyle(this.uniqueId, this.responsiveColumns); } },
