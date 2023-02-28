@@ -25,6 +25,10 @@ export class ColumnGroupRow {
 }
 
 export class ColumnGroup extends TableColumn {
+  rows: ColumnGroupRow[];
+
+  fields!: TableColumn[];
+
   constructor(layout, columnDef, renderedColumns) {
     super({
       name: `ColumnGroup${layout.columns.length}`,

@@ -3,7 +3,21 @@ import getObjectFromPath from '../../util/get-object-from-path';
 
 import ColumnOrdering from './column-ordering';
 
+type RenderDecorator = (data: any, thead: boolean) => string;
+
 export default class TableColumn {
+  name!: string;
+
+  label!: string;
+
+  align!: 'left' | 'right' | 'center';
+
+  visibility!: number; // ColumnDisplay
+
+  maxWidth!: number;
+
+  private _maxWidth: number;
+
   constructor(initialData, orderingArray) {
     this._maxWidth = 0;
     initialData.ordering = initialData.ordering || '';
@@ -12,7 +26,7 @@ export default class TableColumn {
 
     // Determine what is to be used for render decorator for this column
     const renderDecorator = initialData.render_params ? initialData.render_params.table : '';
-    let returnFunc = this.renderDecoratorPlain;
+    let returnFunc: RenderDecorator = this.renderDecoratorPlain;
     if (renderDecorator && renderDecorator.substring(0, 13) === 'df-tablecell-') {
       switch (renderDecorator.substring(13)) {
       case 'bool':
@@ -72,7 +86,7 @@ export default class TableColumn {
       },
 
       renderDecoratorFunction: {
-        get() { return (rowData, thead) => returnFunc.apply(this, [rowData, thead]); },
+        get(): RenderDecorator { return (rowData, thead) => returnFunc.apply(this, [rowData, thead]); },
         enumerable: true,
       },
 
@@ -84,34 +98,35 @@ export default class TableColumn {
     this.layout = layout;
   }
 
-  setMaxWidth(value) {
+  setMaxWidth(value: number) {
     if (value > this._maxWidth) {
       this._maxWidth = value;
     }
   }
 
-  renderDecoratorPlain(rowData) {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  renderDecoratorPlain(rowData: any, thead: boolean) {
     return rowData[this.name];
   }
 
-  renderDecoratorBool(rowData, thead) {
+  renderDecoratorBool(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     return `<code>${rowData[this.name]}</code>`;
   }
 
-  renderDecoratorLink(rowData, thead) {
+  renderDecoratorLink(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     return `<a href="${rowData[this.name]}">${rowData[this.name]}</a>`;
   }
 
-  renderDecoratorEmail(rowData, thead) {
+  renderDecoratorEmail(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     const value = rowData[this.name];
     const nameOnly = value.includes('<') ? value.substring(0, value.indexOf('<')).trim() : value;
     return `<a href="mailto:${value}">${nameOnly}</a>`;
   }
 
-  renderDecoratorFile(rowData, thead) {
+  renderDecoratorFile(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     const value = rowData[this.name];
     if (value) {
@@ -122,13 +137,13 @@ export default class TableColumn {
     return null;
   }
 
-  renderDecoratorIP(rowData, thead) {
+  renderDecoratorIP(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     let value = rowData[this.name];
     const segments = value.split('.');
     if (segments.length === 4) {
       // eslint-disable-next-line no-param-reassign
-      value = segments.map((x) => {
+      value = segments.map((x: string) => {
         const padding = x.length < 3 ? `<span style="opacity: .5">${'000'.slice(x.length - 3)}</span>` : '';
         return `${padding}<span>${x}</span>`;
       }).join('.');
