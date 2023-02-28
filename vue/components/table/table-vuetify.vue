@@ -3,7 +3,7 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-      <table-style :key="responsiveColumns.totalWidth" scoped :columns="responsiveColumns" :unique-id="uniqueId"/>
+      <table-style :key="responsiveColumns.totalWidth" :columns="responsiveColumns" :unique-id="uniqueId"/>
       <!-- eslint-enable -->
       <div :id="uniqueId" ref="container" :key="responsiveLayoutWidth">
         <VuetifyActions :actions="actions.header"/>

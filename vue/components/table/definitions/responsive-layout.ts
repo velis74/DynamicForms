@@ -130,6 +130,6 @@ export class ResponsiveLayouts {
     return this.layouts.find((layout) => {
       layout.totalWidth = _.sum(layout.columns.map((el) => el.maxWidth ?? 0));
       return layout.totalWidth <= containerWidth;
-    }) ?? this.layouts[-1];
+    }) ?? this.layouts[this.layouts.length - 1];
   }
 }

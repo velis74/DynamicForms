@@ -93,5 +93,5 @@ export default {
 </script>
 <template>
   <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component-->
-  <component :is="'style'" type="text/css" v-html="tableStyle"/>
+  <component :is="'style'" type="text/css" scoped v-html="tableStyle"/>
 </template>
