@@ -104,6 +104,7 @@ export default class TableColumn {
     }
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   renderDecoratorPlain(rowData: any, thead: boolean) {
     return rowData[this.name];
   }

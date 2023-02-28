@@ -6,7 +6,7 @@
  * Motivation for this class is primarily the faster access of array items by their name.
  * The reason this does not extend Array is that Vue seems to redeclare every Array descendant as plain Array
  */
-interface ItemWithName {name: string;};
+interface ItemWithName {name: string;}
 
 export default class IndexedArray<IndexedItem extends ItemWithName> {
   items!: IndexedItem[];
@@ -30,18 +30,22 @@ export default class IndexedArray<IndexedItem extends ItemWithName> {
   }
 
   forEach(
-    callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => void, thisArg?: IndexedArray<IndexedItem>
+    callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => void,
+    thisArg?: IndexedArray<IndexedItem>,
   ) {
     return this.items.forEach(callback, thisArg || this);
   }
 
-  map(callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => void, thisArg?: IndexedArray<IndexedItem>) {
+  map(
+    callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => void,
+    thisArg?: IndexedArray<IndexedItem>,
+  ) {
     return this.items.map(callback, thisArg || this);
   }
 
   reduce(
     callback: (previousValue: any, currentValue: IndexedItem, currentIndex: number, array: IndexedItem[]) => any,
-    initialValue?: any
+    initialValue?: any,
   ) {
     return this.items.reduce(callback, initialValue);
   }
