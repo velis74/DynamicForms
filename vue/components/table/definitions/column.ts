@@ -14,6 +14,11 @@ export default class TableColumn {
 
   visibility!: number; // ColumnDisplay
 
+  renderParams!: {
+    table_format: any,
+    table_show_zeroes?: boolean,
+  };
+
   maxWidth!: number;
 
   private _maxWidth: number;

@@ -1,6 +1,8 @@
 import { reactive } from 'vue';
 
 export default class TableRow { // eslint-disable-line max-classes-per-file
+  [key: string]: any;
+
   constructor(rowData) {
     const dfControlData = rowData.df_control_data || {};
     delete rowData.df_control_data;
