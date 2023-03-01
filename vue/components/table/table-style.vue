@@ -79,7 +79,6 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
 let tableStyle = generateStyle(props.uniqueId, props.columns);
 
 onUpdated(() => {
-  console.log('a');
   tableStyle = generateStyle(props.uniqueId, props.columns);
 });
 /*

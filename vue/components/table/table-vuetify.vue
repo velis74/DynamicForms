@@ -28,7 +28,7 @@
 </template>
 <!--suppress ES6UnusedImports -->
 <script lang="ts">
-import { defineComponent, defineProps, withDefaults, toRefs } from 'vue';
+import { defineComponent, defineProps, withDefaults } from 'vue';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
 import FilteredActions from '../actions/filtered-actions';
@@ -73,12 +73,13 @@ const props = withDefaults(
   },
 );
 
-const { pkName, title, rows, loading, actions, filterDefinition } = toRefs(props);
+// const { pkName, title, rows, loading, actions, filterDefinition } = toRefs(props);
 const {
   uniqueId,
   container,
   responsiveLayoutWidth,
   responsiveColumns,
+  responsiveLayout, // eslint-disable-line @typescript-eslint/no-unused-vars
   dataColumns,
   theadRowData,
   onMeasure, // eslint-disable-line @typescript-eslint/no-unused-vars

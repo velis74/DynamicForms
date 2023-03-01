@@ -27,7 +27,6 @@ export default /* #__PURE__ */ defineComponent({
   name: 'ColumnGroup',
   mixins: [RenderMeasured, RowTypesMixin],
   props: {
-    thead: { type: Boolean, default: false }, // is this row rendered in thead section
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
     actions: { type: FilteredActions, required: true },

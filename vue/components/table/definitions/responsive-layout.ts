@@ -10,6 +10,20 @@ import IndexedArray from '../../classes/indexed-array';
 
 import TableColumn from './column';
 
+interface ResponsiveTableLayoutDefinition {
+  columns: (string | string[])[];
+  autoAddNonListedColumns: boolean;
+}
+
+interface ResponsiveTableLayoutsDefinition {
+  auto_generate_single_row_layout: boolean;
+  auto_generate_single_column_layout: boolean;
+  layouts: {
+    columns: string[];
+    auto_add_non_listed_columns: boolean;
+  }[];
+}
+
 export class ColumnGroupRow {
   constructor(fieldsDef, renderedColumns) {
     const fields = Array.isArray(fieldsDef) ? fieldsDef : [fieldsDef];
@@ -63,14 +77,12 @@ export class ResponsiveLayout {
 
   rows: number;
 
-  constructor(definition, renderedColumns) {
+  constructor(definition: ResponsiveTableLayoutDefinition, renderedColumns: IndexedArray<TableColumn>) {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
     this.columns = new IndexedArray([]);
     columnsDef.forEach((column) => {
       this.columns.push(
-        column.length === 1 ?
-          renderedColumns[column[0]] :
-          new ColumnGroup(this, column, renderedColumns),
+        column.length === 1 ? renderedColumns[column[0]] : new ColumnGroup(this, column, renderedColumns),
       );
     });
     this.rows = Math.max(1, ...this.columns.map((col) => (col.rows ? col.rows.length : 1)));
@@ -100,42 +112,45 @@ export class ResponsiveLayout {
 export class ResponsiveLayouts {
   layouts: ResponsiveLayout[];
 
-  constructor(renderedColumns, responsiveTableLayoutsDef) {
+  constructor(renderedColumns: IndexedArray<TableColumn>, responsiveTableLayoutsDef: ResponsiveTableLayoutsDefinition) {
     this.layouts = [];
 
     // one row, columns next to each other variant is generated automatically
     // Any columns not listed in the array will be auto-added to first row at the end (here, none are listed)
     if (responsiveTableLayoutsDef == null || responsiveTableLayoutsDef.auto_generate_single_row_layout) {
-      this.pushLayout(new ResponsiveLayout({ autoAddNonListedColumns: true }, renderedColumns));
+      this.pushLayout(new ResponsiveLayout({ autoAddNonListedColumns: true, columns: [] }, renderedColumns));
       renderedColumns.forEach((column) => column.setLayout(this.layouts[0]));
     }
 
-    if (responsiveTableLayoutsDef == null) return; // nothing more to do here
-
-    // Intermediate layouts, each should be narrower than the previous (otherwise it will never be drawn)
-    responsiveTableLayoutsDef.layouts.forEach((layoutDef) => {
-      this.pushLayout(new ResponsiveLayout({
-        columns: layoutDef.columns,
-        autoAddNonListedColumns: layoutDef.auto_add_non_listed_columns,
-      }, renderedColumns));
-    });
+    if (responsiveTableLayoutsDef && responsiveTableLayoutsDef.layouts) {
+      // Intermediate layouts, each should be narrower than the previous (otherwise it will never be drawn)
+      responsiveTableLayoutsDef.layouts.forEach((layoutDef) => {
+        this.pushLayout(new ResponsiveLayout({
+          columns: layoutDef.columns,
+          autoAddNonListedColumns: layoutDef.auto_add_non_listed_columns,
+        }, renderedColumns));
+      });
+    }
 
     // n rows, 1 column variant is generated automatically
-    if (responsiveTableLayoutsDef.auto_generate_single_row_layout) {
+    if (responsiveTableLayoutsDef == null || responsiveTableLayoutsDef.auto_generate_single_column_layout) {
       this.pushLayout(
-        new ResponsiveLayout({ columns: [renderedColumns.map((column) => column.name)] }, renderedColumns),
+        new ResponsiveLayout(
+          { columns: [renderedColumns.map((column) => column.name)], autoAddNonListedColumns: true },
+          renderedColumns,
+        ),
       );
     }
   }
 
-  pushLayout(layout) {
+  pushLayout(layout: ResponsiveLayout) {
     // For some reason, Vue will not decorate totalWidth property when used from table.js.
     // Making the layout observable will
-    this.layouts.push(reactive(layout));
+    this.layouts.push(reactive(layout) as ResponsiveLayout);
   }
 
   recalculate(containerWidth: number): ResponsiveLayout {
-    return this.layouts.find((layout) => {
+    return this.layouts.find((layout: ResponsiveLayout) => {
       layout.totalWidth = _.sum(layout.columns.map((el) => el.maxWidth ?? 0));
       return layout.totalWidth <= containerWidth;
     }) ?? this.layouts[this.layouts.length - 1];

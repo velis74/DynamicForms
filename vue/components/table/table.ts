@@ -41,9 +41,14 @@ export function useTableBase(props: TableBasePropsInterface) {
     // while redrawing, ResizeObserver will ofter report the old element being resized to zero
     if (width) containerWidth.value = entries[0].contentRect.width;
   });
-  onMounted(() => { setTimeout(() => resizeObserver.observe(container.value), 1); });
+  onMounted(() => {
+    resizeObserver.observe(container.value);
+    // TODO: for some reason the above statement does not work, even if delayed by nextTick or setTimeout
+    //  so we make this poor solution where we just re-observe the container every second so that it properly registers
+    setInterval(() => resizeObserver.observe(container.value), 1000);
+  });
   onBeforeUpdate(() => { resizeObserver.unobserve(container.value); });
-  onUpdated(() => { setTimeout(() => resizeObserver.observe(container.value), 1); });
+  onUpdated(() => { resizeObserver.observe(container.value); });
   onUnmounted(() => { resizeObserver.disconnect(); });
 
   const renderedColumns: ComputedRef<IndexedArray<TableColumn>> = computed(

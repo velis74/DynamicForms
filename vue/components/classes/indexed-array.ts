@@ -37,7 +37,7 @@ export default class IndexedArray<IndexedItem extends ItemWithName> {
   }
 
   map(
-    callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => void,
+    callback: (value: IndexedItem, index?: number, array?: IndexedItem[]) => any,
     thisArg?: IndexedArray<IndexedItem>,
   ) {
     return this.items.map(callback, thisArg || this);
