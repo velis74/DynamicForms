@@ -15,7 +15,7 @@ interface ResponsiveTableLayoutDefinition {
   autoAddNonListedColumns: boolean;
 }
 
-interface ResponsiveTableLayoutsDefinition {
+export interface ResponsiveTableLayoutsDefinition {
   auto_generate_single_row_layout: boolean;
   auto_generate_single_column_layout: boolean;
   layouts: {
@@ -112,7 +112,10 @@ export class ResponsiveLayout {
 export class ResponsiveLayouts {
   layouts: ResponsiveLayout[];
 
-  constructor(renderedColumns: IndexedArray<TableColumn>, responsiveTableLayoutsDef: ResponsiveTableLayoutsDefinition) {
+  constructor(
+    renderedColumns: IndexedArray<TableColumn>,
+    responsiveTableLayoutsDef: ResponsiveTableLayoutsDefinition | null,
+  ) {
     this.layouts = [];
 
     // one row, columns next to each other variant is generated automatically

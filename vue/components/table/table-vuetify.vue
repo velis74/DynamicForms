@@ -28,7 +28,7 @@
 </template>
 <!--suppress ES6UnusedImports -->
 <script lang="ts">
-import { defineComponent, defineProps, withDefaults } from 'vue';
+import { defineComponent, defineProps, withDefaults, toRefs } from 'vue';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
 import FilteredActions from '../actions/filtered-actions';
@@ -53,7 +53,6 @@ export default /* #__PURE__ */ defineComponent({
 });
 </script>
 <script setup lang="ts">
-
 const props = withDefaults(
   defineProps<{ // Can't just import the interface - vue complains. https://github.com/vuejs/core/issues/4294
     pkName: string;
@@ -73,7 +72,7 @@ const props = withDefaults(
   },
 );
 
-// const { pkName, title, rows, loading, actions, filterDefinition } = toRefs(props);
+const { pkName, title, rows, loading, actions, filterDefinition } = toRefs(props);
 const {
   uniqueId,
   container,

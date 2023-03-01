@@ -1,5 +1,5 @@
 import ResizeObs from 'resize-observer-polyfill';
-import { computed, ComputedRef, onBeforeUpdate, onMounted, onUnmounted, onUpdated, ref } from 'vue';
+import { computed, ComputedRef, onBeforeUpdate, onMounted, onUnmounted, onUpdated, provide, reactive, ref } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 import ColumnDisplay from '../classes/display-mode';
@@ -7,7 +7,7 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
-import { ResponsiveLayout, ResponsiveLayouts } from './definitions/responsive-layout';
+import { ResponsiveLayout, ResponsiveLayouts, ResponsiveTableLayoutsDefinition } from './definitions/responsive-layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
 
@@ -23,7 +23,7 @@ export interface TableBasePropsInterface {
   pkName: string;
   title: string;
   columns: TableColumn[];
-  responsiveTableLayouts: object | null;
+  responsiveTableLayouts: ResponsiveTableLayoutsDefinition | null;
   columnDefs: object;
   rows: TableRows;
   loading: boolean;
@@ -34,6 +34,7 @@ export interface TableBasePropsInterface {
 export function useTableBase(props: TableBasePropsInterface) {
   const containerWidth = ref(0);
   const container = ref();
+  provide('table-config', reactive({}));
 
   const resizeObserver = new ResizeObs((entries) => {
     // while redrawing, sometimes ResizeObserver will report width for the old as well as for the new element

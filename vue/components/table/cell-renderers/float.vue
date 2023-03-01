@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, inject, reactive } from 'vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'TableCellFloat',
@@ -15,20 +15,17 @@ export default /* #__PURE__ */ defineComponent({
   computed: {
     value() { return this.rowData[this.column.name]; },
     config() {
-      // find the component that has the rows array. We will abuse that component to store our configuration
-      let componentWithRows = this.$parent;
-      while (!componentWithRows.rows) componentWithRows = componentWithRows.$parent;
+      const tableConfig: any = inject('table-config'); // provided by table.ts
 
-      let config = componentWithRows[`_TableCellFloat_${this.column.name}`];
+      let config = tableConfig[`_TableCellFloat_${this.column.name}`];
 
       // if config does not exist yet or if rows actually changed (table was reprovisioned with another one)
-      if (!config || config.orgRows !== componentWithRows.rows) {
+      if (!config) {
         config = reactive({
           maxDecimals: 0,
           decimalChar: 1.1.toLocaleString().substring(1, 2),
-          orgRows: componentWithRows.rows,
         });
-        componentWithRows[`_TableCellFloat_${this.column.name}`] = config;
+        tableConfig[`_TableCellFloat_${this.column.name}`] = config;
       }
       return config;
     },
