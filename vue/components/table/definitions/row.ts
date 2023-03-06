@@ -1,9 +1,14 @@
 import { reactive } from 'vue';
 
+import RowControlStructure = DfTable.RowControlStructure;
+import RowDataInterface = DfTable.RowDataInterface;
+
 export default class TableRow { // eslint-disable-line max-classes-per-file
   [key: string]: any;
 
-  constructor(rowData) {
+  dfControlStructure: RowControlStructure;
+
+  constructor(rowData: RowDataInterface) {
     const dfControlData = rowData.df_control_data || {};
     delete rowData.df_control_data;
     Object.assign(this, rowData);
@@ -20,13 +25,13 @@ export default class TableRow { // eslint-disable-line max-classes-per-file
     });
   }
 
-  setMeasuredHeight(value) {
+  setMeasuredHeight(value: number) {
     if (this.dfControlStructure.measuredHeight !== value) {
       this.dfControlStructure.measuredHeight = value;
     }
   }
 
-  setIsShowing(value) {
+  setIsShowing(value: boolean) {
     if (this.dfControlStructure.isShowing !== value) {
       this.dfControlStructure.isShowing = value;
     }

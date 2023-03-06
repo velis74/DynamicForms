@@ -1,17 +1,36 @@
 import _ from 'lodash';
 
+import { APIConsumer } from '../../api_consumer/namespace';
+
 import TableRow from './row';
 
+import RowDataInterface = DfTable.RowDataInterface;
+import RowsData = DfTable.RowsData;
+
 export default class TableRows {
-  constructor(logic, rowsData) {
+  logic: APIConsumer.LogicInterface;
+
+  visibilityHandler: (rowPk?: number) => boolean | { callback: (isVisible: boolean) => void, once?: boolean };
+
+  next: string | null;
+
+  data: TableRow[];
+
+  rowIndices: { [key: string]: number };
+
+  constructor(logic: APIConsumer.LogicInterface, rowsData: RowsData) {
     this.logic = logic;
-    this.visibilityHandler = () => false; // function to pass to vue-observe-visibility to know when to load more rows
+    // function to pass to vue-observe-visibility to know when to load more rows
+    this.visibilityHandler = () => {
+      console.log('Empty handler');
+      return false;
+    };
 
     this.next = null; // url to fetch rows after currently last row
     this.data = []; // actual rows
     this.rowIndices = {}; // stores primaryKey -> {index} in data for faster lookup when deleting & updating
 
-    if (rowsData && rowsData.results && Array.isArray(rowsData.results)) {
+    if (rowsData && 'results' in rowsData && Array.isArray(rowsData.results)) {
       // REST response was paginated. actual rows in results, next and prev pointer provided as well
       this.updateRows(rowsData.results);
       this.next = rowsData.next;
@@ -25,10 +44,13 @@ export default class TableRows {
   /**
    * Creates a visibilityHandler on first and last row so that we can trigger loading new rows when they come in view
    */
-  decorate(newRows) {
+  decorate(newRows: RowDataInterface[]) {
     if (!newRows || !newRows.length) {
       // No new rows received, so let's not monitor visibility for further loading
-      this.visibilityHandler = () => false;
+      this.visibilityHandler = () => {
+        console.log('Empty handler 2');
+        return false;
+      };
       return;
     }
     const pkName = this.logic.pkName;
@@ -36,13 +58,13 @@ export default class TableRows {
     const triggerRow2 = newRows[newRows.length - 1][pkName];
     const self = this;
 
-    this.visibilityHandler = (rowPk) => {
+    this.visibilityHandler = (rowPk?: number) => {
       if (triggerRow1 !== rowPk && triggerRow2 !== rowPk) return false;
       return { callback: (isVisible) => { self.loadMoreRows(isVisible); }, once: true };
     };
   }
 
-  async loadMoreRows(isVisible) {
+  async loadMoreRows(isVisible: boolean) {
     if (!isVisible || !this.next) return;
     const newRows = await this.logic.fetch(this.next, true);
     this.updateRows(newRows.results);
@@ -50,7 +72,7 @@ export default class TableRows {
     this.decorate(newRows.results);
   }
 
-  updateRows(newRows) {
+  updateRows(newRows: RowDataInterface[]) {
     let wasModified = false;
     const pkName = this.logic.pkName;
     newRows.map((row) => {
@@ -71,10 +93,10 @@ export default class TableRows {
   }
 
   reIndex() {
-    this.rowIndices = _.invert(_.mapValues(this.data, (row) => row[this.logic.pkName]));
+    this.rowIndices = _.invert(_.mapValues(this.data, (row) => (row[this.logic.pkName] as number)));
   }
 
-  deleteRow(tableRowId) {
+  deleteRow(tableRowId: string) {
     this.data.splice(this.rowIndices[tableRowId], 1);
     this.reIndex();
   }

@@ -8,14 +8,12 @@ import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 import getObjectFromPath from '../util/get-object-from-path';
 
-import FormDefinition = APIConsumer.FormDefinition;
-import FormLayoutType = APIConsumer.FormLayoutType;
-import PKValueType = APIConsumer.PKValueType;
+import { APIConsumer } from './namespace';
 
-class APIConsumerLogic {
+class APIConsumerLogic implements APIConsumer.LogicInterface {
   private baseURL: string;
 
-  private pkName: string;
+  pkName: string;
 
   private fields: { [key: string]: { [key: string]: any } };
 
@@ -27,7 +25,7 @@ class APIConsumerLogic {
 
   private formFields: { [key: string]: unknown };
 
-  private formLayout: FormLayoutType;
+  private formLayout: APIConsumer.FormLayoutType;
 
   private formComponent: string; // component responsible for rendering the form layout
 
@@ -123,7 +121,7 @@ class APIConsumerLogic {
     );
   }
 
-  async getUXDefinition(pkValue: PKValueType, isTable: boolean) {
+  async getUXDefinition(pkValue: APIConsumer.PKValueType, isTable: boolean) {
     let url = this.baseURL;
     if (!isTable) url += `/${pkValue}`;
     return this.fetch(`${url}.componentdef`, isTable);
@@ -154,7 +152,7 @@ class APIConsumerLogic {
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
-  async getFormDefinition(pkValue: PKValueType) {
+  async getFormDefinition(pkValue: APIConsumer.PKValueType) {
     if (this.formLayout == null) {
       this.ux_def = await this.getUXDefinition(pkValue, false);
       this.pkName = this.ux_def.primary_key_name;
@@ -196,7 +194,7 @@ class APIConsumerLogic {
     return this.requestedPKValue === 'new' ? 'new' : (this.formData || {})[this.pkName];
   }
 
-  get formDefinition(): FormDefinition {
+  get formDefinition(): APIConsumer.FormDefinition {
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
       pkName: this.pkName,
@@ -231,7 +229,7 @@ class APIConsumerLogic {
     return res;
   }
 
-  async dialogForm(pk: PKValueType, formData: any = null) {
+  async dialogForm(pk: APIConsumer.PKValueType, formData: any = null) {
     await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
