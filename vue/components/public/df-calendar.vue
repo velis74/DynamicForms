@@ -1,5 +1,5 @@
 <template>
-  <full-calendar :options="calendarOptions"/>
+  <full-calendar ref="fullCalendar" :options="calendarOptions"/>
 </template>
 
 <script lang="ts">
@@ -118,6 +118,7 @@ export default defineComponent({
       const startAt = encodeURIComponent(selectionInfo.startStr);
       const endAt = encodeURIComponent(selectionInfo.endStr);
       await this.apiConsumer.dialogForm('new', { start_at: startAt, end_at: endAt });
+      this.refresh();
       // const dlgRes = await DynamicForms.dialog.fromURL(
       //   `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`,
       //   'new',
@@ -132,6 +133,7 @@ export default defineComponent({
       // console.log(clickInfo.event);
       const eventId = clickInfo.event.id;
       await this.apiConsumer.dialogForm(eventId);
+      this.refresh();
       // const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
       // switch (dlgRes && dlgRes.action ? dlgRes.action.name : null) {
       // case 'delete_dlg':
@@ -150,6 +152,10 @@ export default defineComponent({
       if (promise) promise.resolveData = { action, data, params };
       this.actionDeleteExecute(action, data, modal, params, promise);
       if (modal) modal.hide();
+    },
+    refresh() {
+      const calendar = this.$refs.fullCalendar.getApi();
+      calendar.refetchEvents();
     },
     async resizeReservation(resizeInfo: EventResizeDoneArg | EventDropArg) {
       const url = this.detail_url(resizeInfo.event.id);
