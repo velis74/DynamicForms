@@ -6,7 +6,7 @@
     :error-count="baseBinds['error-count']"
   >
     <div style="width: 100%;">
-      <datepicker
+      <Datetime
         :key="datetimeFieldKey"
         v-model="value"
         :type="inputType"
@@ -23,11 +23,11 @@
 </template>
 
 <script lang="ts">
-import 'vue3-datetime/dist/vue3-datetime.min.css';
+import 'vue-datetime3/dist/style.css';
 
-import Datepicker from '@vuepic/vue-datepicker';
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
+import { Datetime } from 'vue-datetime3';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
@@ -37,7 +37,7 @@ import VuetifyInput from './input-vuetify.vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'DDatetime',
-  components: { Datepicker, VuetifyInput, InputClearButton },
+  components: { Datetime, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return { datetimeFieldKey: Math.round(Math.random() * 1000) };
@@ -47,7 +47,7 @@ export default /* #__PURE__ */ defineComponent({
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() { return this.modelValue.value; },
+      get: function get() { return this.modelValue; },
       set: function set(newVal: any) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign

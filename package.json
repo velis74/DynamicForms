@@ -15,7 +15,7 @@
   },
   "scripts": {
     "serve": "vite",
-    "build":"vite build",
+    "build": "vite build",
     "build-package": "vite build && vue-tsc --emitDeclarationOnly -p tsconfig.build.json",
     "test": "vitest run --coverage",
     "lint": "eslint vue && vue-tsc --noEmit"
@@ -45,7 +45,6 @@
     "@fullcalendar/resource-timegrid": "^6.1.4",
     "@fullcalendar/timegrid": "^6.1.4",
     "@fullcalendar/vue3": "^6.1.4",
-    "@vuepic/vue-datepicker": "^3.5.3",
     "axios": "^1.2.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
@@ -55,11 +54,11 @@
     "resize-observer-polyfill": "^1.5.1",
     "suncalc": "^1.9.0",
     "vue": "^3.2.45",
+    "vue-datetime3": "^1.0.2",
     "vue-ionicon": "^2.1.0",
     "vue-multiselect": "^3.0.0-alpha.2",
     "vue-observe-visibility": "^1.0.0",
     "vue-router": "^4.1.6",
-    "vue3-datetime": "^2.0.0-beta.3",
     "vuetify": "^3.0.1",
     "weekstart": "^1.1.0"
   },
