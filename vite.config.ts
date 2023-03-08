@@ -31,7 +31,7 @@ const axiosRedirectConfig = () => ({
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   plugins: [
-    vue({ template: transformAssetUrls }),
+    vue(),
     {
       ...eslint({
         failOnWarning: false,
@@ -64,7 +64,7 @@ export default defineConfig({
     },
   },
   build: {
-    target: 'es2015',
+    target: 'es2022',
     lib: {
       entry: resolve(__dirname, './vue/dynamicforms.ts'),
       formats: ['umd'],
