@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
-import Action from './action';
+import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
 
@@ -25,11 +24,11 @@ async function asyncSome(arr: HandlerWithPayload[], fun: (handler: HandlerWithPa
 function getHandlersWithPayload(
   action: Action,
   self: ComponentWithActionsAndHandler,
-  actionName: string,
+  actionName: `action${string}`,
 ): HandlerWithPayload[] {
   // first, if action has a specific handler specified, let's just return that and be done with it
-  if (action[`action${actionName}`]) {
-    return [{ instance: action, methodName: `action${actionName}`, payload: action.payload }];
+  if (action[actionName]) {
+    return [{ instance: action, methodName: actionName, payload: action.payload }];
   }
   // WARNING: It is unlikely, but possible that a parent would handle the event, but not have a payload prop
   let parent = self;
@@ -40,8 +39,8 @@ function getHandlersWithPayload(
     if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
 
     if (parent.payload !== undefined) payload = parent.payload;
-    if (parent[`action${actionName}`]) {
-      res.unshift({ instance: parent, methodName: `action${actionName}`, payload });
+    if (parent[actionName]) {
+      res.unshift({ instance: parent, methodName: actionName, payload });
     }
     parent = parent.$parent as ComponentWithActionsAndHandler;
   }
@@ -89,12 +88,16 @@ export default /* #__PURE__ */ defineComponent({
 
       const action = actions;
       const ed = { ...action.payload?.['$extra-data'], ...extraData };
-      const actionDFName = `${_.upperFirst(_.camelCase(_.toLower(action.name)))}`;
+      const actionDFName = getActionName(action.name);
 
       let lastExecutedHandler;
       const handlers = [
         ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> this, actionDFName),
-        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> this, 'DefaultProcessor'),
+        ...getHandlersWithPayload(
+          action,
+          <ComponentWithActionsAndHandler> <unknown> this,
+          getActionName('DefaultProcessor'),
+        ),
       ];
       // console.log('handlers', handlers, 'action', action);
       const actionHandled = await asyncSome(

@@ -24,6 +24,10 @@ export function defaultActionHandler(action: Action, payload: FormPayload, extra
   return true;
 }
 
+export function getActionName(actionName: string | undefined): `action${string}` {
+  return `action${_.upperFirst(_.camelCase(_.toLower(actionName)))}`;
+}
+
 class Action implements ActionJSON {
   public name!: string;
 
@@ -102,8 +106,8 @@ class Action implements ActionJSON {
     // any non-string or empty string must resolve as null for fieldName
     const fieldName = !_.isString(fieldNameTemp) || fieldNameTemp.length === 0 ? null : fieldNameTemp;
 
-    const actionName = `${_.upperFirst(_.camelCase(_.toLower(data.name)))}`;
-    this[`action${actionName}`] = data[`action${actionName}`];
+    const actionName = getActionName(data.name);
+    this[actionName] = data[actionName];
 
     Object.defineProperties(this, {
       name: { get() { return name; }, enumerable: true },

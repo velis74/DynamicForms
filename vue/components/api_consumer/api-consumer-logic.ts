@@ -207,12 +207,18 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     };
   }
 
+  async delete() {
+    if (this.pkValue !== 'new') {
+      await apiClient.delete(`${this.baseURL}/${this.pkValue}`);
+    }
+  }
+
   async deleteRow(tableRow) {
     await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`);
     this.rows.deleteRow(tableRow[this.pkName]);
   }
 
-  async saveForm() {
+  async saveForm(refresh: boolean = true) {
     let url = `${this.baseURL}/`;
     let res;
 
@@ -223,22 +229,29 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
       res = await apiClient.post(url, this.formData);
     }
 
-    // reload the whole table
-    await this.reload(true);
+    if (refresh) {
+      // reload the whole table
+      await this.reload(true);
+    }
 
     return res;
   }
 
-  async dialogForm(pk: APIConsumer.PKValueType, formData: any = null) {
+  async dialogForm(pk: APIConsumer.PKValueType, formData: any = null, refresh: boolean = true) {
     await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
-      this.formData = formData;
+      this.formData = new FormPayload(formData, this.formLayout);
     }
     const resultAction = await dfModal.fromFormDefinition(this.formDefinition);
     let error = {};
     if (resultAction.action.name === 'submit') {
-      await this.saveForm().catch((data) => {
+      await this.saveForm(refresh).catch((data) => {
+        // Include form error and field errors
+        error = { ...data.response.data };
+      });
+    } else if (resultAction.action.name === 'delete_dlg') {
+      await this.delete().catch((data) => {
         // Include form error and field errors
         error = { ...data.response.data };
       });
