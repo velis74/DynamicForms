@@ -1,5 +1,7 @@
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
+import { APIConsumer } from '../api_consumer/namespace';
+
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
@@ -96,7 +98,7 @@ export default /* #__PURE__ */ defineComponent({
         ...getHandlersWithPayload(
           action,
           <ComponentWithActionsAndHandler> <unknown> this,
-          getActionName('DefaultProcessor'),
+          'actionDefaultProcessor',
         ),
       ];
       // console.log('handlers', handlers, 'action', action);
