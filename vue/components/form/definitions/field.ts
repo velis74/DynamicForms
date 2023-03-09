@@ -11,61 +11,50 @@
  */
 import DisplayMode from '../../classes/display-mode';
 
-// Checks if we are in development mode
-const IS_DEVELOPMENT = (
-  window.webpackHotUpdate || process.env.NODE_ENV === 'development' // TODO: this is for webpack, not Vite
-);
+import RenderParams, { RenderParamsJSON } from './field-render-params';
 
-function wrapInProxy(renderParams) {
-  return new Proxy(renderParams, {
-    get(target, prop) {
-      if (Object.prototype.hasOwnProperty.call(target, prop)) {
-        return Reflect.get(...arguments); // eslint-disable-line prefer-rest-params
-      }
-      if (!(['toJSON', 'constructor', 'render', 'state', '_isVue'].includes(prop) || typeof prop === 'symbol')) {
-        // these are called by Vue internals when inspecting in Vue devtools
-        // TODO: ce odkomentiras, se bo usulo mio logov
-        // console.error(`RenderParams doesn't have property named ${prop.toString()}`);
-      }
-      return target[prop];
-    },
-  });
-}
-
-function RenderParams(params) {
-  this.inputType = params.input_type;
-  this.fieldCSSClass = params.field_class;
-  this.maxLength = params.max_length;
-
-  // Text input
-  this.pattern = params.pattern;
-  this.min = params.min;
-  this.max = params.max;
-  this.minLength = params.min_length || 0;
-  this.maxLength = params.max_length || 1E20;
-
-  // text input, translated into HTML attributes
-  this.step = params.step;
-  this.size = params.size;
-
-  // DateTime
-  this.formFormat = params.form_format;
-
-  // select
-  this.multiple = params.multiple;
-  this.allowTags = params.allow_tags;
-
-  return IS_DEVELOPMENT ? wrapInProxy(this) : this;
+export interface FormFieldJSON {
+  name: string;
+  label: string;
+  alignment: 'left' | 'right' | 'center' | 'decimal';
+  visibility: { form: number, table: number };
+  render_params: RenderParamsJSON;
+  read_only: true | any; // boolean
+  choices: unknown;
+  width_classes: string; // bootstrap column width classes TODO: should be changed to something platform agnostic
+  help_text: string;
+  allow_null: boolean;
 }
 
 export default class FormField {
+  private fieldDef!: FormFieldJSON;
+
   public name!: string;
 
-  public visibility!: number;
+  public label!: string;
+
+  public align!: string;
+
+  public visibility!: number; // DisplayMode
+
+  public renderParams!: RenderParams;
 
   public readOnly!: boolean;
 
-  constructor(fieldDef) {
+  public componentName!: string;
+
+  public helpText!: string;
+
+  public choices!: unknown;
+
+  public widthClasses!: string;
+
+  public allowNull!: boolean;
+
+  public renderKey: number;
+
+  constructor(fieldDef: FormFieldJSON) {
+    this.renderKey = 0; // used in row.vue
     // Below we circumvent having to declare an internal variable which property getters would be reading from
     Object.defineProperties(this, {
       fieldDef: { get() { return fieldDef; }, enumerable: false },
@@ -92,7 +81,7 @@ export default class FormField {
 
   get isVisible() { return (this.visibility !== DisplayMode.SUPPRESS && this.visibility !== DisplayMode.HIDDEN); }
 
-  setVisibility(visibility) {
+  setVisibility(visibility: number) {
     let displayMode;
     if (DisplayMode.getValue(visibility)) {
       displayMode = DisplayMode.getValue(visibility);
