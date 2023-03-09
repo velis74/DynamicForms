@@ -1,11 +1,12 @@
 <template>
-  <full-calendar ref="fullCalendar" :options="calendarOptions"/>
+  <full-calendar :options="calendarOptions"/>
 </template>
 
 <script lang="ts">
 import type {
   CalendarOptions,
   DateSpanApi,
+  DateSelectArg,
   DatesSetArg,
   EventDropArg,
   EventInput,
@@ -21,14 +22,12 @@ import FullCalendar from '@fullcalendar/vue3';
 import SunCalc from 'suncalc';
 import { defineComponent } from 'vue';
 
-import ActionsMixin from '../actions/actions-mixin';
 import { APIConsumerLogic } from '../api_consumer/index-temporary';
 import apiClient from '../util/api-client';
 
 export default defineComponent({
   name: 'DfCalendar',
   components: { FullCalendar },
-  mixins: [ActionsMixin],
   emits: ['title-change'],
   data() {
     return {
@@ -113,49 +112,18 @@ export default defineComponent({
     eventDataTransform(input: EventInput) {
       return { id: input.id, start: input.start_at, end: input.end_at, title: input.title };
     },
-    async addReservation(selectionInfo: DateSpanApi) {
-      // console.log(selectionInfo.start, selectionInfo.end, selectionInfo.allDay);
-      const startAt = encodeURIComponent(selectionInfo.startStr);
-      const endAt = encodeURIComponent(selectionInfo.endStr);
-      await this.apiConsumer.dialogForm('new', { start_at: startAt, end_at: endAt });
-      this.refresh();
-      // const dlgRes = await DynamicForms.dialog.fromURL(
-      //   `${this.url}/new.componentdef?start_at=${startAt}&end_at=${endAt}`,
-      //   'new',
-      //   this.uuid,
-      // );
-      // const event = this.eventDataTransform(dlgRes.data);
-      // selectionInfo.view.calendar.addEvent(event, true);
-      // selectionInfo.view.calendar.refetchEvents();
-      // console.log([event, event.start, dlgRes]);
+    async addReservation(selectionInfo: DateSelectArg) {
+      await this.apiConsumer.dialogForm(
+        'new',
+        { start_at: selectionInfo.startStr, end_at: selectionInfo.endStr },
+        false,
+      );
+      selectionInfo.view.calendar.refetchEvents();
     },
     async editReservation(clickInfo: EventClickArg) {
-      // console.log(clickInfo.event);
       const eventId = clickInfo.event.id;
-      await this.apiConsumer.dialogForm(eventId);
-      this.refresh();
-      // const dlgRes = await DynamicForms.dialog.fromURL(`${this.url}/${eventId}.componentdef`, 'edit', this.uuid);
-      // switch (dlgRes && dlgRes.action ? dlgRes.action.name : null) {
-      // case 'delete_dlg':
-      //   clickInfo.event.remove();
-      //   break;
-      // case 'submit':
-      //   clickInfo.event.setDates(dlgRes.data.start_at, dlgRes.data.end_at);
-      //   clickInfo.event.setProp('title', dlgRes.data.title);
-      //   break;
-      // default:
-      //   console.log(dlgRes);
-      // }
-    },
-    actionDelete_dlgExecute(action, data, modal, params, promise) {
-      // will be called from actionHandlerMixin
-      if (promise) promise.resolveData = { action, data, params };
-      this.actionDeleteExecute(action, data, modal, params, promise);
-      if (modal) modal.hide();
-    },
-    refresh() {
-      const calendar = this.$refs.fullCalendar.getApi();
-      calendar.refetchEvents();
+      await this.apiConsumer.dialogForm(eventId, null,false);
+      clickInfo.view.calendar.refetchEvents();
     },
     async resizeReservation(resizeInfo: EventResizeDoneArg | EventDropArg) {
       const url = this.detail_url(resizeInfo.event.id);
