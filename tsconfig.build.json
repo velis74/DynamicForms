@@ -6,6 +6,7 @@
   ],
   "compilerOptions": {
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": true
   }
 }
