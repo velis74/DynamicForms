@@ -1,7 +1,5 @@
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
-import { APIConsumer } from '../api_consumer/namespace';
-
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
