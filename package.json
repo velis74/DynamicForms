@@ -1,16 +1,19 @@
 {
   "name": "dynamicforms",
-  "version": "1.0.0",
+  "version": "0.7.16",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
     "dist/*"
   ],
-  "main": "dist/src/dynamicforms.umd.js",
+  "main": "dist/dynamicforms.umd.js",
   "types": "./dist/dynamicforms.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/src/dynamicforms.umd.js"
+      "import": "./dist/dynamicforms.umd.js"
+    },
+    "./dynamicforms.css": {
+      "import": "./dist/style.css"
     }
   },
   "scripts": {

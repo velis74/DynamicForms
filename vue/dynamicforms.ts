@@ -1,16 +1,18 @@
 import type { App } from 'vue';
 
 import * as apiconsumer from './components/api_consumer/index-temporary';
+import dfModal from './components/modal/modal-view-api';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
 import * as VuetifyComponents from './components/vuetify';
 import VuetifyViewMode from './demo-app/vuetify/view-mode.vue';
 import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
+import dfVuetifyConfiguration from './plugins/vuetify';
 
-export { apiconsumer };
+export { apiconsumer, dfModal, dfVuetifyConfiguration };
 
 function unifyName(theme: string, name: string) {
   if (!name.toLowerCase().startsWith(theme.toLowerCase())) {
-    if (name === 'LoadingIndicator' || name === 'DfModal') {
+    if (['LoadingIndicator', 'DfModal', 'ModalView'].includes(name)) {
       // LoadingIndicator is a special case because it is not CSS framework dependent
       // dfModal is also not: instead it instantiates a DfModalDialog, which is CSS framework dependent
       return name;
@@ -28,7 +30,7 @@ const defaultOptions: DynamicFormsOptions = { ui: 'vuetify' };
 
 const uiOptions: Array<string> = ['vuetify'];
 
-export default function createDynamicForms(options: DynamicFormsOptions = defaultOptions) {
+export function createDynamicForms(options: DynamicFormsOptions = defaultOptions) {
   const ui = options.ui || 'vuetify';
 
   const install = (app: App) => {
@@ -40,7 +42,10 @@ export default function createDynamicForms(options: DynamicFormsOptions = defaul
       // import all global instances that we need for vuetify to work
       app.component(unifyName(ui, VuetifyApp.name), VuetifyApp);
       app.component(unifyName(ui, VuetifyViewMode.name), VuetifyViewMode);
-      Object.values(VuetifyComponents).map((component) => app.component(unifyName(ui, component.name), component));
+      Object.values(VuetifyComponents).map((component) => {
+        if (!component.name) console.warn('Component has no name', component);
+        return app.component(unifyName(ui, component.name), component);
+      });
       break;
     default:
       // issue a warning stating what are appropriate options

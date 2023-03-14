@@ -68,12 +68,13 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, './vue/dynamicforms.ts'),
       formats: ['umd'],
-      fileName: 'src/dynamicforms',
+      fileName: 'dynamicforms',
       name: 'dynamicforms.[name]',
     },
     rollupOptions: {
       external: ['vue', 'vue-router', 'vuetify'],
       output: {
+        sourcemap: true,
         globals: {
           vue: 'vue',
           'vue-router': 'vue-router',

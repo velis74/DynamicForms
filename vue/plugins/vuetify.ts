@@ -18,6 +18,9 @@ const defaultTheme: ThemeDefinition = {
   },
 };
 
-const vuetify = createVuetify({ theme: { defaultTheme: 'defaultTheme', themes: { defaultTheme } } });
+const vuetify = createVuetify({
+  defaults: { global: {} },
+  theme: { defaultTheme: 'defaultTheme', themes: { defaultTheme } },
+});
 
 export default vuetify;
