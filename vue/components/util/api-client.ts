@@ -15,12 +15,14 @@ const apiClient = axios.create({
 
 requestTracker.apiClient = apiClient;
 
-interface RequestConfig extends AxiosRequestConfig {
-  showProgress?: boolean;
-  sequence?: number;
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    showProgress?: boolean;
+    sequence?: number;
+  }
 }
 
-apiClient.interceptors.request.use((config: RequestConfig) => {
+apiClient.interceptors.request.use((config) => {
   const showProgress = config.showProgress !== undefined ? config.showProgress : true;
 
   // @ts-ignore: headers might be undefined, but they are not
@@ -45,7 +47,7 @@ apiClient.interceptors.request.use((config: RequestConfig) => {
 
 apiClient.interceptors.response.use(
   (response) => {
-    requestTracker.removeRequest((response.config as RequestConfig).sequence as number);
+    requestTracker.removeRequest((response.config as AxiosRequestConfig).sequence as number);
     return response;
   },
   (error) => {

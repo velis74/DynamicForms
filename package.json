@@ -1,6 +1,6 @@
 {
   "name": "dynamicforms",
-  "version": "0.7.17",
+  "version": "0.7.18",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [

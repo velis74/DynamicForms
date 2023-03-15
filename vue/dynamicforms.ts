@@ -1,6 +1,5 @@
 import type { App } from 'vue';
 
-import * as apiconsumer from './components/api_consumer/index-temporary';
 import dfModal from './components/modal/modal-view-api';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
 import * as VuetifyComponents from './components/vuetify';
@@ -8,7 +7,8 @@ import VuetifyViewMode from './demo-app/vuetify/view-mode.vue';
 import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
 import dfVuetifyConfiguration from './plugins/vuetify';
 
-export { apiconsumer, dfModal, dfVuetifyConfiguration };
+export * from './components/api_consumer/index-temporary';
+export { dfModal, dfVuetifyConfiguration };
 
 function unifyName(theme: string, name: string) {
   if (!name.toLowerCase().startsWith(theme.toLowerCase())) {
