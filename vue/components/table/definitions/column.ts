@@ -3,6 +3,8 @@ import getObjectFromPath from '../../util/get-object-from-path';
 
 import ColumnOrdering from './column-ordering';
 
+import ColumnJSON = DfTable.ColumnJSON;
+
 type RenderDecorator = (data: any, thead: boolean) => string;
 
 export default class TableColumn {
@@ -10,7 +12,7 @@ export default class TableColumn {
 
   label!: string;
 
-  align!: 'left' | 'right' | 'center';
+  align!: DfTable.CSSAlignment;
 
   visibility!: number; // ColumnDisplay
 
@@ -21,16 +23,20 @@ export default class TableColumn {
 
   maxWidth!: number;
 
+  private ordering: ColumnOrdering;
+
   private _maxWidth: number;
 
-  constructor(initialData, orderingArray) {
+  private layout: DfTable.ResponsiveLayoutInterface | null;
+
+  constructor(initialData: ColumnJSON, orderingArray: ColumnOrdering[]) {
     this._maxWidth = 0;
     initialData.ordering = initialData.ordering || '';
     this.ordering = new ColumnOrdering(initialData.ordering, orderingArray, this);
     this.layout = null;
 
     // Determine what is to be used for render decorator for this column
-    const renderDecorator = initialData.render_params ? initialData.render_params.table : '';
+    const renderDecorator = initialData.render_params?.table || '';
     let returnFunc: RenderDecorator = this.renderDecoratorPlain;
     if (renderDecorator && renderDecorator.substring(0, 13) === 'df-tablecell-') {
       switch (renderDecorator.substring(13)) {
@@ -49,8 +55,8 @@ export default class TableColumn {
       case 'ipaddr':
         returnFunc = this.renderDecoratorIP;
         break;
-        // DRF also formats simple lists, complex dicts / lists
-        // DRF also parses ordinary strings to check if they contain \n (pre)
+        // TODO: DRF also formats simple lists, complex dicts / lists
+        // TODO: DRF also parses ordinary strings to check if they contain \n (pre)
       default:
         break;
       }
@@ -99,7 +105,7 @@ export default class TableColumn {
     });
   }
 
-  setLayout(layout) {
+  setLayout(layout: DfTable.ResponsiveLayoutInterface) {
     this.layout = layout;
   }
 

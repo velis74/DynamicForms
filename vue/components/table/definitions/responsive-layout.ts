@@ -70,7 +70,7 @@ export class ColumnGroup extends TableColumn {
   }
 }
 
-export class ResponsiveLayout {
+export class ResponsiveLayout implements DfTable.ResponsiveLayoutInterface {
   totalWidth!: number;
 
   columns: IndexedArray<TableColumn>;

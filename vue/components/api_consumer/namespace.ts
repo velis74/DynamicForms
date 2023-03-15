@@ -1,12 +1,23 @@
 // import FilteredActions from '../actions/filtered-actions';
 // import TableColumns from '../table/definitions/columns';
 
-export namespace APIConsumer {
+namespace APIConsumer {
   import ActionsJSON = Actions.ActionsJSON;
   // type of primary keys. Django would normally have integers, but really, anything can be used as primary key
   import ErrorsJSON = Actions.ErrorsJSON;
 
   export type PKValueType = NonNullable<any>;
+
+  export interface Titles {
+    table: string;
+    new: string;
+    edit: string;
+  }
+
+  export interface UXDefinition {
+    primary_key_name: string;
+    titles: Titles;
+  }
 
   export interface FormPayload {
     [key: string]: any;

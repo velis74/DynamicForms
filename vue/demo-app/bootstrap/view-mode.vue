@@ -70,8 +70,7 @@ export default /* #__PURE__ */ defineComponent({
           await this.consumer.getFullDefinition();
           this.data = this.consumer.tableDefinition;
         } else if (this.showForm) {
-          await this.consumer.getFormDefinition('new');
-          this.data = this.consumer.formDefinition;
+          this.data = await this.consumer.getFormDefinition('new');
         } /* else {
           TODO: uncomment when modal has fromURL() method
           await DynamicForms.dialog.fromURL(`${this.url}/new.componentdef`, 'new', this.uuid);

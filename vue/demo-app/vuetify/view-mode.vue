@@ -60,8 +60,7 @@ export default /* #__PURE__ */ defineComponent({
           await this.consumer.getFullDefinition();
           this.data = this.consumer.tableDefinition;
         } else if (this.showForm) {
-          await this.consumer.getFormDefinition('new');
-          this.data = this.consumer.formDefinition;
+          this.data = await this.consumer.getFormDefinition('new');
         } else if (this.showDialog) {
           await this.consumer.dialogForm('new');
           this.viewMode = 'form';

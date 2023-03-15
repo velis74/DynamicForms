@@ -122,7 +122,7 @@ export default defineComponent({
     },
     async editReservation(clickInfo: EventClickArg) {
       const eventId = clickInfo.event.id;
-      await this.apiConsumer.dialogForm(eventId, null,false);
+      await this.apiConsumer.dialogForm(eventId, null, false);
       clickInfo.view.calendar.refetchEvents();
     },
     async resizeReservation(resizeInfo: EventResizeDoneArg | EventDropArg) {

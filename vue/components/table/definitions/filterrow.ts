@@ -10,13 +10,16 @@ import TableColumns from './columns';
 import TableRow from './row';
 
 export default class TableFilterRow { // eslint-disable-line max-classes-per-file
-  columns: unknown[];
+  columns: IndexedArray<TableColumn>;
 
-  value: unknown;
+  private value: unknown;
+
+  private payload: FormPayload;
 
   constructor(filterData: any) {
     if (!filterData) {
-      this.columns = [];
+      this.columns = new IndexedArray([]);
+      this.payload = new FormPayload();
       return;
     }
     const filterDataNoActions = _.filter(filterData.columns, (cl) => !_.includes(cl.name, '#actions'));
@@ -29,7 +32,7 @@ export default class TableFilterRow { // eslint-disable-line max-classes-per-fil
     });
     // eslint-disable-next-line max-len
     const filteredCols = _.filter(
-      TableColumns(filterDataNoActions.map((col) => col.name), fields),
+      new TableColumns(filterDataNoActions.map((col) => col.name), fields),
       (c) => c.visibility === DisplayMode.FULL,
     );
     filteredCols.forEach((v: TableColumn) => {

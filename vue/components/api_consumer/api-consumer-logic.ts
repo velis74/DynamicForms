@@ -8,8 +8,6 @@ import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 import getObjectFromPath from '../util/get-object-from-path';
 
-import { APIConsumer } from './namespace';
-
 class APIConsumerLogic implements APIConsumer.LogicInterface {
   private baseURL: string;
 
@@ -17,7 +15,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   private fields: { [key: string]: { [key: string]: any } };
 
-  private tableColumns: TableColumns[];
+  private tableColumns: TableColumns;
 
   private loading: boolean;
 
@@ -35,17 +33,19 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   private ux_def: Object;
 
-  private rows: unknown[];
+  private rows: TableRows;
 
-  private formData: FormDataType;
+  private formData: FormPayload;
 
   private requestedPKValue: null;
 
   private ordering: { parameter: string, style: null, counter: number };
 
-  private filterDefinition: null;
+  private filterDefinition: TableFilterRow | null;
 
   private filterData: Object;
+
+  private titles: APIConsumer.Titles;
 
   constructor(baseURL: string) {
     /**
@@ -66,15 +66,15 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     this.loading = false;
 
     this.fields = {};
-    this.tableColumns = [];
+    this.tableColumns = new TableColumns([], {});
     this.responsiveTableLayouts = null;
     this.formFields = {};
     this.formLayout = null;
     this.formComponent = 'df-form-layout';
     this.errors = {};
-    this.actions = {};
+    this.actions = new FilteredActions({});
     this.ux_def = {};
-    this.rows = [];
+    this.rows = new TableRows(this, []);
     this.formData = {} as any;
     this.requestedPKValue = null;
     this.ordering = {
@@ -84,6 +84,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     };
     this.filterDefinition = null;
     this.filterData = {};
+    this.titles = { new: '', edit: '', table: '' };
   }
 
   async fetch(url: string, isTable: boolean, filter: boolean = false) {
@@ -121,7 +122,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     );
   }
 
-  async getUXDefinition(pkValue: APIConsumer.PKValueType, isTable: boolean) {
+  async getUXDefinition(pkValue: APIConsumer.PKValueType, isTable: boolean): Promise<APIConsumer.UXDefinition> {
     let url = this.baseURL;
     if (!isTable) url += `/${pkValue}`;
     return this.fetch(`${url}.componentdef`, isTable);
@@ -139,7 +140,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     UXDefinition.columns.forEach((column: { [key: string]: any }) => {
       this.fields[column.name] = column;
     });
-    this.tableColumns = TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
+    this.tableColumns = new TableColumns(UXDefinition.columns.map((col) => col.name), this.fields);
     this.rows = new TableRows(this, UXDefinition.rows);
     this.setOrdering(
       UXDefinition.ordering_parameter,
@@ -152,7 +153,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
-  async getFormDefinition(pkValue: APIConsumer.PKValueType) {
+  async getFormDefinition(pkValue: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
     if (this.formLayout == null) {
       this.ux_def = await this.getUXDefinition(pkValue, false);
       this.pkName = this.ux_def.primary_key_name;
@@ -166,6 +167,16 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     this.formLayout = new FormLayout(this.ux_def.dialog);
     this.formData = new FormPayload(this.ux_def.record, this.formLayout);
     this.actions = new FilteredActions(this.ux_def.actions);
+    return {
+      title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
+      pkName: this.pkName,
+      pkValue: this.pkValue,
+      layout: this.formLayout,
+      payload: this.formData,
+      loading: this.loading,
+      actions: this.actions,
+      errors: this.errors,
+    };
   }
 
   setOrdering(parameter, style, counter) {
@@ -194,26 +205,13 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     return this.requestedPKValue === 'new' ? 'new' : (this.formData || {})[this.pkName];
   }
 
-  get formDefinition(): APIConsumer.FormDefinition {
-    return {
-      title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
-      pkName: this.pkName,
-      pkValue: this.pkValue,
-      layout: this.formLayout,
-      payload: this.formData,
-      loading: this.loading,
-      actions: this.actions,
-      errors: this.errors,
-    };
-  }
-
   async delete() {
     if (this.pkValue !== 'new') {
       await apiClient.delete(`${this.baseURL}/${this.pkValue}`);
     }
   }
 
-  async deleteRow(tableRow) {
+  async deleteRow(tableRow: FormPayload) {
     await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`);
     this.rows.deleteRow(tableRow[this.pkName]);
   }
@@ -238,12 +236,12 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
   }
 
   async dialogForm(pk: APIConsumer.PKValueType, formData: any = null, refresh: boolean = true) {
-    await this.getFormDefinition(pk);
+    const formDef = await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
       this.formData = new FormPayload(formData, this.formLayout);
     }
-    const resultAction = await dfModal.fromFormDefinition(this.formDefinition);
+    const resultAction = await dfModal.fromFormDefinition(formDef);
     let error = {};
     if (resultAction.action.name === 'submit') {
       await this.saveForm(refresh).catch((data) => {
