@@ -13,7 +13,7 @@ describe('DialogList', () => {
     expect(dialogList.current?.dialogId).toEqual(1);
     expect(dialogList.current?.title).toEqual('aha');
 
-    const promise = dialogDef?.promise as Promise<any>;
+    const promise = dialogDef?.promise;
     expect(dialogList.isCurrentDialogPromise(promise)).toBeTruthy();
     expect(dialogList.getDialogDefFromPromise(promise)).toEqual(dialogDef);
   });

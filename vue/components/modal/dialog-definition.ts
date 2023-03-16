@@ -22,24 +22,28 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
   private _topOfTheStack?: boolean; // true when this dialog is the first one
 
   /*  API functions */
-  public close?: Function; // API function to close this dialog from calling code
+  public close: Function; // API function to close this dialog from calling code
 
   /* Support declarations */
-  public promise?: Promise<any>; // The promise which will be resolved when the dialog closes
+  public promise: Promise<any>; // The promise which will be resolved when the dialog closes
 
-  public resolvePromise?: Function; // function to resolve the promise
+  public resolvePromise: Function; // function to resolve the promise
 
-  public rejectPromise?: Function; // Function to reject the promise
+  public rejectPromise: Function; // Function to reject the promise
 
-  constructor(title: String | VNode, body: DialogMessage, options: DialogOptions, actions: FilteredActions) {
+  constructor(title: string | VNode, body: DialogMessage, options: DialogOptions, actions: FilteredActions) {
     this.title = title;
     this.body = body;
     this.options = options;
     this.actions = actions;
     this.dialogId = ++idGenerator;
+    this.close = () => null;
+    this.promise = new Promise<any>(() => {});
+    this.resolvePromise = () => null;
+    this.rejectPromise = () => null;
   }
 
-  get topOfTheStack() { return this._topOfTheStack; }
+  get topOfTheStack() { return this._topOfTheStack || false; }
 
   set topOfTheStack(value: boolean) { this._topOfTheStack = value; }
 }

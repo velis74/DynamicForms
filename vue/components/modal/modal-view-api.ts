@@ -3,6 +3,7 @@ import FilteredActions from '../actions/filtered-actions';
 
 import DialogDefinition from './dialog-definition';
 import DialogSize from './dialog-size';
+import { instances } from './modal-view';
 import dialogList from './modal-view-list';
 
 import DialogMessage = Dialogs.DialogMessage;
@@ -12,7 +13,9 @@ import DialogTitle = Dialogs.DialogTitle;
 const defaultOptions = { size: DialogSize.DEFAULT };
 
 const dfModal = {
-  getDialogDefinition(existingDialog: number) {
+  get isInstalled() { return instances.length > 0; },
+  getDialogDefinition(existingDialog: number | Promise<any>) {
+    if (existingDialog instanceof Promise) return dialogList.getDialogDefFromPromise(existingDialog);
     return dialogList.getDialogFromId(existingDialog);
   },
   fromRenderFunctions(existingDialog: number, dfDialog: DialogDefinition) {
@@ -26,7 +29,7 @@ const dfModal = {
     return this.message(
       formDefinition.title,
       { componentName: formDefinition.layout.componentName, props: { layout, payload, actions, errors } },
-      formDefinition.actions.formFooter,
+      actions.formFooter,
     );
   },
   message(title: DialogTitle, message: DialogMessage, actions?: FilteredActions, options?: DialogOptions) {

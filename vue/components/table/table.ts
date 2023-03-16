@@ -43,10 +43,10 @@ export function useTableBase(props: TableBasePropsInterface) {
     if (width) containerWidth.value = entries[0].contentRect.width;
   });
   onMounted(() => {
-    resizeObserver.observe(container.value);
+    if (container.value) resizeObserver.observe(container.value);
     // TODO: for some reason the above statement does not work, even if delayed by nextTick or setTimeout
     //  so we make this poor solution where we just re-observe the container every second so that it properly registers
-    setInterval(() => resizeObserver.observe(container.value), 1000);
+    setInterval(() => { if (container.value) resizeObserver.observe(container.value); }, 1000);
   });
   onBeforeUpdate(() => { resizeObserver.unobserve(container.value); });
   onUpdated(() => { resizeObserver.observe(container.value); });

@@ -1,6 +1,12 @@
 import { AxiosInstance } from 'axios';
 
+import DialogDefinition from '../modal/dialog-definition';
+import dfModal from '../modal/modal-view-api';
+
+import CustomComponentMessage = Dialogs.CustomComponentMessage;
+
 const SHOW_DIALOG_AFTER_MS = 250;
+const emptyPromise = new Promise<any>(() => {});
 
 class RequestTracker {
   private activeRequests: { [key: number]: number };
@@ -9,20 +15,14 @@ class RequestTracker {
 
   public apiClient?: AxiosInstance;
 
-  private dialogPromise: null;
-
-  private dfModal: null;
+  private dialogPromise: Promise<any>;
 
   constructor() {
     this.activeRequests = {};
     this.requestCounter = 0;
     // this.apiClient = null; // type: apiClient
-    this.dialogPromise = null;
-    this.dfModal = null;
+    this.dialogPromise = emptyPromise;
   }
-
-  // this.dfModal is set when modal-view.ts is executed
-  get isInstalled() { return this.dfModal != null; }
 
   addRequest() {
     /**
@@ -44,8 +44,8 @@ class RequestTracker {
 
   loading() { return Object.keys(this.activeRequests).length; }
 
-  get isShowingProgress() {
-    return this.dfModal?.isCurrentDialogPromise(this.dialogPromise);
+  isShowingProgress() {
+    return dfModal.getDialogDefinition(this.dialogPromise) != null;
   }
 
   oldestActiveRequest() {
@@ -71,7 +71,7 @@ class RequestTracker {
      * checks if there are any ongoing requests that are running for 250ms or more. If that's the case, show progress
      * This method is set up to run in global window.setInterval
      */
-    if (!this.isInstalled) return; // Don't attempt to show the dialog if the dfModal is not installed
+    if (!dfModal.isInstalled) return; // Don't attempt to show the dialog if the dfModal is not installed
 
     const oldestActiveRequest = this.oldestActiveRequest();
 
@@ -89,12 +89,16 @@ class RequestTracker {
         { headers: { 'x-df-timestamp': oldestActiveRequest.timestamp } },
       );
       // we need to recheck because after the request, the dialog might no longer show
-      if (this.isShowingProgress) {
-        const dlgDef = this.dfModal.getDialogDefFromPromise(this.dialogPromise);
-        dlgDef.body.props.progress = Number(progress.data.value);
-        dlgDef.body.props.label = progress.data.comment;
+      if (this.isShowingProgress()) {
+        // we are showing so getDialogDefinition will not return null here
+        const dlgDef = dfModal.getDialogDefinition(this.dialogPromise) as DialogDefinition;
+        const body = dlgDef.body as CustomComponentMessage;
+        if (body.props != null) {
+          body.props.progress = Number(progress.data.value);
+          body.props.label = progress.data.comment;
+        }
       }
-    } else if (this.loading() === 0 && this.isShowingProgress) {
+    } else if (this.loading() === 0 && this.isShowingProgress()) {
       this.hide();
     }
   }
@@ -105,16 +109,16 @@ class RequestTracker {
       `${this.oldestActiveRequest().age}ms old with timestamp ${this.oldestActiveRequest().timestamp}.`,
     );
     const title = 'Performing operation';
-    this.dialogPromise = this.dfModal.message(
+    this.dialogPromise = dfModal.message(
       title,
       { componentName: 'LoadingIndicator', props: { loading: true, label: null, progress: null } },
     );
   }
 
   hide() {
-    const dlgDef = this.dfModal.getDialogDefFromPromise(this.dialogPromise);
-    if (dlgDef) this.dfModal.popDialog(dlgDef.dialogId);
-    this.dialogPromise = null;
+    const dlgDef = dfModal.getDialogDefinition(this.dialogPromise);
+    if (dlgDef != null) (<Function> dlgDef.close)();
+    this.dialogPromise = emptyPromise;
   }
 }
 

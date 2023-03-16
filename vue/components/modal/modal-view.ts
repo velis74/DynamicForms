@@ -4,7 +4,7 @@ import ModalRenderer from './modal-renderer';
 import dialogList from './modal-view-list';
 
 let uniqueIdCounter = 0;
-const instances: number[] = [];
+export const instances: number[] = [];
 
 export default defineComponent({
   name: 'ModalView',

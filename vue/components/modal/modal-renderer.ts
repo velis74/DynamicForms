@@ -36,6 +36,7 @@ export default /* #__PURE__ */ defineComponent({
       options: DialogOptions,
     ) {
       return h(
+        // Jure 16.3.2023 types don't match here, but the code works. Too green to be able to fix
         resolveComponent('DfModalDialog'),
         { show: true, options: options || {}, key: curDlgKey },
         {

@@ -6,10 +6,16 @@ import ModalRenderer from './modal-renderer';
 import dfModal from './modal-view-api';
 import dialogList from './modal-view-list';
 
-class DialogDefinitionWithSettableTop extends DialogDefinition {
-  instance: ComponentPublicInstance;
+interface DfModalPublicInstance extends ComponentPublicInstance {
+  topOfTheStack: boolean;
+  size: number;
+}
 
-  constructor(instance: ComponentPublicInstance) {
+class DialogDefinitionWithSettableTop extends DialogDefinition {
+  instance: DfModalPublicInstance;
+
+  constructor(instance: DfModalPublicInstance) {
+    // Jure 16.3.2023: types don't work here, but the code actually does.
     super(instance.$slots.title, instance.$slots.body, { size: instance.size }, instance.$slots.actions);
     this.instance = instance;
   }
