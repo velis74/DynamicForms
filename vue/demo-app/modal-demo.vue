@@ -41,7 +41,9 @@ export default /* #__PURE__ */ defineComponent({
   data() {
     return {
       showTemplate: false,
-      templateDialogActions: new FilteredActions([Action.closeAction({ actionClose: this.actionClose })]),
+      templateDialogActions: new FilteredActions(
+        [Action.closeAction({ actionClose: this.actionClose as Actions.ActionHandler })],
+      ),
       counter: 1,
     };
   },
@@ -93,7 +95,7 @@ export default /* #__PURE__ */ defineComponent({
         break;
       }
     },
-    actionClose() { // action, payload, extraData) {
+    actionClose(): boolean { // action, payload, extraData) {
       // handles the close action of the template-based dialog
       this.showTemplate = false;
       return true;

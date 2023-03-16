@@ -183,7 +183,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     this.ordering = { parameter: parameter || 'ordering', style, counter };
   }
 
-  title(which) {
+  title(which: 'table' | 'new' | 'edit') {
     return this.titles[which];
   }
 
@@ -239,7 +239,9 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     const formDef = await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
-      this.formData = new FormPayload(formData, this.formLayout);
+      // TODO: there is currently an issue where if you get a 400 and have to fix the data, second "save" does nothing
+      formDef.payload = new FormPayload(formData, this.formLayout as FormLayout);
+      this.formData = formDef.payload;
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
     let error = {};
