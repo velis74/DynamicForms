@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union
 
 from rest_framework.serializers import Serializer as DRFSerializer
 
@@ -85,7 +85,7 @@ class Layout(object):
         :param size: 'small', 'large' or ''
         :param header_classes: 'bg-info', ..., or ''
         """
-        self.rows: List[Row] = rows or []
+        self.rows: Iterable[Row] = rows or []
         self.columns = columns
         self.size = size
         self.header_classes = header_classes
