@@ -19,14 +19,6 @@ class DFRouter(DefaultRouter):
         if id(viewset) in self.single_record_registrations:
             # these routes are copied from SimpleRouter, but modified so that they don't ask for a parameter
             return [
-                # Dynamically generated list routes. Generated using
-                # @action(detail=False) decorator on methods of the viewset.
-                DynamicRoute(
-                    url=r"^{prefix}/{url_path}{trailing_slash}$",
-                    name="{basename}-{url_name}",
-                    detail=False,
-                    initkwargs={},
-                ),
                 Route(
                     url=r"^{prefix}{trailing_slash}$",
                     mapping={
@@ -39,14 +31,6 @@ class DFRouter(DefaultRouter):
                     name="{basename}-detail",
                     detail=True,
                     initkwargs={"suffix": "Instance"},
-                ),
-                # Dynamically generated detail routes. Generated using
-                # @action(detail=True) decorator on methods of the viewset.
-                DynamicRoute(
-                    url=r"^{prefix}/{lookup}/{url_path}{trailing_slash}$",
-                    name="{basename}-{url_name}",
-                    detail=True,
-                    initkwargs={},
                 ),
             ]
         return super().get_routes(viewset)
