@@ -1,7 +1,6 @@
 from typing import Optional, Set
 
-from rest_framework.routers import DefaultRouter, DynamicRoute, Route
-
+from rest_framework.routers import DefaultRouter, Route, DynamicRoute
 from dynamicforms.viewsets import SingleRecordViewSet
 
 
