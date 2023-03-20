@@ -124,7 +124,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   async getUXDefinition(pkValue: APIConsumer.PKValueType, isTable: boolean): Promise<APIConsumer.UXDefinition> {
     let url = this.baseURL;
-    if (!isTable) url += `/${pkValue}`;
+    if (!isTable && pkValue) url += `/${pkValue}`;
     return this.fetch(`${url}.componentdef`, isTable);
   }
 
@@ -202,7 +202,9 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
   }
 
   get pkValue() {
-    return this.requestedPKValue === 'new' ? 'new' : (this.formData || {})[this.pkName];
+    return this.requestedPKValue === 'new' || this.requestedPKValue == null ?
+      this.requestedPKValue :
+      (this.formData || {})[this.pkName];
   }
 
   async delete() {
@@ -217,14 +219,13 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
   }
 
   async saveForm(refresh: boolean = true) {
-    let url = `${this.baseURL}/`;
     let res;
 
-    if (this.pkValue !== 'new') {
-      url += `${this.pkValue}/`;
-      res = await apiClient.put(url, this.formData);
+    if (this.pkValue !== 'new' && this.pkValue) {
+      res = await apiClient.put(`${this.baseURL}/${this.pkValue}/`, this.formData);
     } else {
-      res = await apiClient.post(url, this.formData);
+      // this.pkValue might be new or null for SingleRecordViewSets
+      res = await apiClient.post(`${this.baseURL}${this.pkValue ? '/' : ''}`, this.formData);
     }
 
     if (refresh) {
@@ -246,10 +247,12 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     const resultAction = await dfModal.fromFormDefinition(formDef);
     let error = {};
     if (resultAction.action.name === 'submit') {
-      await this.saveForm(refresh).catch((data) => {
+      try {
+        await this.saveForm(refresh);
+      } catch (err: any) {
         // Include form error and field errors
-        error = { ...data.response.data };
-      });
+        error = { ...err?.response?.data };
+      }
     } else if (resultAction.action.name === 'delete_dlg') {
       await this.delete().catch((data) => {
         // Include form error and field errors

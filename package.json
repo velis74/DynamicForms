@@ -1,6 +1,6 @@
 {
   "name": "dynamicforms",
-  "version": "0.7.21",
+  "version": "0.7.30",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
@@ -59,7 +59,7 @@
     "vue": "^3.2.45",
     "vue-datetime3": "^1.0.2",
     "vue-ionicon": "^2.1.0",
-    "vue-multiselect": "^3.0.0-alpha.2",
+    "vue-multiselect": "^3.0.0-beta.1",
     "vue-observe-visibility": "^1.0.0",
     "vue-router": "^4.1.6",
     "vuetify": "^3.0.1",

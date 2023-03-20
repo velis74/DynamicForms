@@ -11,23 +11,10 @@
  */
 import DisplayMode from '../../classes/display-mode';
 
-import RenderParams, { RenderParamsJSON } from './field-render-params';
-
-export interface FormFieldJSON {
-  name: string;
-  label: string;
-  alignment: 'left' | 'right' | 'center' | 'decimal';
-  visibility: { form: number, table: number };
-  render_params: RenderParamsJSON;
-  read_only: true | any; // boolean
-  choices: unknown;
-  width_classes: string; // bootstrap column width classes TODO: should be changed to something platform agnostic
-  help_text: string;
-  allow_null: boolean;
-}
+import RenderParams from './field-render-params';
 
 export default class FormField {
-  private fieldDef!: FormFieldJSON;
+  private fieldDef!: DfForm.FormFieldJSON;
 
   public name!: string;
 
@@ -45,7 +32,9 @@ export default class FormField {
 
   public helpText!: string;
 
-  public choices!: unknown;
+  public choices!: DfForm.ChoicesJSON[];
+
+  public ajax!: DfForm.AJAXJSON;
 
   public widthClasses!: string;
 
@@ -53,7 +42,7 @@ export default class FormField {
 
   public renderKey: number;
 
-  constructor(fieldDef: FormFieldJSON) {
+  constructor(fieldDef: DfForm.FormFieldJSON) {
     this.renderKey = 0; // used in row.vue
     // Below we circumvent having to declare an internal variable which property getters would be reading from
     Object.defineProperties(this, {
@@ -73,6 +62,7 @@ export default class FormField {
       readOnly: { get() { return fieldDef.read_only === true; }, enumerable: true },
       componentName: { get() { return fieldDef.render_params.form_component_name; }, enumerable: true },
       choices: { get() { return fieldDef.choices; }, enumerable: true },
+      ajax: { get() { return fieldDef.ajax; }, enumerable: true },
       widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },
       helpText: { get() { return fieldDef.help_text; }, enumerable: true },
       allowNull: { get() { return fieldDef.allow_null; }, enumerable: true },

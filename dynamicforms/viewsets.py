@@ -53,8 +53,13 @@ class NewMixin(object):
             return super().retrieve(request, *args, **kwargs)
         except Http404:
             lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-            if filter_kwargs.get('pk', None) == 'new':
+            filter_kwargs = {
+                self.lookup_field: self.kwargs.get(
+                    # if this is a SingleRecordViewSet, our router may have created routes where pk won't even be there
+                    lookup_url_kwarg, 'new' if isinstance(self, SingleRecordViewSet) else None
+                )
+            }
+            if filter_kwargs.get(self.lookup_field, None) == 'new':
                 instance = self.new_object()
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)

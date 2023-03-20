@@ -21,9 +21,15 @@
       :taggable="taggable"
       :aria-describedby="field.helpText && showLabelOrHelpText ? field.name + '-help' : null"
       :placeholder="field.placeholder"
+
+      :options-limit="limit"
+      :loading="loading"
+      :internal-search="!field.ajax"
+
       @select="onSelect"
       @input="onInput"
       @tag="onTag"
+      @search-change="onSearch"
     />
   </vuetify-input>
 </template>
@@ -31,10 +37,12 @@
 <script lang="ts">
 /**
  * TODO: the field does not look like a Vuetify field: label is on left
+ * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
 import { defineComponent } from 'vue';
 import Multiselect from 'vue-multiselect';
 
+import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
@@ -46,30 +54,36 @@ export default /* #__PURE__ */ defineComponent({
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {
-      selected: null,
+      selected: null as DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null,
       disabled: false,
       required: false,
+      loadedChoices: [] as DfForm.ChoicesJSON[],
+      loading: false,
+      limit: 99999,
     };
   },
   computed: {
-    options() { return this.field.choices; },
+    options() { return this.field.choices || this.loadedChoices; },
     options_json() { return JSON.stringify(this.options); },
     multiple() { return this.field.renderParams.multiple; },
     taggable() { return this.field.renderParams.allowTags; },
     result: {
       get() {
         if (this.selected) {
-          return this.multiple ? this.selected.map((i) => i.id) : this.selected.id;
+          return this.multiple ?
+            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
+            (<DfForm.ChoicesJSON> this.selected).id;
         }
         return '';
       },
-      set(value) {
+      set(value: any) {
         if (value != null) {
           if (this.multiple) {
             const val = value.constructor === Array ? value.map(String) : value.split(',');
             this.selected = this.options.filter((o) => val.includes(`${o.id}`));
           } else {
-            this.selected = this.options.find((o) => String(o.id) === String(value));
+            const fnd = this.options.find((o) => String(o.id) === String(value));
+            this.selected = fnd || null;
           }
         } else {
           this.selected = null;
@@ -93,18 +107,37 @@ export default /* #__PURE__ */ defineComponent({
     onSelect() {
       this.value = this.result;
     },
-    onInput(inp) {
+    onInput(inp: any) {
       if (inp === null) {
         this.value = this.result;
       }
     },
-    onTag(newTag) {
+    onTag(newTag: string) {
       const newTagObj = { id: newTag, text: newTag };
       this.field.choices.push(newTagObj);
       if (this.multiple) {
-        this.selected.push(newTagObj);
+        (<DfForm.ChoicesJSON[]> this.selected).push(newTagObj);
       } else {
         this.selected = newTagObj;
+      }
+    },
+    async onSearch(query: string) {
+      const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
+      const req = `${this.field.ajax.url_reverse}?${this.field.ajax.query_field}=${query}` +
+        `${this.field.ajax.additional_parameters ? `&${this.field.ajax.additional_parameters}` : ''}`;
+      this.loading = true;
+      try {
+        let loadedData = (await apiClient.get(req, { headers, params: this.filterData })).data;
+        if (Array.isArray(loadedData)) {
+          // Pagination was not delivered. We got a plain array
+          loadedData = { results: loadedData, next: null };
+        }
+        this.loadedChoices = loadedData.results.map(
+          (item: { id: any, full_name: string }) => ({ id: item.id, text: item.full_name }),
+        );
+        this.limit = loadedData.next ? this.loadedChoices.length : 99999;
+      } finally {
+        this.loading = false;
       }
     },
   },
