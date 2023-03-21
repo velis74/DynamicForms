@@ -6,7 +6,11 @@ let FormLayoutClass; // hoisting required: so we can use the class before it's e
 function Column(layoutRow, def, fields) {
   const res = fields[def.field];
   let renderKey = 0;
-  Object.defineProperty(res, 'layoutFieldComponentName', { get() { return 'FormField'; }, enumerable: true });
+  Object.defineProperty(res, 'layoutFieldComponentName', {
+    get() { return 'FormField'; },
+    enumerable: true,
+    configurable: true,
+  });
   Object.defineProperty(res, 'renderKey', {
     get() { return renderKey; },
     set(value) {
@@ -19,8 +23,19 @@ function Column(layoutRow, def, fields) {
 }
 
 class Group extends Column {
+  public layoutFieldComponentName!: string;
+
+  public title!: string;
+
+  public layout!: typeof FormLayoutClass;
+
   constructor(layoutRow, def, fields) {
     super(layoutRow, def, fields);
+    Object.defineProperty(this, 'layoutFieldComponentName', {
+      get() { return 'FormFieldGroup'; },
+      enumerable: true,
+      configurable: true,
+    });
     Object.defineProperty(this, 'title', { get() { return def.title; }, enumerable: true });
     Object.defineProperty(this, 'layout', { get() { return new FormLayoutClass(def.layout); }, enumerable: true });
     // footer=self.footer, title=self.title or sub_serializer.label,
@@ -44,6 +59,8 @@ function FormColumn(layoutRow, columnDef, fields) {
 }
 
 class LayoutRow {
+  public renderKey!: number;
+
   constructor(rowDef, fields) {
     this.columns = rowDef.columns.map((column) => new FormColumn(this, column, fields));
     this.renderKey = 0;
