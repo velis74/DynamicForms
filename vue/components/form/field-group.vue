@@ -48,7 +48,6 @@ export default /* #__PURE__ */ defineComponent({
       handler(newValue: any, oldValue: any) {
         this.payload[this.field.name] = this.formPayload;
 
-        console.log(this.formPayload);
         this.dispatchAction(
           this.actions.valueChanged,
           { field: this.field.name, oldValue, newValue },
