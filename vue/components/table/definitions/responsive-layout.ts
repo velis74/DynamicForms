@@ -25,9 +25,11 @@ export interface ResponsiveTableLayoutsDefinition {
 }
 
 export class ColumnGroupRow {
-  constructor(fieldsDef, renderedColumns) {
+  fields: TableColumn[];
+
+  constructor(fieldsDef: string | string[], renderedColumns: IndexedArray<TableColumn>) {
     const fields = Array.isArray(fieldsDef) ? fieldsDef : [fieldsDef];
-    this.fields = fields.map((field) => {
+    this.fields = fields.map((field: string) => {
       const column = renderedColumns[field];
       if (column === undefined) {
         console.error(`Column ${field} does not exist`, renderedColumns);
@@ -43,14 +45,15 @@ export class ColumnGroup extends TableColumn {
 
   fields!: TableColumn[];
 
-  constructor(layout, columnDef, renderedColumns) {
+  constructor(layout: ResponsiveLayout, columnDef: string[], renderedColumns: IndexedArray<TableColumn>) {
     super({
       name: `ColumnGroup${layout.columns.length}`,
       label: '',
       alignment: 'left',
       ordering: '',
-      visibility: { table: DisplayMode.FULL },
-      render_params: { table: '#ColumnGroup' },
+      visibility: { table: DisplayMode.FULL, form: DisplayMode.SUPPRESS },
+      render_params: <DfForm.RenderParamsJSON><unknown>{ table: '#ColumnGroup' },
+      table_classes: '',
     }, []);
 
     this.setLayout(layout);
@@ -59,8 +62,8 @@ export class ColumnGroup extends TableColumn {
     Object.defineProperties(this, {
       fields: {
         get() {
-          return this.rows.reduce((result, row) => {
-            row.fields.forEach((field) => result.push(field));
+          return this.rows.reduce((result: TableColumn[], row: ColumnGroupRow) => {
+            row.fields.forEach((field: TableColumn) => result.push(field));
             return result;
           }, []);
         },
@@ -79,23 +82,25 @@ export class ResponsiveLayout implements DfTable.ResponsiveLayoutInterface {
 
   constructor(definition: ResponsiveTableLayoutDefinition, renderedColumns: IndexedArray<TableColumn>) {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
-    this.columns = new IndexedArray([]);
-    columnsDef.forEach((column) => {
+    this.columns = new IndexedArray<TableColumn>([]);
+    columnsDef.forEach((column: string[]) => {
       this.columns.push(
         column.length === 1 ? renderedColumns[column[0]] : new ColumnGroup(this, column, renderedColumns),
       );
     });
-    this.rows = Math.max(1, ...this.columns.map((col) => (col.rows ? col.rows.length : 1)));
+    this.rows = Math.max(1, ...this.columns.map(
+      (col: TableColumn | ColumnGroup) => (col instanceof ColumnGroup ? col.rows.length : 1),
+    ));
     this.totalWidth = 0;
 
     // add non-listed columns
     if (definition.autoAddNonListedColumns) {
-      const usedColumns = new Set();
+      const usedColumns = new Set<string>();
       const allColumns = new Set(renderedColumns.map((col) => col.name));
-      this.columns.forEach((columnGroup) => {
+      this.columns.forEach((columnGroup: TableColumn | ColumnGroup) => {
         if (columnGroup instanceof ColumnGroup) {
-          columnGroup.rows.forEach((row) => {
-            row.fields.forEach((column) => usedColumns.add(column.name));
+          columnGroup.rows.forEach((row: ColumnGroupRow) => {
+            row.fields.forEach((column: TableColumn) => usedColumns.add(column.name));
           });
         } else {
           usedColumns.add(columnGroup.name);

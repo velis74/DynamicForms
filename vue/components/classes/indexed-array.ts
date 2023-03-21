@@ -6,14 +6,14 @@
  * Motivation for this class is primarily the faster access of array items by their name.
  * The reason this does not extend Array is that Vue seems to redeclare every Array descendant as plain Array
  */
-interface ItemWithName {name: string;}
+interface ItemWithName { name: string; }
 
 export default class IndexedArray<IndexedItem extends ItemWithName> {
   items!: IndexedItem[];
 
   length!: number;
 
-  // [key: string]: IndexedItem;
+  [key: string]: IndexedItem | any; // any because I can't eliminate the other class members for the indexed access decl
 
   constructor(columns: IndexedItem[]) {
     Object.defineProperties(this, {

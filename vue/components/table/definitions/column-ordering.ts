@@ -3,7 +3,7 @@ import OrderingDirection from './column-ordering-direction';
 type TransformationFunction = (columns: any[]) => undefined;
 
 export default class ColumnOrdering {
-  direction: number; // OrderingDirection
+  direction: OrderingDirection;
 
   changeCounter: number; // TODO: Jure 2.2023 not sure it's needed any more in Vue3?
 
