@@ -12,17 +12,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
-import { DfForm, DfTable } from '../../components/public';
 
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';
 // import actionHandlerMixin from '../mixins/actionHandlerMixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'BootstrapViewMode',
-  components: { DfForm, DfTable },
   emits: ['title-change', 'load-route'],
   data() {
     return {
@@ -70,8 +70,7 @@ export default {
           await this.consumer.getFullDefinition();
           this.data = this.consumer.tableDefinition;
         } else if (this.showForm) {
-          await this.consumer.getFormDefinition('new');
-          this.data = this.consumer.formDefinition;
+          this.data = await this.consumer.getFormDefinition('new');
         } /* else {
           TODO: uncomment when modal has fromURL() method
           await DynamicForms.dialog.fromURL(`${this.url}/new.componentdef`, 'new', this.uuid);
@@ -82,5 +81,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

@@ -3,21 +3,18 @@ from typing import List, Union
 
 import pytz
 from django.conf import settings
-from django.contrib.auth.views import redirect_to_login
 from django.db import models
 from django.http import Http404
 from django.utils.dateparse import (
     datetime_re, iso8601_duration_re, parse_datetime, parse_duration, parse_time, standard_duration_re, time_re
 )
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
-from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms.fields import BooleanField
-from .renderers import TemplateHTMLRenderer
 from .settings import DYNAMICFORMS
 
 
@@ -56,8 +53,13 @@ class NewMixin(object):
             return super().retrieve(request, *args, **kwargs)
         except Http404:
             lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-            if filter_kwargs.get('pk', None) == 'new':
+            filter_kwargs = {
+                self.lookup_field: self.kwargs.get(
+                    # if this is a SingleRecordViewSet, our router may have created routes where pk won't even be there
+                    lookup_url_kwarg, 'new' if isinstance(self, SingleRecordViewSet) else None
+                )
+            }
+            if filter_kwargs.get(self.lookup_field, None) == 'new':
                 instance = self.new_object()
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
@@ -145,57 +147,6 @@ class TemplateRendererMixin():
             # If we don't set this META, django won't recognise our CSRF token
             request.META['HTTP_X_CSRFTOKEN'] = request.POST['csrfmiddlewaretoken']
         return super().initialize_request(request, *args, **kwargs)
-
-    def finalize_response(self, request, response, *args, **kwargs):
-        if not isinstance(response, Response):
-            return response
-
-        res = super().finalize_response(request, response, *args, **kwargs)
-
-        def get_query_params():
-            if request.query_params:
-                return '?' + '&'.join(['%s=%s' % (key, value) for key, value in request.query_params.items()])
-            return ''
-
-        if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
-            if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
-                if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
-                        isinstance(res.data['results'], (ReturnList, ReturnDict)):
-                    serializer = res.data['results'].serializer
-                else:
-                    try:
-                        serializer = res.data.serializer
-                    except AttributeError:
-                        # This happens when there's a ValidationError on LIST command
-                        res.accepted_renderer = JSONRenderer()
-                        return res
-
-                if isinstance(serializer, ListSerializer):
-                    serializer.child.render_type = self.render_type
-                else:
-                    serializer.render_type = self.render_type
-
-                if self.render_type in ('table', 'table rows'):
-                    serializer.data_template = self.template_name
-                elif self.render_type == 'dialog':
-                    serializer.data_template = DYNAMICFORMS.modal_dialog_rest_template
-                    res.template_name = DYNAMICFORMS.modal_dialog_rest_template
-                elif self.render_type == 'form':
-                    serializer.data_template = res.data.serializer.template_name
-                    res.template_name = res.data.serializer.template_name
-                else:
-                    if isinstance(serializer, ListSerializer):
-                        serializer.child.render_type = 'table'
-                        serializer.child.data_template = self.template_name
-                    else:
-                        serializer.render_type = 'form'
-                        serializer.data_template = serializer.template_name
-            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
-                    self.render_type != 'dialog':
-                # TODO: We should show a message here that user is not authorized for this action (only for 403)
-                if not request.is_ajax():
-                    res = redirect_to_login(request.path_info + get_query_params())
-        return res
 
 
 class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.ModelViewSet):

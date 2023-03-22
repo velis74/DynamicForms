@@ -3,16 +3,16 @@
     <component :is="renderComponent" v-bind="renderComponentData"/>
   </div>
 </template>
-<script>
-import { DfForm, DfModal, DfTable } from '../public';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import RowTypesEnum from '../table/row-types-enum';
 
 import APIConsumerLogic from './api-consumer-logic';
 import ComponentDisplay from './component-display';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'APIConsumer',
-  components: { DfModal, DfForm, DfTable },
   props: {
     /**
      * Object containing the properties required to render at least one of the display components
@@ -48,16 +48,6 @@ export default {
       }
     },
   },
-  watch: {
-    'consumer.ordering': {
-      handler() {
-        if (this.orderingCounter !== this.consumer.ordering.counter.counter) {
-          this.consumer.reload();
-        }
-      },
-      deep: true,
-    },
-  },
   methods: {
     actionDelete(actionData, payload) {
       this.consumer.deleteRow(payload);
@@ -68,22 +58,24 @@ export default {
       return true;
     },
     async actionAdd() {
-      await this.consumer.dialogForm('new', this.$dfModal);
+      await this.consumer.dialogForm('new');
       return true;
     },
     async actionEdit(actionData, payload, extraData) {
       if (extraData.rowType !== RowTypesEnum.Data) return false;
-      await this.consumer.dialogForm(payload[this.consumer.pkName], this.$dfModal);
+      await this.consumer.dialogForm(payload[this.consumer.pkName]);
       return true;
     },
     actionSort(action, payload, extraData) {
       // This is the default handler for ordering
       if (extraData.rowType === RowTypesEnum.Label && action.position === 'ROW_CLICK' && extraData.column) {
+        const oldChangeCounter = extraData.column.ordering.changeCounter;
         extraData.column.ordering.handleColumnHeaderClick(extraData.event);
+        if (oldChangeCounter !== extraData.column.ordering.changeCounter) this.consumer.reload();
         return true;
       }
       return false;
     },
   },
-};
+});
 </script>

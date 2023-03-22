@@ -429,7 +429,7 @@ class Actions(object):
             self.actions = []
             return
 
-        self.actions = list(args)  # type: List[ActionBase]
+        self.actions: List[ActionBase] = list(args)
         if add_default_crud:
             self.actions.append(
                 TableAction(TablePosition.HEADER, _('Add'), title=_('Add new record'), name='add',

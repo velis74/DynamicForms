@@ -1,7 +1,7 @@
 <template>
   <div
     ref="column"
-    :class="`${columnClass} ${column.name} text-${column.align} ${customClass(column)}`"
+    :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
     @click.stop="(event) => dispatchAction(actions.rowClick, { column, event, rowType })"
     @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { column, event, rowType })"
   >
@@ -9,7 +9,6 @@
       <FormField
         v-if="filterRow.formFieldInstance"
         :field="filterRow.formFieldInstance"
-        :payload="rowData"
         :actions="actions"
         :errors="{}"
         style="padding: 0; margin: 0;"
@@ -56,47 +55,53 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
-import FormField from '../form/field';
-import DfActions from '../public/df-actions';
+import FormField from '../form/field.vue';
 
 import * as TableCells from './cell-renderers';
-import ColumnGroup from './column-group';
+import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
-import OrderingIndicator from './ordering-indicator';
+import OrderingIndicator from './ordering-indicator.vue';
 import RenderMeasured from './render-measure';
-import RowTypesMixin from './row-types-mixin';
+import RowTypesEnum from './row-types-enum';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericColumn',
-  components: { ColumnGroup, OrderingIndicator, DfActions, FormField, ...TableCells },
-  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
+  components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
+  mixins: [RenderMeasured, ActionHandlerMixin],
+  provide() {
+    return { payload: computed(() => this.rowData) };
+  },
   props: {
     column: { type: TableColumn, required: true },
     rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterRow: { type: TableColumn, default: null },
+    rowType: RowTypesEnum.rowTypeProp(),
   },
   computed: {
+    thead() { return RowTypesEnum.isTHead(this.rowType); },
     columnClass() {
       return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col';
     },
   },
   methods: {
-    onMeasure(refName, maxWidth) {
+    onMeasure(refName: string, maxWidth: number) {
       if (refName === 'column') {
         this.column.setMaxWidth(maxWidth);
       }
     },
-    customClass(column) {
-      let res = column.CSSClass;
-      if (this.thead) res = `${res} ${column.CSSClassHead}`.trim();
+    customClass() {
+      let res = this.column.CSSClass;
+      if (this.thead) res = `${res} ${this.column.CSSClassHead}`.trim();
       return res;
     },
   },
-};
+});
 </script>
 
 <style scoped>

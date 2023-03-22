@@ -88,5 +88,7 @@ class AllowTagsMixin(object):
             for item in value:
                 if item not in self.choices.keys():
                     self.grouped_choices[item] = item
+        elif isinstance(value, str) and self.allow_tags and value not in self.choices.keys():
+            self.grouped_choices[value] = value
 
         return super().iter_options_bound(value)

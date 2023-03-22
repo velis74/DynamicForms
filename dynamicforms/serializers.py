@@ -86,6 +86,8 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         Returns serializer for filter row in table
         :return:  Serializer
         """
+        if self.view_mode == ViewModeSerializer.ViewMode.FORM:
+            return None
         if getattr(self, '_filter_ser', None) is None:
             # noinspection PyAttributeOutsideInit
             self._filter_ser = type(self)(is_filter=True, context=getattr(self, 'context', {}))

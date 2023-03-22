@@ -6,11 +6,11 @@
     :error-count="baseBinds['error-count']"
   >
     <div style="width: 100%;">
-      <datetime
+      <Datetime
         :key="datetimeFieldKey"
         v-model="value"
         :type="inputType"
-        :phrases="{ok: gettext('Ok'), cancel: gettext('Cancel')}"
+        :phrases="{ ok: gettext('Ok'), cancel: gettext('Cancel') }"
         :format="displayFormat"
         style="float: left; width: 85%; border: 1px solid #e8e8e8; height: 2rem;"
         input-style="vertical-align: sub; width: 100%;"
@@ -22,17 +22,20 @@
   </vuetify-input>
 </template>
 
-<script>
+<script lang="ts">
+import 'vue-datetime3/dist/style.css';
+
 import { DateTime } from 'luxon';
-import { Datetime } from 'vue-datetime';
+import { defineComponent } from 'vue';
+import { Datetime } from 'vue-datetime3';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import InputClearButton from './clear-input-button';
-import VuetifyInput from './input-vuetify';
+import InputClearButton from './clear-input-button.vue';
+import VuetifyInput from './input-vuetify.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DDatetime',
   components: { Datetime, VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
@@ -44,14 +47,14 @@ export default {
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() { return this.payload.value; },
-      set: function set(newVal) {
+      get: function get() { return this.modelValue; },
+      set: function set(newVal: any) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign
           newVal = this.inputType === 'date' ?
             DateTime.fromISO(newVal).toFormat('yyyy-MM-dd') : DateTime.fromISO(newVal).toFormat('HH:mm:ss');
         }
-        this.payload.setValue(newVal || null);
+        this.$emit('update:modelValue', newVal);
       },
     },
     displayFormat() {
@@ -66,12 +69,10 @@ export default {
       this.datetimeFieldKey = Math.round(Math.random() * 1000);
     },
   },
-};
+});
 </script>
 
 <style>
-@import '~vue-datetime/dist/vue-datetime.css';
-
 .vdatetime-calendar__month {
   white-space: normal;
 }

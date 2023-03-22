@@ -16,7 +16,7 @@
       v-for="column in renderedColumns.items"
       :key="column.name"
       :column="column"
-      :row-data="filterDefinition ? filterDefinition.payload : rowData"
+      :row-data="payload"
       :row-type="rowType"
       :actions="actions"
       :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
@@ -24,7 +24,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { ObserveVisibility } from 'vue-observe-visibility';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
@@ -34,20 +35,22 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render-measure';
-import RowTypesMixin from './row-types-mixin';
+import RowTypesEnum from './row-types-enum';
 
-export default {
+export default defineComponent({
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
-  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
+  mixins: [RenderMeasured, ActionHandlerMixin],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
+    rowType: RowTypesEnum.rowTypeProp(),
   },
   computed: {
+    thead() { return RowTypesEnum.isTHead(this.rowType); },
     TableColumn() { return TableColumn; },
     rowInfiniteStyle() {
       // For rows not currently rendered, we set a fixed width & height. Height is 10 if it hadn't been computed yet
@@ -61,11 +64,11 @@ export default {
     },
   },
   methods: {
-    onMeasure(refName, maxWidth, maxHeight) {
+    onMeasure(refName: string, maxWidth: number, maxHeight: number) {
       if (this.rowData.dfControlStructure.isShowing) {
         this.rowData.setMeasuredHeight(maxHeight);
       }
     },
   },
-};
+});
 </script>

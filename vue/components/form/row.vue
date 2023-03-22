@@ -1,28 +1,28 @@
 <template>
   <v-row v-if="anyFieldVisible" align="end">
     <slot name="before-columns"/>
-    <FormField
+    <component
       :is="column.layoutFieldComponentName"
       v-for="(column, idx) in renderableColumns"
       :key="`${idx}${column.renderKey}`"
-      :field="column"
-      :payload="payload"
-      :errors="errors"
+      v-bind="columnData(column)"
     />
     <slot name="after-columns"/>
   </v-row>
 </template>
 
-<script>
-import FormPayload from './definitions/form-payload';
-import FormField from './field';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import FormFieldGroup from './field-group.vue';
+import FormField from './field.vue';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'FormRow',
-  components: { FormField },
+  components: { FormField, FormFieldGroup },
+  inject: ['actions', 'payload'],
   props: {
     columns: { type: Array, required: true },
-    payload: { type: FormPayload, default: null },
     errors: { type: Object, default: () => {} },
     anyFieldVisible: { type: Boolean, required: true },
   },
@@ -32,9 +32,15 @@ export default {
       return this.columns.filter((col) => col.isVisible);
     },
   },
-};
+  methods: {
+    columnData(col: any) {
+      return {
+        field: col,
+        title: col.title,
+        errors: this.errors,
+        actions: this.actions,
+      };
+    },
+  },
+});
 </script>
-
-<style scoped>
-
-</style>

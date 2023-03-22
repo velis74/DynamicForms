@@ -1,5 +1,5 @@
 <template>
-  <svg v-if="ordering.isOrderable" :key="drawSeq()" viewBox="0 -5 100 110" width="1em" height="1.1em">
+  <svg v-if="ordering.isOrderable" :key="ordering.changeCounter" viewBox="0 -5 100 110" width="1em" height="1.1em">
     <g stroke="currentColor" fill="currentColor" stroke-width="4">
       <g v-if="showSegmentNo()">
         <path v-if="showArrowUp()" d="M10 35 A45 30 0 0 1 90 35L 50 -5, 10 35"/>
@@ -17,20 +17,20 @@
   </svg>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ColumnOrdering from './definitions/column-ordering';
 import OrderingDirection from './definitions/column-ordering-direction';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'OrderingIndicator',
   props: { ordering: { type: ColumnOrdering, required: true } },
   methods: {
-    orderClick(event) { this.ordering.handleColumnHeaderClick(event); },
     numberPos() { return this.ordering.direction === OrderingDirection.ASC ? 65 : 35; },
     showArrowUp() { return !this.ordering.isOrdered || this.ordering.direction !== OrderingDirection.DESC; },
     showArrowDown() { return !this.ordering.isOrdered || this.ordering.direction !== OrderingDirection.ASC; },
     showSegmentNo() { return this.ordering.isOrdered && this.ordering.direction !== OrderingDirection.UNORDERED; },
-    drawSeq() { return this.ordering.changeCounter.counter; },
   },
-};
+});
 </script>

@@ -24,15 +24,17 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'LoadingIndicator',
   props: {
     loading: { type: Boolean, required: true },
     label: { type: String, default: null },
     progress: { type: Number, default: null },
   },
-};
+});
 </script>
 
 <style scoped>

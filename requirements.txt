@@ -1,7 +1,7 @@
 six
 pytz
 coreapi>=1.32
-django>=2,<=4.0
+django>=2
 djangorestframework>=3.14
 django-filter
 django-enumfields >= 2.1.1

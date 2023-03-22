@@ -3,6 +3,7 @@
     :id="field.uuid"
     v-model="value"
     :type="inputType"
+    variant="underlined"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
     :placeholder="field.placeholder"
@@ -15,15 +16,18 @@
     :disabled="field.readOnly"
 
     v-bind="baseBinds"
+    :messages="[]"
   />
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DInput',
   mixins: [InputBase, TranslationsMixin],
   computed: {
@@ -50,5 +54,5 @@ export default {
       return res;
     },
   },
-};
+});
 </script>

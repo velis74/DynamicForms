@@ -6,42 +6,49 @@
       <v-btn @click="btnClick('nested', 1)">Nested</v-btn>
     </v-row>
     <df-modal v-model="showTemplate">
-      <div slot="title">Modal as template</div>
-      <div slot="body">
-        <p>This modal is created as a template in this demo page.</p>
-        <p>
-          It should be trivial to insert any markup you wish.<br>
-          <b>This bold</b> is just for testing whether everything works.<br>
-          This counter too: {{ counter }}<br>
-        </p>
-      </div>
-      <div slot="actions">
-        <df-actions :actions="templateDialogActions"/>
-      </div>
+      <template #title>
+        <div>Modal as template</div>
+      </template>
+      <template #body>
+        <div>
+          <p>This modal is created as a template in this demo page.</p>
+          <p>
+            It should be trivial to insert any markup you wish.<br>
+            <b>This bold</b> is just for testing whether everything works.<br>
+            This counter too: {{ counter }}<br>
+          </p>
+        </div>
+      </template>
+      <template #actions>
+        <div>
+          <df-actions :actions="templateDialogActions"/>
+        </div>
+      </template>
     </df-modal>
   </div>
 </template>
 
-<script>
-import Action from '../components/actions/action';
-import FilteredActions from '../components/actions/filtered-actions';
-import DialogSize from '../components/classes/dialog-size';
-import { DfModal } from '../components/modal';
-import { DfActions } from '../components/public';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import Action, { defaultActionHandler } from '../components/actions/action';
+import FilteredActions from '../components/actions/filtered-actions';
+import DialogSize from '../components/modal/dialog-size';
+import dfModal from '../components/modal/modal-view-api';
+
+export default /* #__PURE__ */ defineComponent({
   name: 'ModalDemo',
-  components: { DfModal, DfActions },
   data() {
     return {
       showTemplate: false,
-      templateDialogActions: new FilteredActions([Action.closeAction()]),
+      templateDialogActions: new FilteredActions(
+        [Action.closeAction({ actionClose: this.actionClose as Actions.ActionHandler })],
+      ),
       counter: 1,
     };
   },
-  computed: { DialogSize() { return DialogSize; } },
   methods: {
-    async btnClick(which, level) {
+    async btnClick(which: string, level: number) {
       switch (which) {
       case 'template':
         this.showTemplate = !this.showTemplate;
@@ -53,17 +60,17 @@ export default {
         }
         break;
       case 'procedural': {
-        const res = await this.$dfModal.yesNo(
+        const res = await dfModal.yesNo(
           'Procedural modal dialog',
           'This modal was shown by calling a method from your code.\nPlease click one of the buttons.\n' +
-          'In the mean time, the code is waiting and will proceed execution when you decide on one of the buttons',
+          'In the mean time, the code is waiting and will proceed with execution when you decide on one of the buttons',
         );
-        await this.$dfModal.message('Result', `You clicked the "${res.action.label}" button`);
+        await dfModal.message('Result', `You clicked the "${res.action.label}" button`);
         break;
       }
       case 'nested': {
         const suggestedSize = [DialogSize.SMALL, DialogSize.DEFAULT, DialogSize.LARGE][Math.floor(Math.random() * 3)];
-        await this.$dfModal.message(
+        await dfModal.message(
           'Nested dialogs example',
           `This is dialog nesting ${level}\n` +
           'Click "Nest" to generate another dialog',
@@ -73,15 +80,12 @@ export default {
               name: 'nest',
               label: 'Nest',
               position: 'FORM_FOOTER',
-              handlerWithPayload: {
-                handler: () => {
-                  this.btnClick('nested', level + 1);
-                  return true;
-                },
-                payload: null,
+              actionNest: () => {
+                this.btnClick('nested', level + 1);
+                return true;
               },
             }),
-            Action.closeAction(),
+            Action.closeAction({ actionClose: defaultActionHandler }),
           ]),
           { size: suggestedSize },
         );
@@ -91,11 +95,11 @@ export default {
         break;
       }
     },
-    actionClose() { // action, payload, extraData) {
+    actionClose(): boolean { // action, payload, extraData) {
       // handles the close action of the template-based dialog
       this.showTemplate = false;
       return true;
     },
   },
-};
+});
 </script>

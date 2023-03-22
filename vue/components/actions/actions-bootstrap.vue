@@ -14,30 +14,32 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import IonIcon from 'vue-ionicon';
 
+import Action from './action';
 import ActionsMixin from './actions-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'BootstrapActions',
   components: { IonIcon },
   mixins: [ActionsMixin],
   methods: {
-    getVisibilityClass(visible) {
+    getVisibilityClass(visible: boolean) {
       return visible ? 'd-inline-block' : 'd-none';
     },
-    iconClass(action) {
+    iconClass(action: Action) {
       return this.getVisibilityClass(this.displayIcon(action));
     },
-    labelClass(action) {
+    labelClass(action: Action) {
       return this.getVisibilityClass(this.displayLabel(action));
     },
-    marginClass(action) {
+    marginClass(action: Action) {
       return this.getVisibilityClass(this.displayIcon(action) && this.displayLabel(action));
     },
   },
-};
+});
 </script>
 
 <style scoped>

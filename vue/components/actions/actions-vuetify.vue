@@ -1,11 +1,12 @@
 <template>
   <div v-if="actions != null && actions.length > 0" class="text-end">
     <v-btn
-      v-for="(action,idx) in actions"
+      v-for="(action, idx) in actions"
       :key="idx"
+      variant="tonal"
       :elevation="0"
       :class="idx === 0 ? '' : 'ms-3'"
-      :small="isSmallSize(action)"
+      :size="isSmallSize(action) ? 'small' : 'default'"
       @click="(event) => dispatchAction(action, { event })"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
@@ -15,19 +16,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+import './actions.css';
 import IonIcon from 'vue-ionicon';
 
 import ActionHandlerMixin from './action-handler-mixin';
 import ActionsMixin from './actions-mixin';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyActions',
   components: { IonIcon },
   mixins: [ActionsMixin, ActionHandlerMixin],
-};
+});
 </script>
-
-<style scoped>
-  @import "actions.css";
-</style>

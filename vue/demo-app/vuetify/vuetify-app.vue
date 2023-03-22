@@ -17,16 +17,18 @@
 
       <v-spacer/>
 
-      <v-menu bottom right close-on-click offset-y>
-        <template #activator="{ on, attrs }">
-          <v-btn dark text color="light" v-bind="attrs" v-on="on"><span>Theme</span></v-btn>
-        </template>
-        <v-list>
-          <v-list-item v-for="theme in themes" :key="theme" @click="$emit('theme-changed', theme)">
-            <div class="text-button">{{ theme }}</div>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <template #append>
+        <v-menu bottom right close-on-click offset-y>
+          <template #activator="{ props }">
+            <v-btn dark text color="light" v-bind="props"><span>Theme</span></v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="theme in themes" :key="theme" @click="$emit('theme-changed', theme)">
+              <div class="text-button">{{ theme }}</div>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
@@ -44,24 +46,13 @@
   </v-app>
 </template>
 
-<script>
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib/framework';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
 import { ModalView } from '../../components/modal';
-import * as VuetifyComponents from '../../components/vuetify';
 
-import VuetifyViewMode from './view-mode';
-
-Object.values(VuetifyComponents).map((component) => Vue.component(component.name, component));
-Vue.component(VuetifyViewMode.name, VuetifyViewMode);
-
-Vue.use(Vuetify);
-const vuetify = new Vuetify({});
-
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyApp',
-  vuetify,
   components: { ModalView },
   props: {
     title: { type: String, required: true },
@@ -70,5 +61,5 @@ export default {
   },
   emits: ['theme-changed'],
   data: () => ({ drawer: false }),
-};
+});
 </script>

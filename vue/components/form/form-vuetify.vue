@@ -17,17 +17,17 @@
   </v-card>
 </template>
 
-<script>
-import { DfActions } from '../public';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
 import Form from './form';
-import FormLayout from './layout-vuetify';
+import FormLayout from './layout-vuetify.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyForm',
-  components: { FormLayout, DfActions },
+  components: { FormLayout },
   mixins: [Form],
-};
+});
 </script>
 
 <style>

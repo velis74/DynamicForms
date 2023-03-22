@@ -32,7 +32,7 @@
   </vuetify-input>
 </template>
 
-<script>
+<script lang="ts">
 /**
  * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
  *   is using IonIcon
@@ -43,8 +43,8 @@ import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
 
 import InputBase from './base';
-import InputClearButton from './clear-input-button';
-import VuetifyInput from './input-vuetify';
+import InputClearButton from './clear-input-button.vue';
+import VuetifyInput from './input-vuetify.vue';
 
 export default {
   name: 'DFile',

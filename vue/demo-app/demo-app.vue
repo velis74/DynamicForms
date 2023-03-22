@@ -1,70 +1,32 @@
 <template>
-  <component
-    :is="themeComponent"
+  <!-- @theme-changed="changeTheme"-->
+  <df-app
     :themes="themes"
     :examples="examples"
     :title="title"
-    @theme-changed="changeTheme"
   >
     <template #main-component>
       <router-view @title-change="setTitle"/>
     </template>
-  </component>
+  </df-app>
 </template>
-<script>
+
+<script lang="ts">
 /**
  * TODO: not all demos working yet. must port more from the old ViewMode
  * TODO: unit tests for everything. none there yet
  */
-import _ from 'lodash';
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { defineComponent } from 'vue';
 
-import APIConsumerLoader from '../components/api_consumer/api-consumer-loader';
+import routes from '../routes';
 
-import ExampleHiddenLayout from './example-hidden-layout';
-import ModalDemo from './modal-demo';
-import NamedComponentLoader from './named-component-loader';
-
-Vue.use(VueRouter);
-Vue.component(ExampleHiddenLayout.name, ExampleHiddenLayout);
-
-const routes = [
-  { title: 'Validated', path: '/validated', component: APIConsumerLoader },
-  { title: 'Hidden fields', path: '/hidden-fields', component: APIConsumerLoader },
-  { title: 'Basic fields', path: '/basic-fields', component: APIConsumerLoader },
-  { title: 'Advanced fields', path: '/advanced-fields', component: APIConsumerLoader },
-  { title: 'Page loading', path: '/page-load', component: APIConsumerLoader },
-  { title: 'Filtering', path: '/filter', component: APIConsumerLoader },
-  { title: 'Actions overview', path: '/actions-overview', component: APIConsumerLoader },
-  { title: 'Custom CSS per row', path: '/calculated-css-class-for-table-row', component: APIConsumerLoader },
-  // { path: '/single-dialog/:id', component: PageLoader, meta: { component: 'dialog', uuid: singleDlgFakeUUID } },
-  // { path: '/choice-allow-tags-fields', component: PageLoader },
-  // { path: '/calendar', component: Calendar },
-  // { path: '/documents', component: PageLoader },
-  { title: 'Modal dialogs', path: '/modal', component: ModalDemo },
-  {
-    title: 'The three view-modes',
-    path: '/view-mode',
-    component: NamedComponentLoader,
-    props: { componentName: 'ViewMode', componentNameAddTemplateName: true, componentProps: {} },
-  },
-];
-const router = new VueRouter({ routes });
-
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'DemoApp',
-  router,
-  components: {
-    // eslint-disable-next-line import/extensions
-    BootstrapApp: () => import(/* webpackChunkName: "bootstrap" */ './bootstrap/bootstrap-app.vue'),
-    // eslint-disable-next-line import/extensions
-    VuetifyApp: () => import(/* webpackChunkName: "vuetify" */ './vuetify/vuetify-app.vue'),
-  },
   data: () => ({
     title: '',
     // eslint-disable-next-line max-len
-    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ? localStorage.getItem('df-theme') : 'vuetify',
+    theme: localStorage.getItem('df-theme') && localStorage.getItem('df-theme') !== 'undefined' ?
+      localStorage.getItem('df-theme') : 'vuetify',
     themes: ['bootstrap', 'vuetify'],
     themeData: {
       bootstrap: [],
@@ -73,27 +35,20 @@ export default {
   }),
   computed: {
     examples() {
-      return routes.map((route) => ({ title: route.title, path: route.path }));
-    },
-    themeComponent() {
-      switch (this.theme) {
-      case 'bootstrap':
-        return 'BootstrapApp';
-      case 'vuetify':
-        return 'VuetifyApp';
-      default:
-        throw new Error('Unknown theme');
-      }
+      return routes.map((route) => ({ title: route.meta.title, path: route.path }));
     },
   },
+  /*
   mounted() {
     this.resetResources(null);
   },
+  */
   methods: {
     setTitle(newTitle) {
       this.title = newTitle;
       document.title = `${newTitle} - DynamicForms`;
     },
+    /*
     removeResources(theme) {
       const removed = [];
       _.forEach(Array.prototype.slice.call(document.getElementsByTagName('link')).concat(
@@ -130,6 +85,7 @@ export default {
         this.theme = newTheme;
       }
     },
+    */
   },
-};
+});
 </script>

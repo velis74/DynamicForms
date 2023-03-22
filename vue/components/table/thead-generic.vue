@@ -5,7 +5,7 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
-      :row-type="labelRowType"
+      :row-type="RowTypesEnum.Label"
     />
     <GenericTRow
       v-if="filterDefinition"
@@ -14,35 +14,40 @@
       :row-data="rowData"
       :actions="actions"
       :filter-definition="filterDefinition"
-      :row-type="filterRowType"
+      :row-type="RowTypesEnum.Filter"
     />
     <div class="df-separator"/>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import RenderMeasured from './render-measure';
-import RowTypesMixin from './row-types-mixin';
-import GenericTRow from './trow-generic';
+import RowTypesEnum from './row-types-enum';
+import GenericTRow from './trow-generic.vue';
 
-export default {
+export default /* #__PURE__ */ defineComponent({
   name: 'GenericTHead',
   components: { GenericTRow },
-  mixins: [RenderMeasured, RowTypesMixin],
+  mixins: [RenderMeasured],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     rowData: { type: TableRow, required: true },
-    actions: { type: FilteredActions, default: null },
+    actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
+    rowType: RowTypesEnum.rowTypeProp(),
   },
+  data() { return { RowTypesEnum }; },
+  computed: { thead() { return RowTypesEnum.isTHead(this.rowType); } },
   methods: {
-    onMeasure(refName, maxWidth, maxHeight) {
+    onMeasure(refName: string, maxWidth: number, maxHeight: number) {
       this.rowData.setMeasuredHeight(maxHeight);
     },
   },
-};
+});
 </script>

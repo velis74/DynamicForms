@@ -1,0 +1,47 @@
+{% load i18n dynamicforms %}
+
+{% set_var templatename=DYNAMICFORMS.template|add:'base_list.html' %}
+
+{% if serializer.render_type != 'table rows' %}
+  {% block tablestart-includes %}{% endblock %}
+  <table id="list-{{ serializer.uuid }}" class="{% extendtemplate template_name_var=templatename block="table_class" only %}">
+  <thead>
+  <tr>
+    {% table_columns_count serializer as columns_count %}
+    {# TODO: Remove "Actions" strings #}
+    {% render_table_commands serializer "thead_rowstart" %}
+    {% for column in serializer.fields.values %}
+      {% if column.display_table == DYNAMICFORMS.DisplayMode.FULL or column.display_table == DYNAMICFORMS.DisplayMode.INVISIBLE %}
+        {% set_var_conditional invisible=1 condition_var=column.display_table compare=DYNAMICFORMS.DisplayMode.INVISIBLE else_value=0 %}
+        <th {% extendtemplate template_name_var=templatename block="th_definition" invisible=invisible table_classes=column.table_classes ordering=column.ordering only %} data-field-name="{{ column.field_name }}">{{ column.label }}<span class="ordering"></span></th>
+      {% endif %}{% endfor %}
+    {% render_table_commands serializer "thead_rowend" %}
+  </tr>
+  {% if serializer.show_filter %}
+    {% render_form serializer.filter_data form_template=DYNAMICFORMS.table_filter_base_template %}
+  {% endif %}
+  </thead>
+  <tbody>
+{% endif %}
+{% include DYNAMICFORMS.table_body_base_template %}
+{% if serializer.render_type != 'table rows' %}
+  </tbody>
+  <tfoot>
+  <tr id="loading-{{ serializer.uuid }}" style="display: none">
+    <td colspan="{{ columns_count }}" align="center">Loading...</td>
+  </tr>
+  </tfoot>
+  </table>
+  {% block tableend-includes %}{% endblock %}
+  {% render_table_commands serializer "onrowclick" %}
+  {#TODO: Unit test: check if on_click & on_right_click declare properly, when table rows dynamically load#}
+  <script type="application/javascript">
+    {% if serializer.show_filter %}
+      dynamicforms.registerFilterRowKeypress("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html'%}");
+    {% endif %}
+    dynamicforms.paginatorInitTable("{{ serializer.uuid }}", "{{ link_next }}", "{{ link_prev }}");
+    dynamicforms.setRecordURL("{{ serializer.uuid }}", "{% url url_reverse|add:'-list' format='html' %}");
+    dynamicforms.getInitialOrdering("{{ serializer.uuid }}");
+    {% block scriptend-includes %}{% endblock %}
+  </script>
+{% endif %}
