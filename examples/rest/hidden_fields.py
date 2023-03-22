@@ -23,7 +23,7 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HiddenFields
         exclude = ()
-        layout = Layout(component_name='ExampleHiddenLayout')
+        layout = Layout(component_name='df-form-layout')
 
 
 class HiddenFieldsViewSet(ModelViewSet):
