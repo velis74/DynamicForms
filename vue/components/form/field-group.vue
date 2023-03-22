@@ -63,7 +63,10 @@ export default /* #__PURE__ */ defineComponent({
     formPayload: {
       handler(newValue: Object, oldValue: Object) {
         // TODO: remove manual creation of recur field
-        this.payload[this.field.name] = this.use ? { ...newValue, recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 } } : undefined;
+        this.payload[this.field.name] = this.use ? {
+          ...newValue,
+          recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 },
+        } : undefined;
 
         this.dispatchAction(
           this.actions.valueChanged,
