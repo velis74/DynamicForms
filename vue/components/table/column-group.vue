@@ -6,7 +6,6 @@
         :key="field.name"
         :column="field"
         :row-data="rowData"
-        :row-type="rowType"
         :thead="thead"
         :actions="actions"
         :row-type="$parent.$props.rowType"
