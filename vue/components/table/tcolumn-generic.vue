@@ -67,12 +67,12 @@ import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
 import OrderingIndicator from './ordering-indicator.vue';
 import RenderMeasured from './render-measure';
-import RowTypesMixin from './row-types-mixin';
+import RowTypesEnum from './row-types-enum';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
-  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
+  mixins: [RenderMeasured, ActionHandlerMixin],
   provide() {
     return { payload: computed(() => this.rowData) };
   },
@@ -81,8 +81,10 @@ export default /* #__PURE__ */ defineComponent({
     rowData: { type: Object, required: true },
     actions: { type: FilteredActions, required: true },
     filterRow: { type: TableColumn, default: null },
+    rowType: RowTypesEnum.rowTypeProp(),
   },
   computed: {
+    thead() { return RowTypesEnum.isTHead(this.rowType); },
     columnClass() {
       return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col';
     },

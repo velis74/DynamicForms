@@ -14,21 +14,23 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 
 import TableColumn from './definitions/column';
-import RowTypesMixin from './row-types-mixin';
+import RowTypesEnum from './row-types-enum';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'ColumnGroup',
-  mixins: [RowTypesMixin],
-  props: {
-    column: { type: TableColumn, required: true },
-    rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, required: true },
-  },
+const props = defineProps({
+  column: { type: TableColumn, required: true },
+  rowData: { type: Object, required: true },
+  actions: { type: FilteredActions, required: true },
+  rowType: RowTypesEnum.rowTypeProp(),
 });
+
+const thead = computed(() => RowTypesEnum.isTHead(props.rowType));
+</script>
+<script lang="ts">
+export default { name: 'ColumnGroup' };
 </script>

@@ -35,20 +35,22 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import RenderMeasured from './render-measure';
-import RowTypesMixin from './row-types-mixin';
+import RowTypesEnum from './row-types-enum';
 
-export default /* #__PURE__ */ defineComponent({
+export default defineComponent({
   name: 'GenericTRow',
   directives: { 'observe-visibility': ObserveVisibility },
-  mixins: [RenderMeasured, ActionHandlerMixin, RowTypesMixin],
+  mixins: [RenderMeasured, ActionHandlerMixin],
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
     rowData: { type: Object, required: true },
     actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
+    rowType: RowTypesEnum.rowTypeProp(),
   },
   computed: {
+    thead() { return RowTypesEnum.isTHead(this.rowType); },
     TableColumn() { return TableColumn; },
     rowInfiniteStyle() {
       // For rows not currently rendered, we set a fixed width & height. Height is 10 if it hadn't been computed yet
