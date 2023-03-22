@@ -34,23 +34,12 @@ export default /* #__PURE__ */ defineComponent({
   },
   methods: {
     columnData(col: any) {
-      switch (col.layoutFieldComponentName) {
-      case 'FormField':
-        return {
-          field: col,
-          errors: this.errors,
-          actions: this.actions,
-        };
-      case 'FormFieldGroup':
-        return {
-          field: col,
-          title: col.title,
-          errors: this.errors,
-          actions: this.actions,
-        };
-      default:
-        return {};
-      }
+      return {
+        field: col,
+        title: col.title,
+        errors: this.errors,
+        actions: this.actions,
+      };
     },
   },
 });
