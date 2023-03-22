@@ -48,8 +48,6 @@ export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyTable',
   components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody, TableStyle },
   mixins: [RenderMeasured, TranslationsMixin],
-  setup() {
-  },
 });
 </script>
 <script setup lang="ts">

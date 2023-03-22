@@ -62,7 +62,7 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   methods: {
-    onMeasure(refName, maxWidth, maxHeight) {
+    onMeasure(refName: string, maxWidth: number, maxHeight: number) {
       if (this.rowData.dfControlStructure.isShowing) {
         this.rowData.setMeasuredHeight(maxHeight);
       }

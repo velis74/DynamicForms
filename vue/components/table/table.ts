@@ -39,7 +39,7 @@ export function useTableBase(props: TableBasePropsInterface) {
   const resizeObserver = new ResizeObs((entries) => {
     // while redrawing, sometimes ResizeObserver will report width for the old as well as for the new element
     const width = Math.max.apply(null, entries.map((entry) => entry.contentRect.width));
-    // while redrawing, ResizeObserver will ofter report the old element being resized to zero
+    // while redrawing, ResizeObserver will often report the old element being resized to zero
     if (width) containerWidth.value = entries[0].contentRect.width;
   });
   onMounted(() => {

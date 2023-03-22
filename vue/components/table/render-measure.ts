@@ -1,8 +1,10 @@
+import { defineComponent } from 'vue';
+
 /**
  * This mixin reports measured dimensions of rendered DOM
  * It works in tandem with TableColumnSizer mixin that actually generates the resulting styles
  */
-export default {
+export default defineComponent({
   mounted() { this.measureRenderedDimensions(); },
   updated() { this.measureRenderedDimensions(); },
   methods: {
@@ -21,4 +23,4 @@ export default {
       });
     },
   },
-};
+});

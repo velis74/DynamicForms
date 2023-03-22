@@ -1,7 +1,7 @@
 <template>
   <div
     ref="column"
-    :class="`${columnClass} ${column.name} text-${column.align} ${customClass(column)}`"
+    :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
     @click.stop="(event) => dispatchAction(actions.rowClick, { column, event, rowType })"
     @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { column, event, rowType })"
   >
@@ -88,14 +88,14 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   methods: {
-    onMeasure(refName, maxWidth) {
+    onMeasure(refName: string, maxWidth: number) {
       if (refName === 'column') {
         this.column.setMaxWidth(maxWidth);
       }
     },
-    customClass(column) {
-      let res = column.CSSClass;
-      if (this.thead) res = `${res} ${column.CSSClassHead}`.trim();
+    customClass() {
+      let res = this.column.CSSClass;
+      if (this.thead) res = `${res} ${this.column.CSSClassHead}`.trim();
       return res;
     },
   },

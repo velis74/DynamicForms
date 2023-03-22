@@ -29,6 +29,12 @@ export default class TableColumn {
 
   private layout: DfTable.ResponsiveLayoutInterface | null;
 
+  CSSClass!: string;
+
+  CSSClassHead!: string;
+
+  renderComponentName!: string;
+
   constructor(initialData: ColumnJSON, orderingArray: ColumnOrdering[]) {
     this._maxWidth = 0;
     initialData.ordering = initialData.ordering || '';

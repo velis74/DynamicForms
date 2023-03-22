@@ -42,7 +42,7 @@ export default /* #__PURE__ */ defineComponent({
     filterDefinition: { type: TableFilterRow, default: null },
   },
   methods: {
-    onMeasure(refName, maxWidth, maxHeight) {
+    onMeasure(refName: string, maxWidth: number, maxHeight: number) {
       this.rowData.setMeasuredHeight(maxHeight);
     },
   },
