@@ -25,6 +25,7 @@ import DFile from './inputs/file.vue';
 import DInput from './inputs/input.vue';
 import DPlaceholder from './inputs/placeholder.vue';
 import DSelect from './inputs/select.vue';
+import DTextArea from './inputs/text-area.vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormField',
@@ -37,6 +38,7 @@ export default /* #__PURE__ */ defineComponent({
     DPassword: DInput,
     DPlaceholder,
     DSelect,
+    DTextArea,
   },
   mixins: [ActionHandlerMixin],
   inject: { payload: { from: 'payload', default: {} as FormPayload } },

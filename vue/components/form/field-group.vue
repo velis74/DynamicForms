@@ -2,20 +2,33 @@
   <v-col :class="cssClasses + columnClasses">
     <v-card>
       <v-card-title v-if="field.title">
-        {{ field.title }}
-      </v-card-title>
-      <v-card-text>
-        <df-form-layout
-          :is="field.componentName"
-          :layout="field.layout"
-          :payload="formPayload"
-          :actions="actions"
-          :errors="errors"
+        <span class="float-left pt-2">
+          {{ field.title }}
+        </span>
+        <v-switch
+          v-model="use"
+          class="float-right"
+          color="primary"
+          density="compact"
         />
-      </v-card-text>
-      <v-card-actions v-if="field.footer">
-        {{ field.footer }}
-      </v-card-actions>
+      </v-card-title>
+      <v-expand-transition>
+        <template v-if="use">
+          <v-card-text>
+            <df-form-layout
+              :is="field.componentName"
+              :layout="field.layout"
+              :payload="formPayload"
+              :actions="actions"
+              :errors="errors"
+              transition="scale-transition"
+            />
+          </v-card-text>
+          <v-card-actions v-if="field.footer">
+            {{ field.footer }}
+          </v-card-actions>
+        </template>
+      </v-expand-transition>
     </v-card>
   </v-col>
 </template>
@@ -36,7 +49,10 @@ export default /* #__PURE__ */ defineComponent({
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
   },
-  data: () => ({ formPayload: {} as FormPayload }),
+  data: () => ({
+    formPayload: {} as FormPayload,
+    use: false as boolean,
+  }),
   computed: {
     columnClasses() {
       const classes = this.field.widthClasses;
@@ -45,8 +61,9 @@ export default /* #__PURE__ */ defineComponent({
   },
   watch: {
     formPayload: {
-      handler(newValue: any, oldValue: any) {
-        this.payload[this.field.name] = this.formPayload;
+      handler(newValue: Object, oldValue: Object) {
+        // TODO: remove manual creation of recur field
+        this.payload[this.field.name] = this.use ? { ...newValue, recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 } } : undefined;
 
         this.dispatchAction(
           this.actions.valueChanged,
@@ -55,8 +72,14 @@ export default /* #__PURE__ */ defineComponent({
       },
       deep: true,
     },
+    use: {
+      handler(value: boolean) {
+        this.payload[this.field.name] = value ? this.formPayload : undefined;
+      },
+    },
   },
   created() {
+    this.use = !(this.payload[this.field.name] == null);
     this.formPayload = new FormPayload(this.payload[this.field.name] ?? {}, this.field.layout);
   },
 });
