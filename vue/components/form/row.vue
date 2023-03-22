@@ -1,13 +1,11 @@
 <template>
   <v-row v-if="anyFieldVisible" align="end">
     <slot name="before-columns"/>
-    <FormField
+    <component
       :is="column.layoutFieldComponentName"
       v-for="(column, idx) in renderableColumns"
       :key="`${idx}${column.renderKey}`"
-      :field="column"
-      :errors="errors"
-      :actions="actions"
+      v-bind="columnData(column)"
     />
     <slot name="after-columns"/>
   </v-row>
@@ -16,12 +14,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import FormFieldGroup from './field-group.vue';
 import FormField from './field.vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormRow',
-  components: { FormField },
-  inject: ['actions'],
+  components: { FormField, FormFieldGroup },
+  inject: ['actions', 'payload'],
   props: {
     columns: { type: Array, required: true },
     errors: { type: Object, default: () => {} },
@@ -31,6 +30,16 @@ export default /* #__PURE__ */ defineComponent({
     renderableColumns() {
       // We return all fields that are not suppressed and not hidden
       return this.columns.filter((col) => col.isVisible);
+    },
+  },
+  methods: {
+    columnData(col: any) {
+      return {
+        field: col,
+        title: col.title,
+        errors: this.errors,
+        actions: this.actions,
+      };
     },
   },
 });
