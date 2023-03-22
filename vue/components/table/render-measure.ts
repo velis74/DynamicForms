@@ -1,4 +1,8 @@
-import { defineComponent } from 'vue';
+import { ComponentPublicInstance, defineComponent } from 'vue';
+
+interface MeasurableComponent extends ComponentPublicInstance {
+  onMeasure: (colName: string, maxWidth: number, maxHeight: number) => void;
+}
 
 /**
  * This mixin reports measured dimensions of rendered DOM
@@ -16,8 +20,9 @@ export default defineComponent({
           if (!elements.length) return; // as column defs change, columns are reset, but refs from before stay
           const maxWidth = Math.max.apply(null, elements.map((el) => (el ? el.clientWidth : 0)));
           const maxHeight = Math.max.apply(null, elements.map((el) => (el ? el.clientHeight : 0)));
-          if (typeof this.onMeasure === 'function') {
-            this.onMeasure(colName, maxWidth, maxHeight);
+          const self = this as any as MeasurableComponent;
+          if (typeof self.onMeasure === 'function') {
+            self.onMeasure(colName, maxWidth, maxHeight);
           }
         });
       });
