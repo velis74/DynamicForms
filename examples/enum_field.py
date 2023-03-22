@@ -1,9 +1,10 @@
 from dynamicforms import fields
 
 
-class EnumField(fields.IntegerField):
+class EnumField(fields.ChoiceField):
 
     def __init__(self, enum_type, *args, **kwds):
+        kwds['choices'] = tuple([(member.value, member.name) for member in enum_type])
         super().__init__(*args, **kwds)
         self.enum_type = enum_type
 
