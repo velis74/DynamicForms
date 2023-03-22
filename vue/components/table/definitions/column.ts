@@ -1,4 +1,5 @@
 import ColumnDisplay from '../../classes/display-mode';
+import FormField from '../../form/definitions/field';
 import getObjectFromPath from '../../util/get-object-from-path';
 
 import ColumnOrdering from './column-ordering';
@@ -23,7 +24,7 @@ export default class TableColumn {
 
   maxWidth!: number;
 
-  private ordering: ColumnOrdering;
+  ordering: ColumnOrdering;
 
   private _maxWidth: number;
 
@@ -34,6 +35,10 @@ export default class TableColumn {
   CSSClassHead!: string;
 
   renderComponentName!: string;
+
+  renderDecoratorFunction!: (rowData: Object, thead: boolean) => void;
+
+  formFieldInstance ?: FormField;
 
   constructor(initialData: ColumnJSON, orderingArray: ColumnOrdering[]) {
     this._maxWidth = 0;
