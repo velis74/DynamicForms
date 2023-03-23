@@ -50,8 +50,8 @@ export default /* #__PURE__ */ defineComponent({
     cssClasses: { type: String, default: 'col' },
   },
   data: () => ({
-    formPayload: new FormPayload(this.payload[this.field.name] ?? {}, this.field.layout) as FormPayload,
-    use: !(this.payload[this.field.name] == null) as boolean,
+    formPayload: {} as FormPayload,
+    use: false as boolean,
   }),
   computed: {
     columnClasses() {
@@ -80,6 +80,10 @@ export default /* #__PURE__ */ defineComponent({
         this.payload[this.field.name] = value ? this.formPayload : undefined;
       },
     },
+  },
+  created() {
+    this.use = !(this.payload[this.field.name] == null);
+    this.formPayload = new FormPayload(this.payload[this.field.name] ?? {}, this.field.layout);
   },
 });
 </script>
