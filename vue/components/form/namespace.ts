@@ -27,6 +27,7 @@ namespace DfForm {
 
   export interface RenderParamsJSON {
     input_type: string;
+    form_component_def: Object;
     form_component_name: string;
     field_class: string;
     pattern: string;

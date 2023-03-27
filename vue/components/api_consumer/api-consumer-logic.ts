@@ -265,7 +265,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     if (error && Object.keys(error).length) await this.dialogForm(pk, this.formData);
   }
 
-  async filter(filterData = null) {
+  async filter(filterData: Object | null = null) {
     if (filterData) this.filterData = filterData;
     await this.reload(true);
   }
