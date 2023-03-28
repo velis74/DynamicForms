@@ -7,10 +7,10 @@ declare global {
   }
 }
 
-export default {
-  methods: {
-    gettext(str: string) {
-      return window.gettext ? window.gettext(str) : str;
-    },
-  },
-};
+function gettext(str: string) {
+  return window.gettext ? window.gettext(str) : str;
+}
+
+export { gettext };
+
+export default { methods: { gettext(str: string) { return gettext(str); } } };

@@ -1,4 +1,4 @@
-import ColumnDisplay from '../../classes/display-mode';
+import DisplayMode from '../../classes/display-mode';
 import FormField from '../../form/definitions/field';
 import getObjectFromPath from '../../util/get-object-from-path';
 
@@ -90,7 +90,7 @@ export default class TableColumn {
         },
         enumerable: true,
       },
-      visibility: { get() { return ColumnDisplay.get(initialData.visibility.table); }, enumerable: true },
+      visibility: { get() { return DisplayMode.fromAny(initialData.visibility.table); }, enumerable: true },
       CSSClass: { get() { return initialData.table_classes || ''; }, enumerable: true },
       CSSClassHead: { get() { return (this.ordering.isOrderable && 'ordering') || ''; }, enumerable: true },
       renderParams: { get() { return initialData.render_params; }, enumerable: true },

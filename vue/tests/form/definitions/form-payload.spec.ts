@@ -1,4 +1,4 @@
-import ColumnDisplay from '../../../components/classes/display-mode';
+import DisplayMode from '../../../components/classes/display-mode';
 import FormPayload from '../../../components/form/definitions/form-payload';
 import FormLayout from '../../../components/form/definitions/layout';
 
@@ -12,17 +12,17 @@ const fieldDefinitions = {
     fieldWritable: {
       name: 'fieldWritable',
       read_only: false,
-      visibility: { form: ColumnDisplay.FULL },
+      visibility: { form: DisplayMode.FULL },
     },
     fieldReadOnly: {
       name: 'fieldReadOnly',
       read_only: true,
-      visibility: { form: ColumnDisplay.FULL },
+      visibility: { form: DisplayMode.FULL },
     },
     fieldHidden: {
       name: 'fieldHidden',
       read_only: true,
-      visibility: { form: ColumnDisplay.SUPPRESS },
+      visibility: { form: DisplayMode.SUPPRESS },
     },
   },
   rows: [],

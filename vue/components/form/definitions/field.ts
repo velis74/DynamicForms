@@ -22,7 +22,7 @@ export default class FormField {
 
   public align!: string;
 
-  public visibility!: number; // DisplayMode
+  public visibility!: DisplayMode;
 
   public renderParams!: RenderParams;
 
@@ -57,7 +57,7 @@ export default class FormField {
         },
         enumerable: true,
       },
-      visibility: { get() { return DisplayMode.get(fieldDef.visibility.form); }, enumerable: true },
+      visibility: { get() { return DisplayMode.fromAny(fieldDef.visibility.form); }, enumerable: true },
       renderParams: { get() { return new RenderParams(fieldDef.render_params); }, enumerable: true },
       readOnly: { get() { return fieldDef.read_only === true; }, enumerable: true },
       componentName: { get() { return fieldDef.render_params.form_component_name; }, enumerable: true },
@@ -73,8 +73,8 @@ export default class FormField {
 
   setVisibility(visibility: number) {
     let displayMode;
-    if (DisplayMode.getValue(visibility)) {
-      displayMode = DisplayMode.getValue(visibility);
+    if (DisplayMode.isDefined(visibility)) {
+      displayMode = DisplayMode.fromAny(visibility);
     } else if (visibility) {
       displayMode = DisplayMode.FULL;
     } else {

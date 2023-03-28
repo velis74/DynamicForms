@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import ColumnDisplay from '../../classes/display-mode';
+import DisplayMode from '../../classes/display-mode';
 
 import FormField from './field';
 import FormLayout from './layout';
@@ -26,7 +26,7 @@ export default class FormPayload implements FormPayloadNS {
       [properties, extraData] = this.deepClone(data);
     } else if (layout?.fields) {
       Object.values(layout.fields).forEach((field: FormField) => {
-        if (field.visibility === ColumnDisplay.SUPPRESS) return;
+        if (field.visibility === DisplayMode.SUPPRESS) return;
         if (field.readOnly) {
           properties[field.name] = { get() { return data[field.name]; }, enumerable: false };
         } else {

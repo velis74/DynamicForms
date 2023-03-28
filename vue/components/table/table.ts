@@ -2,7 +2,7 @@ import ResizeObs from 'resize-observer-polyfill';
 import { computed, ComputedRef, onBeforeUpdate, onMounted, onUnmounted, onUpdated, provide, reactive, ref } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
-import ColumnDisplay from '../classes/display-mode';
+import DisplayMode from '../classes/display-mode';
 import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
@@ -56,7 +56,7 @@ export function useTableBase(props: TableBasePropsInterface) {
     () => new IndexedArray<TableColumn>(
       props.columns.filter(
         (column: TableColumn) => (
-          column.visibility === ColumnDisplay.FULL || column.visibility === ColumnDisplay.INVISIBLE
+          column.visibility === DisplayMode.FULL || column.visibility === DisplayMode.INVISIBLE
         ),
       ),
     ),
@@ -74,7 +74,7 @@ export function useTableBase(props: TableBasePropsInterface) {
     () => responsiveLayout.value.columns,
   );
   const dataColumns: ComputedRef<TableColumn[]> = computed(
-    () => props.columns.filter((column: TableColumn) => column.visibility === ColumnDisplay.HIDDEN),
+    () => props.columns.filter((column: TableColumn) => column.visibility === DisplayMode.HIDDEN),
   );
   const theadRowData: ComputedRef<TableRow> = computed(
     // Creates a fake table row with column labels for data

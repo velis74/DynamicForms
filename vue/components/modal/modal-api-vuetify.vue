@@ -47,6 +47,8 @@ export default /* #__PURE__ */ defineComponent({
       switch (this.size) {
       case DialogSize.SMALL:
         return 400;
+      case DialogSize.MEDIUM:
+        return 600;
       case DialogSize.LARGE:
         return 800;
       case DialogSize.X_LARGE:
@@ -57,6 +59,7 @@ export default /* #__PURE__ */ defineComponent({
     },
     computedFullScreen() {
       if (this.size === DialogSize.SMALL && !this.$vuetify.display.smAndUp) return true;
+      if (this.size === DialogSize.MEDIUM && !this.$vuetify.display.mdAndUp) return true;
       if (this.size === DialogSize.LARGE && !this.$vuetify.display.lgAndUp) return true;
       if (this.size === DialogSize.X_LARGE && !this.$vuetify.display.xl) return true;
       return false;

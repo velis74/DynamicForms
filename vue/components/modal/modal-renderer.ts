@@ -1,4 +1,5 @@
-import { defineComponent, h, RenderFunction, resolveComponent } from 'vue';
+import _ from 'lodash';
+import { defineComponent, h, RenderFunction, resolveComponent, DefineComponent } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 
@@ -8,7 +9,7 @@ import DialogOptions = Dialogs.DialogOptions;
 
 function processSlot(
   slot: string,
-  content: string | FilteredActions | CustomComponentMessage | RenderFunction,
+  content: string | DefineComponent | FilteredActions | CustomComponentMessage | RenderFunction,
 ) {
   if (content == null) return null;
   if (typeof content === 'string') {
@@ -20,7 +21,10 @@ function processSlot(
     return () => h(resolveComponent('DfActions'), { slot, actions: content });
   }
   if (content && 'componentName' in content && 'props' in content) {
-    return () => h(resolveComponent(content.componentName), { slot, ...content.props });
+    const component = _.isString(content.componentName) ?
+      resolveComponent(content.componentName) :
+      content.componentName; // it is a component
+    return () => h(component, { slot, ...content.props });
   }
   // we have slots as render functions (template usage of DfDialog)
   return content;

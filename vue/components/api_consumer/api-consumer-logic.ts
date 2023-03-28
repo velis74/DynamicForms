@@ -153,7 +153,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
-  async getFormDefinition(pkValue: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
+  async getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
     if (this.formLayout == null) {
       this.ux_def = await this.getUXDefinition(pkValue, false);
       this.pkName = this.ux_def.primary_key_name;
