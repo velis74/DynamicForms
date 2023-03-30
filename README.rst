@@ -16,7 +16,7 @@ The new primary branch is now `main`.
 HTML renderers will no longer be supported and have been removed from the "new" dynamicforms module. It was too slow and
 required too many hacks to remain viable. So we moved to Vue. The components in 0.70 will be vue3, vuetify3, vite and
 typescript-compatible. We're in final stages of adapting to the new stack. Some inputs and some table functionality
-(e.g. sorting) isn't working yet.
+isn't working yet.
 
 We're keeping the Bootstrap stubs too, but not actively developing to support seamless selection of the two frameworks.
 If there is interest to support CSS frameworks other than Vuetify, pull requests welcome. Hopefully the stubs should
@@ -64,7 +64,12 @@ What is DynamicForms?
 
 DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single
 DRF Serializer / ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders
-(and anything else DRF supports) giving you free choice of how to implement your project.
+(and anything else DRF supports) keeping you free to implement your project.
+
+There are two parts to DanymicForms:
+
+* Django / DRF extensions providing the JSON definitions for on-screen objects
+* HTML / Javascript component library providing the visualisation
 
 It performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its
 own: It is a `django <https://www.djangoproject.com/>`_ library that gives you the power of dynamically-shown form
@@ -80,25 +85,22 @@ Documentation `on readthedocs <https://dynamicforms.readthedocs.io/>`_
 Why DynamicForms
 ----------------
 
-* Turn your rest-framework ViewSets into HTML forms
+* Turn your rest-framework ViewSets into HTML tables & forms
 * Powerful HTML based CRUD
 
-   * Support for fetching "new" records, both in JSON or in HTML
-   * Render to HTML, dialog html or from your own template
-   * Render form (embedded or dialog) or table, depending on situation
+   * Support for fetching "new" records
+   * Render to table, form or dialog, with plenty of customisation options
+   * Full nested data support
    * Dynamically display & hide fields based on other fields' values
    * Easily add actions and place the buttons to execute them anywhere you like
 
 * Clear separation of list & dialog templates
-* Dynamic loading of additional records for table views
-* Easy implementation of simple filtering
+* Dynamic loading of additional records for table views supported by infinite scroll
+* Responsive tables (multiple table layouts for various screen widths)
+* Easy implementation of filtering
 * Action items, declared globally, placed where you need them
 * Custom templates whenever & wherever you want them
-* Render to full html or work with dialogs within same page or both at the same time
-* Each form and field have a unique HTML id for easy finding & manipulation
-* Bootstrap 3 & 4 and jQuery UI templates, easy to make your own or enhance existing
 * Support for form validation, will show errors even if they are not tied to a field
-* Convenient JS functions for easier action scripting
 * Progress dialog for long lasting ajax operations
 
 Quick start guide
@@ -107,6 +109,7 @@ Quick start guide
 .. code-block:: bash
 
    pip install dynamicforms
+   npm install --save dynamicforms
 
 Then you need to Activate DynamicForms in DRF.
 
@@ -117,9 +120,6 @@ DynamicForms has been designed to cause minimal disruption to your existing code
 
 So instead of DRF ModelViewSet just use DynamicForms ModelViewSet, instead of ModelSerializer - DynamicForms
 ModelSerializer.
-
-Currently only the dynamicforms.viewsets.ModelViewSet is supported for ViewSets. We have others planned,
-but not implemented yet.
 
 examples/rest/page_load.py
 

@@ -1,6 +1,6 @@
 {
   "name": "dynamicforms",
-  "version": "0.7.38",
+  "version": "0.7.39",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
@@ -79,7 +79,7 @@
     "flush-promises": "^1.0.2",
     "http-proxy-middleware": "^2.0.6",
     "jsdom": "^21",
-    "np": "^7.6.0",
+    "np": "^7.7.0",
     "sass": "^1",
     "typescript": "^4.9.3",
     "vite": "^4",
