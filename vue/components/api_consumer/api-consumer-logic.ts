@@ -6,7 +6,6 @@ import TableColumns from '../table/definitions/columns';
 import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
-import getObjectFromPath from '../util/get-object-from-path';
 
 class APIConsumerLogic implements APIConsumer.LogicInterface {
   private baseURL: string;
@@ -108,8 +107,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   formatUrlWithOrderParam(url: string) {
     let requestUrl = url;
-    const orderingTransformationFunction = getObjectFromPath(this.ordering.style);
-    const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue(orderingTransformationFunction);
+    const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue();
     const order = orderingValue.length ? `${this.ordering.parameter}=${orderingValue}` : '';
     if (order.length) requestUrl = `${url}?${order}`;
     return requestUrl;
