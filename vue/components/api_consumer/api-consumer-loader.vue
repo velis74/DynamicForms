@@ -11,7 +11,7 @@ import APIConsumerLogic from './api-consumer-logic';
 import APIConsumer from './api-consumer.vue';
 import ComponentDisplay from './component-display';
 
-export default /* #__PURE__ */ defineComponent({
+export default defineComponent({
   name: 'APIConsumerLoader',
   components: { APIConsumer },
   emits: ['title-change', 'load-route'],

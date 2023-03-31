@@ -44,10 +44,10 @@ export default defineConfig({
     axiosRedirectConfig(),
   ],
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL_('./src', import.meta.url)),
-      '~': fileURLToPath(new URL_('./node_modules', import.meta.url)),
-    },
+    // alias: {
+    //   '@': fileURLToPath(new URL_('./src', import.meta.url)),
+    //   '~': fileURLToPath(new URL_('./node_modules', import.meta.url)),
+    // },
     extensions: [
       '.js',
       '.ts',
@@ -72,14 +72,10 @@ export default defineConfig({
       name: 'dynamicforms.[name]',
     },
     rollupOptions: {
-      external: ['vue', 'vue-router', 'vuetify'],
+      external: ['axios', 'bootstrap', 'bootstrap-vue', 'lodash', 'vue', 'vue-ionicon', 'vue-router', 'vuetify'],
       output: {
         sourcemap: true,
-        globals: {
-          vue: 'vue',
-          'vue-router': 'vue-router',
-          vuetify: 'vuetify'
-        }
+        globals: (id: string) => id, // all external modules are currently not aliased to anything but their own names
       }
     }
   },

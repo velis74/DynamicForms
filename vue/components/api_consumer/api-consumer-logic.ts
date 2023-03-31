@@ -23,7 +23,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   private formFields: { [key: string]: unknown };
 
-  private formLayout: APIConsumer.FormLayoutType;
+  private formLayout: APIConsumer.FormLayoutType | null;
 
   private formComponent: string; // component responsible for rendering the form layout
 
@@ -39,11 +39,11 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
 
   private requestedPKValue: null;
 
-  private ordering: { parameter: string, style: null, counter: number };
+  public ordering: { parameter: string, style: null, counter: number };
 
   private filterDefinition: TableFilterRow | null;
 
-  private filterData: Object;
+  private filterData: FormPayload;
 
   private titles: APIConsumer.Titles;
 
@@ -83,7 +83,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
       counter: 0,
     };
     this.filterDefinition = null;
-    this.filterData = {};
+    this.filterData = new FormPayload();
     this.titles = { new: '', edit: '', table: '' };
   }
 
@@ -265,7 +265,7 @@ class APIConsumerLogic implements APIConsumer.LogicInterface {
     if (error && Object.keys(error).length) await this.dialogForm(pk, this.formData);
   }
 
-  async filter(filterData = null) {
+  async filter(filterData?: FormPayload) {
     if (filterData) this.filterData = filterData;
     await this.reload(true);
   }
