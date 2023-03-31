@@ -3,7 +3,6 @@ import FormLayout from '../form/definitions/layout';
 import dfModal from '../modal/modal-view-api';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
-import getObjectFromPath from '../util/get-object-from-path';
 
 import ConsumerLogicBase from './consumer-logic-base';
 
