@@ -1,7 +1,7 @@
 {
   "name": "@velis/dynamicforms",
   "private": false,
-  "version": "0.7.41",
+  "version": "0.7.42",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
