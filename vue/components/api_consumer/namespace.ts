@@ -19,6 +19,18 @@ namespace APIConsumer {
     titles: Titles;
   }
 
+  export interface TableUXDefinition extends UXDefinition {
+    columns: any
+    rows: any
+    ordering_parameter: any
+    ordering_style: any
+    responsive_table_layouts: any
+    actions: any
+    filter: any
+    dialog: any
+    record: any
+  }
+
   export interface FormPayload {
     [key: string]: any;
 
@@ -43,25 +55,14 @@ namespace APIConsumer {
     errors: ErrorsJSON,
   };
 
-  export interface LogicInterface {
-    // private baseURL: string;
+  export interface BaseLogicInterface {
     pkName: string;
-    // private fields: { [key: string]: { [key: string]: any } };
-    // private tableColumns: TableColumns[];
-    // private loading: boolean;
-    // private responsiveTableLayouts: null;
-    // private formFields: { [key: string]: unknown };
-    // private formLayout: FormLayoutType;
-    // private formComponent: string; // component responsible for rendering the form layout
-    // private errors: { [key: string]: unknown };
-    // private actions: FilteredActions;
-    // private ux_def: Object;
-    // private rows: unknown[];
-    // private formData: FormDataType;
-    // private requestedPKValue: null;
-    // private ordering: { parameter: string, style: null, counter: number };
-    // private filterDefinition: null;
-    // private filterData: Object;
-    fetch: (url: string, isTable: boolean, filter?: boolean) => any;
+    setOrdering(parameter: string, style: any | null, counter: number): void;
+    reload(filter: boolean): Promise<void>;
+    deleteRow(tableRow: FormPayload): Promise<void>;
+    dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean): Promise<void>;
+    title(which: 'table' | 'new' | 'edit'): string;
   }
+  export interface ApiLogicInterface extends BaseLogicInterface {}
+  export interface MemoryLogicInterface extends BaseLogicInterface {}
 }

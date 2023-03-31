@@ -8,7 +8,7 @@ import { defineComponent } from 'vue';
 
 import RowTypesEnum from '../table/row-types-enum';
 
-import APIConsumerLogic from './api-consumer-logic';
+import BaseConsumerLogic from './base-consumer-logic';
 import ComponentDisplay from './component-display';
 
 export default /* #__PURE__ */ defineComponent({
@@ -17,7 +17,7 @@ export default /* #__PURE__ */ defineComponent({
     /**
      * Object containing the properties required to render at least one of the display components
      */
-    consumer: { type: APIConsumerLogic, required: true },
+    consumer: { type: BaseConsumerLogic, required: true },
     /**
      * What UX should the component render
      */
