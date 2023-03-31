@@ -40,8 +40,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   formatUrlWithOrderParam(url: string) {
     let requestUrl = url;
-    const orderingTransformationFunction = getObjectFromPath(this.ordering.style);
-    const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue(orderingTransformationFunction);
+    const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue();
     const order = orderingValue?.length ? `${this.ordering.parameter}=${orderingValue}` : '';
     if (order.length) requestUrl = `${url}?${order}`;
     return requestUrl;

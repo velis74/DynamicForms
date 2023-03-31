@@ -104,7 +104,7 @@ export default class ColumnOrdering {
     this.changeCounter++;
   }
 
-  calculateOrderingValue(transformationFunction: TransformationFunctionVerbose): string[] {
+  calculateOrderingValue(transformationFunction?: TransformationFunctionVerbose): string[] {
     // TODO: this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
     const cols: OrderingValue[] = this.orderingArray.map((columnOrdering) => (
       { name: columnOrdering.column.name, direction: columnOrdering.direction }
@@ -114,7 +114,7 @@ export default class ColumnOrdering {
   }
 
   calculateOrderingFunction(
-    transformationFunction: TransformationFunctionBase,
+    transformationFunction?: TransformationFunctionBase,
   ): { name: any, direction: OrderingDirection }[] {
     // TODO: this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
     const cols = this.orderingArray.map((columnOrdering) => (
