@@ -10,12 +10,8 @@
   "main": "dist/dynamicforms.umd.js",
   "types": "./dist/dynamicforms.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/dynamicforms.umd.js"
-    },
-    "./dynamicforms.css": {
-      "import": "./dist/style.css"
-    }
+    ".": "./dist/dynamicforms.umd.js",
+    "./styles.css": "./dist/style.css"
   },
   "scripts": {
     "serve": "vite",
