@@ -3,9 +3,9 @@
 
 namespace APIConsumer {
   import ActionsJSON = Actions.ActionsJSON;
-  // type of primary keys. Django would normally have integers, but really, anything can be used as primary key
   import ErrorsJSON = Actions.ErrorsJSON;
 
+  // type of primary keys. Django would normally have integers, but really, anything can be used as primary key
   export type PKValueType = NonNullable<any>;
 
   export interface Titles {
