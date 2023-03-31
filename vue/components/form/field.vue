@@ -21,7 +21,6 @@ import FormPayload from './definitions/form-payload';
 import DCheckbox from './inputs/checkbox.vue';
 import DCKEditor from './inputs/ckeditor.vue';
 import DDateTime from './inputs/datetime.vue';
-import DList from './inputs/list.vue';
 import DFile from './inputs/file.vue';
 import DInput from './inputs/input.vue';
 import DList from './inputs/list.vue';
