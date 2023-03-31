@@ -7,7 +7,7 @@ import { defineComponent } from 'vue';
 
 import APIConsumer from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
-import ConsumerLogic from '../../api_consumer/consumer-logic';
+import ConsumerLogicArray from '../../api_consumer/consumer-logic-array';
 import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
 
@@ -18,7 +18,7 @@ export default defineComponent({
   components: { APIConsumer },
   mixins: [InputBase, TranslationsMixin],
   data() {
-    return { consumer: null as ConsumerLogic | null };
+    return { consumer: null as ConsumerLogicArray | null };
   },
   computed: {
     displayComponent() {
@@ -36,7 +36,7 @@ export default defineComponent({
     const definition = (await apiClient.get(
       `${this.field.renderParams.formComponentDef?.detail_url.split('/').slice(0, -1).join('/')}.componentdef`,
     )).data;
-    this.consumer = new ConsumerLogic(definition, this.modelValue as any[]);
+    this.consumer = new ConsumerLogicArray(definition, this.modelValue as any[]);
   },
 });
 </script>

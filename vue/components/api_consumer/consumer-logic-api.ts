@@ -5,9 +5,9 @@ import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 import getObjectFromPath from '../util/get-object-from-path';
 
-import BaseConsumerLogic from './base-consumer-logic';
+import ConsumerLogicBase from './consumer-logic-base';
 
-class APIConsumerLogic extends BaseConsumerLogic implements APIConsumer.ApiLogicInterface {
+class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
   private readonly baseURL: string;
 
   constructor(baseURL: string) {
@@ -142,4 +142,4 @@ class APIConsumerLogic extends BaseConsumerLogic implements APIConsumer.ApiLogic
   }
 }
 
-export default APIConsumerLogic;
+export default ConsumerLogicApi;

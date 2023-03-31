@@ -7,9 +7,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import APIConsumerLogic from './api-consumer-logic';
 import APIConsumer from './api-consumer.vue';
 import ComponentDisplay from './component-display';
+import ConsumerLogicApi from './consumer-logic-api';
 
 export default defineComponent({
   name: 'APIConsumerLoader',
@@ -17,7 +17,7 @@ export default defineComponent({
   emits: ['title-change', 'load-route'],
   data() {
     return {
-      consumer: null as APIConsumerLogic | null,
+      consumer: null as ConsumerLogicApi | null,
       errorText: null,
       displayComponent: ComponentDisplay.TABLE,
     };
@@ -27,7 +27,7 @@ export default defineComponent({
   methods: {
     async goToRoute(to: any) {
       if (!to.name.startsWith('CL ')) return;
-      const consumer = new APIConsumerLogic(to.path);
+      const consumer = new ConsumerLogicApi(to.path);
       try {
         await consumer.getFullDefinition();
         this.errorText = null;

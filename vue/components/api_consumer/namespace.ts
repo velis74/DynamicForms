@@ -20,15 +20,15 @@ namespace APIConsumer {
   }
 
   export interface TableUXDefinition extends UXDefinition {
-    columns: any
-    rows: any
-    ordering_parameter: any
-    ordering_style: any
-    responsive_table_layouts: any
-    actions: any
-    filter: any
-    dialog: any
-    record: any
+    columns: unknown
+    rows: unknown
+    ordering_parameter: unknown
+    ordering_style: unknown
+    responsive_table_layouts: unknown
+    actions: unknown
+    filter: unknown
+    dialog: unknown
+    record: unknown
   }
 
   export interface FormPayload {
@@ -55,7 +55,7 @@ namespace APIConsumer {
     errors: ErrorsJSON,
   };
 
-  export interface BaseLogicInterface {
+  export interface ConsumerLogicBaseInterface {
     pkName: string;
     setOrdering(parameter: string, style: any | null, counter: number): void;
     reload(filter: boolean): Promise<void>;
@@ -63,6 +63,6 @@ namespace APIConsumer {
     dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean): Promise<void>;
     title(which: 'table' | 'new' | 'edit'): string;
   }
-  export interface ApiLogicInterface extends BaseLogicInterface {}
-  export interface MemoryLogicInterface extends BaseLogicInterface {}
+  export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {}
+  export interface ConsumerLogicArrayInterface extends ConsumerLogicBaseInterface {}
 }

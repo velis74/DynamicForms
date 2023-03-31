@@ -5,9 +5,9 @@ import OrderingDirection from '../table/definitions/column-ordering-direction';
 import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
 
-import BaseConsumerLogic from './base-consumer-logic';
+import ConsumerLogicBase from './consumer-logic-base';
 
-class ConsumerLogic extends BaseConsumerLogic implements APIConsumer.MemoryLogicInterface {
+class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
   private readonly records: any;
 
   private internalRecords: any[];
@@ -131,4 +131,4 @@ class ConsumerLogic extends BaseConsumerLogic implements APIConsumer.MemoryLogic
   }
 }
 
-export default ConsumerLogic;
+export default ConsumerLogicArray;

@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
+import ConsumerLogicApi from '../../components/api_consumer/consumer-logic-api';
 
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';
@@ -30,7 +30,7 @@ export default /* #__PURE__ */ defineComponent({
       uuid: 'the-three-modes',
       viewModeChecked: ['form'],
       oldViewModeChecked: ['form'],
-      consumer: new APIConsumerLogic('/hidden-fields'),
+      consumer: new ConsumerLogicApi('/hidden-fields'),
       data: {},
     };
   },

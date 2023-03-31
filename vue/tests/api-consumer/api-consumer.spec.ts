@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
 
-import APIConsumerLogic from '../../components/api_consumer/api-consumer-logic';
+import ConsumerLogicApi from '../../components/api_consumer/consumer-logic-api';
 
 import * as mockComponentDef from './api-consumer-table-componentdef.json';
 
 vi.mock('axios', () => {
   const res = {
-    get: async (url) => {
+    get: async (url: string) => {
       if (url.includes('failure')) throw Error('Refusing to return definition');
       return { data: mockComponentDef };
     },
@@ -21,11 +21,11 @@ vi.mock('axios', () => {
 
 describe('APIConsumerLogic', () => {
   it('fails to load data from a bad url', async () => {
-    const apiConsumer = new APIConsumerLogic('failure');
+    const apiConsumer = new ConsumerLogicApi('failure');
     await expect(apiConsumer.getFullDefinition()).rejects.toThrowError('Refusing to return definition');
   });
   it('loads the data and composes the fields, tableColumns collections', async () => {
-    const apiConsumer = new APIConsumerLogic('/hidden-fields');
+    const apiConsumer = new ConsumerLogicApi('/hidden-fields');
     await apiConsumer.getFullDefinition();
     const allProps = [
       'id', 'df_control_data', 'df_prev_id', 'row_css_style', 'note', 'unit', 'int_fld', 'qty_fld',

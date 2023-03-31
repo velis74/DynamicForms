@@ -5,7 +5,7 @@ import TableColumns from '../table/definitions/columns';
 import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
 
-abstract class BaseConsumerLogic implements APIConsumer.BaseLogicInterface {
+abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterface {
   pkName: string;
 
   protected fields: { [key: string]: { [key: string]: any } };
@@ -157,4 +157,4 @@ abstract class BaseConsumerLogic implements APIConsumer.BaseLogicInterface {
   abstract deleteRow(tableRow: FormPayload): Promise<void>;
 }
 
-export default BaseConsumerLogic;
+export default ConsumerLogicBase;
