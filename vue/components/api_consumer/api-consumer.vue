@@ -6,6 +6,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import Action from '../actions/action';
+import FormPayload from '../form/definitions/form-payload';
+import TableColumn from '../table/definitions/column';
 import RowTypesEnum from '../table/row-types-enum';
 
 import BaseConsumerLogic from './base-consumer-logic';
@@ -21,9 +24,12 @@ export default /* #__PURE__ */ defineComponent({
     /**
      * What UX should the component render
      */
-    displayComponent: { type: Object, required: true, validator(value) { return ComponentDisplay.isDefined(value); } },
+    displayComponent: {
+      type: Number,
+      required: true,
+      validator(value: ComponentDisplay) { return ComponentDisplay.isDefined(value); },
+    },
   },
-  data() { return { orderingCounter: this.consumer.ordering.counter.counter }; },
   computed: {
     renderComponent() {
       switch (this.displayComponent) {
@@ -49,11 +55,11 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   methods: {
-    actionDelete(actionData, payload) {
+    actionDelete(actionData: Action, payload: FormPayload) {
       this.consumer.deleteRow(payload);
       return true;
     },
-    actionValueChanged(actionData, payload) {
+    actionValueChanged(actionData: Action, payload: FormPayload) {
       this.consumer.filter(payload);
       return true;
     },
@@ -61,14 +67,18 @@ export default /* #__PURE__ */ defineComponent({
       await this.consumer.dialogForm('new');
       return true;
     },
-    async actionEdit(actionData, payload, extraData) {
+    async actionEdit(actionData: Action, payload: FormPayload, extraData: { rowType: RowTypesEnum }) {
       if (extraData.rowType !== RowTypesEnum.Data) return false;
       await this.consumer.dialogForm(payload[this.consumer.pkName]);
       return true;
     },
-    actionSort(action, payload, extraData) {
+    actionSort(
+      actionData: Action,
+      payload: FormPayload,
+      extraData: { rowType: RowTypesEnum, column?: TableColumn, event: KeyboardEvent },
+    ) {
       // This is the default handler for ordering
-      if (extraData.rowType === RowTypesEnum.Label && action.position === 'ROW_CLICK' && extraData.column) {
+      if (extraData.rowType === RowTypesEnum.Label && actionData.position === 'ROW_CLICK' && extraData.column) {
         const oldChangeCounter = extraData.column.ordering.changeCounter;
         extraData.column.ordering.handleColumnHeaderClick(extraData.event);
         if (oldChangeCounter !== extraData.column.ordering.changeCounter) this.consumer.reload();

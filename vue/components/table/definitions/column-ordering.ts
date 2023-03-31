@@ -1,6 +1,7 @@
 import OrderingDirection from './column-ordering-direction';
 
-type TransformationFunction = (columns: any[]) => undefined;
+type OrderingValue = { name: string, direction: OrderingDirection };
+type TransformationFunction = (columns: OrderingValue[]) => string[];
 
 export default class ColumnOrdering {
   direction: OrderingDirection;
@@ -102,9 +103,9 @@ export default class ColumnOrdering {
     this.changeCounter++;
   }
 
-  calculateOrderingValue(transformationFunction: TransformationFunction) {
-    // this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
-    const cols = this.orderingArray.map((columnOrdering) => (
+  calculateOrderingValue(transformationFunction: TransformationFunction): string[] {
+    // TODO: this method should be in TableColumns, but it seems Vue regenerates any array derivative to plain array
+    const cols: OrderingValue[] = this.orderingArray.map((columnOrdering) => (
       { name: columnOrdering.column.name, direction: columnOrdering.direction }
     ));
     if (transformationFunction) return transformationFunction(cols);
