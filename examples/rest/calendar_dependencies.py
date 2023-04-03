@@ -13,7 +13,7 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self.fields['recurrence'].display_table = fields.DisplayMode.SUPPRESS
+        self.fields["recurrence"].display_table = fields.DisplayMode.SUPPRESS
         self.old_recurrence = None
 
     # def to_internal_value(self, data):
@@ -27,38 +27,36 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
     #     return super().to_internal_value(data)
 
     def save_dependencies(self, validated_data, instance: CalendarEvent = None, reminders: Optional[List[dict]] = None):
-
         def save_recurrence(data):
-            recurrence = CalendarRecurrence.objects.filter(pk=int(data.get('id', 0))).first()
+            recurrence = CalendarRecurrence.objects.filter(pk=int(data.get("id", 0))).first()
             res = RecurrenceSerializer(instance=recurrence)
             if recurrence:
                 return res.update(recurrence, data)
             return res.create(data)
 
-        if isinstance(validated_data.get('recurrence', None), CalendarRecurrence):
+        if isinstance(validated_data.get("recurrence", None), CalendarRecurrence):
             pass  # we already saved recurrence, so let's not do anything about it now
-        elif validated_data.get('recurrence', None):
-            validated_data['recurrence'] = save_recurrence(validated_data['recurrence'])
+        elif validated_data.get("recurrence", None):
+            validated_data["recurrence"] = save_recurrence(validated_data["recurrence"])
         elif instance:
             instance.recurrence = None
 
-        if reminders:
+        if reminders is not None:
             from .calendar_reminders import RemindersSerializer
+
             r_ids = set()
             for reminder in reminders:
-                reminder['event'] = instance.id
+                reminder["event"] = instance.id
                 ser = RemindersSerializer(
-                    instance=CalendarReminder.objects.filter(pk=reminder.get('id', 0)).first(), data=reminder
+                    instance=CalendarReminder.objects.filter(pk=reminder.get("id", 0)).first(), data=reminder
                 )
                 ser.is_valid(raise_exception=True)
                 r_ids.add(ser.save().id)
             CalendarReminder.objects.filter(event=instance).exclude(id__in=r_ids).delete()
-        elif instance:
-            CalendarReminder.objects.filter(event=instance).delete()
 
     def create(self, validated_data):
-        change_this_record_only = validated_data.pop('change_this_record_only', False)
-        reminders = validated_data.pop('reminders', [])
+        change_this_record_only = validated_data.pop("change_this_record_only", False)
+        reminders = validated_data.pop("reminders", None)
         self.save_dependencies(validated_data)
         instance = super().create(validated_data)
         self.save_dependencies(validated_data, instance, reminders)
@@ -66,39 +64,38 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        change_this_record_only = validated_data.pop('change_this_record_only', False)
-        reminders = validated_data.pop('reminders', [])
+        change_this_record_only = validated_data.pop("change_this_record_only", False)
+        reminders = validated_data.pop("reminders", None)
         self.save_dependencies(validated_data, instance, reminders)
         return self.handle_recurrence(
             super().update(instance, validated_data), self.old_recurrence, change_this_record_only
         )
 
-    def handle_recurrence(self, instance: CalendarEvent, old_recurrence: Optional[CalendarRecurrence],
-                          change_this_record_only: bool):
+    def handle_recurrence(
+        self, instance: CalendarEvent, old_recurrence: Optional[CalendarRecurrence], change_this_record_only: bool
+    ):
         cutoff_date = instance.start_at  # date before which we will not delete / modify event instances
         if not instance.recurrence and old_recurrence:
             # recurrence was cancelled: delete all instances but this one
-            CalendarEvent.objects. \
-                filter(recurrence_id=old_recurrence.id). \
-                exclude(id=instance.id). \
-                exclude(start_at__lte=cutoff_date). \
-                delete()
+            CalendarEvent.objects.filter(recurrence_id=old_recurrence.id).exclude(id=instance.id).exclude(
+                start_at__lte=cutoff_date
+            ).delete()
             if not old_recurrence.events.exists():
                 old_recurrence.delete()
             else:
                 instance.recurrence = old_recurrence
-                instance.save(update_fields=('recurrence',))
+                instance.save(update_fields=("recurrence",))
         elif instance.recurrence:
             # Recurrence remains or is changed. Update / create any items after right now
             recur: CalendarRecurrence = instance.recurrence
             # recurrence remains the same or it has changed. Iterate & update instances
             existing = iter(
-                CalendarEvent.objects.filter(recurrence_id=instance.recurrence_id).order_by('start_at').all()
+                CalendarEvent.objects.filter(recurrence_id=instance.recurrence_id).order_by("start_at").all()
             )
             instance_data = model_to_dict(instance)
             instance_reminders = list(instance.reminders.all())
-            del instance_data['id']
-            instance_data['recurrence_id'] = instance_data.pop('recurrence', None)
+            del instance_data["id"]
+            instance_data["recurrence_id"] = instance_data.pop("recurrence", None)
             cur_task = next(existing, None)
             for dtm in recur.date_range(cutoff_date):
                 while cur_task and cur_task.start_at < dtm:
@@ -106,8 +103,8 @@ class RecurrenceEventSerializer(serializers.ModelSerializer):
                         cur_task.delete()
                     # advance existing recurring tasks to this date at least
                     cur_task = next(existing, None)
-                instance_data['start_at'] = dtm
-                instance_data['end_at'] = dtm + (instance.end_at - instance.start_at)
+                instance_data["start_at"] = dtm
+                instance_data["end_at"] = dtm + (instance.end_at - instance.start_at)
                 if cur_task and cur_task.start_at == dtm:
                     dtm_task = cur_task
                     cur_task = next(existing, None)
