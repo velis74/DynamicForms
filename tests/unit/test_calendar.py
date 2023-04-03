@@ -790,7 +790,6 @@ class CalendarRemindersTest(CommonTestBase):
         """
         Preserve reminders on event change
         """
-
         # First create event with reminders
         event = self.get_event_def(num_reminders=2)
         event_url = reverse("calendar-event-list", args=["json"])
@@ -805,7 +804,6 @@ class CalendarRemindersTest(CommonTestBase):
         event_url = reverse("calendar-event-detail", kwargs=dict(pk=event_id, format="json"))
         response = self.get_json(self.client.get(event_url), status.HTTP_200_OK)
         self.check_event_as_expected(response, event)
-        print(response)
 
         # Update events start and end times
         event_update = dict(
@@ -823,3 +821,25 @@ class CalendarRemindersTest(CommonTestBase):
         # TODO: can't compare events due to recurrence overwrite
         # event.update(event_update)
         # self.check_event_as_expected(response, event)
+
+    def test_clear_reminders(self):
+        """
+        Passing in empty array of reminders should clear reminders on event
+        """
+        # First create event with reminders
+        event = self.get_event_def(num_reminders=2)
+        event_url = reverse("calendar-event-list", args=["json"])
+        response = self.get_json(
+            self.client.post(event_url, data=self.encode_json(event), content_type="application/json"),
+            status.HTTP_201_CREATED,
+        )
+        self.check_event_as_expected(response, event)
+        event_id = response["id"]
+
+        event_url = reverse("calendar-event-detail", kwargs=dict(pk=event_id, format="json"))
+        event_update = dict(reminders=[])
+        response = self.get_json(
+            self.client.patch(event_url, data=self.encode_json(event_update), content_type="application/json"),
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(response["reminders"], [])
