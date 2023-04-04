@@ -22,7 +22,7 @@ import FullCalendar from '@fullcalendar/vue3';
 import SunCalc from 'suncalc';
 import { defineComponent } from 'vue';
 
-import { APIConsumerLogic } from '../api_consumer/index-temporary';
+import { ConsumerLogicApi } from '../api_consumer/index-temporary';
 import apiClient from '../util/api-client';
 
 export default defineComponent({
@@ -35,7 +35,7 @@ export default defineComponent({
       sunriseTime: '8:00',
       sunsetTime: '16:00',
       url: '/calendar-event',
-      apiConsumer: new APIConsumerLogic('/calendar-event'),
+      apiConsumer: new ConsumerLogicApi('/calendar-event'),
     };
   },
   computed: {

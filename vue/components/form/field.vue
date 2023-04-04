@@ -23,6 +23,7 @@ import DCKEditor from './inputs/ckeditor.vue';
 import DDateTime from './inputs/datetime.vue';
 import DFile from './inputs/file.vue';
 import DInput from './inputs/input.vue';
+import DList from './inputs/list.vue';
 import DPlaceholder from './inputs/placeholder.vue';
 import DSelect from './inputs/select.vue';
 import DTextArea from './inputs/text-area.vue';
@@ -35,6 +36,7 @@ export default /* #__PURE__ */ defineComponent({
     DDateTime,
     DFile,
     DInput,
+    DList,
     DPassword: DInput,
     DPlaceholder,
     DSelect,

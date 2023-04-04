@@ -82,7 +82,9 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
         if hasattr(self.child, 'as_component_def_table'):
             return self.child.as_component_def_table
         res = super().as_component_def()
-        res['render_params']['form_component_name'] = 'DPlaceholder'
+        res['render_params']['form_component_name'] = 'DList'
+        self.child.apply_component_context()
+        res['render_params']['form_component_def'] = self.child.component_params(output_json=False)
         return res
 
 

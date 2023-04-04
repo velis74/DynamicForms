@@ -6,6 +6,7 @@ from .advanced_fields import AdvancedFieldsViewset
 from .basic_fields import BasicFieldsViewset
 from .calculated_css_class_for_table_row import CalculatedCssClassForTableRowViewSet
 from .calendar import CalendarEventViewSet
+from .calendar_reminders import CalendarRemindersViewSet
 from .choice_allow_tags_fields import ChoiceAllowTagsFieldsViewSet
 from .document import DocumentsViewset
 from .hidden_fields import HiddenFieldsViewSet
@@ -31,3 +32,4 @@ router.register(r'calculated-css-class-for-table-row', CalculatedCssClassForTabl
                 'calculated-css-class-for-table-row')
 router.register(r'documents', DocumentsViewset, 'documents')
 router.register(r'calendar-event', CalendarEventViewSet, 'calendar-event')
+router.register(r'calendar-reminder', CalendarRemindersViewSet, 'calendar-reminder')

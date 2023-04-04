@@ -23,6 +23,8 @@ export default class RenderParams {
 
   allowTags: boolean;
 
+  formComponentDef?: unknown;
+
   constructor(params: DfForm.RenderParamsJSON) {
     this.inputType = params.input_type;
     this.fieldCSSClass = params.field_class;
@@ -44,5 +46,8 @@ export default class RenderParams {
     // select
     this.multiple = params.multiple;
     this.allowTags = params.allow_tags;
+
+    // form definition
+    this.formComponentDef = params.form_component_def;
   }
 }

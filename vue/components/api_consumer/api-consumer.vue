@@ -11,8 +11,8 @@ import FormPayload from '../form/definitions/form-payload';
 import TableColumn from '../table/definitions/column';
 import RowTypesEnum from '../table/row-types-enum';
 
-import APIConsumerLogic from './api-consumer-logic';
 import ComponentDisplay from './component-display';
+import ConsumerLogicBase from './consumer-logic-base';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'APIConsumer',
@@ -20,7 +20,7 @@ export default /* #__PURE__ */ defineComponent({
     /**
      * Object containing the properties required to render at least one of the display components
      */
-    consumer: { type: APIConsumerLogic, required: true },
+    consumer: { type: ConsumerLogicBase, required: true },
     /**
      * What UX should the component render
      */
