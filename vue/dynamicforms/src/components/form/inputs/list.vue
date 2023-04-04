@@ -1,13 +1,14 @@
 <template>
-  <APIConsumer v-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
+  <APIConsumerVue v-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import APIConsumer from '../../api_consumer/api-consumer.vue';
+import APIConsumerVue from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
 import ConsumerLogicArray from '../../api_consumer/consumer-logic-array';
+import { APIConsumer } from '../../api_consumer/namespace';
 import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
 
@@ -15,10 +16,10 @@ import InputBase from './base';
 
 export default defineComponent({
   name: 'DList',
-  components: { APIConsumer },
+  components: { APIConsumerVue },
   mixins: [InputBase, TranslationsMixin],
   data() {
-    return { consumer: null as ConsumerLogicArray | null };
+    return { consumer: null as APIConsumer.ConsumerLogicArrayInterface | null };
   },
   computed: {
     displayComponent() {

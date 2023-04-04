@@ -34,9 +34,13 @@ export namespace DfForm {
     [key: string]: FormFieldJSON;
   }
 
+  export interface FormComponentDefinition {
+    detail_url: string;
+  }
+
   export interface RenderParamsJSON {
     input_type: string;
-    form_component_def: Object;
+    form_component_def: DfForm.FormComponentDefinition;
     form_component_name: string;
     field_class: string;
     pattern: string;

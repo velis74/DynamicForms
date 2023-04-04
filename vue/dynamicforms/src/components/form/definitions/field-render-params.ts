@@ -25,7 +25,7 @@ export default class RenderParams {
 
   allowTags: boolean;
 
-  formComponentDef?: unknown;
+  formComponentDef?: DfForm.FormComponentDefinition;
 
   constructor(params: DfForm.RenderParamsJSON) {
     this.inputType = params.input_type;
