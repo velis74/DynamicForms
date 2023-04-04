@@ -73,7 +73,7 @@ setuptools.setup(
     "To put it differently: once defined, a particular ViewSet / Serializer can be rendered in multiple "
     "ways allowing you to perform viewing and authoring operations on the data in question.",
     long_description=long_description,
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     url="https://github.com/velis74/DynamicForms",
     packages=setuptools.find_packages(include=("dynamicforms", "dynamicforms_legacy")),
     include_package_data=True,
