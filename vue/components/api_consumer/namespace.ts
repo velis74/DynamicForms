@@ -25,7 +25,6 @@ namespace APIConsumer {
     ['$extra-data']: any;
 
     addExtraData: (data: { [key: string]: any }) => void;
-    deepClone: (base: FormPayload) => any[];
   }
 
   export interface FormLayoutType {

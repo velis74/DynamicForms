@@ -1,13 +1,22 @@
 <template>
-  <FormLayout :layout="layout" :payload="payload" :errors="errors"/>
+  <df-form-layout :layout="layout" :payload="payload" :errors="errors"/>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
+
+import Action from '../components/actions/action';
 import DisplayMode from '../components/classes/display-mode';
 import FormPayload from '../components/form/definitions/form-payload';
 import FormLayout from '../components/form/definitions/layout';
 
-export default {
+type ExtraDataType = {
+  field: string,
+  oldValue: any,
+  newValue: any,
+};
+
+export default defineComponent({
   name: 'ExampleHiddenLayout',
   props: {
     layout: { type: FormLayout, required: true },
@@ -15,45 +24,54 @@ export default {
     errors: { type: Object, default: () => {} },
   },
   data() {
-    return { oldPayload: this.payload.deepClone() };
+    return { oldPayload: new FormPayload({} as FormPayload) };
   },
   watch: { // eslint-disable-line object-curly-newline
     // Watching variables is one way of catering for dynamic field visibility / initialisation
     //   The other would be to track value-changed events emitted by the Layout. See valueChanged handler below
 
     // eslint-disable-next-line func-names
-    'payload.note': function (newValue, oldValue) { this.noteChanged(newValue, oldValue); },
+    'payload.note': function (newValue: string) { this.noteChanged(newValue); },
     payload: {
-      handler(newValue) {
+      handler(newValue: FormPayload) {
         // See note in handler function on https://vuejs.org/guide/essentials/watchers.html#deep-watchers
         // If we want to track changes we have to manually keep previous value in custom variable.
         this.unitChanged(newValue.unit);
-        this.oldPayload = newValue.deepClone();
+        this.oldPayload = new FormPayload(newValue);
       },
       deep: true,
     },
   },
-  mounted() { this.unitChanged(this.payload); },
-  updated() { this.unitChanged(this.payload); },
+  mounted() { this.unitChanged(this.payload.unit); },
+  updated() { this.unitChanged(this.payload.unit); },
   methods: {
-    unitVisible() {
+    getVisibilityMode(mode: boolean): DisplayMode {
+      return mode ? DisplayMode.FULL : DisplayMode.HIDDEN;
+    },
+    unitVisible(): boolean {
       return this.layout.fields.unit.visibility === DisplayMode.FULL;
     },
-    actionValueChanged(action, payload, extradata) {
+    actionValueChanged(action: Action, payload: FormPayload, extraData: ExtraDataType) {
       // Creating a value-changed handler is one of two ways of catering for dynamic field visibility
       //   Watching variables is another. See watch handler above
       //   Note that 'unit' will also be handled by the "payload" watch above
-      if (extradata.field === 'unit') this.unitChanged(extradata.newValue.unit);
+      if (extraData.field === 'unit') this.unitChanged(extraData.newValue);
     },
-    noteChanged(newValue) {
-      this.layout.fields.unit.setVisibility(newValue !== 'abc');
+    noteChanged(newValue: string) {
+      this.layout.fields.unit.setVisibility(newValue !== 'abc' ? DisplayMode.FULL : DisplayMode.HIDDEN);
       this.unitChanged(this.payload.unit);
     },
-    unitChanged(newValue) {
-      this.layout.fields.int_fld.setVisibility(this.unitVisible() && ['pcs', 'cst'].includes(newValue));
-      this.layout.fields.qty_fld.setVisibility(this.unitVisible() && newValue === 'wt');
-      this.layout.fields.cst_fld.setVisibility(this.unitVisible() && newValue === 'cst');
+    unitChanged(newValue: string) {
+      this.layout.fields.int_fld.setVisibility(
+        this.getVisibilityMode(this.unitVisible() && ['pcs', 'cst'].includes(newValue)),
+      );
+      this.layout.fields.qty_fld.setVisibility(
+        this.getVisibilityMode(this.unitVisible() && newValue === 'wt'),
+      );
+      this.layout.fields.cst_fld.setVisibility(
+        this.getVisibilityMode(this.unitVisible() && newValue === 'cst'),
+      );
     },
   },
-};
+});
 </script>

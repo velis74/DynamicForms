@@ -23,7 +23,7 @@ export default class FormPayload implements FormPayloadNS {
       // This is an empty constructor which creates just the class instance, without any payload nor any fields.
       // properties and extraData are already what they need to be
     } else if (data instanceof FormPayload) {
-      [properties, extraData] = this.deepClone(data);
+      [properties, extraData] = this.copyWithProperties(data);
     } else if (layout?.fields) {
       Object.values(layout.fields).forEach((field: FormField) => {
         if (field.visibility === DisplayMode.SUPPRESS) return;
@@ -49,7 +49,7 @@ export default class FormPayload implements FormPayloadNS {
     Object.defineProperty(this, '$extra-data', { get() { return extraData; }, enumerable: false, configurable: true });
   }
 
-  deepClone(base: FormPayload) {
+  private copyWithProperties(base: FormPayload): [_properties: any, extraData: any] {
     Object.entries(base).forEach(([itemName, itemValue]) => {
       this[itemName] = itemValue;
     });

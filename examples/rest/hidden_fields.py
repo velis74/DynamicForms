@@ -6,24 +6,25 @@ from ..models import HiddenFields
 
 
 class HiddenFieldsSerializer(serializers.ModelSerializer):
-    template_context = dict(url_reverse='hidden-fields')
+    template_context = dict(url_reverse="hidden-fields")
     form_titles = {
-        'table': 'Hidden fields list',
-        'new': 'New hidden fields object',
-        'edit': 'Editing hidden fields object',
+        "table": "Hidden fields list",
+        "new": "New hidden fields object",
+        "edit": "Editing hidden fields object",
     }
 
     actions = Actions(
         # FieldChangeAction(['note'], name='field-note-change'),  # action_js = 'examples.action_hiddenfields_note'
         # FieldChangeAction(['unit'], name='field-unit-change'),  # action_js = 'examples.action_hiddenfields_unit'
         # FormInitAction(name='form_init'),  # action_js = 'examples.hide_fields_on_show("{{ serializer.uuid }}");',
-        add_default_crud=True, add_default_filter=False
+        add_default_crud=True,
+        add_default_filter=False,
     )
 
     class Meta:
         model = HiddenFields
         exclude = ()
-        layout = Layout(component_name='df-form-layout')
+        layout = Layout(component_name="ExampleHiddenLayout")
 
 
 class HiddenFieldsViewSet(ModelViewSet):
