@@ -5,6 +5,7 @@ from rest_framework.fields import Field as DRFField
 
 from .action import ActionMixin
 from .choice import ChoiceMixin
+from .dependant_visibility import DependantVisibilityMixin, FieldType, F, S, Statement
 from .enable_copy import EnableCopyMixin
 from .field_render import DisplayMode, FieldAlignment, FieldRenderMixin
 from .file_field import FileFieldMixin
@@ -17,8 +18,9 @@ from .related_field_ajax import RelatedFieldAJAXMixin
 from .rtf_field import RTFFieldMixin
 
 
-class DFField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, DRFField, abc.ABC):
+class DFField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, DependantVisibilityMixin, DRFField, abc.ABC):
     """
     Class only for type hinting
     """
+
     pass

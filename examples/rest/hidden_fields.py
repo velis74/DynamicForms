@@ -1,4 +1,5 @@
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
+from dynamicforms.fields import F
 from dynamicforms.action import Actions
 from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
@@ -20,6 +21,8 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         add_default_crud=True,
         add_default_filter=False,
     )
+
+    qty_fld = fields.FloatField(conditional_visibility=((F("unit") >= "Weight") | (F("unit") != "Weight")))
 
     class Meta:
         model = HiddenFields
