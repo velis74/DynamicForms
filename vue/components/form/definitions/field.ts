@@ -60,7 +60,11 @@ export default class FormField {
       visibility: { get() { return DisplayMode.fromAny(fieldDef.visibility.form); }, enumerable: true },
       renderParams: { get() { return new RenderParams(fieldDef.render_params); }, enumerable: true },
       readOnly: { get() { return fieldDef.read_only === true; }, enumerable: true },
-      componentName: { get() { return fieldDef.render_params.form_component_name; }, enumerable: true },
+      componentName: {
+        get() { return fieldDef.render_params.form_component_name; },
+        enumerable: true,
+        configurable: true,
+      },
       choices: { get() { return fieldDef.choices; }, enumerable: true },
       ajax: { get() { return fieldDef.ajax; }, enumerable: true },
       widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },

@@ -42,4 +42,25 @@ namespace DfForm {
     allow_tags: boolean;
     table: string;
   }
+
+  export type FormLayoutFieldsCollection = { [key: string]: DfForm.FormFieldJSON };
+
+  export interface FormLayoutRowsColumnJSON {
+    type: 'column' | 'group';
+    field: string;
+    title?: string;
+    layout?: DfForm.FormLayoutJSON;
+  }
+
+  export interface FormLayoutRowJSON {
+    component: string;
+    columns: FormLayoutRowsColumnJSON[];
+  }
+
+  export interface FormLayoutJSON {
+    field_name: string;
+    component_name: string;
+    fields: FormLayoutFieldsCollection;
+    rows: FormLayoutRowJSON[];
+  }
 }
