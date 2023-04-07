@@ -34,7 +34,7 @@ class Operators(IntEnum):
     LT = -4
     GE = -5
     LE = -6
-    INCLUDES = -7
+    INCLUDED = -7
 
 
 # Types
@@ -77,7 +77,7 @@ class Field(object):
         return Statement(self.field_name, Operators.NOT_EQUALS, other)
 
     def includes(self, other: any) -> Statement:
-        return Statement(self.field_name, Operators.INCLUDES, other)
+        return Statement(self.field_name, Operators.INCLUDED, other)
 
 
 class Statement:

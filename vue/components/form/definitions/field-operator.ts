@@ -18,7 +18,7 @@ enum Operator {
   LT = -4,
   GE = -5,
   LE = -6,
-  INCLUDES = -7,
+  INCLUDED = -7,
 }
 
 namespace Operator {
@@ -36,7 +36,7 @@ namespace Operator {
     if (operator.toUpperCase() === 'LT') return Operator.LT;
     if (operator.toUpperCase() === 'GE') return Operator.GE;
     if (operator.toUpperCase() === 'LE') return Operator.LE;
-    if (operator.toUpperCase() === 'INCLUDES') return Operator.INCLUDES;
+    if (operator.toUpperCase() === 'INCLUDES') return Operator.INCLUDED;
     return Operator.AND;
   }
 
@@ -52,10 +52,7 @@ namespace Operator {
   }
 
   export function isLogicOperator(operator: any): boolean {
-    if (Operator.isDefined(operator)) {
-      return Operator.fromAny(operator) >= 0;
-    }
-    return false;
+    return operator >= 0;
   }
 }
 
