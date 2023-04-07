@@ -5,6 +5,7 @@ import FormPayload from './components/form/definitions/form-payload';
 import DialogSize from './components/modal/dialog-size';
 import dfModal from './components/modal/modal-view-api';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
+import apiClient from './components/util/api-client';
 import { gettext, interpolate } from './components/util/translations-mixin';
 import * as VuetifyComponents from './components/vuetify';
 import VuetifyViewMode from './demo-app/vuetify/view-mode.vue';
@@ -12,7 +13,7 @@ import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
 import dfVuetifyConfiguration from './plugins/vuetify';
 
 export * from './components/api_consumer/index-temporary';
-export { dfModal, DialogSize, DisplayMode, FormPayload, dfVuetifyConfiguration, gettext, interpolate };
+export { dfModal, DialogSize, DisplayMode, FormPayload, dfVuetifyConfiguration, gettext, interpolate, apiClient };
 
 function unifyName(theme: string, name: string) {
   if (!name.toLowerCase().startsWith(theme.toLowerCase())) {
