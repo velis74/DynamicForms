@@ -22,11 +22,14 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         add_default_filter=False,
     )
 
-    qty_fld = fields.FloatField(conditional_visibility=((F("unit") >= "Weight") | (F("unit") != "Weight")))
-
     class Meta:
         model = HiddenFields
         exclude = ()
+        changed_flds = {
+            "int_fld": dict(conditional_visibility=F("unit").includes(("pcs", "cst"))),
+            "qty_fld": dict(conditional_visibility=F("unit") == "wt"),
+            "cst_fld": dict(conditional_visibility=F("unit") == "cst"),
+        }
         layout = Layout(component_name="ExampleHiddenLayout")
 
 

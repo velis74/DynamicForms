@@ -18,7 +18,8 @@ class DependantVisibilityMixin(object):
         return res
 
 
-class LogicOperators(IntEnum):
+class Operators(IntEnum):
+    # Logic Operators
     NOT = 0
     OR = 1
     AND = 2
@@ -26,18 +27,17 @@ class LogicOperators(IntEnum):
     NAND = 4
     NOR = 5
 
-
-class Comparators(IntEnum):
-    EQUALS = 0
-    NOT_EQUALS = 1
-    GT = 2
-    LT = 3
-    GE = 4
-    LE = 5
+    # Comparators
+    EQUALS = -1
+    NOT_EQUALS = -2
+    GT = -3
+    LT = -4
+    GE = -5
+    LE = -6
+    INCLUDES = -7
 
 
 # Types
-Operators = Union[LogicOperators, Comparators]
 FieldType = str
 ExpressionType = Tuple[str, Operators, any]
 StatementType = Tuple[Union[FieldType, ExpressionType], Operators, Union[any, ExpressionType]]
@@ -59,22 +59,25 @@ class Field(object):
         return self.field_name
 
     def __eq__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.EQUALS, other)
+        return Statement(self.field_name, Operators.EQUALS, other)
 
     def __gt__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.GT, other)
+        return Statement(self.field_name, Operators.GT, other)
 
     def __ge__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.GE, other)
+        return Statement(self.field_name, Operators.GE, other)
 
     def __le__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.LE, other)
+        return Statement(self.field_name, Operators.LE, other)
 
     def __lt__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.LT, other)
+        return Statement(self.field_name, Operators.LT, other)
 
     def __ne__(self, other: any) -> Statement:
-        return Statement(self.field_name, Comparators.NOT_EQUALS, other)
+        return Statement(self.field_name, Operators.NOT_EQUALS, other)
+
+    def includes(self, other: any) -> Statement:
+        return Statement(self.field_name, Operators.INCLUDES, other)
 
 
 class Statement:
@@ -102,18 +105,15 @@ class Statement:
         self.statement_b = statement_b
 
     def __or__(self, other: Statement) -> Statement:
-        return Statement(self, LogicOperators.OR, other)
+        return Statement(self, Operators.OR, other)
 
     def __and__(self, other: Statement):
-        return Statement(self, LogicOperators.AND, other)
+        return Statement(self, Operators.AND, other)
 
     def __xor__(self, other: Statement):
-        return Statement(self, LogicOperators.XOR, other)
+        return Statement(self, Operators.XOR, other)
 
     def to_value(self) -> StatementType:
-        """
-        :returns:
-        """
         if isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement):
             return self.statement_a.to_value(), self.operator, self.statement_b.to_value()
         return self.statement_a, self.operator, self.statement_b

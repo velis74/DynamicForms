@@ -11,6 +11,8 @@ namespace DfForm {
     query_field: string;
   }
 
+  export type StatementJSON = [ string | StatementJSON, number, any | StatementJSON ] | null;
+
   export interface FormFieldJSON {
     name: string;
     label: string;
@@ -23,6 +25,7 @@ namespace DfForm {
     width_classes: string; // bootstrap column width classes TODO: should be changed to something platform agnostic
     help_text: string;
     allow_null: boolean;
+    conditional_visibility: DfForm.StatementJSON;
   }
 
   export interface RenderParamsJSON {
@@ -64,3 +67,5 @@ namespace DfForm {
     rows: FormLayoutRowJSON[];
   }
 }
+
+export default DfForm;
