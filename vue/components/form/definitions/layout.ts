@@ -103,6 +103,10 @@ class FormLayout {
   constructor(layout: DfForm.FormLayoutJSON) {
     this.fields = {};
     this.rows = layout.rows.map((row) => new LayoutRow(row, this.fields, layout.fields));
+    Object.keys(layout.fields).forEach((fieldName: string) => {
+      // here we generically add all the fields that were not listed in the layout definition
+      if (!(fieldName in this.fields)) this.fields[fieldName] = new FormField(layout.fields[fieldName]);
+    });
     Object.defineProperty(this, 'componentName', { get() { return layout.component_name; }, enumerable: true });
     // TODO field_name is not implemented yet on the backend
     Object.defineProperty(this, 'fieldName', { get() { return layout.field_name; }, enumerable: true });

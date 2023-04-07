@@ -36,7 +36,8 @@ describe('FormPayload', () => {
     expect(Object.keys(ds).length).toEqual(0);
   });
   it('Check if a basic data sample parses and properly sets up the fields', () => {
-    const ds = new FormPayload(fieldValues, new FormLayout(fieldDefinitions));
+    const formLayout = new FormLayout(fieldDefinitions);
+    const ds = new FormPayload(fieldValues, formLayout);
 
     expect(ds.fieldWritable).toEqual(12);
     expect(ds.fieldReadOnly).toEqual('abc');
