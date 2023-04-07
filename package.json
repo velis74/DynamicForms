@@ -18,7 +18,10 @@
     "build-no-tsc": "vite build",
     "build": "vite build && vue-tsc --emitDeclarationOnly -p tsconfig.build.json",
     "test": "vitest run --coverage",
-    "lint": "eslint vue && vue-tsc --noEmit"
+    "lint": "eslint vue && vue-tsc --noEmit",
+    "docs:dev": "vitepress dev doc",
+    "docs:build": "vitepress build doc",
+    "docs:preview": "vitepress preview doc"
   },
   "keywords": [
     "vue",
@@ -79,6 +82,7 @@
     "vite": "^4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vuetify": "^1.0.0",
+    "vitepress": "^1.0.0-alpha.65",
     "vitest": "^0",
     "vue-tsc": "^1.0.9"
   },

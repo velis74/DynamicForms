@@ -21,3 +21,7 @@ media
 /dynamicforms/vue/node_modules/
 /dynamicforms/vue/package-lock.json
 /dist/
+
+# Make sure to add .vitepress/dist and .vitepress/cache to your .gitignore file.
+.vitepress/dist
+.vitepress/cache
