@@ -21,6 +21,9 @@ enum Operator {
   INCLUDED = -7,
 }
 
+// Exported for testing purposes
+export const defaultOperator = Operator.AND;
+
 namespace Operator {
   export function fromString(operator: string): Operator {
     if (operator.toUpperCase() === 'NOT') return Operator.NOT;
@@ -36,14 +39,14 @@ namespace Operator {
     if (operator.toUpperCase() === 'LT') return Operator.LT;
     if (operator.toUpperCase() === 'GE') return Operator.GE;
     if (operator.toUpperCase() === 'LE') return Operator.LE;
-    if (operator.toUpperCase() === 'INCLUDES') return Operator.INCLUDED;
-    return Operator.AND;
+    if (operator.toUpperCase() === 'INCLUDED') return Operator.INCLUDED;
+    return defaultOperator;
   }
 
   export function fromAny(mode: any): Operator {
     const input = (typeof mode === 'number') ? mode : Operator.fromString(mode as string);
     if (Object.values(Operator).includes(input)) return input;
-    return Operator.AND;
+    return defaultOperator;
   }
 
   export function isDefined(operator: number | string): boolean {
