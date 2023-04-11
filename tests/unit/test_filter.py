@@ -33,5 +33,4 @@ class FilterTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response["content-type"], "application/json")
         content = json.loads(response.content)
-        print(json.dumps(content, indent=4))
         validate(content, schema)
