@@ -1,7 +1,7 @@
 import json
-from jsonschema import validate
 
 from django.urls import reverse
+from jsonschema import validate
 from rest_framework import status
 from rest_framework.test import APITestCase
 
