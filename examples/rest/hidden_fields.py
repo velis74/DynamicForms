@@ -1,4 +1,4 @@
-from dynamicforms import fields, serializers
+from dynamicforms import serializers
 from dynamicforms.fields import F
 from dynamicforms.action import Actions
 from dynamicforms.template_render.layout import Layout
@@ -26,7 +26,7 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         model = HiddenFields
         exclude = ()
         changed_flds = {
-            "int_fld": dict(conditional_visibility=F("unit").includes(("pcs", "cst"))),
+            "int_fld": dict(conditional_visibility=F("unit").included(("pcs", "cst"))),
             "qty_fld": dict(conditional_visibility=F("unit") == "wt"),
             "cst_fld": dict(conditional_visibility=F("unit") == "cst"),
         }

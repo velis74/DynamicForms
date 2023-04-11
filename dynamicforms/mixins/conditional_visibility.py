@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterable
 
 
 class DependantVisibilityMixin(object):
@@ -35,6 +35,25 @@ class Operators(IntEnum):
     GE = -5
     LE = -6
     INCLUDED = -7
+
+
+LogicOperators = [
+    Operators.OR,
+    Operators.AND,
+    Operators.XOR,
+    Operators.NAND,
+    Operators.NOR,
+]
+
+Comparators = [
+    Operators.EQUALS,
+    Operators.NOT_EQUALS,
+    Operators.GT,
+    Operators.LT,
+    Operators.GE,
+    Operators.LE,
+    Operators.INCLUDED,
+]
 
 
 # Types
@@ -76,7 +95,7 @@ class Field(object):
     def __ne__(self, other: any) -> Statement:
         return Statement(self.field_name, Operators.NOT_EQUALS, other)
 
-    def includes(self, other: any) -> Statement:
+    def included(self, other: Iterable) -> Statement:
         return Statement(self.field_name, Operators.INCLUDED, other)
 
 
@@ -104,6 +123,27 @@ class Statement:
         self.operator = operator
         self.statement_b = statement_b
 
+        self.validation()
+
+    def validation(self) -> None:
+        if self.operator == Operators.INCLUDED:
+            try:
+                len(self.statement_b)
+            except TypeError:
+                raise ValueError(f"Operator INCLUDED expects an iterable value, got {self.statement_b}")
+        if self.operator in LogicOperators:
+            if not (isinstance(self.statement_a, S) and isinstance(self.statement_b, S)):
+                raise ValueError(
+                    f"Logic operators expect a Statement type variables,"
+                    f"got {type(self.statement_a)}, {type(self.statement_b)}"
+                )
+        else:
+            # We are using comparator
+            if isinstance(self.statement_a, S) and isinstance(self.statement_b, S):
+                raise ValueError(f"Comparators expect non Statement type variables")
+            if not isinstance(self.statement_a, str):
+                raise ValueError(f"Comparators expects first value to be string type, got {type(self.statement_a)}")
+
     def __or__(self, other: Statement) -> Statement:
         return Statement(self, Operators.OR, other)
 
@@ -119,6 +159,6 @@ class Statement:
         return self.statement_a, self.operator, self.statement_b
 
 
-# Aliases for developer friendly experience (or probably in some cases, another case of WTFs)
+# Aliases for developer friendly experience
 F = Field
 S = Statement
