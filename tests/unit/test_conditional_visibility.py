@@ -16,6 +16,19 @@ class OperatorsTest(TestCase):
     S1 = S(field_name, Operators.EQUALS, comparison_value)
     S1_value = S1.to_value()
 
+    def _test_iterable_value(self, operator: Operators):
+        # Will fail upon not receiving iterable value
+        self.assertRaises(
+            ValueError, S, statement_a=self.field_name, operator=operator, statement_b=self.comparison_value
+        )
+        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=operator, statement_b=self.S1)
+
+        # Should not fail when receiving iterable values
+        S(statement_a=self.field_name, operator=operator, statement_b=self.comparison_list)  # list
+        S(statement_a=self.field_name, operator=operator, statement_b={10, 11, 12})  # set
+        S(statement_a=self.field_name, operator=operator, statement_b=(10, 11, 12))  # tuple
+        S(statement_a=self.field_name, operator=operator, statement_b=range(10))  # generator
+
     def test_operator_validation(self):
         # Logic operators with non Statement arguments
         for operator in LogicOperators:
@@ -34,17 +47,8 @@ class OperatorsTest(TestCase):
                 ValueError, S, statement_a=self.comparison_value, operator=operator, statement_b=self.comparison_value
             )
 
-        # In will fail upon not receiving iterable value
-        self.assertRaises(
-            ValueError, S, statement_a=self.field_name, operator=Operators.IN, statement_b=self.comparison_value
-        )
-        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.IN, statement_b=self.S1)
-
-        # Not In should fail in same cases as In
-        self.assertRaises(
-            ValueError, S, statement_a=self.field_name, operator=Operators.NOT_IN, statement_b=self.comparison_value
-        )
-        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.NOT_IN, statement_b=self.S1)
+        self._test_iterable_value(operator=Operators.IN)
+        self._test_iterable_value(operator=Operators.NOT_IN)
 
         # Not operator should only get 1 statement
         self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.NOT, statement_b=self.S1)
