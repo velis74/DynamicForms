@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections import namedtuple
 from enum import IntEnum
-from typing import Tuple, Union, Iterable
+from typing import Tuple, Union, Iterable, NamedTuple
 
 
 class ConditionalVisibilityMixin(object):
@@ -58,8 +59,18 @@ Comparators = [
 
 # Types
 FieldType = str
-ExpressionType = Tuple[str, Operators, any]
-StatementType = Tuple[Union[FieldType, ExpressionType], Operators, Union[any, ExpressionType]]
+
+
+class ExpressionType(NamedTuple):
+    field_name: str
+    operator: Operators
+    value: any
+
+
+class StatementType(NamedTuple):
+    statement_a: Union[FieldType, ExpressionType]
+    operator: Operators
+    statement_b: Union[any, ExpressionType]
 
 
 class Field(object):
