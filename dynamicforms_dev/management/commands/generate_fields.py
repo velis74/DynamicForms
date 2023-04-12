@@ -111,7 +111,7 @@ class Command(BaseCommand):
         from dynamicforms.mixins import (
             ActionMixin,
             ChoiceMixin,
-            DependantVisibilityMixin,
+            ConditionalVisibilityMixin,
             FieldAlignment,
             FieldRenderMixin,
             NullValueMixin,
@@ -165,7 +165,7 @@ class Command(BaseCommand):
                                 (
                                     "DFField, ActionMixin, FieldRenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, "
                                     + "FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, "
-                                    + "DependantVisibilityMixin, Statement, F, "
+                                    + "ConditionalVisibilityMixin, Statement, F, "
                                     + ", ".join(field_mixins)
                                 ).split(", "),
                                 key=str.casefold,
@@ -200,7 +200,7 @@ class Command(BaseCommand):
                     param_classes.append((0, NullValueMixin))
 
                 param_classes.append((0, ActionMixin))
-                param_classes.append((0, DependantVisibilityMixin))
+                param_classes.append((0, ConditionalVisibilityMixin))
                 param_classes.append((0, FieldRenderMixin))
 
                 skip_depth = 0
@@ -410,7 +410,7 @@ class Command(BaseCommand):
                 class_def = (
                     f"{hstore_field_indent}class {field_class}({additional_mixin}"
                     + f"FieldRenderMixin, ActionMixin, FieldHelpTextMixin, "
-                    + f"DependantVisibilityMixin, {field_module}{drf_class}):"
+                    + f"ConditionalVisibilityMixin, {field_module}{drf_class}):"
                 )
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)

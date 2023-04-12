@@ -4,7 +4,7 @@ from enum import IntEnum
 from typing import Tuple, Union, Iterable
 
 
-class DependantVisibilityMixin(object):
+class ConditionalVisibilityMixin(object):
     def __init__(self, *args, conditional_visibility: Statement = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.conditional_visibility = conditional_visibility
