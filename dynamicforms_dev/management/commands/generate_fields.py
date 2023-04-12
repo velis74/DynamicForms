@@ -165,7 +165,7 @@ class Command(BaseCommand):
                                 (
                                     "DFField, ActionMixin, FieldRenderMixin, DisplayMode, ChoiceMixin, RelatedFieldAJAXMixin, "
                                     + "FieldHelpTextMixin, PasswordFieldMixin, NullValueMixin, EnableCopyMixin, FieldAlignment, "
-                                    + "ConditionalVisibilityMixin, Statement, F, "
+                                    + "ConditionalVisibilityMixin, Statement, "
                                     + ", ".join(field_mixins)
                                 ).split(", "),
                                 key=str.casefold,

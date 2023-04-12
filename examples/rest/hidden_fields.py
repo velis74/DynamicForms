@@ -1,6 +1,6 @@
 from dynamicforms import serializers
-from dynamicforms.fields import F
 from dynamicforms.action import Actions
+from dynamicforms.mixins import F
 from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields

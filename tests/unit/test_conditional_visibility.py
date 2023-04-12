@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from dynamicforms.mixins.conditional_visibility import F, Operators, S, LogicOperators, Comparators
+from dynamicforms.mixins.conditional_visibility import Comparators, F, LogicOperators, Operators, S
 
 
 def create_operator(statement_a, operator, statement_b):

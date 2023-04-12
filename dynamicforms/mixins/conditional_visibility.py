@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Union, Iterable, NamedTuple
+from typing import Iterable, NamedTuple, Union
 
 
 class ConditionalVisibilityMixin(object):
@@ -142,7 +142,7 @@ class Statement:
         if self.operator == Operators.NOT:
             # Not is a special case, since it only takes 1 argument
             if self.statement_b is not None:
-                raise ValueError(f"Operator NOT expects only first statement, got also second statement")
+                raise ValueError("Operator NOT expects only first statement, got also second statement")
 
         if self.operator in LogicOperators:
             if not (isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement)):
@@ -153,7 +153,7 @@ class Statement:
         else:
             # We are using comparator
             if isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement):
-                raise ValueError(f"Comparators expect non Statement type variables")
+                raise ValueError("Comparators expect non Statement type variables")
             if not isinstance(self.statement_a, str):
                 raise ValueError(f"Comparators expects first value to be string type, got {type(self.statement_a)}")
 
