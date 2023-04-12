@@ -136,9 +136,7 @@ class Statement:
 
     def validation(self) -> None:
         if self.operator in [Operators.IN, Operators.NOT_IN]:
-            try:
-                len(self.statement_b)
-            except TypeError:
+            if not isinstance(self.statement_b, Iterable):
                 raise ValueError(f"Operator IN expects an iterable value, got {self.statement_b}")
 
         if self.operator == Operators.NOT:
