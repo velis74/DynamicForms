@@ -4,7 +4,7 @@ import DisplayMode from '../../../components/classes/display-mode';
 import Operator from '../../../components/form/definitions/field-operator';
 import FormPayload from '../../../components/form/definitions/form-payload';
 import FormLayout from '../../../components/form/definitions/layout';
-import calculateVisibility, { Statement } from '../../../components/form/inputs/conditional-visibility';
+import calculateVisibility, { Statement, XOR } from '../../../components/form/inputs/conditional-visibility';
 
 type FieldValues = { [key: string]: any };
 
@@ -65,7 +65,7 @@ const stringValues = {
 const getNumberCondition = (operator: Operator, value: any): Statement => ['numberCondition', operator, value];
 const getStringCondition = (operator: Operator, value: any): Statement => ['stringCondition', operator, value];
 const getCompositeCondition =
-  (conditionA: Statement, operator: Operator, conditionB: Statement): Statement => (
+  (conditionA: Statement, operator: Operator, conditionB?: Statement): Statement => (
     [conditionA, operator, conditionB]
   );
 
@@ -117,17 +117,30 @@ const conditions: { [key: string]: TypeConditions } = {
         getNumberCondition(Operator.GE, numberValues.higher),
       ],
     } as ConditionPair,
-    included: {
+    in: {
       truth: [
-        getNumberCondition(Operator.INCLUDED, [numberValues.equal]),
-        getNumberCondition(Operator.INCLUDED, [numberValues.equal, numberValues.higher]),
-        getNumberCondition(Operator.INCLUDED, [numberValues.equal, numberValues.lower]),
-        getNumberCondition(Operator.INCLUDED, [numberValues.equal, numberValues.higher, numberValues.lower]),
+        getNumberCondition(Operator.IN, [numberValues.equal]),
+        getNumberCondition(Operator.IN, [numberValues.equal, numberValues.higher]),
+        getNumberCondition(Operator.IN, [numberValues.equal, numberValues.lower]),
+        getNumberCondition(Operator.IN, [numberValues.equal, numberValues.higher, numberValues.lower]),
       ],
       lie: [
-        getNumberCondition(Operator.INCLUDED, [numberValues.higher, numberValues.lower]),
-        getNumberCondition(Operator.INCLUDED, [numberValues.higher]),
-        getNumberCondition(Operator.INCLUDED, [numberValues.lower]),
+        getNumberCondition(Operator.IN, [numberValues.higher, numberValues.lower]),
+        getNumberCondition(Operator.IN, [numberValues.higher]),
+        getNumberCondition(Operator.IN, [numberValues.lower]),
+      ],
+    } as ConditionPair,
+    not_in: {
+      truth: [
+        getNumberCondition(Operator.NOT_IN, [numberValues.higher, numberValues.lower]),
+        getNumberCondition(Operator.NOT_IN, [numberValues.higher]),
+        getNumberCondition(Operator.NOT_IN, [numberValues.lower]),
+      ],
+      lie: [
+        getNumberCondition(Operator.NOT_IN, [numberValues.equal]),
+        getNumberCondition(Operator.NOT_IN, [numberValues.equal, numberValues.higher]),
+        getNumberCondition(Operator.NOT_IN, [numberValues.equal, numberValues.lower]),
+        getNumberCondition(Operator.NOT_IN, [numberValues.equal, numberValues.higher, numberValues.lower]),
       ],
     } as ConditionPair,
   } as TypeConditions,
@@ -148,13 +161,22 @@ const conditions: { [key: string]: TypeConditions } = {
         getStringCondition(Operator.NOT_EQUALS, stringValues.equal),
       ],
     } as ConditionPair,
-    includes: {
+    in: {
       truth: [
-        getStringCondition(Operator.INCLUDED, [stringValues.equal]),
-        getStringCondition(Operator.INCLUDED, [stringValues.equal, stringValues.not_equal]),
+        getStringCondition(Operator.IN, [stringValues.equal]),
+        getStringCondition(Operator.IN, [stringValues.equal, stringValues.not_equal]),
       ],
       lie: [
-        getStringCondition(Operator.INCLUDED, [stringValues.not_equal]),
+        getStringCondition(Operator.IN, [stringValues.not_equal]),
+      ],
+    } as ConditionPair,
+    not_in: {
+      truth: [
+        getStringCondition(Operator.NOT_IN, [stringValues.not_equal]),
+      ],
+      lie: [
+        getStringCondition(Operator.NOT_IN, [stringValues.equal]),
+        getStringCondition(Operator.NOT_IN, [stringValues.equal, stringValues.not_equal]),
       ],
     } as ConditionPair,
   } as TypeConditions,
@@ -217,6 +239,116 @@ const conditions: { [key: string]: TypeConditions } = {
         ),
       ],
     },
+    nand: {
+      truth: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.NAND,
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.NAND,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.NAND,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+      ],
+      lie: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.NAND,
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+        ),
+      ],
+    },
+    nor: {
+      truth: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.NOR,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+      ],
+      lie: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.NOR,
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.NOR,
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.NOR,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+      ],
+    },
+    xor: {
+      truth: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.XOR,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+        getCompositeCondition(
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+          Operator.XOR,
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+        ),
+      ],
+      lie: [
+        getCompositeCondition(
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+          Operator.XOR,
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+        ),
+        getCompositeCondition(
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+          Operator.XOR,
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.XOR,
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+        ),
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.XOR,
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+        ),
+      ],
+    },
+    not: {
+      truth: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.lower),
+          Operator.NOT,
+        ),
+        getCompositeCondition(
+          getStringCondition(Operator.EQUALS, stringValues.not_equal),
+          Operator.NOT,
+        ),
+      ],
+      lie: [
+        getCompositeCondition(
+          getNumberCondition(Operator.EQUALS, numberValues.equal),
+          Operator.NOT,
+        ),
+        getCompositeCondition(
+          getStringCondition(Operator.EQUALS, stringValues.equal),
+          Operator.NOT,
+        ),
+      ],
+    },
   },
 };
 
@@ -267,6 +399,15 @@ describe('ConditionalVisibilityUtils', () => {
     definition = addConditionFieldCondition(null, definition);
     expect(definition.fields.conditionedField.conditionalVisibility).toBeDefined();
     expect(definition.fields.conditionedField.conditionalVisibility).toBeNull();
+  });
+});
+
+describe('XOR function test', () => {
+  it('Test XOR', () => {
+    expect(XOR(false, false)).toBe(false);
+    expect(XOR(true, false)).toBe(true);
+    expect(XOR(false, true)).toBe(true);
+    expect(XOR(true, true)).toBe(false);
   });
 });
 

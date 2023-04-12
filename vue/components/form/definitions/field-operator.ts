@@ -18,7 +18,8 @@ enum Operator {
   LT = -4,
   GE = -5,
   LE = -6,
-  INCLUDED = -7,
+  IN = -7,
+  NOT_IN = -8,
 }
 
 // Exported for testing purposes
@@ -39,7 +40,8 @@ namespace Operator {
     if (operator.toUpperCase() === 'LT') return Operator.LT;
     if (operator.toUpperCase() === 'GE') return Operator.GE;
     if (operator.toUpperCase() === 'LE') return Operator.LE;
-    if (operator.toUpperCase() === 'INCLUDED') return Operator.INCLUDED;
+    if (operator.toUpperCase() === 'IN') return Operator.IN;
+    if (operator.toUpperCase() === 'NOT_IN') return Operator.NOT_IN;
     return defaultOperator;
   }
 
@@ -54,7 +56,7 @@ namespace Operator {
     return Object.values(Operator).includes(check);
   }
 
-  export function isLogicOperator(operator: any): boolean {
+  export function isLogicOperator(operator: Operator): boolean {
     return operator >= 0;
   }
 }

@@ -4,7 +4,7 @@ import FormPayload = APIConsumer.FormPayload;
 
 export type Statement = [ string | Statement, Operator, any | Statement ] | null;
 
-function XOR(value1: boolean, value2: boolean): boolean {
+export function XOR(value1: boolean, value2: boolean): boolean {
   return value1 ? !value2 : value2;
 }
 
@@ -26,6 +26,8 @@ function calculateVisibility(payload: FormPayload, statement: Statement): boolea
       return !(calculateVisibility(payload, statement[0] as Statement) || calculateVisibility(payload, statement[2]));
     case Operator.XOR:
       return XOR(calculateVisibility(payload, statement[0] as Statement), calculateVisibility(payload, statement[2]));
+    case Operator.NOT:
+      return !calculateVisibility(payload, statement[0] as Statement);
     default:
       throw new Error(`Not implemented operator ${operator}`);
     }
@@ -45,8 +47,10 @@ function calculateVisibility(payload: FormPayload, statement: Statement): boolea
       return fieldValue >= compareValue;
     case Operator.GT:
       return fieldValue > compareValue;
-    case Operator.INCLUDED:
+    case Operator.IN:
       return compareValue.includes(fieldValue);
+    case Operator.NOT_IN:
+      return !compareValue.includes(fieldValue);
     default:
       throw new Error(`Not implemented operator ${operator}`);
     }

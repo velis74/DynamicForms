@@ -15,7 +15,8 @@ describe('Operator', () => {
     expect(Operator.fromString('LT')).toBe(Operator.LT);
     expect(Operator.fromString('GE')).toBe(Operator.GE);
     expect(Operator.fromString('LE')).toBe(Operator.LE);
-    expect(Operator.fromString('INCLUDED')).toBe(Operator.INCLUDED);
+    expect(Operator.fromString('IN')).toBe(Operator.IN);
+    expect(Operator.fromString('NOT_IN')).toBe(Operator.NOT_IN);
 
     expect(Operator.fromString('THIS WILL NEVER BE AN OPERATOR')).toBe(defaultOperator);
   });
