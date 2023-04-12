@@ -38,15 +38,15 @@ class Operators(IntEnum):
     NOT_IN = -8
 
 
-LogicOperators = [
+LogicOperators = {
     Operators.OR,
     Operators.AND,
     Operators.XOR,
     Operators.NAND,
     Operators.NOR,
-]
+}
 
-Comparators = [
+Comparators = {
     Operators.EQUALS,
     Operators.NOT_EQUALS,
     Operators.GT,
@@ -55,7 +55,7 @@ Comparators = [
     Operators.LE,
     Operators.IN,
     Operators.NOT_IN,
-]
+}
 
 
 # Types
@@ -147,14 +147,14 @@ class Statement:
                 raise ValueError(f"Operator NOT expects only first statement, got also second statement")
 
         if self.operator in LogicOperators:
-            if not (isinstance(self.statement_a, S) and isinstance(self.statement_b, S)):
+            if not (isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement)):
                 raise ValueError(
-                    f"Logic operators expect a Statement type variables,"
+                    f"Logic operators expect Statement type variables,"
                     f"got {type(self.statement_a)}, {type(self.statement_b)}"
                 )
         else:
             # We are using comparator
-            if isinstance(self.statement_a, S) and isinstance(self.statement_b, S):
+            if isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement):
                 raise ValueError(f"Comparators expect non Statement type variables")
             if not isinstance(self.statement_a, str):
                 raise ValueError(f"Comparators expects first value to be string type, got {type(self.statement_a)}")
