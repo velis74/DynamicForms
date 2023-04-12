@@ -34,11 +34,24 @@ class OperatorsTest(TestCase):
                 ValueError, S, statement_a=self.comparison_value, operator=operator, statement_b=self.comparison_value
             )
 
-        # Included will fail upon not receiving iterable value
+        # In will fail upon not receiving iterable value
         self.assertRaises(
-            ValueError, S, statement_a=self.field_name, operator=Operators.INCLUDED, statement_b=self.comparison_value
+            ValueError, S, statement_a=self.field_name, operator=Operators.IN, statement_b=self.comparison_value
         )
-        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.INCLUDED, statement_b=self.S1)
+        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.IN, statement_b=self.S1)
+
+        # Not In should fail in same cases as In
+        self.assertRaises(
+            ValueError, S, statement_a=self.field_name, operator=Operators.NOT_IN, statement_b=self.comparison_value
+        )
+        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.NOT_IN, statement_b=self.S1)
+
+        # Not operator should only get 1 statement
+        self.assertRaises(ValueError, S, statement_a=self.field_name, operator=Operators.NOT, statement_b=self.S1)
+        self.assertRaises(ValueError, S, statement_a=self.S1, operator=Operators.NOT, statement_b=self.S1)
+        self.assertRaises(
+            ValueError, S, statement_a=self.field_name, operator=Operators.NOT, statement_b=self.comparison_value
+        )
 
     def test_field_operations(self):
         self.assertEqual(
@@ -72,8 +85,8 @@ class OperatorsTest(TestCase):
         )
 
         self.assertEqual(
-            (F(field_name=self.field_name).included(self.comparison_list)).to_value(),
-            (self.field_name, Operators.INCLUDED, self.comparison_list),
+            (F(field_name=self.field_name).is_in(self.comparison_list)).to_value(),
+            (self.field_name, Operators.IN, self.comparison_list),
         )
 
     def test_statements_operators(self):

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from collections import namedtuple
 from enum import IntEnum
-from typing import Tuple, Union, Iterable, NamedTuple
+from typing import Union, Iterable, NamedTuple
 
 
 class ConditionalVisibilityMixin(object):
@@ -35,7 +34,8 @@ class Operators(IntEnum):
     LT = -4
     GE = -5
     LE = -6
-    INCLUDED = -7
+    IN = -7
+    NOT_IN = -8
 
 
 LogicOperators = [
@@ -53,7 +53,8 @@ Comparators = [
     Operators.LT,
     Operators.GE,
     Operators.LE,
-    Operators.INCLUDED,
+    Operators.IN,
+    Operators.NOT_IN,
 ]
 
 
@@ -61,16 +62,10 @@ Comparators = [
 FieldType = str
 
 
-class ExpressionType(NamedTuple):
-    field_name: str
-    operator: Operators
-    value: any
-
-
 class StatementType(NamedTuple):
-    statement_a: Union[FieldType, ExpressionType]
+    statement_a: Union[FieldType, StatementType]
     operator: Operators
-    statement_b: Union[any, ExpressionType]
+    statement_b: Union[any, StatementType]
 
 
 class Field(object):
@@ -106,8 +101,11 @@ class Field(object):
     def __ne__(self, other: any) -> Statement:
         return Statement(self.field_name, Operators.NOT_EQUALS, other)
 
-    def included(self, other: Iterable) -> Statement:
-        return Statement(self.field_name, Operators.INCLUDED, other)
+    def is_in(self, other: Iterable) -> Statement:
+        return Statement(self.field_name, Operators.IN, other)
+
+    def not_in(self, other: Iterable) -> Statement:
+        return Statement(self.field_name, Operators.NOT_IN, other)
 
 
 class Statement:
@@ -137,11 +135,17 @@ class Statement:
         self.validation()
 
     def validation(self) -> None:
-        if self.operator == Operators.INCLUDED:
+        if self.operator in [Operators.IN, Operators.NOT_IN]:
             try:
                 len(self.statement_b)
             except TypeError:
-                raise ValueError(f"Operator INCLUDED expects an iterable value, got {self.statement_b}")
+                raise ValueError(f"Operator IN expects an iterable value, got {self.statement_b}")
+
+        if self.operator == Operators.NOT:
+            # Not is a special case, since it only takes 1 argument
+            if self.statement_b is not None:
+                raise ValueError(f"Operator NOT expects only first statement, got also second statement")
+
         if self.operator in LogicOperators:
             if not (isinstance(self.statement_a, S) and isinstance(self.statement_b, S)):
                 raise ValueError(
@@ -164,10 +168,13 @@ class Statement:
     def __xor__(self, other: Statement):
         return Statement(self, Operators.XOR, other)
 
+    def __neg__(self):
+        return Statement(self, Operators.NOT, None)
+
     def to_value(self) -> StatementType:
         if isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement):
-            return self.statement_a.to_value(), self.operator, self.statement_b.to_value()
-        return self.statement_a, self.operator, self.statement_b
+            return StatementType(self.statement_a.to_value(), self.operator, self.statement_b.to_value())
+        return StatementType(self.statement_a, self.operator, self.statement_b)
 
 
 # Aliases for developer friendly experience

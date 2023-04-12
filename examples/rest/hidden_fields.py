@@ -26,7 +26,7 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
         model = HiddenFields
         exclude = ()
         changed_flds = {
-            "int_fld": dict(conditional_visibility=F("unit").included(("pcs", "cst"))),
+            "int_fld": dict(conditional_visibility=F("unit").is_in(("pcs", "cst"))),
             "qty_fld": dict(conditional_visibility=F("unit") == "wt"),
             "cst_fld": dict(conditional_visibility=F("unit") == "cst"),
         }
