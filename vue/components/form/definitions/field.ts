@@ -10,6 +10,8 @@
  * So, right now we aren't doing anything about that!
  */
 import DisplayMode from '../../classes/display-mode';
+import { Statement } from '../inputs/conditional-visibility';
+import DfForm from '../namespace';
 
 import RenderParams from './field-render-params';
 
@@ -42,6 +44,8 @@ export default class FormField {
 
   public renderKey: number;
 
+  public conditionalVisibility!: Statement;
+
   constructor(fieldDef: DfForm.FormFieldJSON) {
     this.renderKey = 0; // used in row.vue
     // Below we circumvent having to declare an internal variable which property getters would be reading from
@@ -70,6 +74,7 @@ export default class FormField {
       widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },
       helpText: { get() { return fieldDef.help_text; }, enumerable: true },
       allowNull: { get() { return fieldDef.allow_null; }, enumerable: true },
+      conditionalVisibility: { get() { return fieldDef.conditional_visibility; }, enumerable: true },
     });
   }
 

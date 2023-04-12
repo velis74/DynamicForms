@@ -1,5 +1,6 @@
 from dynamicforms import serializers
 from dynamicforms.action import Actions
+from dynamicforms.mixins import F
 from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import HiddenFields
@@ -24,6 +25,11 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HiddenFields
         exclude = ()
+        changed_flds = {
+            "int_fld": dict(conditional_visibility=F("unit").is_in(("pcs", "cst"))),
+            "qty_fld": dict(conditional_visibility=F("unit") == "wt"),
+            "cst_fld": dict(conditional_visibility=F("unit") == "cst"),
+        }
         layout = Layout(component_name="ExampleHiddenLayout")
 
 

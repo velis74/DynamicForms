@@ -26,7 +26,7 @@ export default defineComponent({
   data() {
     return { oldPayload: new FormPayload({} as FormPayload) };
   },
-  watch: { // eslint-disable-line object-curly-newline
+  watch: {
     // Watching variables is one way of catering for dynamic field visibility / initialisation
     //   The other would be to track value-changed events emitted by the Layout. See valueChanged handler below
 
