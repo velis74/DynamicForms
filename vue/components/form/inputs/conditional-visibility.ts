@@ -4,6 +4,10 @@ import FormPayload = APIConsumer.FormPayload;
 
 export type Statement = [ string | Statement, Operator, any | Statement ] | null;
 
+function XOR(value1: boolean, value2: boolean): boolean {
+  return value1 ? !value2 : value2;
+}
+
 function calculateVisibility(payload: FormPayload, statement: Statement): boolean {
   if (statement == null) return true;
 
@@ -16,6 +20,12 @@ function calculateVisibility(payload: FormPayload, statement: Statement): boolea
       return calculateVisibility(payload, statement[0] as Statement) && calculateVisibility(payload, statement[2]);
     case Operator.OR:
       return calculateVisibility(payload, statement[0] as Statement) || calculateVisibility(payload, statement[2]);
+    case Operator.NAND:
+      return !(calculateVisibility(payload, statement[0] as Statement) && calculateVisibility(payload, statement[2]));
+    case Operator.NOR:
+      return !(calculateVisibility(payload, statement[0] as Statement) || calculateVisibility(payload, statement[2]));
+    case Operator.XOR:
+      return XOR(calculateVisibility(payload, statement[0] as Statement), calculateVisibility(payload, statement[2]));
     default:
       throw new Error(`Not implemented operator ${operator}`);
     }
