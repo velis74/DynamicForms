@@ -5,10 +5,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Action from '../components/actions/action';
-import DisplayMode from '../components/classes/display-mode';
-import FormPayload from '../components/form/definitions/form-payload';
-import FormLayout from '../components/form/definitions/layout';
+import Action from '../dynamicforms/src/components/actions/action';
+import DisplayMode from '../dynamicforms/src/components/classes/display-mode';
+import FormPayload from '../dynamicforms/src/components/form/definitions/form-payload';
+import FormLayout from '../dynamicforms/src/components/form/definitions/layout';
 
 type ExtraDataType = {
   field: string,

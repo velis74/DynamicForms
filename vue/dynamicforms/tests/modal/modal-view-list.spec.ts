@@ -1,4 +1,4 @@
-import dialogList, { DialogDefinition } from '../../components/modal/modal-view-list';
+import dialogList, { DialogDefinition } from '../../src/components/modal/modal-view-list';
 
 describe('DialogList', () => {
   // eslint-disable-next-line no-undef

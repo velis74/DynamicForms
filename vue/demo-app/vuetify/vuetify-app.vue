@@ -49,7 +49,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { ModalView } from '../../components/modal';
+import { ModalView } from '../../dynamicforms/src/components/modal';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyApp',

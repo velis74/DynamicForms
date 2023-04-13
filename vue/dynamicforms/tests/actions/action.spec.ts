@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
-import Action, { defaultActionHandler } from '../../components/actions/action';
-import FormPayload from '../../components/form/definitions/form-payload';
+import Action, { defaultActionHandler } from '../../src/components/actions/action';
+import FormPayload from '../../src/components/form/definitions/form-payload';
 
 describe('Action', () => {
   describe('defaultActionHandler', () => {

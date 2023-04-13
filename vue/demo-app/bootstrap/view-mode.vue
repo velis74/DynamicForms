@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import ConsumerLogicApi from '../../components/api_consumer/consumer-logic-api';
+import ConsumerLogicApi from '../../dynamicforms/src/components/api_consumer/consumer-logic-api';
 
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';

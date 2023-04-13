@@ -1,4 +1,4 @@
-import DialogSize from '../../components/modal/dialog-size';
+import DialogSize from '../../src/components/modal/dialog-size';
 
 describe('DialogSize', () => {
   // eslint-disable-next-line no-undef

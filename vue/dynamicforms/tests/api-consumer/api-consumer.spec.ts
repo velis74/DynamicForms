@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-import ConsumerLogicApi from '../../components/api_consumer/consumer-logic-api';
+import ConsumerLogicApi from '../../src/components/api_consumer/consumer-logic-api';
 
 import * as mockComponentDef from './api-consumer-table-componentdef.json';
 

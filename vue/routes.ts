@@ -1,5 +1,5 @@
-import APIConsumerLoader from './components/api_consumer/api-consumer-loader.vue';
-import DfCalendar from './components/public/df-calendar.vue';
+import APIConsumerLoader from './dynamicforms/src/components/api_consumer/api-consumer-loader.vue';
+import DfCalendar from './dynamicforms/src/components/public/df-calendar.vue';
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
 

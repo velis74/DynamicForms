@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-import DisplayMode from '../../../components/classes/display-mode';
-import Operator from '../../../components/form/definitions/field-operator';
-import FormPayload from '../../../components/form/definitions/form-payload';
-import FormLayout from '../../../components/form/definitions/layout';
-import calculateVisibility, { Statement, XOR } from '../../../components/form/inputs/conditional-visibility';
+import DisplayMode from '../../../src/components/classes/display-mode';
+import Operator from '../../../src/components/form/definitions/field-operator';
+import FormPayload from '../../../src/components/form/definitions/form-payload';
+import FormLayout from '../../../src/components/form/definitions/layout';
+import calculateVisibility, { Statement, XOR } from '../../../src/components/form/inputs/conditional-visibility';
 
 type FieldValues = { [key: string]: any };
 

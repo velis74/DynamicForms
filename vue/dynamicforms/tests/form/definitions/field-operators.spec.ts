@@ -1,4 +1,4 @@
-import Operator, { defaultOperator } from '../../../components/form/definitions/field-operator';
+import Operator, { defaultOperator } from '../../../src/components/form/definitions/field-operator';
 
 describe('Operator', () => {
   it('Create Operators From String', () => {

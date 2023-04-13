@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { vi } from 'vitest';
 
-import Action from '../../components/actions/action';
-import FilteredActions from '../../components/actions/filtered-actions';
+import Action from '../../src/components/actions/action';
+import FilteredActions from '../../src/components/actions/filtered-actions';
 
 describe('Actions', () => {
   it('Basic instance creation tests', () => {

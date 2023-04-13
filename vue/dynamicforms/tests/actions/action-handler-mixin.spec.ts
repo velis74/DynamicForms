@@ -2,9 +2,9 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import { vi } from 'vitest';
 import { createVuetify } from 'vuetify';
 
-import ActionHandlerMixin from '../../components/actions/action-handler-mixin';
-import FilteredActions from '../../components/actions/filtered-actions';
-import FormPayload from '../../components/form/definitions/form-payload';
+import ActionHandlerMixin from '../../src/components/actions/action-handler-mixin';
+import FilteredActions from '../../src/components/actions/filtered-actions';
+import FormPayload from '../../src/components/form/definitions/form-payload';
 
 const actions = {
   head: { position: 'HEADER', name: 'head' },

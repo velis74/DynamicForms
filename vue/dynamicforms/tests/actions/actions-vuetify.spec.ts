@@ -4,10 +4,10 @@ import { vi } from 'vitest';
 import { nextTick } from 'vue';
 import { createVuetify } from 'vuetify';
 
-import Action, { defaultActionHandler } from '../../components/actions/action';
-import VuetifyActions from '../../components/actions/actions-vuetify.vue';
-import FilteredActions from '../../components/actions/filtered-actions';
-import * as VuetifyComponents from '../../components/vuetify';
+import Action, { defaultActionHandler } from '../../src/components/actions/action';
+import VuetifyActions from '../../src/components/actions/actions-vuetify.vue';
+import FilteredActions from '../../src/components/actions/filtered-actions';
+import * as VuetifyComponents from '../../src/components/vuetify';
 
 const fieldName = 'field-name';
 const actionDefinitions = {

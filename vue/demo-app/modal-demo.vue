@@ -31,10 +31,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Action, { defaultActionHandler } from '../components/actions/action';
-import FilteredActions from '../components/actions/filtered-actions';
-import DialogSize from '../components/modal/dialog-size';
-import dfModal from '../components/modal/modal-view-api';
+import Action, { defaultActionHandler } from '../dynamicforms/src/components/actions/action';
+import FilteredActions from '../dynamicforms/src/components/actions/filtered-actions';
+import DialogSize from '../dynamicforms/src/components/modal/dialog-size';
+import dfModal from '../dynamicforms/src/components/modal/modal-view-api';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'ModalDemo',

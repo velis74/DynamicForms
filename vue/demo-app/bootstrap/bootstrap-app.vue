@@ -35,7 +35,7 @@ import { BootstrapVue } from 'bootstrap-vue';
 import Vue, { defineComponent } from 'vue';
 
 // import * as BootstrapComponents from '../../components/bootstrap';
-import { ModalView } from '../../components/modal';
+import { ModalView } from '../../dynamicforms/src/components/modal';
 
 import BootstrapViewMode from './view-mode.vue';
 

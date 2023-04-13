@@ -1,4 +1,4 @@
-import IndexedArray, { IndexedItem } from '../../components/classes/indexed-array';
+import IndexedArray, { IndexedItem } from '../../src/components/classes/indexed-array';
 
 describe('IndexedArray', () => {
   it('should be initialized with correct items and length properties', () => {
