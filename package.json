@@ -4,13 +4,17 @@
   "version": "0.70.47",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
-  "workspaces": [ "vue/dynamicforms" ],
+  "workspaces": [ "vue/*" ],
   "scripts": {
     "serve": "npm run serve --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "build-no-tsc": "npm run build-no-tsc --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.3",
+    "vite": "^4"
   },
   "eslintConfig": {
     "extends": [

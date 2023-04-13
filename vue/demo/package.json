@@ -1,0 +1,17 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "scripts": {
+    "serve": "vite"
+  },
+  "dependencies": {
+    "axios": "^1.2.0",
+    "bootstrap": "<5.0.0",
+    "bootstrap-vue": "^2.21.2",
+    "lodash": "^4.17.15",
+    "vue": "^3.2.45",
+    "vue-ionicon": "^2.1.0",
+    "vue-router": "^4.1.6",
+    "vuetify": "^3.0.1"
+  }
+}
