@@ -35,7 +35,7 @@ import { BootstrapVue } from 'bootstrap-vue';
 import Vue, { defineComponent } from 'vue';
 
 // import * as BootstrapComponents from '../../components/bootstrap';
-import { ModalView } from '../../dynamicforms/src/components/modal';
+import { ModalView } from '@velis/dynamicforms/src/components/modal';
 
 import BootstrapViewMode from './view-mode.vue';
 
@@ -57,6 +57,6 @@ export default /* #__PURE__ */ defineComponent({
 </script>
 
 <style scoped>
-  @import '~bootstrap/dist/css/bootstrap.css';
-  @import '~bootstrap-vue/dist/bootstrap-vue.css';
+  @import '../../../../../node_modules/bootstrap/dist/css/bootstrap.css';
+  @import '../../../../../node_modules/bootstrap-vue/dist/bootstrap-vue.css';
 </style>

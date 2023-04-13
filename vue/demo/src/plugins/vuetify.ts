@@ -1,4 +1,4 @@
-import { createVuetify } from 'vuetify';
+import { createVuetify } from 'vue/demo/src/plugins/vuetify';
 import { ThemeDefinition } from 'vuetify/dist/vuetify';
 
 const defaultTheme: ThemeDefinition = {
