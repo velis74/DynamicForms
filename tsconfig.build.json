@@ -1,9 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": [
-    "vue/demo/src/demo-app",
-    "vue/dynamicforms/tests"
-  ],
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,

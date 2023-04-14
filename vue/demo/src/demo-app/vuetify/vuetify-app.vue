@@ -49,11 +49,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { ModalView } from '@velis/dynamicforms/src/components/modal';
-
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyApp',
-  components: { ModalView },
   props: {
     title: { type: String, required: true },
     themes: { type: Array, required: true },

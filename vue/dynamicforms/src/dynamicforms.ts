@@ -1,5 +1,9 @@
 import type { App } from 'vue';
 
+import VuetifyViewMode from '../../demo/src/demo-app/vuetify/view-mode.vue';
+import VuetifyApp from '../../demo/src/demo-app/vuetify/vuetify-app.vue';
+import dfVuetifyConfiguration from '../../demo/src/plugins/vuetify';
+
 import DisplayMode from './components/classes/display-mode';
 import FormPayload from './components/form/definitions/form-payload';
 import DialogSize from './components/modal/dialog-size';
@@ -8,9 +12,6 @@ import TcolumnGeneric from './components/table/tcolumn-generic.vue';
 import apiClient from './components/util/api-client';
 import { gettext, interpolate } from './components/util/translations-mixin';
 import * as VuetifyComponents from './components/vuetify';
-import VuetifyViewMode from '../../demo/src/demo-app/vuetify/view-mode.vue';
-import VuetifyApp from '../../demo/src/demo-app/vuetify/vuetify-app.vue';
-import dfVuetifyConfiguration from '../../demo/src/plugins/vuetify';
 
 export * from './components/api_consumer/index-temporary';
 export { dfModal, DialogSize, DisplayMode, FormPayload, dfVuetifyConfiguration, gettext, interpolate, apiClient };
