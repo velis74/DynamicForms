@@ -1,8 +1,6 @@
 import type { App } from 'vue';
 
-import VuetifyViewMode from '../../demo/src/demo-app/vuetify/view-mode.vue';
-import VuetifyApp from '../../demo/src/demo-app/vuetify/vuetify-app.vue';
-import dfVuetifyConfiguration from '../../demo/src/plugins/vuetify';
+// import dfVuetifyConfiguration from '../../demo/src/plugins/vuetify';
 
 import DisplayMode from './components/classes/display-mode';
 import FormPayload from './components/form/definitions/form-payload';
@@ -14,7 +12,7 @@ import { gettext, interpolate } from './components/util/translations-mixin';
 import * as VuetifyComponents from './components/vuetify';
 
 export * from './components/api_consumer/index-temporary';
-export { dfModal, DialogSize, DisplayMode, FormPayload, dfVuetifyConfiguration, gettext, interpolate, apiClient };
+export { dfModal, DialogSize, DisplayMode, FormPayload, gettext, interpolate, apiClient };
 
 function unifyName(theme: string, name: string) {
   if (!name.toLowerCase().startsWith(theme.toLowerCase())) {
@@ -46,8 +44,6 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
       // check if Vuetify is installed
 
       // import all global instances that we need for vuetify to work
-      app.component(unifyName(ui, VuetifyApp.name), VuetifyApp);
-      app.component(unifyName(ui, VuetifyViewMode.name), VuetifyViewMode);
       Object.values(VuetifyComponents).map((component) => {
         if (!component.name) console.warn('Component has no name', component);
         return app.component(unifyName(ui, component.name), component);

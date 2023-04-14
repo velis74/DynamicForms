@@ -1,5 +1,6 @@
 import APIConsumerLoader from '@velis/dynamicforms/src/components/api_consumer/api-consumer-loader.vue';
 import DfCalendar from '@velis/dynamicforms/src/components/public/df-calendar.vue';
+
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
 
