@@ -1,5 +1,5 @@
 {
-  "name": "@velis/dynamicforms",
+  "name": "dynamicform-project",
   "private": false,
   "version": "0.70.47",
   "description": "Data entry boilerplate components and a RESTful API consumer",

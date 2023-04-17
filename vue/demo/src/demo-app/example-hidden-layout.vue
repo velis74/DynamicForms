@@ -3,12 +3,8 @@
 </template>
 
 <script lang="ts">
+import { Action, DisplayMode, FormPayload } from '@velis/dynamicforms-local';
 import { defineComponent } from 'vue';
-
-import Action from '@velis/dynamicforms/src/components/actions/action';
-import DisplayMode from '@velis/dynamicforms/src/components/classes/display-mode';
-import FormPayload from '@velis/dynamicforms/src/components/form/definitions/form-payload';
-import FormLayout from '@velis/dynamicforms/src/components/form/definitions/layout';
 
 type ExtraDataType = {
   field: string,
@@ -19,7 +15,7 @@ type ExtraDataType = {
 export default defineComponent({
   name: 'ExampleHiddenLayout',
   props: {
-    layout: { type: FormLayout, required: true },
+    layout: { type: Object, required: true },
     payload: { type: FormPayload, default: null },
     errors: { type: Object, default: () => {} },
   },

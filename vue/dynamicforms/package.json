@@ -1,5 +1,5 @@
 {
-  "name": "@velis/dynamicforms",
+  "name": "@velis/dynamicforms-local",
   "private": false,
   "version": "0.70.47",
   "description": "Data entry boilerplate components and a RESTful API consumer",
@@ -10,7 +10,10 @@
   "main": "dist/dynamicforms.umd.js",
   "types": "./dist/dynamicforms.d.ts",
   "exports": {
-    ".": "./dist/dynamicforms.umd.js",
+    ".": {
+      "require": "./dist/dynamicforms.umd.js",
+      "import": "./dist/dynamicforms.mjs"
+    },
     "./styles.css": "./dist/style.css",
     "./src/*": "./src/*"
   },
@@ -50,15 +53,6 @@
     "weekstart": "^1.1.0"
   },
   "devDependencies": {
-    "@fullcalendar/core": "^6.1.4",
-    "@fullcalendar/daygrid": "^6.1.4",
-    "@fullcalendar/interaction": "^6.1.4",
-    "@fullcalendar/list": "^6.1.4",
-    "@fullcalendar/moment": "^6.1.4",
-    "@fullcalendar/moment-timezone": "^6.1.4",
-    "@fullcalendar/resource-timegrid": "^6.1.4",
-    "@fullcalendar/timegrid": "^6.1.4",
-    "@fullcalendar/vue3": "^6.1.4",
     "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^1.27.1",
@@ -73,7 +67,6 @@
     "jsdom": "^21",
     "np": "^7.7.0",
     "sass": "^1",
-    "suncalc": "^1.9.0",
     "vitest": "^0",
     "vue-tsc": "^1.0.9"
   },

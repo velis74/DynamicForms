@@ -1,5 +1,5 @@
-import { createDynamicForms } from '@velis/dynamicforms/src/dynamicforms';
-import type { DynamicFormsOptions } from '@velis/dynamicforms/src/dynamicforms';
+import { createDynamicForms } from '@velis/dynamicforms-local';
+import type { DynamicFormsOptions } from '@velis/dynamicforms-local';
 
 const options: DynamicFormsOptions = { ui: 'vuetify' };
 

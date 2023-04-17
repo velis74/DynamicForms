@@ -29,12 +29,8 @@
 </template>
 
 <script lang="ts">
+import { Action, defaultActionHandler, FilteredActions, DialogSize, dfModal } from '@velis/dynamicforms-local';
 import { defineComponent } from 'vue';
-
-import Action, { defaultActionHandler } from '@velis/dynamicforms/src/components/actions/action';
-import FilteredActions from '@velis/dynamicforms/src/components/actions/filtered-actions';
-import DialogSize from '@velis/dynamicforms/src/components/modal/dialog-size';
-import dfModal from '@velis/dynamicforms/src/components/modal/modal-view-api';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'ModalDemo',

@@ -1,7 +1,7 @@
 import type { App } from 'vue';
 
-// import dfVuetifyConfiguration from '../../demo/src/plugins/vuetify';
-
+import Action, { defaultActionHandler } from './components/actions/action';
+import FilteredActions from './components/actions/filtered-actions';
 import DisplayMode from './components/classes/display-mode';
 import FormPayload from './components/form/definitions/form-payload';
 import DialogSize from './components/modal/dialog-size';
@@ -12,7 +12,18 @@ import { gettext, interpolate } from './components/util/translations-mixin';
 import * as VuetifyComponents from './components/vuetify';
 
 export * from './components/api_consumer/index-temporary';
-export { dfModal, DialogSize, DisplayMode, FormPayload, gettext, interpolate, apiClient };
+export {
+  Action,
+  defaultActionHandler,
+  apiClient,
+  dfModal,
+  DialogSize,
+  DisplayMode,
+  FilteredActions,
+  FormPayload,
+  gettext,
+  interpolate,
+};
 
 function unifyName(theme: string, name: string) {
   if (!name.toLowerCase().startsWith(theme.toLowerCase())) {

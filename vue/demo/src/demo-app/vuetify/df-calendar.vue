@@ -19,11 +19,9 @@ import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/vue3';
+import { apiClient, ConsumerLogicApi } from '@velis/dynamicforms-local';
 import SunCalc from 'suncalc';
 import { defineComponent } from 'vue';
-
-import { ConsumerLogicApi } from '../api_consumer/index-temporary';
-import apiClient from '../util/api-client';
 
 export default defineComponent({
   name: 'DfCalendar',

@@ -9,6 +9,7 @@ import vuetify from './plugins/vuetify';
 import router from './router';
 
 import 'vuetify/styles/main.css';
+import '@velis/dynamicforms-local/styles.css';
 
 const app = createApp(DemoApp);
 app.use(router);
@@ -17,7 +18,7 @@ app.use(dynamicForms);
 app.config.unwrapInjectedRef = true;
 
 // demo specific components
-app.component('df-app', VuetifyApp);
+app.component('DfApp', VuetifyApp);
 app.component(ViewMode.name, ViewMode);
 app.component(ExampleHiddenLayout.name, ExampleHiddenLayout);
 

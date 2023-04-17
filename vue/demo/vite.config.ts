@@ -9,7 +9,7 @@ const axiosRedirectConfig = () => ({
   name: 'serverProxy',
   configureServer(server: any) {
     const filter = function filter(pathname: any, req: any) {
-      return typeof req.headers['x-df-axios'] !== 'undefined' || pathname.startsWith("/calendar-event");
+      return typeof req.headers['x-df-axios'] !== 'undefined' || pathname.startsWith('/calendar-event');
     };
     server.middlewares.use(
       '/',
@@ -60,9 +60,7 @@ export default defineConfig({
     },
   },
   test: {
-    deps: {
-      inline: ['vuetify']
-    },
+    deps: { inline: ['vuetify'] },
     globals: true,
     environment: 'jsdom',
     useAtomics: true, // eliminates tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)

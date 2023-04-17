@@ -1,8 +1,8 @@
-import APIConsumerLoader from '@velis/dynamicforms/src/components/api_consumer/api-consumer-loader.vue';
-import DfCalendar from '@velis/dynamicforms/src/components/public/df-calendar.vue';
+import { APIConsumerLoader } from '@velis/dynamicforms-local';
 
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
+import DfCalendar from './demo-app/vuetify/df-calendar.vue';
 
 const EmptyComponent = { render() { return null; } };
 
