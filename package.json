@@ -8,6 +8,7 @@
     "vue/*"
   ],
   "scripts": {
+    "clean": "rf",
     "dev": "npm run dev --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "build-no-tsc": "npm run build-no-tsc --workspaces --if-present",
@@ -16,7 +17,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.0.1",
-    "typescript": "^4.9.3"
+    "typescript": "^5.0.4"
   },
   "eslintConfig": {
     "extends": [

@@ -1,9 +1,9 @@
 {
-  "extends": "../../node_modules/eslint-config-velis/tsconfig.json",
-  "include": ["src/**/*"],
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": [
-    "./dist",
-    "./coverage",
-    "./node_modules"
+    "dist",
+    "coverage",
+    "node_modules"
   ],
 }

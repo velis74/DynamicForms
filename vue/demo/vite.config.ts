@@ -32,6 +32,11 @@ export default defineConfig({
       ...eslint({
         failOnWarning: false,
         failOnError: false,
+        overrideConfig: {
+          parserOptions: {
+            project: '../../tsconfig.eslint.json'
+          }
+        },
       }),
       apply: 'serve',
       enforce: 'post',
