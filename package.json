@@ -8,7 +8,7 @@
     "vue/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --workspace=demo\" \"npm run watch --workspace=@velis/dynamicforms-local\"",
+    "dev": "npm run dev --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "build-no-tsc": "npm run build-no-tsc --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",

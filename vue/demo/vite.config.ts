@@ -1,4 +1,6 @@
 /// <reference types="vitest" />
+import { resolve } from 'path';
+
 import vue from '@vitejs/plugin-vue';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { defineConfig } from 'vite';
@@ -16,9 +18,7 @@ const axiosRedirectConfig = () => ({
       createProxyMiddleware(filter, {
         target: 'http://localhost:8000',
         changeOrigin: false,
-        pathRewrite: (path) => {
-          return path;
-        },
+        pathRewrite: (path) => (path),
       }),
     );
   },
@@ -40,10 +40,7 @@ export default defineConfig({
     axiosRedirectConfig(),
   ],
   resolve: {
-    // alias: {
-    //   '@': fileURLToPath(new URL_('./src', import.meta.url)),
-    //   '~': fileURLToPath(new URL_('./node_modules', import.meta.url)),
-    // },
+    alias: { dynamicforms: resolve(__dirname, '../dynamicforms/src/dynamicforms') },
     extensions: [
       '.js',
       '.ts',

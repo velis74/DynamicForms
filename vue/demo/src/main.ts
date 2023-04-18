@@ -9,7 +9,6 @@ import vuetify from './plugins/vuetify';
 import router from './router';
 
 import 'vuetify/styles/main.css';
-import '@velis/dynamicforms-local/styles.css';
 
 const app = createApp(DemoApp);
 app.use(router);

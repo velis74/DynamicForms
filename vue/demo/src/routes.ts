@@ -1,4 +1,4 @@
-import { APIConsumerLoader } from '@velis/dynamicforms-local';
+import { APIConsumerLoader } from 'dynamicforms';
 
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
