@@ -21,7 +21,8 @@
     "build-no-tsc": "vite build",
     "build": "vite build && vue-tsc --emitDeclarationOnly -p tsconfig.build.json",
     "test": "vitest run --coverage",
-    "lint": "eslint src && vue-tsc --noEmit"
+    "lint": "eslint src && vue-tsc --noEmit",
+    "watch": "vite build --watch"
   },
   "keywords": [
     "vue",

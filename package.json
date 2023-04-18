@@ -4,15 +4,18 @@
   "version": "0.70.47",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
-  "workspaces": [ "vue/*" ],
+  "workspaces": [
+    "vue/*"
+  ],
   "scripts": {
-    "serve": "npm run serve --workspaces --if-present",
+    "dev": "concurrently \"npm run dev --workspace=demo\" \"npm run watch --workspace=@velis/dynamicforms-local\"",
     "build": "npm run build --workspaces --if-present",
     "build-no-tsc": "npm run build-no-tsc --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
+    "concurrently": "^8.0.1",
     "typescript": "^4.9.3"
   },
   "eslintConfig": {

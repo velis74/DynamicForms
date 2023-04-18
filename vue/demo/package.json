@@ -2,7 +2,7 @@
   "name": "demo",
   "version": "1.0.0",
   "scripts": {
-    "serve": "vite"
+    "dev": "vite"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.4",
