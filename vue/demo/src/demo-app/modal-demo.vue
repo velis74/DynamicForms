@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { Action, defaultActionHandler, FilteredActions, DialogSize, dfModal } from '@velis/dynamicforms-local';
+import { Action, defaultActionHandler, FilteredActions, DialogSize, dfModal } from 'dynamicforms';
 import { defineComponent } from 'vue';
 
 export default /* #__PURE__ */ defineComponent({
@@ -44,7 +44,7 @@ export default /* #__PURE__ */ defineComponent({
     };
   },
   methods: {
-    async btnClick(which: string, level: number) {
+    async btnClick(which: string, level: number = 0) {
       switch (which) {
       case 'template':
         this.showTemplate = !this.showTemplate;
