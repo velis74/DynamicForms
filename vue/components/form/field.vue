@@ -12,11 +12,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
+import FormField from './definitions/field';
 import FormPayload from './definitions/form-payload';
 import DCheckbox from './inputs/checkbox.vue';
 import DCKEditor from './inputs/ckeditor.vue';
@@ -43,21 +44,23 @@ export default /* #__PURE__ */ defineComponent({
     DTextArea,
   },
   mixins: [ActionHandlerMixin],
-  inject: { payload: { from: 'payload', default: {} as FormPayload } },
   props: {
-    field: { type: Object, required: true },
+    field: { type: FormField, required: true },
     actions: { type: FilteredActions, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
   },
+  setup() {
+    return { payload: inject<FormPayload>('payload', {} as FormPayload) };
+  },
   computed: {
-    columnClasses() {
+    columnClasses(): string {
       const classes = this.field.widthClasses;
       return classes ? ` ${classes}` : '';
     },
     fieldValue: {
-      get() { return this.payload[this.field.name]; },
+      get(): any { return this.payload[this.field.name]; },
       set(value: any) {
         this.payload[this.field.name] = value;
       },
@@ -71,7 +74,7 @@ export default /* #__PURE__ */ defineComponent({
           { field: this.field.name, oldValue, newValue },
         );
       },
-      // in case there are a nested value in the future
+      // in case there are nested values in the future
       deep: true,
     },
   },
