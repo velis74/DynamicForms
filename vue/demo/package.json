@@ -14,7 +14,7 @@
     "@fullcalendar/resource-timegrid": "^6.1.4",
     "@fullcalendar/timegrid": "^6.1.4",
     "@fullcalendar/vue3": "^6.1.4",
-    "@velis/dynamicforms-local": "^0.70.47",
+    "@velis/dynamicforms": "^0.70.47",
     "axios": "^1.2.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
