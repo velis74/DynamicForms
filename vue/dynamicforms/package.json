@@ -8,14 +8,13 @@
     "dist/*"
   ],
   "main": "dist/dynamicforms.umd.js",
-  "types": "./dist/dynamicforms.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/dynamicforms.umd.js",
       "import": "./dist/dynamicforms.mjs"
     },
-    "./styles.css": "./dist/style.css",
-    "./src/*": "./src/*"
+    "./styles.css": "./dist/style.css"
   },
   "scripts": {
     "build-no-tsc": "vite build",
