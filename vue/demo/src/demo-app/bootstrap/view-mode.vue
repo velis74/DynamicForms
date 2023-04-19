@@ -13,9 +13,8 @@
 </template>
 
 <script lang="ts">
+import { ConsumerLogicApi } from 'dynamicforms';
 import { defineComponent } from 'vue';
-
-import ConsumerLogicApi from '@velis/dynamicforms/src/components/api_consumer/consumer-logic-api';
 
 // import DFForm from '../components/bootstrap/form/dfform.vue';
 // import DynamicForms from '../dynamicforms';

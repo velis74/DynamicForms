@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
 
-import { createDynamicForms } from '../../src/dynamicforms';
+import { createDynamicForms } from '../../src';
 
 describe('Initialization Tests', () => {
   it('Create DynamicForms', () => {

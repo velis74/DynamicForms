@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "dynamicforms": ["../dynamicforms/src/dynamicforms.ts"]
+      "dynamicforms": ["../dynamicforms/src/index.ts"]
     }
   },
   "include": ["src/**/*"],

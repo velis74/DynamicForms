@@ -38,7 +38,7 @@ export default defineConfig({
   build: {
     target: 'es2015',
     lib: {
-      entry: resolve(__dirname, 'src/dynamicforms.ts'),
+      entry: resolve(__dirname, 'src/index.ts'),
       formats: ['umd', 'es'],
       fileName: 'dynamicforms',
       name: 'dynamicforms.[name]',

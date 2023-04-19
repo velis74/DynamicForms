@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Action, DisplayMode, FormPayload } from '@velis/dynamicforms-local';
+import { Action, DisplayMode, FormPayload } from 'dynamicforms';
 import { defineComponent } from 'vue';
 
 type ExtraDataType = {

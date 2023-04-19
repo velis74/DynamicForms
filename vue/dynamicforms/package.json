@@ -57,7 +57,6 @@
     "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^1.27.1",
-    "@types/suncalc": "^1.9.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitest/coverage-c8": "^0.28.3",
     "@vue/test-utils": "^2.2.4",
