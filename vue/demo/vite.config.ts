@@ -32,11 +32,7 @@ export default defineConfig({
       ...eslint({
         failOnWarning: false,
         failOnError: false,
-        overrideConfig: {
-          parserOptions: {
-            project: '../../tsconfig.eslint.json'
-          }
-        },
+        overrideConfig: { parserOptions: { project: '../../tsconfig.eslint.json' } },
       }),
       apply: 'serve',
       enforce: 'post',
@@ -45,7 +41,7 @@ export default defineConfig({
     axiosRedirectConfig(),
   ],
   resolve: {
-    alias: { dynamicforms: resolve(__dirname, '../dynamicforms/src/dynamicforms') },
+    alias: { dynamicforms: resolve(__dirname, '../dynamicforms/src/index') },
     extensions: [
       '.js',
       '.ts',
