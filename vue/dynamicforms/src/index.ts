@@ -4,6 +4,7 @@ import Action, { defaultActionHandler } from './components/actions/action';
 import FilteredActions from './components/actions/filtered-actions';
 import DisplayMode from './components/classes/display-mode';
 import FormPayload from './components/form/definitions/form-payload';
+import FormLayout from './components/form/definitions/layout';
 import DialogSize from './components/modal/dialog-size';
 import dfModal from './components/modal/modal-view-api';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
@@ -20,6 +21,7 @@ export {
   DialogSize,
   DisplayMode,
   FilteredActions,
+  FormLayout,
   FormPayload,
   gettext,
   interpolate,

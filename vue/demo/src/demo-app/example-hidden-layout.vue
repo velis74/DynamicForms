@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Action, DisplayMode, FormPayload } from 'dynamicforms';
+import { Action, DisplayMode, FormLayout, FormPayload } from 'dynamicforms';
 import { defineComponent } from 'vue';
 
 type ExtraDataType = {
@@ -15,7 +15,7 @@ type ExtraDataType = {
 export default defineComponent({
   name: 'ExampleHiddenLayout',
   props: {
-    layout: { type: Object, required: true },
+    layout: { type: FormLayout, required: true },
     payload: { type: FormPayload, default: null },
     errors: { type: Object, default: () => {} },
   },

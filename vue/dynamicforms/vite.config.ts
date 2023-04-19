@@ -23,10 +23,10 @@ export default defineConfig({
     vuetify({ autoImport: true }),
   ],
   resolve: {
-    // alias: {
-    //   '@': fileURLToPath(new URL_('./src', import.meta.url)),
-    //   '~': fileURLToPath(new URL_('./node_modules', import.meta.url)),
-    // },
+    alias: {
+      '@': resolve(__dirname, './src'),
+      '~': resolve(__dirname, '../../node_modules'),
+    },
     extensions: [
       '.js',
       '.ts',

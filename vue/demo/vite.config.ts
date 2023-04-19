@@ -41,7 +41,11 @@ export default defineConfig({
     axiosRedirectConfig(),
   ],
   resolve: {
-    alias: { dynamicforms: resolve(__dirname, '../dynamicforms/src/index') },
+    alias: {
+      dynamicforms: resolve(__dirname, '../dynamicforms/src/index'),
+      '@': resolve(__dirname, './src'),
+      '~': resolve(__dirname, '../../node_modules'),
+    },
     extensions: [
       '.js',
       '.ts',
