@@ -5,6 +5,7 @@ django>=2
 djangorestframework>=3.14
 django-filter
 django-enumfields >= 2.1.1
+jsonschema
 pillow
 typing; python_version < '3.5'
 django-cors-headers

@@ -1,9 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": [
-    "vue/demo-app",
-    "vue/tests"
-  ],
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,

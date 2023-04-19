@@ -7,7 +7,10 @@ from typing import Iterable
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import (
-    ElementNotInteractableException, NoSuchElementException, TimeoutException, WebDriverException
+    ElementNotInteractableException,
+    NoSuchElementException,
+    TimeoutException,
+    WebDriverException,
 )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -22,19 +25,19 @@ MAX_WAIT_ALERT = 5
 
 
 class Browsers(Enum):
-    FIREFOX = 'FIREFOX'
-    CHROME = 'CHROME'
-    OPERA = 'OPERA'
-    EDGE = 'EDGE'
-    SAFARI = 'SAFARI'
-    IE = 'INTERNETEXPLORER'
+    FIREFOX = "FIREFOX"
+    CHROME = "CHROME"
+    OPERA = "OPERA"
+    EDGE = "EDGE"
+    SAFARI = "SAFARI"
+    IE = "INTERNETEXPLORER"
 
 
 # noinspection PyMethodMayBeStatic
 class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     # host = '0.0.0.0'
 
-    binary_location = ''
+    binary_location = ""
     github_actions = False
 
     def get_browser(self, opts=None):
@@ -92,7 +95,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         if not Relation.objects.count():
             add_relation(Relation)
 
-        self.github_actions = os.environ.get('GITHUB_ACTIONS', False)
+        self.github_actions = os.environ.get("GITHUB_ACTIONS", False)
 
         # first parameter: remote server
         # second parameter: "my" server
@@ -100,17 +103,17 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         # remote_selenium = 'MAC-SERVER:4444,myserver,SAFARI'
         # remote_selenium = 'WIN-SERVER:4444,myserver,FIREFOX|{"binary_location": "C:\\\\Program Files\\\\Mozilla
         #      Firefox\\\\firefox.exe"{comma} "headless": true}'
-        remote_selenium = os.environ.get('REMOTE_SELENIUM', ',')
+        remote_selenium = os.environ.get("REMOTE_SELENIUM", ",")
 
         # first parameter: selected browser
         # second parameter (optional): browser options in JSON format.
-        browser_selenium = os.environ.get('BROWSER_SELENIUM', ';')
+        browser_selenium = os.environ.get("BROWSER_SELENIUM", ";")
         # browser_selenium = 'CHROME;{"no-sandbox": true, "window-size": "1420,1080", "headless": true, ' \
         #                    '"disable-gpu": true}'
         # browser_selenium = 'FIREFOX;{"headless": true, ' \
         #                    '"binary_location": "C:\\\\Program Files\\\\Mozilla Firefox\\\\firefox.exe"}'
 
-        browser_options = browser_selenium.split(';', 1)
+        browser_options = browser_selenium.split(";", 1)
         browser = browser_options[0]
         if browser:
             self.selected_browser = Browsers(browser)
@@ -147,18 +150,19 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         except:
             pass
 
-        remote, this_server = remote_selenium.split(',')
+        remote, this_server = remote_selenium.split(",")
         if remote:
             self.browser = webdriver.Remote(
-                command_executor='http://{remote}/wd/hub'.format(remote=remote),
+                command_executor="http://{remote}/wd/hub".format(remote=remote),
                 desired_capabilities=dict(javascriptEnabled=True, **getattr(webdriver.DesiredCapabilities, browser)),
-                options=opts
+                options=opts,
             )
 
             olsu = self.live_server_url
-            self.live_server_url = 'http://{this_server}:{port}'.format(this_server=this_server,
-                                                                        port=self.live_server_url.split(':')[2])
-            print('Listen: ', olsu, ' --> Remotely accessible on: ', self.live_server_url)
+            self.live_server_url = "http://{this_server}:{port}".format(
+                this_server=this_server, port=self.live_server_url.split(":")[2]
+            )
+            print("Listen: ", olsu, " --> Remotely accessible on: ", self.live_server_url)
         else:
             self.browser = self.get_browser(opts)
 
@@ -190,25 +194,25 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             try:
                 time.sleep(0.01)
                 element = None
-                for el in self.browser.find_elements(By.CLASS_NAME, 'modal'):
+                for el in self.browser.find_elements(By.CLASS_NAME, "modal"):
                     if el.is_displayed():
                         element = el
                         break
                 self.assertIsNotNone(element)
-                element_id = element.get_attribute('id')
+                element_id = element.get_attribute("id")
                 if old_id and element_id == "dialog-{old_id}".format(**locals()):
                     # The new dialog must not have same id as the old one
                     # if it does, this means that we're still looking at the old dialog - let's wait for it to go away
                     if time.time() - start_time > MAX_WAIT:
-                        raise Exception('Timeout for old dialog to go away expired')
+                        raise Exception("Timeout for old dialog to go away expired")
                     continue
-                self.assertTrue(element_id.startswith('dialog-'))
-                element_id = element_id.split('-', 1)[1]
+                self.assertTrue(element_id.startswith("dialog-"))
+                element_id = element_id.split("-", 1)[1]
 
                 # this is a dialog - let's wait for its animations to stop
                 try:
-                    WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(EC.element_to_be_clickable(
-                        (By.CLASS_NAME, 'ui-button' if DYNAMICFORMS.jquery_ui else 'btn'))
+                    WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(
+                        EC.element_to_be_clickable((By.CLASS_NAME, "ui-button" if DYNAMICFORMS.jquery_ui else "btn"))
                     )
                 except TimeoutException as e:
                     # dialog not ready yet or we found a bad dialog with no buttons
@@ -226,7 +230,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         while True:
             try:
                 time.sleep(0.01)
-                if self.browser.find_element(By.ID, 'dialog-{dialog_id}'.format(**locals())) is None:
+                if self.browser.find_element(By.ID, "dialog-{dialog_id}".format(**locals())) is None:
                     break
                 self.assertFalse(time.time() - start_time > MAX_WAIT)
             except WebDriverException:
@@ -235,7 +239,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def get_alert(self, wait_time=None):
         if not wait_time:
             wait_time = MAX_WAIT_ALERT
-        WebDriverWait(self.browser, wait_time).until(EC.alert_is_present(), 'No alert dialog.')
+        WebDriverWait(self.browser, wait_time).until(EC.alert_is_present(), "No alert dialog.")
         alert = self.browser.switch_to.alert
         return alert
 
@@ -243,18 +247,18 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
     def check_error_text(self, dialog):
         error_text = None
         try:
-            error = dialog.find_element(By.CLASS_NAME, 'text-danger')
+            error = dialog.find_element(By.CLASS_NAME, "text-danger")
             if error is not None:
-                error_text = error.get_attribute('innerHTML')
+                error_text = error.get_attribute("innerHTML")
         except WebDriverException:
             pass
         return error_text
 
     def initial_check(self, field, fld_text, fld_name, fld_type):
         self.assertEqual(self.get_element_text(field), fld_text)
-        self.assertEqual(field.get_attribute('name'), fld_name)
+        self.assertEqual(field.get_attribute("name"), fld_name)
 
-        field_type = field.get_attribute('type')
+        field_type = field.get_attribute("type")
         if isinstance(fld_type, tuple):
             self.assertIn(field_type, fld_type)
         else:
@@ -265,29 +269,29 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         start_time = time.time()
         body = None
         while True:
-            for cls in ['card-body', 'panel-body', 'ui-accordion-content']:
+            for cls in ["card-body", "panel-body", "ui-accordion-content"]:
                 try:
                     body = self.browser.find_element(By.CLASS_NAME, cls)
                     if body:
                         break
                 except NoSuchElementException:
-                    self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table to appear')
+                    self.assertFalse(time.time() - start_time > MAX_WAIT, "Wait time exceeded for table to appear")
                     time.sleep(0.01)
             if body:
                 break
 
-        table = body.find_element(By.TAG_NAME, 'table')
+        table = body.find_element(By.TAG_NAME, "table")
         if whole_table:
             return table
 
         while True:
-            rows = table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
+            rows = table.find_element(By.TAG_NAME, "tbody").find_elements(By.TAG_NAME, "tr")
             if not rows:
                 # component renders "no data" in tfoot
-                rows = table.find_element(By.TAG_NAME, 'tfoot').find_elements(By.TAG_NAME, 'tr')
+                rows = table.find_element(By.TAG_NAME, "tfoot").find_elements(By.TAG_NAME, "tr")
 
             if expected_rows is not None and len(rows) != expected_rows:
-                self.assertFalse(time.time() - start_time > MAX_WAIT, 'Wait time exceeded for table rows to appear')
+                self.assertFalse(time.time() - start_time > MAX_WAIT, "Wait time exceeded for table rows to appear")
                 time.sleep(0.01)
                 continue
             else:
@@ -311,7 +315,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
             a.perform()
 
     def check_row(self, row, cell_cnt, cell_values):
-        cells = row.find_elements(By.TAG_NAME, 'td')
+        cells = row.find_elements(By.TAG_NAME, "td")
         self.assertEqual(len(cells), cell_cnt)
         for i in range(len(cell_values)):
             if callable(cell_values[i]):
@@ -325,14 +329,17 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         return self.browser.current_url
 
     def update_edge_field(self, field_id, value):
-        self.browser.execute_script('''
+        self.browser.execute_script(
+            """
         $('#%s').val('%s');
         dynamicforms.fieldChange('%s', 'final');
-            ''' % (field_id, value, field_id))
+            """
+            % (field_id, value, field_id)
+        )
 
     @staticmethod
     def get_field_id_by_name(dialog, name):
-        return dialog.find_element(By.NAME, name).get_attribute('id')
+        return dialog.find_element(By.NAME, name).get_attribute("id")
 
     @staticmethod
     def get_tag_name(el):
@@ -343,14 +350,14 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
         tim = time.time()
         while True:
             res = el.text.strip()
-            if '…' not in res or time.time() > tim + MAX_WAIT:
+            if "…" not in res or time.time() > tim + MAX_WAIT:
                 break
-            time.sleep(.01)
+            time.sleep(0.01)
         return res
 
     def clear_input(self, element):
         element.click()
-        while len(element.get_attribute('value')):
+        while len(element.get_attribute("value")):
             element.send_keys(Keys.BACKSPACE)
         element.clear()
 
