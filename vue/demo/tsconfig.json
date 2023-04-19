@@ -1,0 +1,14 @@
+{
+  "extends": "../dynamicforms/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "dynamicforms": ["../dynamicforms/src/index.ts"],
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "dist",
+    "coverage",
+    "node_modules"
+  ]
+}
