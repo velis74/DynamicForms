@@ -57,6 +57,6 @@ export default /* #__PURE__ */ defineComponent({
 </script>
 
 <style scoped>
-  @import '../../../../../node_modules/bootstrap/dist/css/bootstrap.css';
-  @import '../../../../../node_modules/bootstrap-vue/dist/bootstrap-vue.css';
+  @import '~/bootstrap/dist/css/bootstrap.css';
+  @import '~/bootstrap-vue/dist/bootstrap-vue.css';
 </style>
