@@ -21,3 +21,6 @@ media
 /dynamicforms/vue/node_modules/
 /dynamicforms/vue/package-lock.json
 /dist/
+
+# Local configuration
+.env.local
