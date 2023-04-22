@@ -19,6 +19,11 @@ export default /* #__PURE__ */ defineComponent({
   props: {
     /**
      * Object containing the properties required to render at least one of the display components
+     *
+     * TODO: APIConsumerBase is not reactive. you have to assign the object anew for APIConsumer to work.
+     *  It won't do to just call .getFullDefinition on an existing object.
+     *
+     * TODO: APIConsumer is named incorrectly, causing <a-p-i-consumer> component name. Rename.
      */
     consumer: { type: ConsumerLogicBase, required: true },
     /**
