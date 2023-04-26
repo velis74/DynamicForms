@@ -7,9 +7,10 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
-import { ResponsiveLayout, ResponsiveLayouts, ResponsiveTableLayoutsDefinition } from './definitions/responsive-layout';
+import { ResponsiveLayout, ResponsiveLayouts } from './definitions/responsive-layout';
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
+import { DfTable } from './namespace';
 
 /**
  * Base Table (composable): provides logic for table component.
@@ -23,7 +24,7 @@ export interface TableBasePropsInterface {
   pkName: string;
   title: string;
   columns: TableColumn[];
-  responsiveTableLayouts: ResponsiveTableLayoutsDefinition | null;
+  responsiveTableLayouts: DfTable.ResponsiveTableLayoutsDefinition | null;
   columnDefs: object;
   rows: TableRows;
   loading: boolean;

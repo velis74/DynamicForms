@@ -28,6 +28,10 @@ export namespace DfForm {
     conditional_visibility: DfForm.StatementJSON;
   }
 
+  export interface FormFieldsJSON {
+    [key: string]: FormFieldJSON;
+  }
+
   export interface RenderParamsJSON {
     input_type: string;
     form_component_def: Object;

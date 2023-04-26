@@ -1,3 +1,5 @@
+import { Slot } from 'vue';
+
 import type { Actions } from '../actions/namespace';
 import type { APIConsumer } from '../api_consumer/namespace';
 
@@ -21,7 +23,7 @@ export namespace Dialogs {
     };
   }
 
-  export type DialogMessage = string | CustomComponentMessage;
+  export type DialogMessage = string | CustomComponentMessage | Slot;
 
   export interface RunningDialog {
     topOfTheStack: boolean; // true when this dialog is the first one

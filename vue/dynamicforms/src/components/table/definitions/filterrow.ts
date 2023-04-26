@@ -4,6 +4,7 @@ import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
 import FormField from '../../form/definitions/field';
 import FormPayload from '../../form/definitions/form-payload';
+import { DfForm } from '../../form/namespace';
 
 import TableColumn from './column';
 import TableColumns from './columns';
@@ -26,7 +27,7 @@ export default class TableFilterRow { // eslint-disable-line max-classes-per-fil
     let record = _.clone(filterData.record);
     record = _.mapValues(record, () => null);
     this.value = new TableRow(record);
-    const fields: { [key: string]: { help_text: string | null, label: string | null } } = {};
+    const fields: DfForm.FormFieldsJSON = {};
     filterDataNoActions.forEach((column) => {
       fields[column.name] = column;
     });
@@ -37,8 +38,12 @@ export default class TableFilterRow { // eslint-disable-line max-classes-per-fil
     );
     filteredCols.forEach((v: TableColumn) => {
       const fieldPayload = fields[v.name];
-      fieldPayload.help_text = null;
-      fieldPayload.label = null;
+      // we don't want labels or help text in the filter row
+      // TODO: I don't think this is the way to approach this issue. We have provide/inject and a field could easily
+      //  retrieve information about being placed within filter row. When this was true, label and help text are
+      //  simply not rendered despite being populated.
+      fieldPayload.help_text = '';
+      fieldPayload.label = '';
       v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);

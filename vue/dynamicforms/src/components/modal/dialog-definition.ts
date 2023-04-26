@@ -1,4 +1,4 @@
-import { VNode } from 'vue';
+import { Slot, VNode } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 
@@ -8,13 +8,13 @@ let idGenerator = 0;
 
 export default class DialogDefinition implements Dialogs.RunningDialog {
   /* Base dialog definition */
-  public title: string | VNode;
+  public title: string | VNode | Slot;
 
   public body: Dialogs.DialogMessage;
 
   public options: Dialogs.DialogOptions;
 
-  public actions: FilteredActions | VNode;
+  public actions: FilteredActions | VNode | Slot;
 
   public dialogId: number; // Unique dialog ID
 
@@ -31,10 +31,10 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
   public rejectPromise: Function; // Function to reject the promise
 
   constructor(
-    title: string | VNode,
+    title: string | VNode | Slot,
     body: Dialogs.DialogMessage,
     options: Dialogs.DialogOptions,
-    actions: FilteredActions,
+    actions: FilteredActions | Slot,
   ) {
     this.title = title;
     this.body = body;

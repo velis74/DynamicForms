@@ -1,4 +1,4 @@
-import { ComponentPublicInstance, defineComponent } from 'vue';
+import { ComponentPublicInstance, defineComponent, Slot } from 'vue';
 
 import DialogDefinition from './dialog-definition';
 import DialogSize from './dialog-size';
@@ -16,7 +16,12 @@ class DialogDefinitionWithSettableTop extends DialogDefinition {
 
   constructor(instance: DfModalPublicInstance) {
     // Jure 16.3.2023: types don't work here, but the code actually does.
-    super(instance.$slots.title, instance.$slots.body, { size: instance.size }, instance.$slots.actions);
+    super(
+      instance.$slots.title as Slot,
+      instance.$slots.body as Slot,
+      { size: instance.size },
+      instance.$slots.actions as Slot,
+    );
     this.instance = instance;
   }
 
