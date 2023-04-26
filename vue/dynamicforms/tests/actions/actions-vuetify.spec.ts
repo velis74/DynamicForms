@@ -255,7 +255,7 @@ describe('vuetify-actions action rendering', () => {
 
   it('checks if four buttons were rendered', async () => {
     const htmlCode = mountComponent();
-    const buttonCounter = htmlCode.match(/<v-btn /g)?.length;
+    const buttonCounter = htmlCode.match(/<button /g)?.length;
     expect(buttonCounter).toBe(4);
   });
 
