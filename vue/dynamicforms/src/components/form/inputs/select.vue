@@ -97,7 +97,8 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   mounted: function mounted() {
-    if (!this.multiple && !this.field.allowNull && !this.value && this.options) {
+    if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
+      // Auto select first element
       this.result = this.options[0].id;
     } else {
       this.result = this.value;

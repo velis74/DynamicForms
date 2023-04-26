@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 import _ from 'lodash';
 
 import requestTracker from './request-tracker';
@@ -55,5 +55,9 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export interface DfAxiosProgressEvent extends AxiosProgressEvent {
+  computable?: boolean
+}
 
 export default apiClient;

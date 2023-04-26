@@ -28,15 +28,15 @@ export default defineComponent({
 
     errorsList() { return this.errors || []; },
     errorsDisplayCount() { return this.errorsList.length; },
-    label() { return this.showLabelOrHelpText ? this.field.label : null; },
-    helpText() { return this.showLabelOrHelpText ? this.field.helpText : null; },
+    label() { return this.showLabelOrHelpText ? this.field.label : undefined; },
+    helpText() { return this.showLabelOrHelpText ? this.field.helpText : undefined; },
     baseBinds() {
       // this is potentially vuetify-specific
       return {
         label: this.label,
         'error-messages': this.errorsList,
         'error-count': this.errorsDisplayCount + 10, // +10 so that it can show "rules" error messages
-        messages: this.helpText ? [this.helpText] : null,
+        messages: this.helpText ? [this.helpText] : undefined,
       };
     },
     isNumber() {
