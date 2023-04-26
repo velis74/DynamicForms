@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('examples', '0003_filter_name'),
+        ("examples", "0003_filter_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='basicfields',
-            name='password_field',
+            model_name="basicfields",
+            name="password_field",
             field=models.CharField(max_length=32, null=True),
         ),
     ]

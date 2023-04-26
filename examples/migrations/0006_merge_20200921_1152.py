@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('examples', '0005_advancedfields_file_field_two'),
-        ('examples', '0005_refreshtype_rich_text_field'),
+        ("examples", "0005_advancedfields_file_field_two"),
+        ("examples", "0005_refreshtype_rich_text_field"),
     ]
 
-    operations = [
-    ]
+    operations = []

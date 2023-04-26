@@ -21,8 +21,13 @@ class ViewModeField(ViewModeBase):
         TABLE_DATA = auto()  # Render to table td
         TABLE_HEADER = auto()  # Render field label to table th
 
-    def __init__(self, view_mode: 'ViewModeField.ViewMode', field: FieldRenderMixin, value: Optional[Any] = None,
-                 value_row: Optional[Dict[Any, Any]] = None):
+    def __init__(
+        self,
+        view_mode: "ViewModeField.ViewMode",
+        field: FieldRenderMixin,
+        value: Optional[Any] = None,
+        value_row: Optional[Dict[Any, Any]] = None,
+    ):
         """
         Will patch the field instance such that it will get this mixin mixed in.
         Optionally row and field values can also be provided for a one-off rendering
@@ -31,7 +36,7 @@ class ViewModeField(ViewModeBase):
         :param value: field value in current data row
         :param value_row: current data row value
         """
-        field.__class__ = type('ViewModeBoundField', (ViewModeField, field.__class__), {})
+        field.__class__ = type("ViewModeBoundField", (ViewModeField, field.__class__), {})
         self.set_bound_value(value, value_row)
         super().__init__(view_mode)
 
@@ -47,7 +52,7 @@ class ViewModeField(ViewModeBase):
         """
         return self.view_mode in (ViewModeField.ViewMode.TABLE_ROW, ViewModeField.ViewMode.TABLE_HEAD)
 
-    def render_form(self: '_ViewModeBoundField'):
+    def render_form(self: "_ViewModeBoundField"):
         """
         renders field's serialized value to HTML. Currently code only for performance reasons, we might support
         templating in the future
@@ -56,7 +61,7 @@ class ViewModeField(ViewModeBase):
         """
         return self.bound_value
 
-    def render_table(self: '_ViewModeBoundField'):
+    def render_table(self: "_ViewModeBoundField"):
         """
         renders field's serialized value to HTML. Currently code only for performance reasons, we might support
         templating in the future
@@ -72,4 +77,5 @@ class _ViewModeBoundField(ViewModeField, Field):
     """
     Dummy class just for type hinting
     """
+
     pass

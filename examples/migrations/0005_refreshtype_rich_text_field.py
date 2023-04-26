@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('examples', '0004_basicfields_password_field'),
+        ("examples", "0004_basicfields_password_field"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='refreshtype',
-            name='rich_text_field',
+            model_name="refreshtype",
+            name="rich_text_field",
             field=models.TextField(blank=True, null=True),
         ),
     ]

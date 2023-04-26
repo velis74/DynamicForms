@@ -18,7 +18,7 @@ class SelectType(IntEnum):
     COMPONENT = 2
 
 
-SelectOption = namedtuple('SelectOption', ('value, text'))
+SelectOption = namedtuple("SelectOption", ("value, text"))
 
 
 class SelectOptions(dict):
@@ -32,17 +32,16 @@ class SelectOptions(dict):
 
     @property
     def empty(self):
-        return len(self) == 0 or self.single.value == ''
+        return len(self) == 0 or self.single.value == ""
 
 
 class Select:
-
     def __init__(self, field: WebElement):
         self.element = field
 
     @property
     def id(self):
-        return self.element.get_attribute('id')
+        return self.element.get_attribute("id")
 
     @property
     def _browser(self) -> WebDriver:
@@ -50,9 +49,9 @@ class Select:
 
     @property
     def select_type(self) -> SelectType:
-        if 'select2-field' in self.element.get_attribute('class'):
+        if "select2-field" in self.element.get_attribute("class"):
             return SelectType.SELECT2
-        elif 'df-select-class' in self.element.get_attribute('class'):
+        elif "df-select-class" in self.element.get_attribute("class"):
             return SelectType.COMPONENT
         return SelectType.GENERIC
 
@@ -60,25 +59,25 @@ class Select:
     def current_selection(self):
         if self.select_type == SelectType.COMPONENT:
             return SelectOptions(
-                {k: v for k, v in self.options.items() if str(k) in self.element.get_attribute('data-value').split(',')}
+                {k: v for k, v in self.options.items() if str(k) in self.element.get_attribute("data-value").split(",")}
             )
         select = SeleniumSelect(self.element)
         selected_options = select.all_selected_options
-        return SelectOptions(map(lambda x: (x.get_attribute('value').strip(), x.text.strip()), selected_options))
+        return SelectOptions(map(lambda x: (x.get_attribute("value").strip(), x.text.strip()), selected_options))
 
     @property
     def options(self):
         if self.select_type == SelectType.COMPONENT:
-            options = json.loads(self.element.get_attribute('data-options'))
-            return SelectOptions(map(lambda x: (x['id'], x['text']), options))
+            options = json.loads(self.element.get_attribute("data-options"))
+            return SelectOptions(map(lambda x: (x["id"], x["text"]), options))
 
         select = SeleniumSelect(self.element)
         options = select.options
-        return SelectOptions(map(lambda x: (x.get_attribute('value').strip(), x.text.strip()), options))
+        return SelectOptions(map(lambda x: (x.get_attribute("value").strip(), x.text.strip()), options))
 
     def select_by_value(self, value: Union[str, List[str]]):
         if self.select_type == SelectType.COMPONENT:
-            value = repr(value) if value is not None else 'null'
+            value = repr(value) if value is not None else "null"
             self._browser.execute_script(f"window['setSelectValue {self.id}']({value});")
         elif self.select_type == SelectType.SELECT2:
             element = self.element.parent.find_element(By.XPATH, f"//*[@id='{self.id}']/following-sibling::*[1]")
@@ -91,7 +90,7 @@ class Select:
                 if val:
                     select = SeleniumSelect(self.element)
                     for option in select.options:
-                        if option.get_attribute('value').strip() == val:
+                        if option.get_attribute("value").strip() == val:
                             val = option.text.strip()
                             break
 
@@ -130,7 +129,7 @@ class Select:
                     a.perform()
         elif self.select_type == SelectType.COMPONENT:
             self.element.click()  # get it into input mode
-            inp = self.element.find_element(By.TAG_NAME, 'input')
+            inp = self.element.find_element(By.TAG_NAME, "input")
             inp.send_keys(txt)
             if send_enter:
                 inp.send_keys(Keys.ENTER)

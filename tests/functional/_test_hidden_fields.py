@@ -8,10 +8,8 @@ from tests.functional.selenium_test_case import WaitingStaticLiveServerTestCase
 
 
 class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
-
-    @parameterized.expand(['html', 'component'])
+    @parameterized.expand(["html", "component"])
     def test_hidden_fields(self, renderer):
-
         def _check_shown(show_note, show_unit, show_int, show_qty, show_cst, show_add):
             unit = Select(form.find_element(By.CSS_SELECTOR, '[name="unit"]'))
             int_fld = form.find_element(By.CSS_SELECTOR, 'input[name="int_fld"]')
@@ -29,12 +27,12 @@ class HiddenFieldsDialogTest(WaitingStaticLiveServerTestCase):
             self.assertEqual(add_text.is_displayed(), show_add)
             self.assertEqual(add_container.is_displayed(), show_add)
 
-        self.browser.get(self.live_server_url + reverse('hidden-fields-list', args=[renderer]))
+        self.browser.get(self.live_server_url + reverse("hidden-fields-list", args=[renderer]))
 
-        header = self.find_element_by_classes(('card-header', 'panel-heading', 'ui-accordion-header'))
+        header = self.find_element_by_classes(("card-header", "panel-heading", "ui-accordion-header"))
         add_btn = header.find_element(By.CLASS_NAME, "btn")
-        if add_btn.tag_name == 'div':
-            btn_text = self.get_element_text(add_btn.find_element(By.TAG_NAME, 'span'))
+        if add_btn.tag_name == "div":
+            btn_text = self.get_element_text(add_btn.find_element(By.TAG_NAME, "span"))
         else:
             btn_text = self.get_element_text(add_btn)
         self.assertEqual(btn_text, "Add")

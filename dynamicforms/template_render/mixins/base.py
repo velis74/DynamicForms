@@ -5,7 +5,7 @@ from .render_mode_enum import ViewModeEnum
 class ViewModeBase(object):
     view_mode = None
 
-    def set_view_mode(self, view_mode: 'ViewModeEnum'):
+    def set_view_mode(self, view_mode: "ViewModeEnum"):
         self.view_mode = view_mode
 
     def set_bound_value(self, *args):
@@ -15,13 +15,13 @@ class ViewModeBase(object):
         """
         raise NotImplementedError()
 
-    def render(self: '_ViewModeBoundField'):
-        view_mode_name = f'render_{self.view_mode.name.lower()}'
+    def render(self: "_ViewModeBoundField"):
+        view_mode_name = f"render_{self.view_mode.name.lower()}"
         render_func = getattr(self, view_mode_name, None)
         if render_func is None:
             raise NotImplementedError(
                 f'ViewMode object {self.__class__.__name__}{(" " + self.label) if self.label else ""} has view_mode '
-                f'set to {self.view_mode.name}, but doesn\'t handle rendering for it'
+                f"set to {self.view_mode.name}, but doesn't handle rendering for it"
             )
         return render_func()
 
@@ -34,4 +34,5 @@ class _ViewModeBoundField(ViewModeBase, DFField):
     """
     Dummy class just for type hinting
     """
+
     pass

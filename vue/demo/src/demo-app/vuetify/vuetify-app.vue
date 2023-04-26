@@ -31,7 +31,7 @@
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary>
+    <v-navigation-drawer v-model="drawer" temporary>
       <v-list nav>
         <v-list-item v-for="example in examples" :key="example.title" :to="example.path">
           <v-list-item-title>{{ example.title }}</v-list-item-title>

@@ -4,28 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('examples', '0008_auto_20210312_1146'),
+        ("examples", "0008_auto_20210312_1146"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Document',
+            name="Document",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(help_text='Document description', max_length=30)),
-                ('file', models.FileField(upload_to='documents/')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("description", models.CharField(help_text="Document description", max_length=30)),
+                ("file", models.FileField(upload_to="documents/")),
             ],
         ),
         migrations.AlterField(
-            model_name='basicfields',
-            name='nullboolean_field',
+            model_name="basicfields",
+            name="nullboolean_field",
             field=models.BooleanField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='hiddenfields',
-            name='qty_fld',
-            field=models.FloatField(blank=True, help_text='Feel free to use a decimal point / comma', null=True, verbose_name='Weight'),
+            model_name="hiddenfields",
+            name="qty_fld",
+            field=models.FloatField(
+                blank=True, help_text="Feel free to use a decimal point / comma", null=True, verbose_name="Weight"
+            ),
         ),
     ]

@@ -2,9 +2,15 @@ from typing import Optional
 
 
 class RelatedFieldAJAXMixin(object):
-
-    def __init__(self, *args, url_reverse: Optional[str] = None, placeholder: Optional[str] = None,
-                 additional_parameters: Optional[dict] = None, query_field: str = 'query', **kwargs):
+    def __init__(
+        self,
+        *args,
+        url_reverse: Optional[str] = None,
+        placeholder: Optional[str] = None,
+        additional_parameters: Optional[dict] = None,
+        query_field: str = "query",
+        **kwargs
+    ):
         """
         Allows us to use AJAX to populate select2 options instead of pre-populating at render time
 
@@ -24,7 +30,8 @@ class RelatedFieldAJAXMixin(object):
     @property
     def additional_parameters_urlencoded(self):
         from django.utils.http import urlencode
-        return '?' + urlencode(self.additional_parameters)
+
+        return "?" + urlencode(self.additional_parameters)
 
     # noinspection PyUnresolvedReferences
     def iter_options_bound(self, value):
@@ -32,7 +39,7 @@ class RelatedFieldAJAXMixin(object):
             if value is None:
                 return [dict(value="", display_text=self.placeholder)]
             try:
-                if hasattr(self, 'child_relation'):
+                if hasattr(self, "child_relation"):
                     itm = self.child_relation
                     qry = itm.get_queryset()
                     qry = qry.filter(pk__in=value)

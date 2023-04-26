@@ -1,8 +1,7 @@
 from ..field_render import DisplayMode
 
 
-class SingleChoiceMixin():
-
+class SingleChoiceMixin:
     def __init__(self, *args, single_choice_hide=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.single_choice_hide = single_choice_hide

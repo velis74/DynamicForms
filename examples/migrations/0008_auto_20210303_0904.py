@@ -4,25 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('examples', '0007_basicfields_nullint_field'),
+        ("examples", "0007_basicfields_nullint_field"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='basicfields',
-            name='nullboolean_field',
+            model_name="basicfields",
+            name="nullboolean_field",
             field=models.BooleanField(null=True),
         ),
         migrations.AlterField(
-            model_name='basicfields',
-            name='nullint_field',
+            model_name="basicfields",
+            name="nullint_field",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='pageload',
-            name='choice',
-            field=models.IntegerField(choices=[(1, 'Choice 1'), (2, 'Choice 2'), (3, 'Choice 3'), (4, 'Choice 4')], default=1),
+            model_name="pageload",
+            name="choice",
+            field=models.IntegerField(
+                choices=[(1, "Choice 1"), (2, "Choice 2"), (3, "Choice 3"), (4, "Choice 4")], default=1
+            ),
         ),
     ]

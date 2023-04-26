@@ -9,40 +9,41 @@ from .fields.df_file_field import DfFileField, DfPreloadedFileField
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
-
     def __init__(self, *args, is_filter: bool = False, **kwds):
         super().__init__(*args, is_filter=is_filter, **kwds)
-        if self.context.get('format') == COMPONENT_DEF_RENDERER_FORMAT:
+        if self.context.get("format") == COMPONENT_DEF_RENDERER_FORMAT:
             # todo: THIS RELATIONSHIP IS NOT SUPPORTED IN VIEWMODE
-            self.fields.pop('string_related_field', None)
+            self.fields.pop("string_related_field", None)
 
-    template_context = dict(url_reverse='advanced-fields')
+    template_context = dict(url_reverse="advanced-fields")
     form_titles = {
-        'table': 'Advanced fields list',
-        'new': 'New advanced fields object',
-        'edit': 'Editing advanced fields object',
+        "table": "Advanced fields list",
+        "new": "New advanced fields object",
+        "edit": "Editing advanced fields object",
     }
 
-    regex_pattern = '(?<=abc)def'
+    regex_pattern = "(?<=abc)def"
     regex_field = fields.RegexField(
         regex_pattern,
         error_messages={
-            'invalid': 'This value does not match the required pattern {regex_pattern}.'.format(**locals())})
+            "invalid": "This value does not match the required pattern {regex_pattern}.".format(**locals())
+        },
+    )
 
-    choice_field = fields.ChoiceField(choices=(
-        ('0', 'Choice 1'),
-        ('1', 'Choice 2'),
-        ('2', 'Choice 3'),
-        ('3', 'Choice 4'),
-    ))
+    choice_field = fields.ChoiceField(
+        choices=(
+            ("0", "Choice 1"),
+            ("1", "Choice 2"),
+            ("2", "Choice 3"),
+            ("3", "Choice 4"),
+        )
+    )
 
-    single_choice_field = fields.ChoiceField(choices=(
-        ('0', 'Choice 1'),
-    ), single_choice_hide=True)
+    single_choice_field = fields.ChoiceField(choices=(("0", "Choice 1"),), single_choice_hide=True)
 
     hidden_field = fields.DateTimeField(default=timezone.now, display=fields.DisplayMode.HIDDEN)
     readonly_field = fields.BooleanField(read_only=True)
-    filepath_field = fields.FilePathField(path='examples')
+    filepath_field = fields.FilePathField(path="examples")
 
     # TODO: MultipleChoiceField
     # Problem: Not saved properly to the database. Saved as 'set()' string. Why?
@@ -89,9 +90,9 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     # model_field = serializers.ModelField()
 
     # Relations
-    string_related_field = fields.StringRelatedField(source='primary_key_related_field')
+    string_related_field = fields.StringRelatedField(source="primary_key_related_field")
     primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
-    slug_related_field = fields.SlugRelatedField(slug_field='name', queryset=Relation.objects.all())
+    slug_related_field = fields.SlugRelatedField(slug_field="name", queryset=Relation.objects.all())
     file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
     file_field_two = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
 
@@ -100,8 +101,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdvancedFields
-        exclude = ('multiplechoice_field', 'image_field', 'hyperlinked_related_field',
-                   'hyperlinked_identity_field')
+        exclude = ("multiplechoice_field", "image_field", "hyperlinked_related_field", "hyperlinked_identity_field")
 
     def create(self, validated_data):
         return AdvancedFields.objects.create(**validated_data)
@@ -118,8 +118,5 @@ class AdvancedFieldsViewset(ModelViewSet):
         # all fields e.g. upload new file, we should use PATCH method, but current js client does not support this.
         # To enable update of record without re-uploading new file,
         # we enable partial update with line below -> kwargs['partial'] = True
-        kwargs['partial'] = True
+        kwargs["partial"] = True
         return super().update(request, *args, **kwargs)
-
-
-

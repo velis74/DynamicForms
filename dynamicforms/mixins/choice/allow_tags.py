@@ -7,7 +7,6 @@ from rest_framework.fields import ChoiceField, MultipleChoiceField
 
 
 class DenormalisedArray(list):
-
     def __init__(self, lst, field):
         self.field = field
         if lst is not None and isinstance(lst, str) and isinstance(field, MultipleChoiceField):
@@ -36,7 +35,6 @@ class DenormalisedArray(list):
 
 
 class AllowTagsMixin(object):
-
     def __init__(self, *args, allow_tags=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.allow_tags = allow_tags or False
@@ -50,16 +48,16 @@ class AllowTagsMixin(object):
             data = super().to_internal_value(data)
 
         if isinstance(self, MultipleChoiceField):
-            if isinstance(data, str) or not hasattr(data, '__iter__'):
-                self.fail('not_a_list', input_type=type(data).__name__)
+            if isinstance(data, str) or not hasattr(data, "__iter__"):
+                self.fail("not_a_list", input_type=type(data).__name__)
             if not self.allow_empty and len(data) == 0:
-                self.fail('empty')
+                self.fail("empty")
 
             return data
 
         elif isinstance(self, ChoiceField) and not isinstance(self, MultipleChoiceField):
-            if data == '' and self.allow_blank:
-                return ''
+            if data == "" and self.allow_blank:
+                return ""
 
             try:
                 if not self.allow_tags:
@@ -67,7 +65,7 @@ class AllowTagsMixin(object):
 
                 return data
             except KeyError:
-                self.fail('invalid_choice', input=data)
+                self.fail("invalid_choice", input=data)
 
     def to_representation(self, value, row_data=None):
         if isinstance(self, ChoiceField) and self.allow_tags and value:

@@ -18,9 +18,9 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
     template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     actions = Actions(add_default_crud=True, add_form_buttons=True)
     form_titles = {
-        'table': '',
-        'new': '',
-        'edit': '',
+        "table": "",
+        "new": "",
+        "edit": "",
     }
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
@@ -33,7 +33,7 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
                     setattr(instance, fld.name, None)
             except:
                 instance = StructDefault(_default_=None)
-            kwds.setdefault('instance', instance)
+            kwds.setdefault("instance", instance)
         super().__init__(*args, **kwds)
         try:
             # hide the primary key field (DRF only marks it as R/O)
@@ -62,8 +62,8 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
 
         :return: True | False depending on whether form validation failed
         """
-        if hasattr(self, '_errors'):
-            return 'non_field_errors' in self.errors
+        if hasattr(self, "_errors"):
+            return "non_field_errors" in self.errors
         return False
 
     @property
@@ -72,12 +72,12 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         Returns page title from form_titles based on the rendered data
         :return string: page title
         """
-        if self.render_type == 'table':
-            return self.form_titles.get('table', '')
-        elif self.data.get('id', None):
-            return self.form_titles.get('edit', '')
+        if self.render_type == "table":
+            return self.form_titles.get("table", "")
+        elif self.data.get("id", None):
+            return self.form_titles.get("edit", "")
         else:
-            return self.form_titles.get('new', '')
+            return self.form_titles.get("new", "")
 
     # noinspection PyProtectedMember
     @property
@@ -88,9 +88,9 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         """
         if self.view_mode == ViewModeSerializer.ViewMode.FORM:
             return None
-        if getattr(self, '_filter_ser', None) is None:
+        if getattr(self, "_filter_ser", None) is None:
             # noinspection PyAttributeOutsideInit
-            self._filter_ser = type(self)(is_filter=True, context=getattr(self, 'context', {}))
+            self._filter_ser = type(self)(is_filter=True, context=getattr(self, "context", {}))
             self._filter_ser.master = self
         return self._filter_ser  # Just create the same serializer in filter mode (None values, allow_nulls)
 
@@ -107,19 +107,19 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         return False
 
     @property
-    def renderable_actions(self: 'serializers.Serializer'):
+    def renderable_actions(self: "serializers.Serializer"):
         """
         Returns those actions that are not suppressed
         :return: List[Action]
         """
         # TODO: Ta funkcija po mojem mora odletet (self.*controls*.actions). Sam zakaj ne? Ali se sploh ne uporablja?
-        request = self.context.get('request', None)
-        viewset = self.context.get('view', None)
+        request = self.context.get("request", None)
+        viewset = self.context.get("view", None)
         return [action for action in self.controls.actions if not self.suppress_action(action, request, viewset)]
 
     # noinspection PyUnresolvedReferences
     def get_initial(self) -> Any:
-        if getattr(self, '_errors', None):
+        if getattr(self, "_errors", None):
             # This basically reproduces BaseSerializer.data property except that it disregards the _errors member
             if self.instance:
                 res = self.to_representation(self.instance)
@@ -140,10 +140,7 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         Overrides DRF.serializers.Serializer._writable_fields
         This one in particular should return exactly the same list as DRF's version (as of 17.4.2020, DRF version 3.11
         """
-        return (
-            field for field in self.fields.values()
-            if not field.read_only
-        )
+        return (field for field in self.fields.values() if not field.read_only)
 
     # noinspection PyUnresolvedReferences
     @property
@@ -153,11 +150,13 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
         This one adds additional checks on top of DRF's ones - checking if the field is renderable to table or form
         """
         return (
-            field for field in self.fields.values()
-            if not (field.write_only or
-                    (self.is_rendering_to_list and self.display_table == DisplayMode.SUPPRESS) or
-                    (not self.is_rendering_to_list and self.display_form == DisplayMode.SUPPRESS)
-                    )
+            field
+            for field in self.fields.values()
+            if not (
+                field.write_only
+                or (self.is_rendering_to_list and self.display_table == DisplayMode.SUPPRESS)
+                or (not self.is_rendering_to_list and self.display_form == DisplayMode.SUPPRESS)
+            )
         )
 
     def to_representation(self, instance, row_data=None):
@@ -189,7 +188,7 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
 
     # noinspection PyMethodMayBeStatic
     def get_row_css_style(self, obj):
-        return ''
+        return ""
 
 
 class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
@@ -218,15 +217,15 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     """
 
     def __init__(self, *args, is_filter: bool = False, **kwds):
-        if hasattr(self, 'Meta') and hasattr(self.Meta, 'fields'):
-            self._make_df_special_fields_present_in_fields(['df_prev_id', 'row_css_style', 'df_control_data'])
+        if hasattr(self, "Meta") and hasattr(self.Meta, "fields"):
+            self._make_df_special_fields_present_in_fields(["df_prev_id", "row_css_style", "df_control_data"])
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
 
     def _make_df_special_fields_present_in_fields(self, fields):
         for f in fields:
-            if self.Meta.fields != '__all__' and f not in self.Meta.fields:
-                self.Meta.fields += f,
+            if self.Meta.fields != "__all__" and f not in self.Meta.fields:
+                self.Meta.fields += (f,)
 
     serializer_field_mapping = {
         models.AutoField: fields.IntegerField,
@@ -294,14 +293,17 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         :return:
 
         """
-        if hasattr(self.Meta, 'changed_flds'):
+        if hasattr(self.Meta, "changed_flds"):
             import warnings
+
             warnings.warn(
                 f"""
                 {self.__class__.__module__}.{self.__class__.__name__}:
                 changed_attrs has been found to be a duplicate of DRF's extra_kwargs Meta member. Either use
                 extra_kwargs or the preferred field = AutoGeneratedField(**kwargs) declaration.
-                """, DeprecationWarning, stacklevel=6
+                """,
+                DeprecationWarning,
+                stacklevel=6,
             )
             for field, params in self.Meta.changed_flds.items():
                 field_def = self.fields.get(field, None)
@@ -316,15 +318,15 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
     row_css_style = fields.SerializerMethodField(display=DisplayMode.HIDDEN)
 
     def fetch_prev_id(self, obj, view):
-        ordering = 'id'
+        ordering = "id"
         try:
             ordering = view.pagination_class.ordering
         except:
             pass
-        if ordering != 'id':
-            query_params = self.context['request'].query_params
+        if ordering != "id":
+            query_params = self.context["request"].query_params
             query_params._mutable = True
-            query_params.pop('id', '')
+            query_params.pop("id", "")
             queryset = view.filter_queryset(queryset=view.get_queryset(), query_params=query_params)
             records = list(queryset.order_by(ordering))
             curr_index = records.index(obj)
@@ -334,23 +336,22 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
             return prev_id
 
-        return ''
+        return ""
 
     # noinspection PyMethodMayBeStatic
     def get_df_prev_id(self, obj):
         try:
-            if self.context['request'].META.get('HTTP_X_DF_CALLTYPE', '') == 'refresh_record':
-                view = self.context.get('view', None)
+            if self.context["request"].META.get("HTTP_X_DF_CALLTYPE", "") == "refresh_record":
+                view = self.context.get("view", None)
                 if view:
                     return self.fetch_prev_id(obj, view)
         except:
             pass
 
-        return ''
+        return ""
 
 
 class Serializer(DynamicFormsSerializer, serializers.Serializer):
-
     def update(self, instance, validated_data):
         # Implemented just so IDE doesn't complain. Normally this will be handled in SingleRecordViewSet
         pass

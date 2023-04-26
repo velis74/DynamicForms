@@ -355,7 +355,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         instance_ids = tuple(map(lambda x: x["id"], response))
 
         # check all instances to be as they need to be
-        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+        for instance_id, d in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
             response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
             expected_response["id"] = instance_id
             delta = datetime.timedelta(days=d)
@@ -428,7 +428,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         instance_ids = tuple(map(lambda x: x["id"], response))
 
         # check all instances to be as they need to be
-        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+        for instance_id, d in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
             response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
             expected_response["id"] = instance_id
             delta = datetime.timedelta(days=d)
@@ -493,7 +493,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         instance_ids = tuple(map(lambda x: x["id"], response))
 
         # check all instances to be as they need to be
-        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+        for instance_id, d in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
             response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
             expected_response["id"] = instance_id
             delta = datetime.timedelta(days=d)
@@ -556,7 +556,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         instance_ids = tuple(map(lambda x: x["id"], response))
 
         # check all instances to be as they need to be
-        for (instance_id, d) in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
+        for instance_id, d in zip(instance_ids, (0, 3, 4, 6, 10, 11)):
             response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
             expected_response["id"] = instance_id
             delta = datetime.timedelta(days=d)
@@ -593,7 +593,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         self.assertIsInstance(response, list)
         self.assertEqual(3, len(response))
         expected_response = self.get_event_def(dates_iso=True)
-        for (instance_id, d) in zip(instance_ids, (0, 3, 4)):
+        for instance_id, d in zip(instance_ids, (0, 3, 4)):
             response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
             expected_response["id"] = instance_id
             delta = datetime.timedelta(days=d)
@@ -815,7 +815,7 @@ class CalendarRemindersTest(CommonTestBase):
             status.HTTP_200_OK,
         )
         self.assertEqual(len(response["reminders"]), len(event["reminders"]))
-        for (event_reminder, response_reminder) in zip(response["reminders"], event["reminders"]):
+        for event_reminder, response_reminder in zip(response["reminders"], event["reminders"]):
             self.check_event_as_expected(event_reminder, response_reminder)
 
         # TODO: can't compare events due to recurrence overwrite

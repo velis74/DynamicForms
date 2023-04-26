@@ -13,16 +13,14 @@ def get_progress_value(request):
     progress_key = get_progress_key(request)
     value = None
     if progress_key is not None:
-        cache_value = cache.get('df_progress.%s' % progress_key)
+        cache_value = cache.get("df_progress.%s" % progress_key)
         if cache_value is not None:
-            value = '%.2f' % cache.get('df_progress.%s' % progress_key)
+            value = "%.2f" % cache.get("df_progress.%s" % progress_key)
 
-    return HttpResponse(JSONRenderer().render(
-        dict(
-            value=value,
-            comment=cache.get('df_progress_comment.%s' % progress_key)
-        )
-    ), content_type='application/json')
+    return HttpResponse(
+        JSONRenderer().render(dict(value=value, comment=cache.get("df_progress_comment.%s" % progress_key))),
+        content_type="application/json",
+    )
 
 
 def get_progress_key(request):
@@ -31,9 +29,9 @@ def get_progress_key(request):
     :param request:
     :return: Progress key or None if there is no x_df_timestamp in request header
     """
-    timestamp = request.META.get('HTTP_X_DF_TIMESTAMP', request.GET.get('x_df_timestamp', None))
+    timestamp = request.META.get("HTTP_X_DF_TIMESTAMP", request.GET.get("x_df_timestamp", None))
     if timestamp is not None:
-        return '%s|%s' % (timestamp, request.session.session_key)
+        return "%s|%s" % (timestamp, request.session.session_key)
     return None
 
 
@@ -46,7 +44,7 @@ def set_progress_value(progress_key, value):
     :return:
     """
     if progress_key is not None:
-        cache.set('df_progress.%s' % progress_key, value)
+        cache.set("df_progress.%s" % progress_key, value)
 
 
 def add_progress_value(progress_key, value):
@@ -58,7 +56,7 @@ def add_progress_value(progress_key, value):
     :return:
     """
     if progress_key is not None:
-        cache.set('df_progress.%s' % progress_key, cache.get('df_progress.%s' % progress_key, 0) + value)
+        cache.set("df_progress.%s" % progress_key, cache.get("df_progress.%s" % progress_key, 0) + value)
 
 
 def set_progress_comment(progress_key, value):
@@ -70,4 +68,4 @@ def set_progress_comment(progress_key, value):
     :return:
     """
     if progress_key is not None:
-        cache.set('df_progress_comment.%s' % progress_key, value)
+        cache.set("df_progress_comment.%s" % progress_key, value)

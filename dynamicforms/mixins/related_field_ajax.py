@@ -4,9 +4,15 @@ from django.urls import reverse
 
 
 class RelatedFieldAJAXMixin(object):
-
-    def __init__(self, *args, url_reverse: Optional[str] = None, placeholder: Optional[str] = None,
-                 additional_parameters: Optional[dict] = None, query_field: str = 'query', **kwargs):
+    def __init__(
+        self,
+        *args,
+        url_reverse: Optional[str] = None,
+        placeholder: Optional[str] = None,
+        additional_parameters: Optional[dict] = None,
+        query_field: str = "query",
+        **kwargs
+    ):
         """
         Allows us to use AJAX to populate select2 options instead of pre-populating at render time
 
@@ -26,7 +32,8 @@ class RelatedFieldAJAXMixin(object):
     @property
     def additional_parameters_urlencoded(self):
         from django.utils.http import urlencode
-        return '?' + urlencode(self.additional_parameters)
+
+        return "?" + urlencode(self.additional_parameters)
 
     # noinspection PyUnresolvedReferences
     def iter_options_bound(self, value):
@@ -34,7 +41,7 @@ class RelatedFieldAJAXMixin(object):
             if value is None:
                 return [dict(value="", display_text=self.placeholder)]
             try:
-                if hasattr(self, 'child_relation'):
+                if hasattr(self, "child_relation"):
                     itm = self.child_relation
                     qry = itm.get_queryset()
                     qry = qry.filter(pk__in=value)
@@ -54,12 +61,20 @@ class RelatedFieldAJAXMixin(object):
         except AttributeError:
             res = dict()
         if self.url_reverse:
-            res.update(dict(ajax=dict(
-                url_reverse=reverse(self.url_reverse, kwargs=dict(format='json')),
-                placeholder=self.placeholder, additional_parameters=self.additional_parameters,
-                query_field=self.query_field
-            )))
+            res.update(
+                dict(
+                    ajax=dict(
+                        url_reverse=reverse(self.url_reverse, kwargs=dict(format="json")),
+                        placeholder=self.placeholder,
+                        additional_parameters=self.additional_parameters,
+                        query_field=self.query_field,
+                    )
+                )
+            )
         else:
-            res.update(choices=map(lambda option: dict(id=option.value, text=option.display_text),
-                                   self.iter_options_bound(None)))
+            res.update(
+                choices=map(
+                    lambda option: dict(id=option.value, text=option.display_text), self.iter_options_bound(None)
+                )
+            )
         return res

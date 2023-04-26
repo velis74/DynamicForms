@@ -7,122 +7,203 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='AdvancedFields',
+            name="AdvancedFields",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('regex_field', models.CharField(max_length=256)),
-                ('choice_field', models.CharField(max_length=8, null=True)),
-                ('multiplechoice_field', models.CharField(max_length=8, null=True)),
-                ('filepath_field', models.FilePathField(null=True)),
-                ('file_field', models.FileField(blank=True, null=True, upload_to='examples/')),
-                ('image_field', models.ImageField(blank=True, null=True, upload_to='examples/')),
-                ('hidden_field', models.DateTimeField(default=django.utils.timezone.now)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("regex_field", models.CharField(max_length=256)),
+                ("choice_field", models.CharField(max_length=8, null=True)),
+                ("multiplechoice_field", models.CharField(max_length=8, null=True)),
+                ("filepath_field", models.FilePathField(null=True)),
+                ("file_field", models.FileField(blank=True, null=True, upload_to="examples/")),
+                ("image_field", models.ImageField(blank=True, null=True, upload_to="examples/")),
+                ("hidden_field", models.DateTimeField(default=django.utils.timezone.now)),
             ],
         ),
         migrations.CreateModel(
-            name='BasicFields',
+            name="BasicFields",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('boolean_field', models.BooleanField(default=False)),
-                ('nullboolean_field', models.NullBooleanField()),
-                ('char_field', models.CharField(max_length=32, null=True)),
-                ('email_field', models.EmailField(max_length=254, null=True)),
-                ('slug_field', models.SlugField(null=True)),
-                ('url_field', models.URLField(null=True)),
-                ('uuid_field', models.UUIDField(null=True)),
-                ('ipaddress_field', models.GenericIPAddressField(null=True)),
-                ('integer_field', models.IntegerField(null=True)),
-                ('float_field', models.IntegerField(null=True)),
-                ('decimal_field', models.DecimalField(decimal_places=2, max_digits=5, null=True)),
-                ('datetime_field', models.DateTimeField(null=True)),
-                ('date_field', models.DateField(null=True)),
-                ('time_field', models.TimeField(null=True)),
-                ('duration_field', models.DurationField(null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("boolean_field", models.BooleanField(default=False)),
+                ("nullboolean_field", models.NullBooleanField()),
+                ("char_field", models.CharField(max_length=32, null=True)),
+                ("email_field", models.EmailField(max_length=254, null=True)),
+                ("slug_field", models.SlugField(null=True)),
+                ("url_field", models.URLField(null=True)),
+                ("uuid_field", models.UUIDField(null=True)),
+                ("ipaddress_field", models.GenericIPAddressField(null=True)),
+                ("integer_field", models.IntegerField(null=True)),
+                ("float_field", models.IntegerField(null=True)),
+                ("decimal_field", models.DecimalField(decimal_places=2, max_digits=5, null=True)),
+                ("datetime_field", models.DateTimeField(null=True)),
+                ("date_field", models.DateField(null=True)),
+                ("time_field", models.TimeField(null=True)),
+                ("duration_field", models.DurationField(null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Filter',
+            name="Filter",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('char_field', models.CharField(help_text='Char field', max_length=20, verbose_name='Char field')),
-                ('datetime_field', models.DateTimeField(help_text='Datetime field', verbose_name='Datetime field')),
-                ('int_field', models.IntegerField(help_text='Integer field', verbose_name='Integer field')),
-                ('int_choice_field', models.IntegerField(choices=[(0, 'Choice 1'), (1, 'Choice 2'), (2, 'Choice 3'), (3, 'Choice 4')], help_text='Integer field with choices', verbose_name='Integer field with choices')),
-                ('bool_field', models.BooleanField(help_text='Boolean field', verbose_name='Boolean field')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("char_field", models.CharField(help_text="Char field", max_length=20, verbose_name="Char field")),
+                ("datetime_field", models.DateTimeField(help_text="Datetime field", verbose_name="Datetime field")),
+                ("int_field", models.IntegerField(help_text="Integer field", verbose_name="Integer field")),
+                (
+                    "int_choice_field",
+                    models.IntegerField(
+                        choices=[(0, "Choice 1"), (1, "Choice 2"), (2, "Choice 3"), (3, "Choice 4")],
+                        help_text="Integer field with choices",
+                        verbose_name="Integer field with choices",
+                    ),
+                ),
+                ("bool_field", models.BooleanField(help_text="Boolean field", verbose_name="Boolean field")),
             ],
         ),
         migrations.CreateModel(
-            name='HiddenFields',
+            name="HiddenFields",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('note', models.CharField(help_text='Enter abc to hide unit field', max_length=20)),
-                ('unit', models.CharField(blank=True, choices=[(None, 'No additional data'), ('pcs', 'Pieces'), ('wt', 'Weight'), ('cst', 'Custom')], max_length=10, null=True)),
-                ('int_fld', models.IntegerField(blank=True, null=True, verbose_name='Quantity')),
-                ('qty_fld', models.FloatField(blank=True, help_text='Fell free to use a decimal point / comma', null=True, verbose_name='Weight')),
-                ('cst_fld', models.CharField(blank=True, help_text='Enter additional info here', max_length=80, null=True, verbose_name='Comment')),
-                ('additional_text', models.CharField(blank=True, help_text='Now that you have shown me, please enter something', max_length=80, null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("note", models.CharField(help_text="Enter abc to hide unit field", max_length=20)),
+                (
+                    "unit",
+                    models.CharField(
+                        blank=True,
+                        choices=[(None, "No additional data"), ("pcs", "Pieces"), ("wt", "Weight"), ("cst", "Custom")],
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                ("int_fld", models.IntegerField(blank=True, null=True, verbose_name="Quantity")),
+                (
+                    "qty_fld",
+                    models.FloatField(
+                        blank=True,
+                        help_text="Fell free to use a decimal point / comma",
+                        null=True,
+                        verbose_name="Weight",
+                    ),
+                ),
+                (
+                    "cst_fld",
+                    models.CharField(
+                        blank=True,
+                        help_text="Enter additional info here",
+                        max_length=80,
+                        null=True,
+                        verbose_name="Comment",
+                    ),
+                ),
+                (
+                    "additional_text",
+                    models.CharField(
+                        blank=True,
+                        help_text="Now that you have shown me, please enter something",
+                        max_length=80,
+                        null=True,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PageLoad',
+            name="PageLoad",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(help_text='Item description', max_length=20)),
-                ('choice', models.IntegerField(choices=[(1, 'Choice 1'), (2, 'Choice 2'), (3, 'Choice 3')], default=1)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("description", models.CharField(help_text="Item description", max_length=20)),
+                ("choice", models.IntegerField(choices=[(1, "Choice 1"), (2, "Choice 2"), (3, "Choice 3")], default=1)),
             ],
         ),
         migrations.CreateModel(
-            name='RefreshType',
+            name="RefreshType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(help_text='Item description', max_length=20)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("description", models.CharField(help_text="Item description", max_length=20)),
             ],
         ),
         migrations.CreateModel(
-            name='Relation',
+            name="Relation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=16)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=16)),
             ],
         ),
         migrations.CreateModel(
-            name='Validated',
+            name="Validated",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10, validators=[django.core.validators.RegexValidator('\\w\\w\\d+', 'Please enter a string starting with two characters, followed by up to 8 numbers')])),
-                ('enabled', models.BooleanField()),
-                ('amount', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(5), django.core.validators.MaxValueValidator(10)])),
-                ('item_type', models.IntegerField(choices=[(0, 'Choice 1'), (1, 'Choice 2'), (2, 'Choice 3'), (3, 'Choice 4')])),
-                ('item_flags', models.CharField(blank=True, choices=[('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')], max_length=4, validators=[django.core.validators.RegexValidator('^[ABC]*$', 'Only options A-C may be chosen', 'regex')])),
-                ('comment', models.TextField(blank=True, null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "code",
+                    models.CharField(
+                        max_length=10,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                "\\w\\w\\d+",
+                                "Please enter a string starting with two characters, followed by up to 8 numbers",
+                            )
+                        ],
+                    ),
+                ),
+                ("enabled", models.BooleanField()),
+                (
+                    "amount",
+                    models.IntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(5),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "item_type",
+                    models.IntegerField(choices=[(0, "Choice 1"), (1, "Choice 2"), (2, "Choice 3"), (3, "Choice 4")]),
+                ),
+                (
+                    "item_flags",
+                    models.CharField(
+                        blank=True,
+                        choices=[("A", "A"), ("B", "B"), ("C", "C"), ("D", "D")],
+                        max_length=4,
+                        validators=[
+                            django.core.validators.RegexValidator("^[ABC]*$", "Only options A-C may be chosen", "regex")
+                        ],
+                    ),
+                ),
+                ("comment", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.AddField(
-            model_name='advancedfields',
-            name='hyperlinked_identity_field',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='hyper_identity', to='examples.Relation'),
+            model_name="advancedfields",
+            name="hyperlinked_identity_field",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="hyper_identity",
+                to="examples.Relation",
+            ),
         ),
         migrations.AddField(
-            model_name='advancedfields',
-            name='hyperlinked_related_field',
-            field=models.ManyToManyField(related_name='hyper_related', to='examples.Relation'),
+            model_name="advancedfields",
+            name="hyperlinked_related_field",
+            field=models.ManyToManyField(related_name="hyper_related", to="examples.Relation"),
         ),
         migrations.AddField(
-            model_name='advancedfields',
-            name='primary_key_related_field',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='primary', to='examples.Relation'),
+            model_name="advancedfields",
+            name="primary_key_related_field",
+            field=models.OneToOneField(
+                null=True, on_delete=django.db.models.deletion.CASCADE, related_name="primary", to="examples.Relation"
+            ),
         ),
         migrations.AddField(
-            model_name='advancedfields',
-            name='slug_related_field',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='slug', to='examples.Relation'),
+            model_name="advancedfields",
+            name="slug_related_field",
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, related_name="slug", to="examples.Relation"
+            ),
         ),
     ]

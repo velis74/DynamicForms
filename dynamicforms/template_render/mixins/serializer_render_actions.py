@@ -11,7 +11,7 @@ from dynamicforms.action import TableAction
 class SerializerRenderActions(object):
     @property
     def actions(self) -> Iterable[TableAction]:
-        raise NotImplementedError('You must implement the actions property in your serializer render_actions method')
+        raise NotImplementedError("You must implement the actions property in your serializer render_actions method")
 
     def as_action_def(self):
         res = {action.name: action.as_component_def() for action in self.actions}

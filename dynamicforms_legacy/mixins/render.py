@@ -32,12 +32,16 @@ class RenderMixin(object):
     Used for rendering individual field to table view
     """
 
-    def __init__(self, *args, uuid: uuid_module.UUID = None,
-                 display: DisplayMode = None,  # None == Leave at default
-                 display_table: DisplayMode = None,  # None == Leave at default
-                 display_form: DisplayMode = None,  # None == Leave at default
-                 table_classes: str = '',
-                 **kwargs):
+    def __init__(
+        self,
+        *args,
+        uuid: uuid_module.UUID = None,
+        display: DisplayMode = None,  # None == Leave at default
+        display_table: DisplayMode = None,  # None == Leave at default
+        display_form: DisplayMode = None,  # None == Leave at default
+        table_classes: str = "",
+        **kwargs
+    ):
         """
 
         :param args: passed on to inherited constructors
@@ -51,8 +55,9 @@ class RenderMixin(object):
         self.uuid = uuid or uuid_module.uuid1()
         # noinspection PyUnresolvedReferences
         self.display_table = (
-            display_table or display
-            or (DisplayMode.FULL if not getattr(self, 'write_only', False) else DisplayMode.SUPPRESS)
+            display_table
+            or display
+            or (DisplayMode.FULL if not getattr(self, "write_only", False) else DisplayMode.SUPPRESS)
         )
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
@@ -79,7 +84,7 @@ class RenderMixin(object):
     def is_rendering_to_html(self):
         try:
             # noinspection PyUnresolvedReferences
-            return self.context['format'] == 'html'
+            return self.context["format"] == "html"
         except:
             pass
         return False
@@ -134,19 +139,19 @@ class RenderMixin(object):
         :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
-        get_queryset = getattr(self, 'get_queryset', None)
+        get_queryset = getattr(self, "get_queryset", None)
 
         if isinstance(self, ManyRelatedField):
             # Hm, not sure if this is the final thing to do: an example of this field is in
             # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
             # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
             cr = self.child_relation
-            return ', '.join((cr.display_value(item) for item in value))
+            return ", ".join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         elif isinstance(self, RelatedField) or get_queryset:
             return self.display_value(value)
         else:
-            choices = getattr(self, 'choices', {})
+            choices = getattr(self, "choices", {})
 
         # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
@@ -169,29 +174,29 @@ class RenderMixin(object):
 
         # This is to fix a problem with calculated fields which was only solved in DRF 3.10.
         # Forces validation and inclusion of the field into validated data. See comment in original function.
-        if res == (True, None) and data is None and self.source == '*':
+        if res == (True, None) and data is None and self.source == "*":
             return False, None
         return res
 
     def ordering(self):
         ordering = []
-        if hasattr(self, 'context') and 'view' in getattr(self, 'context'):
-            ordering = getattr(self.context['view'], 'ordering', None)
+        if hasattr(self, "context") and "view" in getattr(self, "context"):
+            ordering = getattr(self.context["view"], "ordering", None)
 
-        if getattr(self, 'field_name') not in getattr(ordering, 'fields', []):
-            return ''
+        if getattr(self, "field_name") not in getattr(ordering, "fields", []):
+            return ""
 
         index = -1
         direction_asc = True
         for idx, o in enumerate(ordering):
-            if o.startswith('-'):
+            if o.startswith("-"):
                 direction_asc = False
                 o = o[1:]
-            if o == getattr(self, 'field_name'):
+            if o == getattr(self, "field_name"):
                 index = idx
 
         if index > -1:
-            direction_class = ('asc' if direction_asc else 'desc') + ' seg-%d' % (index + 1)
+            direction_class = ("asc" if direction_asc else "desc") + " seg-%d" % (index + 1)
         else:
-            direction_class = 'unsorted'
-        return 'ordering ' + direction_class
+            direction_class = "unsorted"
+        return "ordering " + direction_class

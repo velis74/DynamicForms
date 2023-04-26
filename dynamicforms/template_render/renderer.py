@@ -7,13 +7,17 @@ from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT, COMPONENT_HTML_
 
 
 def data_is_paginated(data):
-    return (isinstance(data, dict) and 'next' in data and 'results' in data and
-            isinstance(data['results'], (ReturnList, ReturnDict)))
+    return (
+        isinstance(data, dict)
+        and "next" in data
+        and "results" in data
+        and isinstance(data["results"], (ReturnList, ReturnDict))
+    )
 
 
 def get_serializer(data) -> Optional[Any]:
     if data_is_paginated(data):
-        return data['results'].serializer
+        return data["results"].serializer
     if isinstance(data, (ReturnList, ReturnDict)):
         return data.serializer
     return None
@@ -33,7 +37,7 @@ class ComponentDefRenderer(JSONRenderer):
 
 
 class ComponentHTMLRenderer(TemplateHTMLRenderer):
-    media_type = 'text/html'
+    media_type = "text/html"
     format = COMPONENT_HTML_RENDERER_FORMAT
 
     def render(self, data, accepted_media_type=None, renderer_context=None):

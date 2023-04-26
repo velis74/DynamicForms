@@ -6,12 +6,12 @@ from dynamicforms.settings import DYNAMICFORMS
 
 # Create your views here.
 def index(request):
-    return redirect(reverse('validated-list', args=['component' if DYNAMICFORMS.components else 'html']))
+    return redirect(reverse("validated-list", args=["component" if DYNAMICFORMS.components else "html"]))
 
 
 def component_index(request):
     DYNAMICFORMS.components = True
     try:
-        return render(request, 'examples/component_index.html')
+        return render(request, "examples/component_index.html")
     finally:
         DYNAMICFORMS.components = False

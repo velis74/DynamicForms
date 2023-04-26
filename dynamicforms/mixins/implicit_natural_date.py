@@ -13,7 +13,7 @@ class NaturalDateTimeMixin(object):
     Used for rendering datetime in human natural style (e.g.: 1 hour, 10 minutes ago)
     """
 
-    def __init__(self, *args, table_format: str = '', **kwargs) -> None:
+    def __init__(self, *args, table_format: str = "", **kwargs) -> None:
         """
 
         :param args:
@@ -27,9 +27,9 @@ class NaturalDateTimeMixin(object):
     # noinspection PyUnresolvedReferences
     def render_to_table(self, value, row_data):
         if value is not None:
-            output_format = getattr(self, 'table_format', None)
+            output_format = getattr(self, "table_format", None)
             if output_format is not None:
-                if re.match(r'%N:\d+', output_format):
+                if re.match(r"%N:\d+", output_format):
                     imported = False
                     try:
                         # This library (will-natural) is used because is the only one we could find that adds text
@@ -38,50 +38,52 @@ class NaturalDateTimeMixin(object):
 
                         # noinspection PyPackageRequirements
                         from natural.date import duration
+
                         imported = True
                     except:
-                        print('Install library for natural presentation of date (pip install will-natural)')
+                        print("Install library for natural presentation of date (pip install will-natural)")
 
                     if imported:
                         if isinstance(self, DateField):
                             now = timezone.now().date()
                         elif isinstance(self, TimeField):
                             now = datetime.now()
-                            value = datetime.now().replace(hour=value.hour, minute=value.minute, second=value.second,
-                                                           microsecond=value.microsecond)
+                            value = datetime.now().replace(
+                                hour=value.hour, minute=value.minute, second=value.second, microsecond=value.microsecond
+                            )
                         else:
                             now = timezone.now()
 
                         # noinspection PyUnboundLocalVariable
-                        return duration(value, now=now, precision=int(output_format.split(':')[1]))
+                        return duration(value, now=now, precision=int(output_format.split(":")[1]))
                 else:
                     # Invoke DRF field's to_representation
-                    global_format = getattr(self, 'format', None)
-                    setattr(self, 'format', output_format)
+                    global_format = getattr(self, "format", None)
+                    setattr(self, "format", output_format)
                     # noinspection PySuperArguments
                     value = super(FieldRenderMixin, self).to_representation(value)  # Skip RenderMixin
-                    setattr(self, 'format', global_format)
-                    return value or ''
+                    setattr(self, "format", global_format)
+                    return value or ""
 
-            return localize(value) if getattr(self, 'is_rendering_to_html', False) else super().render_to_table(
-                value, row_data)
+            return (
+                localize(value)
+                if getattr(self, "is_rendering_to_html", False)
+                else super().render_to_table(value, row_data)
+            )
 
         return super().render_to_table(value, row_data)
 
 
 class TimeFieldMixin(NaturalDateTimeMixin):
-
     def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateFieldMixin(NaturalDateTimeMixin):
-
     def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)
 
 
 class DateTimeFieldMixin(NaturalDateTimeMixin):
-
     def __init__(self, *args, table_format: str = None, **kwargs) -> None:
         super().__init__(*args, table_format=table_format, **kwargs)

@@ -4,11 +4,11 @@ from ..models import Relation
 
 
 class RelationSerializer(serializers.ModelSerializer):
-    template_context = dict(url_reverse='relation')
+    template_context = dict(url_reverse="relation")
     form_titles = {
-        'table': 'Relation fields list',
-        'new': 'New relation object',
-        'edit': 'Editing relation object',
+        "table": "Relation fields list",
+        "new": "New relation object",
+        "edit": "Editing relation object",
     }
 
     name = fields.CharField()

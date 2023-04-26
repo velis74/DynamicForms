@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('examples', '0001_initial'),
+        ("examples", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='basicfields',
-            name='float_field',
+            model_name="basicfields",
+            name="float_field",
             field=models.FloatField(null=True),
         ),
     ]

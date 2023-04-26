@@ -21,6 +21,6 @@ from django.urls import re_path
 from setup import settings
 
 urlpatterns = [
-    re_path(r'^', include('examples.urls')),
-    re_path(r'^admin/', admin.site.urls),
+    re_path(r"^", include("examples.urls")),
+    re_path(r"^admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

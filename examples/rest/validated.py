@@ -10,23 +10,24 @@ class ValidatedSerializer(serializers.ModelSerializer):
     """
     Example showing field validation, both at the field level and at the record level
     """
-    template_context = dict(url_reverse='validated')
+
+    template_context = dict(url_reverse="validated")
     form_titles = {
-        'table': 'Validated list',
-        'new': 'New validated object',
-        'edit': 'Editing validated object',
+        "table": "Validated list",
+        "new": "New validated object",
+        "edit": "Editing validated object",
     }
     actions = Actions(add_default_crud=True, add_default_filter=False, add_form_buttons=True)
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
 
-        if attrs['amount'] != 5:
-            if attrs['code'] != '123':
-                raise ValidationError({'amount': 'amount can only be different than 5 if code is "123"'})
+        if attrs["amount"] != 5:
+            if attrs["code"] != "123":
+                raise ValidationError({"amount": 'amount can only be different than 5 if code is "123"'})
 
-        if attrs['enabled'] is True and attrs['item_type'] == 3:
-            raise ValidationError('When enabled you can only choose from first three item types')
+        if attrs["enabled"] is True and attrs["item_type"] == 3:
+            raise ValidationError("When enabled you can only choose from first three item types")
 
         return attrs
 

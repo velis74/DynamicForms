@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('examples', '0008_auto_20210303_0904'),
+        ("examples", "0008_auto_20210303_0904"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='advancedfields',
-            name='single_choice_field',
+            model_name="advancedfields",
+            name="single_choice_field",
             field=models.CharField(max_length=8, null=True),
         ),
     ]

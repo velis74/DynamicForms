@@ -38,21 +38,23 @@ class NewMixin(object):
         # Not that easy: the returned record may not validate for its (correctly) empty fields
         # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
         # If we do not, subsequent validation may fail because a hidden field has a value
-        field_names = [(f.name + '_id') if isinstance(f, models.ForeignKey) else f.name
-                       for f in self.get_queryset().model._meta.fields]
+        field_names = [
+            (f.name + "_id") if isinstance(f, models.ForeignKey) else f.name
+            for f in self.get_queryset().model._meta.fields
+        ]
         instantiation_params = {k: v for k, v in self.request.GET.items() if k in field_names}
         return self.get_queryset().model(**instantiation_params)
 
     # noinspection PyUnresolvedReferences
     def retrieve(self: viewsets.ModelViewSet, request, *args, **kwargs):
         try:
-            if not hasattr(super(), 'retrieve'):
+            if not hasattr(super(), "retrieve"):
                 raise Http404()  # This is not a ModelViewSet, so we don't have a retrieval mechanism
             return super().retrieve(request, *args, **kwargs)
         except Http404:
             lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
             filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-            if filter_kwargs.get('pk', None) == 'new':
+            if filter_kwargs.get("pk", None) == "new":
                 instance = self.new_object()
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
@@ -75,7 +77,7 @@ class PutPostMixin(object):
     # When there is no record id in URL when calling PUT, this function will be called
     # noinspection PyUnresolvedReferences
     def put(self: viewsets.ModelViewSet, request, *args, **kwargs):
-        self.kwargs['pk'] = request.data['id']
+        self.kwargs["pk"] = request.data["id"]
         return self.update(request, *args, **kwargs)
 
     # When there is record id in URL when calling POST, this function will be called
@@ -84,7 +86,7 @@ class PutPostMixin(object):
         return self.create(request, *args, **kwargs)
 
 
-class TemplateRendererMixin():
+class TemplateRendererMixin:
     template_context = {}
     """
     template_context provides configuration to templates being rendered
@@ -110,8 +112,8 @@ class TemplateRendererMixin():
     template_name = DYNAMICFORMS.table_base_template  #: template filename for listing multiple records (html renderer)
 
     def __init__(self, *args, **kwds):
-        if not self.template_context and getattr(self, 'serializer_class', None) is not None:
-            self.template_context = getattr(self.serializer_class, 'template_context', {})
+        if not self.template_context and getattr(self, "serializer_class", None) is not None:
+            self.template_context = getattr(self.serializer_class, "template_context", {})
         super().__init__(*args, **kwds)
 
     # noinspection PyAttributeOutsideInit
@@ -122,13 +124,13 @@ class TemplateRendererMixin():
         #  There's no "request.data", etc. Just saying. So you don't debug for two hours next time. By "you" I mean me
 
         # Force render using a given render path (full page, table, table rows, form, dialog with form)
-        self.render_type = request.META.get('HTTP_X_DF_RENDER_TYPE', request.GET.get('df_render_type', 'page'))
+        self.render_type = request.META.get("HTTP_X_DF_RENDER_TYPE", request.GET.get("df_render_type", "page"))
 
-        if request.method.lower() == 'post' and request.POST.get('data-dynamicforms-method', None):
+        if request.method.lower() == "post" and request.POST.get("data-dynamicforms-method", None):
             # This is a hack because HTML forms can only do POST & GET. This way we also get PUT & PATCH
-            request.method = request.POST.get('data-dynamicforms-method')
+            request.method = request.POST.get("data-dynamicforms-method")
             # If we don't set this META, django won't recognise our CSRF token
-            request.META['HTTP_X_CSRFTOKEN'] = request.POST['csrfmiddlewaretoken']
+            request.META["HTTP_X_CSRFTOKEN"] = request.POST["csrfmiddlewaretoken"]
         return super().initialize_request(request, *args, **kwargs)
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -139,14 +141,18 @@ class TemplateRendererMixin():
 
         def get_query_params():
             if request.query_params:
-                return '?' + '&'.join(['%s=%s' % (key, value) for key, value in request.query_params.items()])
-            return ''
+                return "?" + "&".join(["%s=%s" % (key, value) for key, value in request.query_params.items()])
+            return ""
 
         if isinstance(res.accepted_renderer, TemplateHTMLRenderer):
             if status.is_success(res.status_code) or res.status_code == status.HTTP_400_BAD_REQUEST:
-                if isinstance(res.data, dict) and 'next' in res.data and 'results' in res.data and \
-                        isinstance(res.data['results'], (ReturnList, ReturnDict)):
-                    serializer = res.data['results'].serializer
+                if (
+                    isinstance(res.data, dict)
+                    and "next" in res.data
+                    and "results" in res.data
+                    and isinstance(res.data["results"], (ReturnList, ReturnDict))
+                ):
+                    serializer = res.data["results"].serializer
                 else:
                     try:
                         serializer = res.data.serializer
@@ -160,23 +166,25 @@ class TemplateRendererMixin():
                 else:
                     serializer.render_type = self.render_type
 
-                if self.render_type in ('table', 'table rows'):
+                if self.render_type in ("table", "table rows"):
                     serializer.data_template = self.template_name
-                elif self.render_type == 'dialog':
+                elif self.render_type == "dialog":
                     serializer.data_template = DYNAMICFORMS.modal_dialog_rest_template
                     res.template_name = DYNAMICFORMS.modal_dialog_rest_template
-                elif self.render_type == 'form':
+                elif self.render_type == "form":
                     serializer.data_template = res.data.serializer.template_name
                     res.template_name = res.data.serializer.template_name
                 else:
                     if isinstance(serializer, ListSerializer):
-                        serializer.child.render_type = 'table'
+                        serializer.child.render_type = "table"
                         serializer.child.data_template = self.template_name
                     else:
-                        serializer.render_type = 'form'
+                        serializer.render_type = "form"
                         serializer.data_template = serializer.template_name
-            elif res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN) and \
-                    self.render_type != 'dialog':
+            elif (
+                res.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+                and self.render_type != "dialog"
+            ):
                 # TODO: We should show a message here that user is not authorized for this action (only for 403)
                 if not request.is_ajax():
                     res = redirect_to_login(request.path_info + get_query_params())
@@ -205,7 +213,8 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             return None
         # determine request format and handle pagination for json format
         if isinstance(self.request.accepted_renderer, JSONRenderer) and not BooleanField().to_internal_value(
-                self.request.META.get('HTTP_X_PAGINATION', self.request.GET.get('x_df_pagination', False))):
+            self.request.META.get("HTTP_X_PAGINATION", self.request.GET.get("x_df_pagination", False))
+        ):
             return None
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
 
@@ -232,7 +241,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             for fld, val in query_params.items():
                 res = self.filter_queryset_field(res, fld, val)
             for backend in self.filter_backends:
-                if hasattr(backend, 'get_ordering'):
+                if hasattr(backend, "get_ordering"):
                     ordering = backend().get_ordering(self.request, queryset, self)
                     if ordering:
                         self.ordering = ordering
@@ -249,7 +258,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         :param value: Field value
         :return: queryset with applied filter for the field
         """
-        if value is None or value == '':
+        if value is None or value == "":
             return queryset
 
         model_meta = queryset.model._meta
@@ -259,10 +268,10 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
 
         # TODO: this would probably be better moved into the fields themselves
         if isinstance(model_meta.get_field(field), (models.CharField, models.TextField)):
-            return queryset.filter(**{field + '__icontains': value})
+            return queryset.filter(**{field + "__icontains": value})
         if isinstance(model_meta.get_field(field), (models.DateField, models.DateTimeField)):
             date_time = None
-            for date_time_fmt in [settings.DATETIME_FORMAT, '%Y-%m-%dT%H:%M:%S', settings.DATE_FORMAT, '%Y-%m-%d']:
+            for date_time_fmt in [settings.DATETIME_FORMAT, "%Y-%m-%dT%H:%M:%S", settings.DATE_FORMAT, "%Y-%m-%d"]:
                 try:
                     date_time = datetime.strptime(value, date_time_fmt)
                     break
@@ -272,15 +281,15 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 return queryset
             date_time = pytz.timezone(settings.TIME_ZONE).localize(date_time).astimezone(pytz.utc)
             if len(value) <= 10:
-                return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(days=1)})
-            return queryset.filter(**{field + '__gte': date_time, field + '__lt': date_time + timedelta(seconds=1)})
+                return queryset.filter(**{field + "__gte": date_time, field + "__lt": date_time + timedelta(days=1)})
+            return queryset.filter(**{field + "__gte": date_time, field + "__lt": date_time + timedelta(seconds=1)})
         else:
             if isinstance(model_meta.get_field(field), models.BooleanField):
-                value = (value == 'true')
+                value = value == "true"
             return queryset.filter(**{field: value})
 
     @staticmethod
-    def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = 'id'):
+    def generate_paged_loader(page_size: int = 30, ordering: Union[str, List[str]] = "id"):
         """
         Generates a Pagination class that will handle dynamic data loading for ViewSets with a lot of data.
         Use by declaring `pagination_class = ModelViewSet.generate_paged_loader()` in class variables
@@ -291,6 +300,7 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
         :return: a Pagination class
         """
         from dynamicforms_legacy.pagination import CursorPagination
+
         ps = page_size
         ordr = ordering
 
@@ -308,17 +318,20 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
                 # In that case original code generates cursor links that have http scheme.
                 # So here I check REFERER header to find out which scheme is originally declared.
                 # And use that one in cursor link.
-                request = getattr(self, 'df_request', None)
-                cursor_url = super().encode_cursor(cursor).split(':', 1)
-                req_url = self.df_request.META.get('HTTP_REFERER', None)
+                request = getattr(self, "df_request", None)
+                cursor_url = super().encode_cursor(cursor).split(":", 1)
+                req_url = self.df_request.META.get("HTTP_REFERER", None)
                 if req_url:
-                    req_url = req_url.split(':', 1)
-                    if cursor_url[0] != req_url[0] and req_url[0].lower() in ('http', 'https'):
+                    req_url = req_url.split(":", 1)
+                    if cursor_url[0] != req_url[0] and req_url[0].lower() in ("http", "https"):
                         cursor_url[0] = req_url[0]
-                cursor_url = ':'.join(cursor_url)
-                if request and isinstance(request.accepted_renderer, JSONRenderer) and \
-                        'x_df_pagination' not in cursor_url:
-                    cursor_url += '&x_df_pagination=1'
+                cursor_url = ":".join(cursor_url)
+                if (
+                    request
+                    and isinstance(request.accepted_renderer, JSONRenderer)
+                    and "x_df_pagination" not in cursor_url
+                ):
+                    cursor_url += "&x_df_pagination=1"
                 return cursor_url
 
         return MyCursorPagination
@@ -338,7 +351,6 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
 
 
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
-
     def new_object(self):
         raise NotImplementedError()
 

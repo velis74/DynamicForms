@@ -9,6 +9,6 @@ class ActionMixin(object):
     def __init__(self, *args, actions: Actions = None, **kwargs):
         super().__init__(*args, **kwargs)
         act = actions or Actions(None)
-        act.actions.extend(getattr(self, 'actions', Actions()).actions)
+        act.actions.extend(getattr(self, "actions", Actions()).actions)
         # Obtain a personalised list of actions
         self.actions = act.get_resolved_copy(self)

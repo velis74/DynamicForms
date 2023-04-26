@@ -10,8 +10,8 @@ class NullChoiceMixin(object):
 
     @property
     def null_choice_text(self):
-        res = '--------'
-        if isinstance(self, ChoiceField) and not getattr(self, 'get_queryset', None):
+        res = "--------"
+        if isinstance(self, ChoiceField) and not getattr(self, "get_queryset", None):
             # Only do this for true ChoiceFields. RelatedFields would run a query here
             # Possibly we will at some point have to enable this for relatedfields too
             for opt in self.iter_options():

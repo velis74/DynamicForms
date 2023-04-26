@@ -20,7 +20,7 @@ from ..struct import Struct
 register = template.Library()
 
 
-@register.filter(name='dict_item')
+@register.filter(name="dict_item")
 def dict_item(d, k):
     """Returns the given key from a dictionary."""
     return d[k]
@@ -78,11 +78,11 @@ def render_form(serializer, form_template=None):
     """
     style = {}
     if form_template:
-        style['form_template'] = form_template
-    style['serializer'] = serializer
+        style["form_template"] = form_template
+    style["serializer"] = serializer
 
     renderer = HTMLFormRenderer()
-    return renderer.render(serializer.data, None, {'style': style})
+    return renderer.render(serializer.data, None, {"style": style})
 
 
 @register.simple_tag
@@ -106,7 +106,7 @@ def render_field(field, style):
     :param style: render parameters
     :return: rendered field template
     """
-    renderer = style.get('renderer', HTMLFormRenderer())
+    renderer = style.get("renderer", HTMLFormRenderer())
     return renderer.render_field(field, style)
 
 
@@ -120,9 +120,11 @@ def table_columns_count(serializer):
     """
     actions = serializer.actions.renderable_actions(serializer)
 
-    return (len([f for f in serializer.fields.values() if f.display_table == DisplayMode.FULL])
-            + (1 if any(action.position == "rowend" for action in actions) else 0)
-            + (1 if any(action.position == "rowstart" for action in actions) else 0))
+    return (
+        len([f for f in serializer.fields.values() if f.display_table == DisplayMode.FULL])
+        + (1 if any(action.position == "rowend" for action in actions) else 0)
+        + (1 if any(action.position == "rowstart" for action in actions) else 0)
+    )
 
 
 @register.simple_tag(takes_context=True)
@@ -138,20 +140,20 @@ def render_table_commands(context, serializer, position, field_name=None, button
     :return: rendered command buttons. If table_header parameter is given and commands for position are defined,
         returns only rendered table header
     """
-    ret = ''
+    ret = ""
 
-    if position == 'onfieldchange':
+    if position == "onfieldchange":
         ret = serializer.actions.render_field_onchange(serializer)
         ret += serializer.actions.render_form_init(serializer)
-    elif position == 'onfieldinit':
+    elif position == "onfieldinit":
         ret += serializer.actions.render_field_init(serializer, field_name)
-    elif position == 'form-buttons':
+    elif position == "form-buttons":
         ret += serializer.actions.render_form_buttons(serializer, button_position)
     else:
         table_header = None
-        if position.startswith('thead_'):
+        if position.startswith("thead_"):
             position = position[6:]
-            table_header = _('Actions')
+            table_header = _("Actions")
 
         positions = dict(
             onrowclick=(TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK),
@@ -166,15 +168,25 @@ def render_table_commands(context, serializer, position, field_name=None, button
         ret_tmp = serializer.actions.render_renderable_actions(positions[position], field_name, serializer)
 
         _position = positions[position][0]
-        if ret_tmp and _position in (TablePosition.ROW_START, TablePosition.ROW_END,
-                                     TablePosition.FILTER_ROW_START, TablePosition.FILTER_ROW_END):
-            ret += ('<th>%s</th>' % table_header) if table_header else (
-                '<td>%s</td>' % ret_tmp if _position not in (
-                    TablePosition.FILTER_ROW_END, TablePosition.FILTER_ROW_START) else '<th>%s</th>' % ret_tmp)
+        if ret_tmp and _position in (
+            TablePosition.ROW_START,
+            TablePosition.ROW_END,
+            TablePosition.FILTER_ROW_START,
+            TablePosition.FILTER_ROW_END,
+        ):
+            ret += (
+                ("<th>%s</th>" % table_header)
+                if table_header
+                else (
+                    "<td>%s</td>" % ret_tmp
+                    if _position not in (TablePosition.FILTER_ROW_END, TablePosition.FILTER_ROW_START)
+                    else "<th>%s</th>" % ret_tmp
+                )
+            )
         elif ret_tmp:
             ret += ret_tmp
 
-    ret = '{% load static i18n %}' + ret
+    ret = "{% load static i18n %}" + ret
 
     return mark_safe(context.template.engine.from_string(ret).render(context))
 
@@ -187,13 +199,13 @@ def field_to_serializer_and_data(context, serializer):
     :param serializer: field to be converted into context
     :return: nothing
     """
-    if hasattr(serializer, 'child'):
+    if hasattr(serializer, "child"):
         # this is a ListSerializer
         context.update(dict(serializer=serializer.child, data=serializer.value, **serializer.child.template_context))
     else:
         serializer._field._data = serializer.value  # The serializer has default values here
         context.update(dict(serializer=serializer, data=serializer.value, **serializer.template_context))
-    return ''
+    return ""
 
 
 @register.simple_tag(takes_context=True)
@@ -206,7 +218,7 @@ def get_data_template(context, context_data=None):
     """
     if context_data:
         context = context_data
-    serializer = context['serializer']
+    serializer = context["serializer"]
     return serializer.data_template
 
 
@@ -221,7 +233,7 @@ def set_var(context, **kwds):
     """
     for k, v in kwds.items():
         context[k] = v
-    return ''
+    return ""
 
 
 @register.simple_tag(takes_context=True)
@@ -241,12 +253,12 @@ def set_var_conditional(context, condition=None, condition_var=None, compare=Non
         condition = condition_var == compare
     for k, v in kwds.items():
         context[k] = v if condition else else_value
-    return ''
+    return ""
 
 
 @register.simple_tag(takes_context=False)
 def iter_options_bound(field):
-    return field.iter_options_bound(field.value) if hasattr(field, 'iter_options_bound') else []
+    return field.iter_options_bound(field.value) if hasattr(field, "iter_options_bound") else []
 
 
 @register.filter
@@ -271,7 +283,7 @@ def json(value):
 def dict_item_default(context, var, d, k, default):
     context[var] = d.get(k, default)
 
-    return ''
+    return ""
 
 
 @register.filter
@@ -282,7 +294,7 @@ def class_name(value):
 @register.filter
 def in_list(value, the_list):
     value = str(value)
-    return value in the_list.split(',')
+    return value in the_list.split(",")
 
 
 @register.filter
@@ -330,7 +342,7 @@ def template_from_string(template_string, using=None):
             return engine.from_string(template_string)
         except TemplateSyntaxError as e:
             chain.append(str(e))
-    raise TemplateSyntaxError(template_string + ','.join(chain))
+    raise TemplateSyntaxError(template_string + ",".join(chain))
 
 
 class ExtendTemplateNode(template.Node):
@@ -347,7 +359,7 @@ class ExtendTemplateNode(template.Node):
 
     def rearrange_blocks(self, nodelist, blocks):
         for idx, node in enumerate(nodelist):
-            if hasattr(node, 'nodelist'):
+            if hasattr(node, "nodelist"):
                 if isinstance(node, BlockNode):
                     if node.name in blocks:
                         nodelist[idx] = blocks[node.name]
@@ -376,15 +388,14 @@ class ExtendTemplateNode(template.Node):
         return ret
 
     def render(self, context):
-
         kwargs = {key: value.resolve(context) for key, value in self.kwargs.items()}
         try:
-            if 'template_name_var' in kwargs:
-                extending_template = get_template(kwargs.get('template_name_var'))
+            if "template_name_var" in kwargs:
+                extending_template = get_template(kwargs.get("template_name_var"))
             else:
                 extending_template = get_template(self.template_name.resolve())
         except:
-            return ''
+            return ""
 
         if self.only:
             flattened_context = kwargs
@@ -395,11 +406,9 @@ class ExtendTemplateNode(template.Node):
         nodelist_changed = False
         new_nodelist = self.get_node_list(extending_template.template.nodelist)
 
-        if 'block' in kwargs:
+        if "block" in kwargs:
             block_nodes = self.get_all_blocks(new_nodelist)
-            new_nodelist = NodeList(
-                [node for node in block_nodes if node.name == kwargs.get('block')]
-            )
+            new_nodelist = NodeList([node for node in block_nodes if node.name == kwargs.get("block")])
             new_nodelist.contains_nontext = True
             nodelist_changed = True
 
@@ -412,7 +421,7 @@ class ExtendTemplateNode(template.Node):
         # are changed, they are changed in next iteration also.
         # So now I load template from empty string and give him changed nodelist. So I don't change original template
         if nodelist_changed:
-            extending_template = template_from_string('', None)
+            extending_template = template_from_string("", None)
             extending_template.template.nodelist = new_nodelist
 
         content = extending_template.render(flattened_context)
@@ -424,7 +433,7 @@ def get_extend_data(token, parser):
     tag_name, args, kwargs = parse_tag(token, parser)
 
     template_name = None
-    if 'template_name_var' not in kwargs:
+    if "template_name_var" not in kwargs:
         template_name = args[0]
 
     return args, kwargs, template_name
@@ -447,7 +456,7 @@ def do_extendtemplate(parser, token):
 
     args, kwargs, template_name = get_extend_data(token, parser)
 
-    return ExtendTemplateNode([], template_name, kwargs, 'only' in (x.token for x in args), False)
+    return ExtendTemplateNode([], template_name, kwargs, "only" in (x.token for x in args), False)
 
 
 @register.tag("extendtemplateblock")
@@ -459,7 +468,7 @@ def do_extendtemplateblock(parser, token):
     args, kwargs, template_name = get_extend_data(token, parser)
 
     # This si multiline block with closing tag
-    nodelist = parser.parse(('endextendtemplateblock',))
+    nodelist = parser.parse(("endextendtemplateblock",))
     parser.delete_first_token()
 
-    return ExtendTemplateNode(nodelist, template_name, kwargs, 'only' in (x.token for x in args), True)
+    return ExtendTemplateNode(nodelist, template_name, kwargs, "only" in (x.token for x in args), True)

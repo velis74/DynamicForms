@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('examples', '0006_merge_20200921_1152'),
+        ("examples", "0006_merge_20200921_1152"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='basicfields',
-            name='nullint_field',
+            model_name="basicfields",
+            name="nullint_field",
             field=models.IntegerField(null=True),
         ),
     ]

@@ -3,13 +3,12 @@ from django.utils.translation import gettext_lazy as _
 
 from .struct import Struct
 
-DYNAMICFORMS_ROOT = 'dynamicforms/'
-DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + 'bootstrap/'
-DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + 'jquery_ui/'
+DYNAMICFORMS_ROOT = "dynamicforms/"
+DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + "bootstrap/"
+DYNAMICFORMS_JQUERY_UI = DYNAMICFORMS_ROOT + "jquery_ui/"
 
 
 class Settings(Struct):
-
     # Support for jQueryUI (this will be queried in dynamicforms.js)
     jquery_ui = False
 
@@ -22,13 +21,13 @@ class Settings(Struct):
     use_select2 = True
 
     # specifies the basepage template to be used for TemplateHTMLRenderer
-    page_template = ''
+    page_template = ""
 
     # specifies text to be displayed in grid when field's value is null
-    null_text_table = 'null'
+    null_text_table = "null"
 
     def __init__(self, data=None, **kwds):
-        kwds.setdefault('page_template', DYNAMICFORMS_ROOT + 'page.html')
+        kwds.setdefault("page_template", DYNAMICFORMS_ROOT + "page.html")
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_BOOTSTRAP
         self.template_root = DYNAMICFORMS_ROOT
@@ -38,7 +37,7 @@ class Settings(Struct):
         res = {}
         res.update(super().__to_dict__())
         for p in dir(self):
-            if not (p == 'clone' or p.startswith('_')):
+            if not (p == "clone" or p.startswith("_")):
                 res[p] = getattr(self, p)
         return res
 
@@ -46,6 +45,7 @@ class Settings(Struct):
     @property
     def DisplayMode(self):
         from .mixins import DisplayMode
+
         return {e.name: e.value for e in DisplayMode}  # A copy to be accessible in the templates
 
     # ****************************************************************************
@@ -53,41 +53,41 @@ class Settings(Struct):
     # to the chosen template pack.
     # ****************************************************************************
 
-    select2_form_field_class = property(lambda self: 'select2-field' if self.use_select2 else '')
+    select2_form_field_class = property(lambda self: "select2-field" if self.use_select2 else "")
 
     # Path to template for :samp:`<html><head>` tag JS & CSS includes, necessary for the chosen template pack.
-    page_includes = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes.html')
+    page_includes = property(lambda self: DYNAMICFORMS_ROOT + "base_includes.html")
 
     # Path to base template for fields.
-    field_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'field/base_field.html')
+    field_base_template = property(lambda self: DYNAMICFORMS_ROOT + "field/base_field.html")
 
     # Path to base template for forms.
-    form_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_form.html')
+    form_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_form.html")
 
     # Path to base template for forms.
-    table_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_list.html')
+    table_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_list.html")
 
     # Path to base template for forms.
-    table_filter_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_table_filter.html')
+    table_filter_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_table_filter.html")
 
     # Path to base template for table body.
-    table_body_base_template = property(lambda self: DYNAMICFORMS_ROOT + 'base_table_body.html')
+    table_body_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_table_body.html")
 
     # Path to template for modal dialog
-    modal_dialog_rest_template = property(lambda self: DYNAMICFORMS_ROOT + 'modal_dialog_rest.html')
+    modal_dialog_rest_template = property(lambda self: DYNAMICFORMS_ROOT + "modal_dialog_rest.html")
 
     # classes to use on form buttons
-    form_button_classes = property(lambda self: '')
-    form_button_classes_cancel = property(lambda self: '')
-    form_button_classes_primary = property(lambda self: '')
-    form_button_classes_secondary = property(lambda self: '')
+    form_button_classes = property(lambda self: "")
+    form_button_classes_cancel = property(lambda self: "")
+    form_button_classes_primary = property(lambda self: "")
+    form_button_classes_secondary = property(lambda self: "")
 
-    select2_include = property(lambda self: DYNAMICFORMS_ROOT + 'base_includes_select2.html')
+    select2_include = property(lambda self: DYNAMICFORMS_ROOT + "base_includes_select2.html")
 
 
 def if3_4(if3, if4):
     def inner(self):
-        if self.bootstrap_version == 'v4':
+        if self.bootstrap_version == "v4":
             return if4
         return if3
 
@@ -96,29 +96,30 @@ def if3_4(if3, if4):
 
 class SettingsBootstrap(Settings):
     # Supported Bootstrap versions are v3 and v4
-    bootstrap_version = 'v4'
+    bootstrap_version = "v4"
 
     def __init__(self, data=None, **kwds):
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_BOOTSTRAP
 
     # select2 helper variables
-    select2_theme = property(if3_4('bootstrap', 'bootstrap4'))
-    select2_add_include = property(if3_4('select2/css/select2-bootstrap3.min.css',
-                                         'select2/css/select2-bootstrap4.min.css'))
+    select2_theme = property(if3_4("bootstrap", "bootstrap4"))
+    select2_add_include = property(
+        if3_4("select2/css/select2-bootstrap3.min.css", "select2/css/select2-bootstrap4.min.css")
+    )
 
     # classes for card divs
-    bs_card_class = property(if3_4('panel panel-default', 'card'))
-    bs_card_header = property(if3_4('panel-heading df-card-header', 'card-header df-card-header'))
-    bs_card_body = property(if3_4('panel-body df-card-body', 'card-body df-card-body'))
+    bs_card_class = property(if3_4("panel panel-default", "card"))
+    bs_card_header = property(if3_4("panel-heading df-card-header", "card-header df-card-header"))
+    bs_card_body = property(if3_4("panel-body df-card-body", "card-body df-card-body"))
 
-    progress_dialog_title = _('Performing operation...')
+    progress_dialog_title = _("Performing operation...")
 
     # classes to use on form buttons
-    form_button_classes = property(lambda self: 'btn ml-1')
-    form_button_classes_cancel = property(lambda self: '')
-    form_button_classes_primary = property(lambda self: 'btn-primary')
-    form_button_classes_secondary = property(lambda self: 'btn-secondary')
+    form_button_classes = property(lambda self: "btn ml-1")
+    form_button_classes_cancel = property(lambda self: "")
+    form_button_classes_primary = property(lambda self: "btn-primary")
+    form_button_classes_secondary = property(lambda self: "btn-secondary")
 
 
 class SettingsJqueryUI(Settings):
@@ -128,13 +129,13 @@ class SettingsJqueryUI(Settings):
         super().__init__(data, **kwds)
         self.template = DYNAMICFORMS_JQUERY_UI
 
-    progress_dialog_title = _('Performing operation...')
+    progress_dialog_title = _("Performing operation...")
 
     # classes to use on form buttons
-    form_button_classes = property(lambda self: 'ui-button ui-corner-all ui-widget')
-    form_button_classes_cancel = property(lambda self: 'close-btn')
-    form_button_classes_primary = property(lambda self: 'ui-state-highlight')
-    form_button_classes_secondary = property(lambda self: '')
+    form_button_classes = property(lambda self: "ui-button ui-corner-all ui-widget")
+    form_button_classes_cancel = property(lambda self: "close-btn")
+    form_button_classes_primary = property(lambda self: "ui-state-highlight")
+    form_button_classes_secondary = property(lambda self: "")
 
 
 def get_settings():
@@ -146,7 +147,7 @@ def get_settings():
     df = Struct(
         template=DYNAMICFORMS_BOOTSTRAP,
     )
-    df = df.clone(**getattr(s, 'DYNAMICFORMS', {}))
+    df = df.clone(**getattr(s, "DYNAMICFORMS", {}))
     template = df.template
     if template == DYNAMICFORMS_BOOTSTRAP:
         return SettingsBootstrap(**df.__to_dict__())
@@ -165,15 +166,15 @@ def version_check(checked_version, min_version):
     """
 
     def version_transform(ver):
-        version = ''
-        vn = va = ''
+        version = ""
+        vn = va = ""
         stage = 0
-        ver = '.' + (ver or '')
+        ver = "." + (ver or "")
         for c in ver:
-            if c == '.':
+            if c == ".":
                 if vn or va:
-                    version += '{0:0>3}{1: <2}.'.format(vn, va)
-                vn = va = ''
+                    version += "{0:0>3}{1: <2}.".format(vn, va)
+                vn = va = ""
                 stage = 0
                 continue
             if c.isdigit():
@@ -187,7 +188,7 @@ def version_check(checked_version, min_version):
             elif stage == 1:
                 va += c
         if vn or va:
-            version += '{0:0>3}{1: <2}.'.format(vn, va)
+            version += "{0:0>3}{1: <2}.".format(vn, va)
         return version[:-1]
 
     if not checked_version:

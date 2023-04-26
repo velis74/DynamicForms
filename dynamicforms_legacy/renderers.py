@@ -25,48 +25,56 @@ class TemplateHTMLRenderer(TemplateHTMLRenderer):
     """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        link_next = link_prev = ''
+        link_next = link_prev = ""
 
-        if isinstance(data, dict) and 'next' in data and 'results' in data and \
-                isinstance(data['results'], (ReturnList, ReturnDict)):
+        if (
+            isinstance(data, dict)
+            and "next" in data
+            and "results" in data
+            and isinstance(data["results"], (ReturnList, ReturnDict))
+        ):
             # This is in case of Pagination
-            link_next = mark_safe(data.get('next', ''))
-            link_prev = mark_safe(data.get('previous', ''))
-            data = data['results']
+            link_next = mark_safe(data.get("next", ""))
+            link_prev = mark_safe(data.get("previous", ""))
+            data = data["results"]
         if isinstance(data, (ReturnList, ReturnDict)):
             ser = data.serializer
-            data = dict(data=data, serializer=ser.child if isinstance(ser, ListSerializer) else ser,
-                        link_next=link_next, link_prev=link_prev)
+            data = dict(
+                data=data,
+                serializer=ser.child if isinstance(ser, ListSerializer) else ser,
+                link_next=link_next,
+                link_prev=link_prev,
+            )
 
-            if getattr(ser, '_errors', {}):
+            if getattr(ser, "_errors", {}):
                 # CAUTION: bad hacks start here. This should be removed at some point
 
                 # unmark exception from response because this was a validation error
                 # This will allow TemplateHTMLRenderer to still render the template as if it was without problems
                 # If this is not done, the only result user will see will be a 404 error without any details
-                response = renderer_context['response']
+                response = renderer_context["response"]
                 response.exception = False
 
                 # result data should be object data otherwise nothing will render...
-                data['data'] = data['serializer'].data
+                data["data"] = data["serializer"].data
 
         return super().render(data, accepted_media_type, renderer_context)
 
     def get_template_names(self, response, view):
-        if view.render_type == 'page' and DYNAMICFORMS.page_template:
+        if view.render_type == "page" and DYNAMICFORMS.page_template:
             return [DYNAMICFORMS.page_template]
         return super().get_template_names(response, view)
 
     def get_template_context(self, data, renderer_context):
         res = super().get_template_context(data, renderer_context)
-        view = renderer_context['view']
-        if hasattr(view, 'template_context'):
+        view = renderer_context["view"]
+        if hasattr(view, "template_context"):
             if callable(view.template_context):
                 res.update(view.template_context())
             else:
                 res.update(view.template_context)
-        res['df_render_type'] = view.render_type  # This one should not fail because it's set in initialize_request
-        res['DYNAMICFORMS'] = DYNAMICFORMS
+        res["df_render_type"] = view.render_type  # This one should not fail because it's set in initialize_request
+        res["DYNAMICFORMS"] = DYNAMICFORMS
         return res
 
 
@@ -92,7 +100,7 @@ class HTMLFormRenderer(HTMLFormRenderer):
     def render_field(self, field, parent_style):
         # noinspection PyProtectedMember
         if isinstance(field._field, HiddenField):
-            return ''
+            return ""
 
         if isinstance(field._field, BooleanField):
             # allow also null to have max values available for determening the right value to render
@@ -103,30 +111,30 @@ class HTMLFormRenderer(HTMLFormRenderer):
 
         style = dict(self.default_style[field])
         style.update(field.style)
-        if 'template_pack' not in style:
-            style['template_pack'] = parent_style.get('template_pack', self.template_pack)
-        style['serializer'] = parent_style.get('serializer', None)
-        style['renderer'] = self
+        if "template_pack" not in style:
+            style["template_pack"] = parent_style.get("template_pack", self.template_pack)
+        style["serializer"] = parent_style.get("serializer", None)
+        style["renderer"] = self
 
         # Get a clone of the field with text-only value representation.
         field = field.as_form_field()
 
-        if style.get('input_type') == 'datetime-local' and isinstance(field.value, six.text_type):
-            field.value = field.value.rstrip('Z')
+        if style.get("input_type") == "datetime-local" and isinstance(field.value, six.text_type):
+            field.value = field.value.rstrip("Z")
 
-        if 'template' in style:
-            template_name = style['template']
+        if "template" in style:
+            template_name = style["template"]
         else:
-            template_name = style['template_pack'].strip('/') + '/' + style['base_template']
+            template_name = style["template_pack"].strip("/") + "/" + style["base_template"]
 
         template = loader.get_template(template_name)
         context = {
-            'field': field,
-            'style': style,
-            'DYNAMICFORMS': DYNAMICFORMS,
+            "field": field,
+            "style": style,
+            "DYNAMICFORMS": DYNAMICFORMS,
         }
         try:
-            context.update(style['serializer'].context['view'].template_context)
+            context.update(style["serializer"].context["view"].template_context)
         except:
             pass
         return template.render(context)
@@ -139,29 +147,35 @@ class HTMLFormRenderer(HTMLFormRenderer):
         renderer_context = renderer_context or {}
         form = data.serializer
 
-        style = renderer_context.get('style', {})
-        style['template_pack'] = DYNAMICFORMS.template_root + 'field'
-        style['renderer'] = self
+        style = renderer_context.get("style", {})
+        style["template_pack"] = DYNAMICFORMS.template_root + "field"
+        style["renderer"] = self
 
-        template_pack = style['template_pack'].strip('/')
+        template_pack = style["template_pack"].strip("/")
 
         # getting the template to use
-        template_name = next((x for x in (  # Get the first specified template name as encountered
-            style.get('form_template', None),  # template name from tag parameter
-            getattr(self, 'form_template', None),  # if ViewSet set the form_template member of this renderer
-            getattr(form, 'form_template', None),  # if Serializer has form_template member set
-            template_pack + '/' + self.base_template  # take default template from pack
-        ) if x))
+        template_name = next(
+            (
+                x
+                for x in (  # Get the first specified template name as encountered
+                    style.get("form_template", None),  # template name from tag parameter
+                    getattr(self, "form_template", None),  # if ViewSet set the form_template member of this renderer
+                    getattr(form, "form_template", None),  # if Serializer has form_template member set
+                    template_pack + "/" + self.base_template,  # take default template from pack
+                )
+                if x
+            )
+        )
 
         template = loader.get_template(template_name)
         context = {
-            'form': form,
-            'style': style,
-            'DYNAMICFORMS': DYNAMICFORMS,
+            "form": form,
+            "style": style,
+            "DYNAMICFORMS": DYNAMICFORMS,
         }
-        context.update(getattr(form, 'template_context', {}))
+        context.update(getattr(form, "template_context", {}))
         try:
-            context.update(form.context['view'].template_context)
+            context.update(form.context["view"].template_context)
         except:
             pass
         return template.render(context)

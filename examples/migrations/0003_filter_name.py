@@ -7,19 +7,22 @@ from . import add_filter, add_page_load, add_relation
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('examples', '0002_auto_20190320_0823'),
+        ("examples", "0002_auto_20190320_0823"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='filter',
-            name='name',
-            field=models.CharField(blank=True, help_text='Name field', max_length=20, null=True,
-                                   verbose_name='Name field'),
+            model_name="filter",
+            name="name",
+            field=models.CharField(
+                blank=True, help_text="Name field", max_length=20, null=True, verbose_name="Name field"
+            ),
         ),
-        migrations.RunPython(lambda apps, schema_editor: add_relation(apps.get_model('examples', 'Relation')),
-                             atomic=True),
-        migrations.RunPython(lambda apps, schema_editor: add_filter(apps.get_model('examples', 'Filter')), atomic=True),
-        migrations.RunPython(lambda apps, schema_editor: add_page_load(apps.get_model('examples', 'PageLoad')),
-                             atomic=True),
+        migrations.RunPython(
+            lambda apps, schema_editor: add_relation(apps.get_model("examples", "Relation")), atomic=True
+        ),
+        migrations.RunPython(lambda apps, schema_editor: add_filter(apps.get_model("examples", "Filter")), atomic=True),
+        migrations.RunPython(
+            lambda apps, schema_editor: add_page_load(apps.get_model("examples", "PageLoad")), atomic=True
+        ),
     ]

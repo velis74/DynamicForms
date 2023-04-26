@@ -6,8 +6,8 @@ from django.db.models import DurationField, F, Q
 
 
 class CursorPagination(drf_p.CursorPagination):
-    ordering = 'pk'
-    NONE_VALUE = '{`None`}'
+    ordering = "pk"
+    NONE_VALUE = "{`None`}"
 
     # noinspection PyAttributeOutsideInit
     def paginate_queryset(self, queryset, request, view=None):
@@ -17,9 +17,9 @@ class CursorPagination(drf_p.CursorPagination):
 
         self.base_url = request.build_absolute_uri()
         self.ordering = self.get_ordering(request, queryset, view)
-        if 'id' not in self.ordering and '-id' not in self.ordering:
+        if "id" not in self.ordering and "-id" not in self.ordering:
             ordering = list(self.ordering)
-            ordering.append('id')
+            ordering.append("id")
             self.ordering = tuple(ordering)
 
         self.cursor = self.decode_cursor(request)
@@ -36,8 +36,12 @@ class CursorPagination(drf_p.CursorPagination):
         # Cursor pagination always enforces an ordering.
         ordering = drf_p._reverse_ordering(self.ordering) if reverse else self.ordering
         # Currently we force nulls_first in ascending order and nulls_last in descending order
-        ordering = [getattr(F(field.lstrip('-')), 'desc' if field.startswith('-') else 'asc')(
-            **{'nulls_last' if field.startswith('-') else 'nulls_first': True}) for field in ordering]
+        ordering = [
+            getattr(F(field.lstrip("-")), "desc" if field.startswith("-") else "asc")(
+                **{"nulls_last" if field.startswith("-") else "nulls_first": True}
+            )
+            for field in ordering
+        ]
         queryset = queryset.order_by(*ordering)
 
         # If we have a cursor with a fixed position then filter by that.
@@ -48,15 +52,15 @@ class CursorPagination(drf_p.CursorPagination):
                 args = []
                 for idx in range(segment_len):
                     order = self.ordering[idx]
-                    is_reversed = order.startswith('-')
-                    order_attr = order.lstrip('-')
+                    is_reversed = order.startswith("-")
+                    order_attr = order.lstrip("-")
                     attr_value = self.field_to_python(queryset, order_attr, current_position[order_attr])
 
                     # Test for: (cursor reversed) XOR (queryset reversed)
                     if idx < segment_len - 1:
                         # if this is the last field in this segment
                         if attr_value == self.NONE_VALUE:
-                            kwargs[order_attr + '__isnull'] = True
+                            kwargs[order_attr + "__isnull"] = True
                         else:
                             kwargs[order_attr] = attr_value
                     elif self.cursor.reverse != is_reversed:
@@ -64,12 +68,12 @@ class CursorPagination(drf_p.CursorPagination):
                             # It is impossible to go lower than None... so we just omit this segment
                             return None
                         else:
-                            args.append(Q(**{order_attr + '__lt': attr_value}) | Q(**{order_attr + '__isnull': True}))
+                            args.append(Q(**{order_attr + "__lt": attr_value}) | Q(**{order_attr + "__isnull": True}))
                     else:
                         if attr_value == self.NONE_VALUE:
-                            kwargs[order_attr + '__isnull'] = False
+                            kwargs[order_attr + "__isnull"] = False
                         else:
-                            kwargs[order_attr + '__gt'] = attr_value
+                            kwargs[order_attr + "__gt"] = attr_value
 
                 return Q(**kwargs) & Q(*args)
 
@@ -83,8 +87,8 @@ class CursorPagination(drf_p.CursorPagination):
         # If we have an offset cursor then offset the entire page by that amount.
         # We also always fetch an extra item in order to determine if there is a
         # page following on from this one.
-        results = list(queryset[offset:offset + self.page_size + 1])
-        self.page = list(results[:self.page_size])
+        results = list(queryset[offset : offset + self.page_size + 1])
+        self.page = list(results[: self.page_size])
         if not self.page:
             # In rest_framework/pagination.py/get_previous_link is expected that self.page is not empty
             # if cursor offset != 0
@@ -135,14 +139,13 @@ class CursorPagination(drf_p.CursorPagination):
         return self.page
 
     def _get_position_from_instance(self, instance, ordering):
-
         def process_field(idx):
-            field_name = ordering[idx].lstrip('-')
+            field_name = ordering[idx].lstrip("-")
             attr = None
             if isinstance(instance, dict):
                 attr = instance[field_name]
             else:
-                field_name_list = field_name.split('__')
+                field_name_list = field_name.split("__")
                 for fn in field_name_list:
                     attr = getattr(instance if attr is None else attr, fn)
             return field_name, self.field_to_representation(attr)

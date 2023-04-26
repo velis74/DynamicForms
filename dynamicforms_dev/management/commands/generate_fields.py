@@ -120,7 +120,6 @@ class Command(BaseCommand):
         )
 
         with open(os.path.abspath(os.path.join("dynamicforms/", "fields.py")), "w") as output:
-
             field_list = []
             for obj in fields.__dict__.values():
                 if (
@@ -212,7 +211,6 @@ class Command(BaseCommand):
                     if hasattr(cls, "__init__"):
                         had_kwds = False
                         for parm in inspect.signature(cls.__init__).parameters.values():
-
                             parm_str = parm.name
                             if parm_str == "self" or parm.kind in (parm.VAR_KEYWORD, parm.VAR_POSITIONAL):
                                 # we don't repeat all the self fields there are. Not all the *args && **kwds
