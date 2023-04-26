@@ -1,9 +1,12 @@
 import { reactive } from 'vue';
 
+import { APIConsumer } from '../../api_consumer/namespace';
+import { DfTable } from '../namespace';
+
 import TableRow from './row';
 
 export default class TableRows {
-  logic: APIConsumer.LogicInterface;
+  logic: APIConsumer.ConsumerLogicBaseInterface;
 
   visibilityHandler: (rowPk?: number) => boolean | { callback: (isVisible: boolean) => void, once?: boolean };
 
@@ -13,7 +16,7 @@ export default class TableRows {
 
   rowIndices: { [key: string]: number };
 
-  constructor(logic: APIConsumer.LogicInterface, rowsData: DfTable.RowsData) {
+  constructor(logic: APIConsumer.ConsumerLogicBaseInterface, rowsData: DfTable.RowsData) {
     this.logic = logic;
     // function to pass to vue-observe-visibility to know when to load more rows
     this.visibilityHandler = () => {
@@ -61,7 +64,7 @@ export default class TableRows {
 
   async loadMoreRows(isVisible: boolean) {
     if (!isVisible || !this.next) return;
-    const newRows = await this.logic.fetch(this.next, true);
+    const newRows = await (<APIConsumer.ConsumerLogicAPIInterface> this.logic).fetch(this.next, true);
     this.updateRows(newRows.results);
     this.next = newRows.next; // replace next so we can load another set of rows
     this.decorate(newRows.results);

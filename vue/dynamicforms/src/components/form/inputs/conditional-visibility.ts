@@ -1,6 +1,5 @@
+import { APIConsumer } from '../../api_consumer/namespace';
 import Operator from '../definitions/field-operator';
-
-import FormPayload = APIConsumer.FormPayload;
 
 export type Statement = [ string | Statement, Operator, any | Statement ] | null;
 
@@ -8,7 +7,7 @@ export function XOR(value1: boolean, value2: boolean): boolean {
   return value1 ? !value2 : value2;
 }
 
-function calculateVisibility(payload: FormPayload, statement: Statement): boolean {
+function calculateVisibility(payload: APIConsumer.FormPayload, statement: Statement): boolean {
   if (statement == null) return true;
 
   const operator = statement[1];

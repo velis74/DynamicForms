@@ -5,6 +5,7 @@ import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
+import { APIConsumer } from './namespace';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
   private readonly baseURL: string;

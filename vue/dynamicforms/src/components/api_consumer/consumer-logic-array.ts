@@ -6,6 +6,7 @@ import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
 
 import ConsumerLogicBase from './consumer-logic-base';
+import { APIConsumer } from './namespace';
 
 class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
   private readonly records: any;

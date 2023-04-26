@@ -1,10 +1,11 @@
 // import FilteredActions from '../actions/filtered-actions';
 // import TableColumns from '../table/definitions/columns';
 
-namespace APIConsumer {
-  import ActionsJSON = Actions.ActionsJSON;
-  import ErrorsJSON = Actions.ErrorsJSON;
+import type { Actions } from '../actions/namespace';
+import type { DfForm } from '../form/namespace';
+import type { DfTable } from '../table/namespace';
 
+export namespace APIConsumer {
   // type of primary keys. Django would normally have integers, but really, anything can be used as primary key
   export type PKValueType = NonNullable<any>;
 
@@ -20,15 +21,15 @@ namespace APIConsumer {
   }
 
   export interface TableUXDefinition extends UXDefinition {
-    columns: unknown
-    rows: unknown
-    ordering_parameter: unknown
-    ordering_style: unknown
-    responsive_table_layouts: unknown
-    actions: unknown
-    filter: unknown
-    dialog: unknown
-    record: unknown
+    columns: DfTable.ColumnJSON[];
+    rows: DfTable.RowsData;
+    ordering_parameter: string;
+    ordering_style: unknown;
+    responsive_table_layouts: DfTable.ResponsiveTableLayoutsDefinition;
+    actions: Actions.ActionsJSON;
+    filter: unknown;
+    dialog: DfForm.FormLayoutJSON;
+    record: unknown;
   }
 
   export interface FormPayload {
@@ -50,8 +51,8 @@ namespace APIConsumer {
     layout: FormLayoutType,
     payload: FormPayload,
     loading: boolean,
-    actions: ActionsJSON,
-    errors: ErrorsJSON,
+    actions: Actions.ActionsJSON,
+    errors: Actions.ErrorsJSON,
   };
 
   export interface ConsumerLogicBaseInterface {
@@ -62,6 +63,8 @@ namespace APIConsumer {
     dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean): Promise<void>;
     title(which: 'table' | 'new' | 'edit'): string;
   }
-  export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {}
+  export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {
+    fetch(url: string, isTable: boolean, filter?: boolean): any;
+  }
   export interface ConsumerLogicArrayInterface extends ConsumerLogicBaseInterface {}
 }

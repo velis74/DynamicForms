@@ -2,8 +2,7 @@ import { VNode } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 
-import DialogMessage = Dialogs.DialogMessage;
-import DialogOptions = Dialogs.DialogOptions;
+import { Dialogs } from './namespace';
 
 let idGenerator = 0;
 
@@ -11,9 +10,9 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
   /* Base dialog definition */
   public title: string | VNode;
 
-  public body: DialogMessage;
+  public body: Dialogs.DialogMessage;
 
-  public options: DialogOptions;
+  public options: Dialogs.DialogOptions;
 
   public actions: FilteredActions | VNode;
 
@@ -31,7 +30,12 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
 
   public rejectPromise: Function; // Function to reject the promise
 
-  constructor(title: string | VNode, body: DialogMessage, options: DialogOptions, actions: FilteredActions) {
+  constructor(
+    title: string | VNode,
+    body: Dialogs.DialogMessage,
+    options: Dialogs.DialogOptions,
+    actions: FilteredActions,
+  ) {
     this.title = title;
     this.body = body;
     this.options = options;

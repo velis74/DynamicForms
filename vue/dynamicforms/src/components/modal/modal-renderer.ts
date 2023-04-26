@@ -3,13 +3,11 @@ import { defineComponent, h, RenderFunction, resolveComponent, DefineComponent }
 
 import FilteredActions from '../actions/filtered-actions';
 
-import CustomComponentMessage = Dialogs.CustomComponentMessage;
-import DialogMessage = Dialogs.DialogMessage;
-import DialogOptions = Dialogs.DialogOptions;
+import { Dialogs } from './namespace';
 
 function processSlot(
   slot: string,
-  content: string | DefineComponent | FilteredActions | CustomComponentMessage | RenderFunction,
+  content: string | DefineComponent | FilteredActions | Dialogs.CustomComponentMessage | RenderFunction,
 ) {
   if (content == null) return null;
   if (typeof content === 'string') {
@@ -35,9 +33,9 @@ export default /* #__PURE__ */ defineComponent({
     renderFunction(
       curDlgKey: number,
       titleSlot: string | RenderFunction,
-      bodySlot: DialogMessage | RenderFunction,
+      bodySlot: Dialogs.DialogMessage | RenderFunction,
       actionsSlot: FilteredActions | RenderFunction,
-      options: DialogOptions,
+      options: Dialogs.DialogOptions,
     ) {
       return h(
         // Jure 16.3.2023 types don't match here, but the code works. Too green to be able to fix

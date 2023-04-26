@@ -7,22 +7,10 @@ import { reactive } from 'vue';
 
 import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
+import { DfForm } from '../../form/namespace';
+import { DfTable } from '../namespace';
 
 import TableColumn from './column';
-
-interface ResponsiveTableLayoutDefinition {
-  columns: (string | string[])[];
-  autoAddNonListedColumns: boolean;
-}
-
-export interface ResponsiveTableLayoutsDefinition {
-  auto_generate_single_row_layout: boolean;
-  auto_generate_single_column_layout: boolean;
-  layouts: {
-    columns: string[];
-    auto_add_non_listed_columns: boolean;
-  }[];
-}
 
 export class ColumnGroupRow {
   fields: TableColumn[];
@@ -80,7 +68,7 @@ export class ResponsiveLayout implements DfTable.ResponsiveLayoutInterface {
 
   rows: number;
 
-  constructor(definition: ResponsiveTableLayoutDefinition, renderedColumns: IndexedArray<TableColumn>) {
+  constructor(definition: DfTable.ResponsiveTableLayoutDefinition, renderedColumns: IndexedArray<TableColumn>) {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
     this.columns = new IndexedArray<TableColumn>([]);
     columnsDef.forEach((column: string[]) => {
@@ -119,7 +107,7 @@ export class ResponsiveLayouts {
 
   constructor(
     renderedColumns: IndexedArray<TableColumn>,
-    responsiveTableLayoutsDef: ResponsiveTableLayoutsDefinition | null,
+    responsiveTableLayoutsDef: DfTable.ResponsiveTableLayoutsDefinition | null,
   ) {
     this.layouts = [];
 

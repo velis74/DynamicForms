@@ -1,14 +1,13 @@
 import { reactive } from 'vue';
 
-import RowControlStructure = DfTable.RowControlStructure;
-import RowDataInterface = DfTable.RowDataInterface;
+import { DfTable } from '../namespace';
 
 export default class TableRow { // eslint-disable-line max-classes-per-file
   [key: string]: any;
 
-  dfControlStructure: RowControlStructure;
+  dfControlStructure: DfTable.RowControlStructure;
 
-  constructor(rowData: RowDataInterface) {
+  constructor(rowData: DfTable.RowDataInterface) {
     const dfControlData = rowData.df_control_data || {};
     delete rowData.df_control_data;
     Object.assign(this, rowData);

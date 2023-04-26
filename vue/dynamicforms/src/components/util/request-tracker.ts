@@ -2,8 +2,7 @@ import { AxiosInstance } from 'axios';
 
 import DialogDefinition from '../modal/dialog-definition';
 import dfModal from '../modal/modal-view-api';
-
-import CustomComponentMessage = Dialogs.CustomComponentMessage;
+import { Dialogs } from '../modal/namespace';
 
 const SHOW_DIALOG_AFTER_MS = 250;
 const emptyPromise = new Promise<any>(() => {});
@@ -92,7 +91,7 @@ class RequestTracker {
       if (this.isShowingProgress()) {
         // we are showing so getDialogDefinition will not return null here
         const dlgDef = dfModal.getDialogDefinition(this.dialogPromise) as DialogDefinition;
-        const body = dlgDef.body as CustomComponentMessage;
+        const body = dlgDef.body as Dialogs.CustomComponentMessage;
         if (body.props != null) {
           body.props.progress = Number(progress.data.value);
           body.props.label = progress.data.comment;

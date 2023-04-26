@@ -1,3 +1,5 @@
+import { DfForm } from '../namespace';
+
 export default class RenderParams {
   inputType: string;
 

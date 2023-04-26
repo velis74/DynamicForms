@@ -1,14 +1,12 @@
 import Action, { defaultActionHandler, getActionName } from '../actions/action';
 import FilteredActions from '../actions/filtered-actions';
+import { APIConsumer } from '../api_consumer/namespace';
 
 import DialogDefinition from './dialog-definition';
 import DialogSize from './dialog-size';
 import { instances } from './modal-view';
 import dialogList from './modal-view-list';
-
-import DialogMessage = Dialogs.DialogMessage;
-import DialogOptions = Dialogs.DialogOptions;
-import DialogTitle = Dialogs.DialogTitle;
+import { Dialogs } from './namespace';
 
 const defaultOptions = { size: DialogSize.DEFAULT };
 
@@ -32,7 +30,12 @@ const dfModal = {
       actions.formFooter,
     );
   },
-  message(title: DialogTitle, message: DialogMessage, actions?: FilteredActions, options?: DialogOptions) {
+  message(
+    title: Dialogs.DialogTitle,
+    message: Dialogs.DialogMessage,
+    actions?: FilteredActions,
+    options?: Dialogs.DialogOptions,
+  ) {
     if (actions) {
       // any actions that don't have special handlers, create the default handler that closes the dialog
       for (const action of actions) {
@@ -49,7 +52,12 @@ const dfModal = {
     dialogList.push(dialogDef);
     return dialogDef.promise;
   },
-  yesNo(title: DialogTitle, question: DialogMessage, actions?: FilteredActions, options?: DialogOptions) {
+  yesNo(
+    title: Dialogs.DialogTitle,
+    question: Dialogs.DialogMessage,
+    actions?: FilteredActions,
+    options?: Dialogs.DialogOptions,
+  ) {
     const dialogDef = new DialogDefinition(
       title,
       question,

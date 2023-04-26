@@ -1,10 +1,9 @@
 import DisplayMode from '../../classes/display-mode';
 import FormField from '../../form/definitions/field';
 import getObjectFromPath from '../../util/get-object-from-path';
+import { DfTable } from '../namespace';
 
 import ColumnOrdering from './column-ordering';
-
-import ColumnJSON = DfTable.ColumnJSON;
 
 type RenderDecorator = (data: any, thead: boolean) => string;
 
@@ -40,7 +39,7 @@ export default class TableColumn {
 
   formFieldInstance ?: FormField;
 
-  constructor(initialData: ColumnJSON, orderingArray: ColumnOrdering[]) {
+  constructor(initialData: DfTable.ColumnJSON, orderingArray: ColumnOrdering[]) {
     this._maxWidth = 0;
     initialData.ordering = initialData.ordering || '';
     this.ordering = new ColumnOrdering(initialData.ordering, orderingArray, this);
@@ -76,7 +75,7 @@ export default class TableColumn {
       // When a function, name will be in format module.submodule.submodule_n.function,
       //   e.g. myModule.formatEmail
       //   The above example will look for function in window['myModule']['formatEmail'] and call it.
-      returnFunc = getObjectFromPath(renderDecorator);
+      returnFunc = getObjectFromPath(renderDecorator) as RenderDecorator;
     }
 
     // Below we circumvent having to declare an internal variable which property getters would be reading from

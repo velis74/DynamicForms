@@ -4,17 +4,20 @@ import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
 import TableFilterRow from '../table/definitions/filterrow';
 import TableRows from '../table/definitions/rows';
+import { DfTable } from '../table/namespace';
+
+import { APIConsumer } from './namespace';
 
 abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterface {
   pkName: string;
 
-  protected fields: { [key: string]: { [key: string]: any } };
+  protected fields: { [key: string]: DfTable.ColumnJSON };
 
   protected tableColumns: TableColumns;
 
   protected loading: boolean;
 
-  protected responsiveTableLayouts: null;
+  protected responsiveTableLayouts?: DfTable.ResponsiveTableLayoutsDefinition;
 
   protected formFields: { [key: string]: unknown };
 
@@ -56,7 +59,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
     this.fields = {};
     this.tableColumns = new TableColumns([], {});
-    this.responsiveTableLayouts = null;
+    this.responsiveTableLayouts = undefined;
     this.formFields = {};
     this.formLayout = null;
     this.formComponent = 'df-form-layout';
@@ -103,7 +106,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
      */
     this.pkName = UXDefinition.primary_key_name;
     this.titles = UXDefinition.titles;
-    UXDefinition.columns.forEach((column: { [key: string]: any }) => {
+    UXDefinition.columns.forEach((column) => {
       this.fields[column.name] = column;
     });
     this.tableColumns = new TableColumns(UXDefinition.columns.map((col: any) => col.name), this.fields);

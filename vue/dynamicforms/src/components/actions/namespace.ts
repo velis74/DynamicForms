@@ -1,15 +1,20 @@
-namespace Actions {
-  import DialogDefinition from '../modal/dialog-definition';
+import type { APIConsumer } from '../api_consumer/namespace';
+import type FormPayload from '../form/definitions/form-payload';
+import type DialogDefinition from '../modal/dialog-definition';
 
-  import Action from './action';
+import type Action from './action';
 
-  import FormPayload = APIConsumer.FormPayload;
+export namespace Actions {
 
   export interface ActionHandlerExtraData {
     dialog?: DialogDefinition;
   }
 
-  export type ActionHandler = (action: Action, payload: FormPayload, extraData: ActionHandlerExtraData) => boolean;
+  export type ActionHandler = (
+    action: Action,
+    payload: APIConsumer.FormPayload,
+    extraData: ActionHandlerExtraData
+  ) => boolean;
 
   export interface BreakpointJSON {
     [key: string]: BreakpointsJSON | boolean | undefined;

@@ -1,4 +1,6 @@
-namespace DfTable {
+import { DfForm } from '../form/namespace';
+
+export namespace DfTable {
   export type CSSAlignment = 'left' | 'right' | 'center';
   export type InitialDataCSSAlignment = CSSAlignment | 'decimal';
 
@@ -43,4 +45,18 @@ namespace DfTable {
     results: RowDataInterface[];
     next: string;
   } | RowDataInterface[];
+
+  export interface ResponsiveTableLayoutDefinition {
+    columns: (string | string[])[];
+    autoAddNonListedColumns: boolean;
+  }
+
+  export interface ResponsiveTableLayoutsDefinition {
+    auto_generate_single_row_layout: boolean;
+    auto_generate_single_column_layout: boolean;
+    layouts: {
+      columns: string[];
+      auto_add_non_listed_columns: boolean;
+    }[];
+  }
 }

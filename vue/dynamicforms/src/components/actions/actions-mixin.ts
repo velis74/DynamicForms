@@ -5,9 +5,10 @@ import BreakpointsInterface from '../util/breakpoints-interface';
 
 import Action from './action';
 import FilteredActions from './filtered-actions';
+import type { Actions } from './namespace';
 
-import BreakpointJSON = Actions.BreakpointJSON;
-import BreakpointsJSON = Actions.BreakpointsJSON;
+type BreakpointJSON = Actions.BreakpointJSON;
+type BreakpointsJSON = Actions.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({

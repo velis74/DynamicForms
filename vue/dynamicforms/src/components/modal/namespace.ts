@@ -1,8 +1,7 @@
-namespace Dialogs {
-  import ActionsJSON = Actions.ActionsJSON;
-  import ErrorsJSON = Actions.ErrorsJSON;
-  import FormLayoutType = APIConsumer.FormLayoutType;
-  import FormPayload = APIConsumer.FormPayload;
+import type { Actions } from '../actions/namespace';
+import type { APIConsumer } from '../api_consumer/namespace';
+
+export namespace Dialogs {
 
   export type DialogTitle = string;
 
@@ -15,10 +14,10 @@ namespace Dialogs {
     componentName: string;
     props?: {
       [key: string]: any,
-      layout?: FormLayoutType,
-      payload?: FormPayload,
-      actions?: ActionsJSON,
-      errors?: ErrorsJSON,
+      layout?: APIConsumer.FormLayoutType,
+      payload?: APIConsumer.FormPayload,
+      actions?: Actions.ActionsJSON,
+      errors?: Actions.ErrorsJSON,
     };
   }
 

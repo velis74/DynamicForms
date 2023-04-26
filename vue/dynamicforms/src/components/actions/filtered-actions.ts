@@ -1,12 +1,12 @@
+import { APIConsumer } from '../api_consumer/namespace';
+
 import Action from './action';
+import { Actions } from './namespace';
 
-import ActionJSON = Actions.ActionJSON;
-import FormPayload = APIConsumer.FormPayload;
-
-type ActionsJSON = (Action | ActionJSON)[];
+type ActionsJSON = (Action | Actions.ActionJSON)[];
 
 type ActionCollection = { [key: string]: Action };
-type ActionsObject = { [key: string]: Action | ActionJSON; };
+type ActionsObject = { [key: string]: Action | Actions.ActionJSON; };
 
 interface FilterCache {
   [key: string]: FilteredActions;
@@ -17,10 +17,10 @@ class FilteredActions implements ActionsJSON {
 
   private filterCache: FilterCache;
 
-  public payload!: FormPayload;
+  public payload!: APIConsumer.FormPayload;
 
-  constructor(actions: ActionCollection | ActionsJSON, payload?: FormPayload) {
-    this.actions = Object.values(actions).reduce((res: ActionCollection, action: Action | ActionJSON) => {
+  constructor(actions: ActionCollection | ActionsJSON, payload?: APIConsumer.FormPayload) {
+    this.actions = Object.values(actions).reduce((res: ActionCollection, action: Action | Actions.ActionJSON) => {
       const name = action.name;
       if (name == null) {
         console.error('Action has no name and will not be added to the list', action);

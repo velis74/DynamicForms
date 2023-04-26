@@ -11,7 +11,7 @@
  */
 import DisplayMode from '../../classes/display-mode';
 import { Statement } from '../inputs/conditional-visibility';
-import DfForm from '../namespace';
+import { DfForm } from '../namespace';
 
 import RenderParams from './field-render-params';
 

@@ -1,12 +1,15 @@
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
+import { APIConsumer } from '../api_consumer/namespace';
+
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
+import { Actions } from './namespace';
 
-import ActionHandler = Actions.ActionHandler;
-import ActionHandlerExtraData = Actions.ActionHandlerExtraData;
-import FormPayload = APIConsumer.FormPayload;
+type ActionHandler = Actions.ActionHandler;
+type ActionHandlerExtraData = Actions.ActionHandlerExtraData;
+type FormPayload = APIConsumer.FormPayload;
 
 type ObjectWithActionHandler = { [key: `action${string}`]: ActionHandler };
 type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload };

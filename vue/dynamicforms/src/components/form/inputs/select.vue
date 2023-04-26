@@ -44,6 +44,7 @@ import Multiselect from 'vue-multiselect';
 
 import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
+import { DfForm } from '../namespace';
 
 import InputBase from './base';
 import VuetifyInput from './input-vuetify.vue';

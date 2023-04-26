@@ -1,4 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
+import { DfForm } from '../namespace';
+
 import FormField from './field';
 
 let FormLayoutClass: typeof FormLayout; // hoisting required: so we can use the class before it's even declared
