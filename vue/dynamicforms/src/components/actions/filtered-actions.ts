@@ -1,35 +1,33 @@
-import { APIConsumer } from '../api_consumer/namespace';
+import type FormPayload from '../form/definitions/form-payload';
 
 import Action from './action';
 import { Actions } from './namespace';
 
-type ActionsJSON = (Action | Actions.ActionJSON)[];
-
 type ActionCollection = { [key: string]: Action };
-type ActionsObject = { [key: string]: Action | Actions.ActionJSON; };
 
 interface FilterCache {
   [key: string]: FilteredActions;
 }
 
-class FilteredActions implements ActionsJSON {
+class FilteredActions {
   public actions: ActionCollection;
 
   private filterCache: FilterCache;
 
-  public payload!: APIConsumer.FormPayload;
+  public payload!: FormPayload;
 
-  constructor(actions: ActionCollection | ActionsJSON, payload?: APIConsumer.FormPayload) {
-    this.actions = Object.values(actions).reduce((res: ActionCollection, action: Action | Actions.ActionJSON) => {
+  constructor(actions: Actions.ActionsJSON | ActionCollection, payload?: FormPayload) {
+    this.actions = Object.values(actions).reduce((res: ActionCollection, action) => {
+      if (action == null) return res; // redundant, but typescript complains otherwise
       const name = action.name;
       if (name == null) {
         console.error('Action has no name and will not be added to the list', action);
         return res;
       }
-      if (action instanceof Action && (action.payload === payload || payload == null)) {
+      if (action instanceof Action && (payload === undefined || action.payload === payload)) {
         res[name] = action;
       } else {
-        res[name] = new Action(action, payload);
+        res[name] = new Action(action, payload as FormPayload);
       }
       return res;
     }, {});
@@ -73,7 +71,7 @@ class FilteredActions implements ActionsJSON {
         Object.values(this.actions)
           .filter((action) => action.position === position && (
             action.fieldName == null || action.fieldName === fieldName))
-          .reduce((obj: ActionsObject, item) => {
+          .reduce((obj: ActionCollection, item) => {
             obj[item.name] = this.actions[item.name];
             return obj;
           }, {}),

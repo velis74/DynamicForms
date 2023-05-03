@@ -2,6 +2,7 @@ import { Slot } from 'vue';
 
 import type { Actions } from '../actions/namespace';
 import type { APIConsumer } from '../api_consumer/namespace';
+import { DfForm } from '../form/namespace';
 
 export namespace Dialogs {
 
@@ -16,7 +17,7 @@ export namespace Dialogs {
     componentName: string;
     props?: {
       [key: string]: any,
-      layout?: APIConsumer.FormLayoutType,
+      layout?: DfForm.FormLayoutJSON,
       payload?: APIConsumer.FormPayload,
       actions?: Actions.ActionsJSON,
       errors?: Actions.ErrorsJSON,

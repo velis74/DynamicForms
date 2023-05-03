@@ -36,20 +36,27 @@ export default /* #__PURE__ */ defineComponent({
       const res = [];
       const rp = this.field.renderParams;
       if (rp.pattern) {
-        res.push((value) => (String(value).match(rp.pattern) ? true : `${value} does not match ${rp.pattern}`));
+        res.push((value: any) => (String(value).match(rp.pattern) ? true : `${value} does not match ${rp.pattern}`));
       }
-      if (rp.min) res.push((value) => ((value >= rp.min) ? true : `${value} < ${rp.min}`));
-      if (rp.max) res.push((value) => ((value >= rp.min) ? true : `${value} > ${rp.min}`));
+      if (rp.min) res.push((value: number) => ((value >= rp.min) ? true : `${value} < ${rp.min}`));
+      if (rp.max) res.push((value: number) => ((value >= rp.min) ? true : `${value} > ${rp.min}`));
       if (rp.minLength) {
-        res.push((value) => ((String(value).length >= rp.minLength) ? true : `len(${value}) < ${rp.minLength}`));
+        res.push(
+          (value: string) => ((String(value).length >= rp.minLength) ? true : `len(${value}) < ${rp.minLength}`),
+        );
       }
       if (rp.maxLength) {
-        res.push((value) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`));
+        res.push(
+          (value: string) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`),
+        );
       }
       if (this.isNumber) {
         // if null is allowed then null and undefined should not trigger invalid number
-        res.push((value) => (this.isValidNumber(value) || (this.field.allowNull && value == null) ? true :
-          'Not a valid number'));
+        res.push(
+          (value: number) => (this.isValidNumber(value) || (this.field.allowNull && value == null) ?
+            true :
+            'Not a valid number'),
+        );
       }
       return res;
     },

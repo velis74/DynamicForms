@@ -18,9 +18,13 @@ import RenderParams from './field-render-params';
 export default class FormField {
   private fieldDef!: DfForm.FormFieldJSON;
 
+  public uuid!: string;
+
   public name!: string;
 
   public label!: string;
+
+  public placeholder!: string;
 
   public align!: string;
 
@@ -52,8 +56,10 @@ export default class FormField {
     Object.defineProperties(this, {
       fieldDef: { get() { return fieldDef; }, enumerable: false },
 
+      uuid: { get() { return fieldDef.uuid; }, enumerable: true },
       name: { get() { return fieldDef.name; }, enumerable: true },
       label: { get() { return fieldDef.label; }, enumerable: true },
+      placeholder: { get() { return fieldDef.placeholder; }, enumerable: true },
       align: {
         get() {
           if (fieldDef.alignment === 'decimal') return 'right';

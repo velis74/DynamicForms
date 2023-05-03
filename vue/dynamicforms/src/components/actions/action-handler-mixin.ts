@@ -1,6 +1,6 @@
 import { ComponentPublicInstance, defineComponent } from 'vue';
 
-import { APIConsumer } from '../api_consumer/namespace';
+import FormPayload from '../form/definitions/form-payload';
 
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
@@ -9,7 +9,6 @@ import { Actions } from './namespace';
 
 type ActionHandler = Actions.ActionHandler;
 type ActionHandlerExtraData = Actions.ActionHandlerExtraData;
-type FormPayload = APIConsumer.FormPayload;
 
 type ObjectWithActionHandler = { [key: `action${string}`]: ActionHandler };
 type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload };
@@ -84,7 +83,7 @@ export default /* #__PURE__ */ defineComponent({
         // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
         // there is one action or many: we just execute them all
         for (const act of actions) {
-          this.dispatchAction(act, extraData);
+          this.dispatchAction(act as Action, extraData);
         }
         return;
       }

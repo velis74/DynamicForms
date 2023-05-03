@@ -2,6 +2,7 @@
 // import TableColumns from '../table/definitions/columns';
 
 import type { Actions } from '../actions/namespace';
+import type FormPayload from '../form/definitions/form-payload';
 import type { DfForm } from '../form/namespace';
 import type { DfTable } from '../table/namespace';
 
@@ -29,26 +30,16 @@ export namespace APIConsumer {
     actions: Actions.ActionsJSON;
     filter: unknown;
     dialog: DfForm.FormLayoutJSON;
-    record: unknown;
+    record: FormPayloadJSON;
   }
 
-  export interface FormPayload {
-    [key: string]: any;
-
-    ['$extra-data']: any;
-
-    addExtraData: (data: { [key: string]: any }) => void;
-  }
-
-  export interface FormLayoutType {
-    componentName: string;
-  }
+  export type FormPayloadJSON = { [key: string]: any; } | null;
 
   export type FormDefinition = {
     title: string,
     pkName: string,
     pkValue: PKValueType,
-    layout: FormLayoutType,
+    layout: DfForm.FormLayoutJSON,
     payload: FormPayload,
     loading: boolean,
     actions: Actions.ActionsJSON,

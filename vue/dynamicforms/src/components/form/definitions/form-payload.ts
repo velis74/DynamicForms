@@ -13,8 +13,8 @@ export default class FormPayload implements APIConsumer.FormPayload {
 
   constructor();
   constructor(data: FormPayload);
-  constructor(data: Record<string, any>, layout: FormLayout);
-  constructor(data?: Record<string, any>, layout?: FormLayout) {
+  constructor(data: APIConsumer.FormPayloadJSON, layout: FormLayout);
+  constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout) {
     let properties = {} as { [key: string]: any };
     let extraData = {};
 

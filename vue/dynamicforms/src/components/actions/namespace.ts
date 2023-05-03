@@ -12,7 +12,7 @@ export namespace Actions {
 
   export type ActionHandler = (
     action: Action,
-    payload: APIConsumer.FormPayload,
+    payload: FormPayload,
     extraData: ActionHandlerExtraData
   ) => boolean;
 
@@ -48,7 +48,8 @@ export namespace Actions {
   export interface ActionsJSON {
     [key: string]: ActionJSON;
 
-    payload: FormPayload;
+    // @ts-ignore
+    payload: APIConsumer.FormPayloadJSON;
   }
 
   export interface ErrorsJSON {

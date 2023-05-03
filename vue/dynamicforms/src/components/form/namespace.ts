@@ -14,8 +14,10 @@ export namespace DfForm {
   export type StatementJSON = [ string | StatementJSON, number, any | StatementJSON ] | null;
 
   export interface FormFieldJSON {
+    uuid: string;
     name: string;
     label: string;
+    placeholder: string;
     alignment: 'left' | 'right' | 'center' | 'decimal';
     visibility: { form: number, table: number };
     render_params: DfForm.RenderParamsJSON;

@@ -47,6 +47,6 @@ export default class TableFilterRow { // eslint-disable-line max-classes-per-fil
       v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);
-    this.payload = new FormPayload(record, { fields: this.columns });
+    this.payload = new FormPayload(record, { fields: this.columns, rows: [], fieldName: '', componentName: '' });
   }
 }
