@@ -62,10 +62,10 @@ const dfModal = {
       title,
       question,
       options || defaultOptions,
-      actions || new FilteredActions([
-        Action.yesAction({ actionYes: defaultActionHandler }),
-        Action.noAction({ actionNo: defaultActionHandler }),
-      ]),
+      actions || new FilteredActions({
+        yes: Action.yesAction({ actionYes: defaultActionHandler }),
+        no: Action.noAction({ actionNo: defaultActionHandler }),
+      }),
     );
     dialogList.push(dialogDef);
     return dialogDef.promise;
