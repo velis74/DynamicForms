@@ -1,7 +1,7 @@
-import { Slot } from 'vue';
+import { RenderFunction, Slot, VNode } from 'vue';
 
 import type { Actions } from '../actions/namespace';
-import type { APIConsumer } from '../api_consumer/namespace';
+import type FormPayload from '../form/definitions/form-payload';
 import { DfForm } from '../form/namespace';
 
 export namespace Dialogs {
@@ -18,13 +18,14 @@ export namespace Dialogs {
     props?: {
       [key: string]: any,
       layout?: DfForm.FormLayoutJSON,
-      payload?: APIConsumer.FormPayload,
+      payload?: FormPayload,
       actions?: Actions.ActionsJSON,
       errors?: Actions.ErrorsJSON,
     };
   }
 
-  export type DialogMessage = string | CustomComponentMessage | Slot;
+  export type DialogSectionContent = string | Slot | RenderFunction | VNode;
+  export type DialogMessage = DialogSectionContent | CustomComponentMessage;
 
   export interface RunningDialog {
     topOfTheStack: boolean; // true when this dialog is the first one

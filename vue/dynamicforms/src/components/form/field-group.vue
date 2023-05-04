@@ -36,15 +36,18 @@
 import { defineComponent } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
+import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
+import { Group } from './definitions/layout';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormFieldGroup',
   mixins: [ActionHandlerMixin],
   inject: ['actions', 'payload'],
   props: {
-    field: { type: Object, required: true },
+    field: { type: Group, required: true },
+    actions: { type: FilteredActions, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },

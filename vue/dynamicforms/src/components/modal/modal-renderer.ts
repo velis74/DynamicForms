@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { defineComponent, h, RenderFunction, resolveComponent, DefineComponent } from 'vue';
+import { defineComponent, h, resolveComponent, DefineComponent } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 
@@ -7,7 +7,7 @@ import { Dialogs } from './namespace';
 
 function processSlot(
   slot: string,
-  content: string | DefineComponent | FilteredActions | Dialogs.CustomComponentMessage | RenderFunction,
+  content: Dialogs.DialogSectionContent | DefineComponent | FilteredActions | Dialogs.CustomComponentMessage,
 ) {
   if (content == null) return null;
   if (typeof content === 'string') {
@@ -32,13 +32,14 @@ export default /* #__PURE__ */ defineComponent({
   methods: {
     renderFunction(
       curDlgKey: number,
-      titleSlot: string | RenderFunction,
-      bodySlot: Dialogs.DialogMessage | RenderFunction,
-      actionsSlot: FilteredActions | RenderFunction,
+      titleSlot: Dialogs.DialogSectionContent,
+      bodySlot: Dialogs.DialogMessage,
+      actionsSlot: Dialogs.DialogSectionContent | FilteredActions,
       options: Dialogs.DialogOptions,
     ) {
       return h(
         // Jure 16.3.2023 types don't match here, but the code works. Too green to be able to fix
+        // @ts-ignore
         resolveComponent('DfModalDialog'),
         { show: true, options: options || {}, key: curDlgKey },
         {

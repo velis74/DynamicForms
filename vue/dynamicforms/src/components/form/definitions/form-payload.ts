@@ -3,10 +3,10 @@ import _ from 'lodash';
 import type { APIConsumer } from '../../api_consumer/namespace';
 import DisplayMode from '../../classes/display-mode';
 
-import FormField from './field';
-import FormLayout from './layout';
+import type FormField from './field';
+import type FormLayout from './layout';
 
-export default class FormPayload implements APIConsumer.FormPayload {
+export default class FormPayload {
   [key: string]: any;
 
   ['$extra-data']: any;

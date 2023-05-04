@@ -6,7 +6,7 @@ import FilteredActions from '../actions/filtered-actions';
 import FormPayload from './definitions/form-payload';
 import FormLayout from './definitions/layout';
 
-export default /* #__PURE__ */ defineComponent({
+export default defineComponent({
   name: 'FormLayoutMixin',
   mixins: [ActionHandlerMixin], // TODO: implement also formFieldChangeMixin
   provide() {

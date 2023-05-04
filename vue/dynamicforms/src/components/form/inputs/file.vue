@@ -38,6 +38,7 @@
  *   is using IonIcon
  */
 import _ from 'lodash';
+import { defineComponent } from 'vue';
 
 import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
@@ -46,13 +47,13 @@ import InputBase from './base';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 
-export default {
+export default defineComponent({
   name: 'DFile',
   components: { VuetifyInput, InputClearButton },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {
-      currentFile: undefined,
+      currentFile: null as (File | null),
       progress: 0,
       showFileOnServer: false,
       fileInputKey: Math.round(Math.random() * 1000),
@@ -62,7 +63,7 @@ export default {
     this.showFileOnServer = !!_.clone(this.value);
   },
   methods: {
-    getFileName(filePath) {
+    getFileName(filePath: string) {
       // returns just the filename without any path
       return !filePath ? filePath : filePath.replace(/^.*[\\/]/, '');
     },
@@ -74,26 +75,29 @@ export default {
       this.progress = 0;
       this.fileInputKey = Math.round(Math.random() * 1000);
       this.showFileOnServer = false;
-      this.currentFile = undefined;
+      this.currentFile = null;
     },
     async upload() {
       this.progress = 0;
-      this.currentFile = this.$refs.file.files.item(0);
+      const fileRef = this.$refs.file as HTMLInputElement;
+      if (!fileRef || !fileRef.files) return;
+      this.currentFile = fileRef.files.item(0);
       const formData = new FormData();
-      formData.append('file', this.currentFile, `${this.currentFile.name}`);
+      formData.append('file', this.currentFile as File, `${(<File> this.currentFile).name}`);
       this.showFileOnServer = true;
       this.progress = 0;
       try {
+        const self = this;
         const res = await apiClient.post(
           '/dynamicforms/preupload-file/',
           formData,
           {
             showProgress: false,
             onUploadProgress: function onUploadProgress(progressEvent) {
-              if (!progressEvent.computable) {
-                this.progress = 50;
+              if (!progressEvent.event.lengthComputable) {
+                self.progress = 50;
               } else {
-                this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                self.progress = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
               }
             },
           },
@@ -103,11 +107,11 @@ export default {
       } catch (err) {
         this.progress = 0;
         this.showFileOnServer = false;
-        this.currentFile = undefined;
+        this.currentFile = null;
         this.fileInputKey = Math.round(Math.random() * 1000);
         throw err;
       }
     },
   },
-};
+});
 </script>

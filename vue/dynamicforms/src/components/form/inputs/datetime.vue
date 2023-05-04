@@ -47,7 +47,7 @@ export default /* #__PURE__ */ defineComponent({
       return this.field.renderParams.inputType;
     },
     value: {
-      get: function get() { return this.modelValue; },
+      get: function get(): any { return this.modelValue; },
       set: function set(newVal: any) {
         if (newVal && this.inputType !== 'datetime') {
           // eslint-disable-next-line no-param-reassign
@@ -62,7 +62,7 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   methods: {
-    onValueConfirmed(doFilter) { this.$emit('onValueConfirmed', doFilter); },
+    onValueConfirmed(doFilter: any) { this.$emit('onValueConfirmed', doFilter); },
     dateTimeInput() { this.onValueConfirmed(true); },
     clear() {
       this.value = '';

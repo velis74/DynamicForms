@@ -18,9 +18,9 @@ export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyInput',
   props: {
     label: { default: null, type: String },
-    errorMessages: { default: () => [], type: Array },
+    errorMessages: { default: () => [], type: Array<string> },
     errorCount: { default: 0, type: Number },
-    messages: { default: () => [], type: Array },
+    messages: { default: () => [], type: Array<string> },
   },
 });
 </script>

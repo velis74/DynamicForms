@@ -8,6 +8,9 @@ export namespace Actions {
 
   export interface ActionHandlerExtraData {
     dialog?: DialogDefinition;
+    field?: string;
+    oldValue?: any;
+    newValue?: any;
   }
 
   export type ActionHandler = (
