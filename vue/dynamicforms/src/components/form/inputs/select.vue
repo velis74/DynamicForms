@@ -147,3 +147,11 @@ export default /* #__PURE__ */ defineComponent({
 </script>
 
 <style src="~/vue-multiselect/dist/vue-multiselect.css"></style>
+<style>
+.multiselect {
+  min-width: 300px;
+}
+.multiselect--active {
+  min-width: 300px;
+}
+</style>
