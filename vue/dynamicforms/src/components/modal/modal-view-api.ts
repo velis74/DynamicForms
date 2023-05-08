@@ -47,7 +47,7 @@ const dfModal = {
       title,
       message,
       options || defaultOptions,
-      actions || new FilteredActions([Action.closeAction({ actionClose: defaultActionHandler })]),
+      actions || new FilteredActions({ close: Action.closeAction({ actionClose: defaultActionHandler }) }),
     );
     dialogList.push(dialogDef);
     return dialogDef.promise;

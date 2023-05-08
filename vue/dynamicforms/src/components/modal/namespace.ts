@@ -1,8 +1,9 @@
 import { RenderFunction, Slot, VNode } from 'vue';
 
+import type FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
-import { DfForm } from '../form/namespace';
+import type FormLayout from '../form/definitions/layout';
 
 export namespace Dialogs {
 
@@ -17,9 +18,9 @@ export namespace Dialogs {
     componentName: string;
     props?: {
       [key: string]: any,
-      layout?: DfForm.FormLayoutJSON,
+      layout?: FormLayout,
       payload?: FormPayload,
-      actions?: ActionsNS.ActionsJSON,
+      actions?: FilteredActions,
       errors?: ActionsNS.ErrorsJSON,
     };
   }
