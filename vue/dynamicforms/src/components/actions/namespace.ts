@@ -11,6 +11,7 @@ export namespace ActionsNS {
     field?: string;
     oldValue?: any;
     newValue?: any;
+    event?: Event;
   }
 
   export type ActionHandler = (

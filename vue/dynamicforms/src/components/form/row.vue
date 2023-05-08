@@ -16,6 +16,7 @@ import { defineComponent, PropType } from 'vue';
 
 import FormFieldType from './definitions/field';
 import FormPayload from './definitions/form-payload';
+import { Column } from './definitions/layout';
 import FormFieldGroup from './field-group.vue';
 import FormField from './field.vue';
 import calculateVisibility from './inputs/conditional-visibility';
@@ -25,7 +26,7 @@ export default /* #__PURE__ */ defineComponent({
   components: { FormField, FormFieldGroup },
   inject: ['actions', 'payload'],
   props: {
-    columns: { type: Array as PropType<Array<FormFieldType>>, required: true },
+    columns: { type: Array as PropType<Array<Column>>, required: true },
     errors: { type: Object, default: () => {} },
     anyFieldVisible: { type: Boolean, required: true },
   },

@@ -6,6 +6,8 @@ import FormField from './field';
 let FormLayoutClass: typeof FormLayout; // hoisting required: so we can use the class before it's even declared
 
 export class Column extends FormField {
+  layoutFieldComponentName!: string;
+
   constructor(layoutRow: LayoutRow, def: DfForm.FormFieldJSON) {
     super(def);
     let renderKey = 0;
@@ -26,11 +28,9 @@ export class Column extends FormField {
 }
 
 export class Group extends Column {
-  public layoutFieldComponentName!: string;
-
   public title!: string;
 
-  public layout!: typeof FormLayoutClass;
+  public layout!: FormLayout;
 
   constructor(layoutRow: LayoutRow, def: DfForm.FormLayoutRowsColumnJSON, fieldDef: DfForm.FormFieldJSON) {
     super(layoutRow, fieldDef);

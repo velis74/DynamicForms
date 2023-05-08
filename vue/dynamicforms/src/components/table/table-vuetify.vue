@@ -11,7 +11,7 @@
           :rendered-columns="responsiveColumns"
           :row-data="theadRowData"
           :actions="actions"
-          :filter-definition="filterDefinition"
+          :filter-definition="filterDefinition || undefined"
         />
         <VuetifyTBody
           :data-columns="dataColumns"
@@ -38,6 +38,7 @@ import TranslationsMixin from '../util/translations-mixin';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRows from './definitions/rows';
+import { DfTable } from './namespace';
 import RenderMeasured from './render-measure';
 import { useTableBase } from './table';
 import TableStyle from './table-style.vue';
@@ -51,12 +52,14 @@ export default /* #__PURE__ */ defineComponent({
 });
 </script>
 <script setup lang="ts">
+type ResponsiveTableLayoutsDefinition = DfTable.ResponsiveTableLayoutsDefinition;
+
 const props = withDefaults(
   defineProps<{ // Can't just import the interface - vue complains. https://github.com/vuejs/core/issues/4294
     pkName: string;
     title: string;
     columns: TableColumn[];
-    responsiveTableLayouts: object | null;
+    responsiveTableLayouts: ResponsiveTableLayoutsDefinition | null;
     columnDefs: object;
     rows: TableRows;
     loading: boolean;

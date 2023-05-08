@@ -7,9 +7,9 @@
       :elevation="0"
       :class="idx === 0 ? '' : 'ms-3'"
       :size="isSmallSize(action) ? 'small' : 'default'"
-      @click.stop="(event) => dispatchAction(action, { event })"
+      @click.stop="(event: MouseEvent) => dispatchAction(action, { event })"
     >
-      <IonIcon v-if="displayIcon(action)" class="action-icon" :name="action.icon"/>
+      <IonIcon v-if="displayIcon(action)" class="action-icon" :name="<string> action.icon"/>
       <span v-if="displayIcon(action) && displayLabel(action)" style="width: .5rem"/>
       <span v-if="displayLabel(action)">{{ labelText(action) }}</span>
     </v-btn>
