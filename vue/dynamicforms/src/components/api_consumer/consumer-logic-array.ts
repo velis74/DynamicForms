@@ -1,6 +1,7 @@
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
 import dfModal from '../modal/modal-view-api';
+import { TransformationFunctionBase } from '../table/definitions/column-ordering';
 import OrderingDirection from '../table/definitions/column-ordering-direction';
 import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
@@ -43,7 +44,9 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     /**
      * Order internal records according to filters
      */
-    const orderingTransformationFunction = getObjectFromPath(this.ordering.style);
+    const orderingTransformationFunction = this.ordering ?
+      getObjectFromPath(<string> this.ordering.style) as TransformationFunctionBase :
+      undefined;
     const orderingValue = this.tableColumns[0].ordering.calculateOrderingFunction(orderingTransformationFunction);
     // ordering can be an empty object
     if (orderingValue?.length) {

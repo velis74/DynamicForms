@@ -14,7 +14,7 @@ import RowTypesEnum from '../table/row-types-enum';
 import ComponentDisplay from './component-display';
 import ConsumerLogicBase from './consumer-logic-base';
 
-export default /* #__PURE__ */ defineComponent({
+export default defineComponent({
   name: 'APIConsumer',
   props: {
     /**
@@ -25,7 +25,7 @@ export default /* #__PURE__ */ defineComponent({
      *
      * TODO: APIConsumer is named incorrectly, causing <a-p-i-consumer> component name. Rename.
      */
-    consumer: { type: ConsumerLogicBase, required: true },
+    consumer: { type: Object, required: true, validator: (value: Object) => value instanceof ConsumerLogicBase },
     /**
      * What UX should the component render
      */

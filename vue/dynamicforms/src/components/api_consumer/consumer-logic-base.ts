@@ -38,7 +38,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
   protected requestedPKValue: null;
 
-  protected ordering: { parameter: string, style: null, counter: number };
+  protected ordering: { parameter: string, style: string | undefined, counter: number };
 
   protected filterDefinition: TableFilterRow | null;
 
@@ -72,7 +72,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.requestedPKValue = null;
     this.ordering = {
       parameter: 'ordering',
-      style: null,
+      style: undefined,
       counter: 0,
     };
     this.filterDefinition = null;

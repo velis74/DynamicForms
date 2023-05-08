@@ -2,7 +2,7 @@ import OrderingDirection from './column-ordering-direction';
 
 type OrderingValue = { name: string, direction: OrderingDirection };
 type TransformationFunctionVerbose = (columns: OrderingValue[]) => string[];
-type TransformationFunctionBase = (columns: OrderingValue[]) => { name: any, direction: OrderingDirection }[];
+export type TransformationFunctionBase = (columns: OrderingValue[]) => { name: any, direction: OrderingDirection }[];
 
 export default class ColumnOrdering {
   direction: OrderingDirection;
