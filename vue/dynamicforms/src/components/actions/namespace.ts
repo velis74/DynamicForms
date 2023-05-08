@@ -4,7 +4,7 @@ import type DialogDefinition from '../modal/dialog-definition';
 
 import type Action from './action';
 
-export namespace Actions {
+export namespace ActionsNS {
 
   export interface ActionHandlerExtraData {
     dialog?: DialogDefinition;
@@ -51,7 +51,7 @@ export namespace Actions {
   export interface ActionsJSON {
     [key: string]: ActionJSON;
 
-    // @ts-ignore
+    // @ts-ignore: don't know how else to get rid of TS2411 here and I really don't want a safe declaration for indexed
     payload: APIConsumer.FormPayloadJSON;
   }
 

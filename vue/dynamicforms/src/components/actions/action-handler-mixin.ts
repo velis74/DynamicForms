@@ -5,10 +5,10 @@ import FormPayload from '../form/definitions/form-payload';
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
-import { Actions } from './namespace';
+import { ActionsNS } from './namespace';
 
-type ActionHandler = Actions.ActionHandler;
-type ActionHandlerExtraData = Actions.ActionHandlerExtraData;
+type ActionHandler = ActionsNS.ActionHandler;
+type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
 
 type ObjectWithActionHandler = { [key: `action${string}`]: ActionHandler };
 type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload };

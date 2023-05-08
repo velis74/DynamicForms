@@ -1,5 +1,5 @@
 import FilteredActions from '../actions/filtered-actions';
-import { Actions } from '../actions/namespace';
+import { ActionsNS } from '../actions/namespace';
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
@@ -118,7 +118,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
       this.tableColumns[0].ordering.changeCounter,
     );
     this.responsiveTableLayouts = UXDefinition.responsive_table_layouts;
-    this.actions = new FilteredActions(<Actions.ActionsJSON> UXDefinition.actions);
+    this.actions = new FilteredActions(<ActionsNS.ActionsJSON> UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }

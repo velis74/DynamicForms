@@ -1,6 +1,6 @@
 import { RenderFunction, Slot, VNode } from 'vue';
 
-import type { Actions } from '../actions/namespace';
+import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
 import { DfForm } from '../form/namespace';
 
@@ -19,8 +19,8 @@ export namespace Dialogs {
       [key: string]: any,
       layout?: DfForm.FormLayoutJSON,
       payload?: FormPayload,
-      actions?: Actions.ActionsJSON,
-      errors?: Actions.ErrorsJSON,
+      actions?: ActionsNS.ActionsJSON,
+      errors?: ActionsNS.ErrorsJSON,
     };
   }
 

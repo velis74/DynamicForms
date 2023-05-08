@@ -1,8 +1,10 @@
 // import FilteredActions from '../actions/filtered-actions';
 // import TableColumns from '../table/definitions/columns';
 
-import type { Actions } from '../actions/namespace';
+import type FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
+import type FormLayout from '../form/definitions/layout';
 import type { DfForm } from '../form/namespace';
 import type { DfTable } from '../table/namespace';
 
@@ -27,7 +29,7 @@ export namespace APIConsumer {
     ordering_parameter: string;
     ordering_style: unknown;
     responsive_table_layouts: DfTable.ResponsiveTableLayoutsDefinition;
-    actions: Actions.ActionsJSON;
+    actions: ActionsNS.ActionsJSON;
     filter: unknown;
     dialog: DfForm.FormLayoutJSON;
     record: FormPayloadJSON;
@@ -39,11 +41,11 @@ export namespace APIConsumer {
     title: string,
     pkName: string,
     pkValue: PKValueType,
-    layout: DfForm.FormLayoutJSON,
+    layout: FormLayout,
     payload: FormPayload,
     loading: boolean,
-    actions: Actions.ActionsJSON,
-    errors: Actions.ErrorsJSON,
+    actions: FilteredActions,
+    errors: ActionsNS.ErrorsJSON,
   };
 
   export interface ConsumerLogicBaseInterface {

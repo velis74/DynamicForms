@@ -2,13 +2,13 @@ import _ from 'lodash';
 
 import FormPayload from '../form/definitions/form-payload';
 
-import { Actions } from './namespace';
+import { ActionsNS } from './namespace';
 
-type ActionHandler = Actions.ActionHandler;
-type ActionHandlerExtraData = Actions.ActionHandlerExtraData;
-type ActionJSON = Actions.ActionJSON;
-type BreakpointJSON = Actions.BreakpointJSON;
-type BreakpointsJSON = Actions.BreakpointsJSON;
+type ActionHandler = ActionsNS.ActionHandler;
+type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
+type ActionJSON = ActionsNS.ActionJSON;
+type BreakpointJSON = ActionsNS.BreakpointJSON;
+type BreakpointsJSON = ActionsNS.BreakpointsJSON;
 
 let uniqueIdCounter = 0;
 const ACTION_POSITIONS = [

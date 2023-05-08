@@ -1,7 +1,7 @@
 import type FormPayload from '../form/definitions/form-payload';
 
 import Action from './action';
-import { Actions } from './namespace';
+import { ActionsNS } from './namespace';
 
 type ActionCollection = { [key: string]: Action };
 
@@ -16,7 +16,7 @@ class FilteredActions {
 
   public payload!: FormPayload;
 
-  constructor(actions: Actions.ActionsJSON | ActionCollection, payload?: FormPayload) {
+  constructor(actions: ActionsNS.ActionsJSON | ActionCollection, payload?: FormPayload) {
     this.actions = Object.values(actions).reduce((res: ActionCollection, action) => {
       if (action == null) return res; // redundant, but typescript complains otherwise
       const name = action.name;
