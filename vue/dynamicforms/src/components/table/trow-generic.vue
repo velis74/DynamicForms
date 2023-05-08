@@ -15,7 +15,7 @@
     <GenericColumn
       v-for="column in renderedColumns.items"
       :key="column.name"
-      :column="column"
+      :column="column as TableColumn"
       :row-data="payload"
       :row-type="rowType"
       :actions="actions"
@@ -34,6 +34,7 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
+import TableRow from './definitions/row';
 import RenderMeasured from './render-measure';
 import RowTypesEnum from './row-types-enum';
 
@@ -44,7 +45,7 @@ export default defineComponent({
   props: {
     renderedColumns: { type: IndexedArray, required: true },
     dataColumns: { type: Array, required: true },
-    rowData: { type: Object, required: true },
+    rowData: { type: TableRow, required: true },
     actions: { type: FilteredActions, required: true },
     filterDefinition: { type: TableFilterRow, default: null },
     rowType: RowTypesEnum.rowTypeProp(),

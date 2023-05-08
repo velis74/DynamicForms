@@ -10,12 +10,12 @@ import TableColumn from './column';
 import TableColumns from './columns';
 import TableRow from './row';
 
-export default class TableFilterRow { // eslint-disable-line max-classes-per-file
+export default class TableFilterRow {
   columns: IndexedArray<TableColumn>;
 
   private value: unknown;
 
-  private payload: FormPayload;
+  public payload: FormPayload;
 
   constructor(filterData: any) {
     if (!filterData) {

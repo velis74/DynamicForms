@@ -33,6 +33,8 @@ export namespace DfTable {
     measuredHeight: number | null;
     isShowing: boolean;
     componentName: string;
+    CSSClass: string;
+    CSSStyle: string;
   }
 
   export interface RowDataInterface {

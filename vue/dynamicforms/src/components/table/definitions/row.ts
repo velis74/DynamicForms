@@ -2,7 +2,7 @@ import { reactive } from 'vue';
 
 import { DfTable } from '../namespace';
 
-export default class TableRow { // eslint-disable-line max-classes-per-file
+export default class TableRow {
   [key: string]: any;
 
   dfControlStructure: DfTable.RowControlStructure;
@@ -16,12 +16,14 @@ export default class TableRow { // eslint-disable-line max-classes-per-file
       measuredHeight: null, // will be filled out when it is rendered into DOM
       isShowing: true, // row is currently in ViewPort and should fully render
       componentName: 'GenericTRow', // default row renderer
+      CSSClass: dfControlData.row_css_class || '',
+      CSSStyle: dfControlData.row_css_style || '',
     });
-    Object.defineProperties(this.dfControlStructure, {
-      CSSClass: { get() { return dfControlData.row_css_class || ''; }, enumerable: true },
-      CSSStyle: { get() { return dfControlData.row_css_style || ''; }, enumerable: true },
-      actions: { get() { return dfControlData.actions || ''; }, enumerable: true },
-    });
+    Object.defineProperty(
+      this.dfControlStructure,
+      'actions',
+      { get() { return dfControlData.actions || ''; }, enumerable: true },
+    );
   }
 
   setMeasuredHeight(value: number) {

@@ -1,6 +1,8 @@
 import type { APIConsumer } from '../api_consumer/namespace';
 import type FormPayload from '../form/definitions/form-payload';
 import type DialogDefinition from '../modal/dialog-definition';
+import type TableColumn from '../table/definitions/column';
+import type RowTypesEnum from '../table/row-types-enum';
 
 import type Action from './action';
 
@@ -12,6 +14,8 @@ export namespace ActionsNS {
     oldValue?: any;
     newValue?: any;
     event?: Event;
+    column?: TableColumn;
+    rowType?: RowTypesEnum;
   }
 
   export type ActionHandler = (
