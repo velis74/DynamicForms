@@ -19,7 +19,7 @@
       :row-data="payload"
       :row-type="rowType"
       :actions="actions"
-      :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
+      :filter-row="filterRow(column.name)"
     />
   </div>
 </template>
@@ -35,6 +35,7 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
+import { DfTable } from './namespace';
 import RenderMeasured from './render-measure';
 import RowTypesEnum from './row-types-enum';
 
@@ -69,6 +70,10 @@ export default defineComponent({
       if (this.rowData.dfControlStructure.isShowing) {
         this.rowData.setMeasuredHeight(maxHeight);
       }
+    },
+    filterRow(columnName: string) {
+      return this.filterDefinition ?
+        this.filterDefinition.columns[columnName] || new TableColumn({} as DfTable.ColumnJSON, []) : null;
     },
   },
 });
