@@ -1,24 +1,28 @@
 <template>
   <div v-if="errorText">{{ errorText }}</div>
-  <APIConsumer v-else-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
+  <APIConsumerVue v-else-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
   <div v-else/>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import APIConsumer from './api-consumer.vue';
+import FormLayout from '../form/definitions/layout';
+
+import APIConsumerVue from './api-consumer.vue';
 import ComponentDisplay from './component-display';
 import ConsumerLogicApi from './consumer-logic-api';
+import { APIConsumer } from './namespace';
 
 export default defineComponent({
   name: 'APIConsumerLoader',
-  components: { APIConsumer },
+  components: { APIConsumerVue },
   emits: ['title-change', 'load-route'],
   data() {
     return {
-      consumer: null as ConsumerLogicApi | null,
-      errorText: null,
+      consumer: undefined as APIConsumer.ConsumerLogicAPIInterface | undefined,
+      test: undefined as FormLayout | undefined,
+      errorText: undefined as string | undefined,
       displayComponent: ComponentDisplay.TABLE,
     };
   },
@@ -30,7 +34,7 @@ export default defineComponent({
       const consumer = new ConsumerLogicApi(to.path);
       try {
         await consumer.getFullDefinition();
-        this.errorText = null;
+        this.errorText = undefined;
         this.consumer = consumer;
         this.$emit('title-change', consumer.title(this.displayComponent === ComponentDisplay.TABLE ? 'table' : 'new'));
       } catch (err: any) {
