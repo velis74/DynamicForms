@@ -6,7 +6,6 @@
     :error-count="baseBinds['error-count']"
   >
     <ckeditor v-model="value" :editor="editor" :config="editorConfig"/>
-    TODO
   </vuetify-input>
 </template>
 
