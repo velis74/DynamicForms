@@ -1,9 +1,9 @@
 <template>
   <div
-    ref="column"
+    ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
-    @click.stop="(event) => dispatchAction(actions.rowClick, { column, event, rowType })"
-    @mouseup.right="(event) => dispatchAction(actions.rowRightClick, { column, event, rowType })"
+    @click.stop="(event) => dispatchAction(this, actions.rowClick, { column, event, rowType })"
+    @mouseup.right="(event) => dispatchAction(this, actions.rowRightClick, { column, event, rowType })"
   >
     <template v-if="filterRow">
       <FormField
@@ -21,22 +21,20 @@
         class="actions"
       />
       <!-- first we render any field start actions -->
-      <!--Actions :thead="thead" :row-data="rowData" :actions="actions.filter('FIELD_START', column.name)"/-->
-      <!-- then the field component itself -->
       <df-actions
         v-if="!thead && actions.fieldStart(column.name).length"
         :actions="actions.fieldStart(column.name)"
         class="actions"
       />
-      <div v-if="column.renderComponentName">
-        <component
-          :is="column.renderComponentName"
-          :row-data="rowData"
-          :column="column"
-          :thead="thead"
-          :actions="actions"
-        />
-      </div>
+      <!-- then the field component itself -->
+      <component
+        :is="column.renderComponentName"
+        v-if="column.renderComponentName"
+        :row-data="rowData"
+        :column="column"
+        :thead="thead"
+        :actions="actions"
+      />
       <!-- or it's just a decorated text and not a component -->
       <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
       <!-- we finish up with any field end actions -->
@@ -55,10 +53,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, defineComponent, inject, provide, ref } from 'vue';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin';
+import { dispatchAction } from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/field.vue';
 
@@ -66,41 +64,49 @@ import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
 import OrderingIndicator from './ordering-indicator.vue';
-import RenderMeasured from './render-measure';
+import { useRenderMeasure } from './render-measure';
 import RowTypesEnum from './row-types-enum';
 
-export default /* #__PURE__ */ defineComponent({
+const props = withDefaults(
+  defineProps<{
+    column: TableColumn,
+    rowData: Object,
+    actions: FilteredActions,
+    filterRow: TableColumn | null,
+  }>(),
+  { filterRow: null },
+);
+
+const rowType: RowTypesEnum = inject('row-type') as RowTypesEnum;
+const thead = computed(() => RowTypesEnum.isTHead(rowType));
+const columnClass = computed(
+  () => (props.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'),
+);
+const payload = computed(() => props.rowData);
+
+function onMeasure(refName: string, maxWidth: number) {
+  if (refName === 'columnsize' && Number.isFinite(maxWidth)) {
+    props.column.setMaxWidth(maxWidth);
+  }
+}
+
+function customClass(): string {
+  let res = props.column.CSSClass;
+  if (thead.value) res = `${res} ${props.column.CSSClassHead}`.trim();
+  return res;
+}
+
+provide('payload', payload);
+
+const columnsize = ref();
+const ordering = ref();
+
+useRenderMeasure(onMeasure, { columnsize, ordering });
+</script>
+<script lang="ts">
+export default defineComponent({
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
-  mixins: [RenderMeasured, ActionHandlerMixin],
-  provide() {
-    return { payload: computed(() => this.rowData) };
-  },
-  props: {
-    column: { type: TableColumn, required: true },
-    rowData: { type: Object, required: true },
-    actions: { type: FilteredActions, required: true },
-    filterRow: { type: TableColumn, default: null },
-    rowType: RowTypesEnum.rowTypeProp(),
-  },
-  computed: {
-    thead() { return RowTypesEnum.isTHead(this.rowType); },
-    columnClass() {
-      return this.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col';
-    },
-  },
-  methods: {
-    onMeasure(refName: string, maxWidth: number) {
-      if (refName === 'column') {
-        this.column.setMaxWidth(maxWidth);
-      }
-    },
-    customClass() {
-      let res = this.column.CSSClass;
-      if (this.thead) res = `${res} ${this.column.CSSClassHead}`.trim();
-      return res;
-    },
-  },
 });
 </script>
 

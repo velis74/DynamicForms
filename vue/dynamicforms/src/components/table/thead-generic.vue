@@ -1,5 +1,5 @@
 <template>
-  <div ref="df-thead" class="df-thead">
+  <div ref="dfthead" class="df-thead">
     <GenericTRow
       :rendered-columns="renderedColumns"
       :data-columns="[]"
@@ -19,35 +19,36 @@
     <div class="df-separator"/>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { defineComponent, ref } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
+import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
-import RenderMeasured from './render-measure';
+import { useRenderMeasure } from './render-measure';
 import RowTypesEnum from './row-types-enum';
 import GenericTRow from './trow-generic.vue';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'GenericTHead',
-  components: { GenericTRow },
-  mixins: [RenderMeasured],
-  props: {
-    renderedColumns: { type: IndexedArray, required: true },
-    rowData: { type: TableRow, required: true },
-    actions: { type: FilteredActions, required: true },
-    filterDefinition: { type: TableFilterRow, default: null },
-    rowType: RowTypesEnum.rowTypeProp(),
-  },
-  data() { return { RowTypesEnum }; },
-  computed: { thead() { return RowTypesEnum.isTHead(this.rowType); } },
-  methods: {
-    onMeasure(refName: string, maxWidth: number, maxHeight: number) {
-      this.rowData.setMeasuredHeight(maxHeight);
-    },
-  },
-});
+const props = withDefaults(
+  defineProps<{ // Can't just import the interface - vue complains. https://github.com/vuejs/core/issues/4294
+    renderedColumns: IndexedArray<TableColumn>,
+    rowData: TableRow,
+    actions: FilteredActions,
+    filterDefinition?: TableFilterRow;
+  }>(),
+  { filterDefinition: undefined },
+);
+
+const dfthead = ref();
+
+function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
+  props.rowData.setMeasuredHeight(maxHeight);
+}
+useRenderMeasure(onMeasure, { dfthead });
+</script>
+<script lang="ts">
+export default defineComponent({ name: 'GenericTHead' });
 </script>

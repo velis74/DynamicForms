@@ -1,5 +1,3 @@
-import { PropType } from 'vue';
-
 enum RowTypesEnum {
   Label = 0,
   Filter = 1,
@@ -14,14 +12,6 @@ namespace RowTypesEnum {
   }
 
   export function isTHead(rowType: RowTypesEnum) { return [RowTypesEnum.Label, RowTypesEnum.Filter].includes(rowType); }
-
-  export function rowTypeProp() {
-    return {
-      type: Number as PropType<RowTypesEnum>,
-      default: () => RowTypesEnum.Data,
-      validator(value: number) { return RowTypesEnum.isDefined(value); },
-    };
-  }
 }
 
 Object.freeze(RowTypesEnum);

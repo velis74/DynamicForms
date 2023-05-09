@@ -64,57 +64,66 @@ function emitEvent(
   }
 }
 
-export default /* #__PURE__ */ defineComponent({
+/**
+ * Action is handled by a specific function on a component. First parent component which has this function
+ * defined executes this function with arguments actionData, payload. Payload is a computed variable, for payload
+ * value, value of first parent component's payload computed value is taken if payload computed var is defined.
+ * If this function returns false then current component tries to execute functionName(payload)
+ *
+ * Function name which executes action data is "calculated from actionData attributes."
+ *
+ * @param self: ComponentPublicInstance
+ * @param actions: Action
+ * @param extraData: object - e.g. { fieldName: 'field' }
+ */
+export async function dispatchAction(
+  self: ComponentPublicInstance,
+  actions: Action | FilteredActions,
+  extraData: ActionHandlerExtraData,
+): Promise<void> {
+  if (actions instanceof FilteredActions) {
+    // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
+    // there is one action or many: we just execute them all
+    for (const act of actions) {
+      dispatchAction(self, act as Action, extraData);
+    }
+    return;
+  }
+
+  const action = actions;
+  const ed = { ...action.payload?.['$extra-data'], ...extraData };
+  const actionDFName = getActionName(action.name);
+
+  let lastExecutedHandler;
+  const handlers = [
+    ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> self, actionDFName),
+    ...getHandlersWithPayload(
+      action,
+      <ComponentWithActionsAndHandler> <unknown> self,
+      'actionDefaultProcessor',
+    ),
+  ];
+  // console.log('handlers', handlers, 'action', action);
+  const actionHandled = await asyncSome(
+    handlers,
+    async (handler: HandlerWithPayload) => {
+      lastExecutedHandler = handler;
+      return (<ActionHandler> (handler.instance[handler.methodName as `action${string}`] ??
+        handler.instance.actionDefaultProcessor))(action, handler.payload, ed);
+    },
+  );
+  if (!actionHandled && lastExecutedHandler) {
+    // means action wasn't handled but some handlers were executed, return first handler
+    lastExecutedHandler = handlers.shift();
+  }
+  emitEvent(self, ['action-executed', { action, payload: lastExecutedHandler?.payload, ed, actionHandled }]);
+}
+
+export default defineComponent({
   name: 'ActionHandlerMixin',
   methods: {
-    /**
-     * Action is handled by a specific function on a component. First parent component which has this function
-     * defined executes this function with arguments actionData, payload. Payload is a computed variable, for payload
-     * value, value of first parent component's payload computed value is taken if payload computed var is defined.
-     * If this function returns false then current component tries to execute functionName(payload)
-     *
-     * Function name which executes action data is "calculated from actionData attributes."
-     *
-     * @param actions: Action
-     * @param extraData: object - e.g. { fieldName: 'field' }
-     */
     async dispatchAction(actions: Action | FilteredActions, extraData: ActionHandlerExtraData) {
-      if (actions instanceof FilteredActions) {
-        // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
-        // there is one action or many: we just execute them all
-        for (const act of actions) {
-          this.dispatchAction(act as Action, extraData);
-        }
-        return;
-      }
-
-      const action = actions;
-      const ed = { ...action.payload?.['$extra-data'], ...extraData };
-      const actionDFName = getActionName(action.name);
-
-      let lastExecutedHandler;
-      const handlers = [
-        ...getHandlersWithPayload(action, <ComponentWithActionsAndHandler> <unknown> this, actionDFName),
-        ...getHandlersWithPayload(
-          action,
-          <ComponentWithActionsAndHandler> <unknown> this,
-          'actionDefaultProcessor',
-        ),
-      ];
-      // console.log('handlers', handlers, 'action', action);
-      const actionHandled = await asyncSome(
-        handlers,
-        async (handler: HandlerWithPayload) => {
-          lastExecutedHandler = handler;
-          return (<ActionHandler> (handler.instance[handler.methodName as `action${string}`] ??
-            handler.instance.actionDefaultProcessor))(action, handler.payload, ed);
-        },
-      );
-      if (!actionHandled && lastExecutedHandler) {
-        // means action wasn't handled but some handlers were executed, return first handler
-        lastExecutedHandler = handlers.shift();
-      }
-      emitEvent(this, ['action-executed', { action, payload: lastExecutedHandler?.payload, ed, actionHandled }]);
+      await dispatchAction(this, actions, extraData);
     },
   },
 });

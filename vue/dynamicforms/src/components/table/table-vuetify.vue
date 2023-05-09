@@ -39,7 +39,7 @@ import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRows from './definitions/rows';
 import { DfTable } from './namespace';
-import RenderMeasured from './render-measure';
+import { useRenderMeasure } from './render-measure';
 import { useTableBase } from './table';
 import TableStyle from './table-style.vue';
 import VuetifyTBody from './tbody-generic.vue';
@@ -48,7 +48,7 @@ import VuetifyTHead from './thead-generic.vue';
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyTable',
   components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody, TableStyle },
-  mixins: [RenderMeasured, TranslationsMixin],
+  mixins: [TranslationsMixin],
 });
 </script>
 <script setup lang="ts">
@@ -82,8 +82,10 @@ const {
   responsiveLayout, // eslint-disable-line @typescript-eslint/no-unused-vars
   dataColumns,
   theadRowData,
-  onMeasure, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onMeasure,
 } = useTableBase(props);
+
+useRenderMeasure(onMeasure, { container });
 </script>
 
 <style scoped>

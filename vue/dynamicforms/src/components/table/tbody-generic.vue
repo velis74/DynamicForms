@@ -11,6 +11,7 @@
       :rendered-columns="renderedColumns"
       :data-columns="dataColumns"
       :row-data="row"
+      :row-type="RowTypesEnum.Data"
       :actions="actions"
     />
   </div>
@@ -24,13 +25,13 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
 import TableRows from './definitions/rows';
+import RowTypesEnum from './row-types-enum';
 import useRowVisibilityObserver from './rows-visibility-observer.js';
 import GenericTRow from './trow-generic.vue';
 
-// export default /* #__PURE__ */ defineComponent({
+// export default defineComponent({
 //   name: 'GenericTBody',
 //   directives: { 'observe-visibility': ObserveVisibility },
-//   components: { GenericTRow },
 //   mixins: [RowsVisibilityObserver],
 const props = defineProps<{
   pkName: string
