@@ -24,16 +24,13 @@
               transition="scale-transition"
             />
           </v-card-text>
-          <v-card-actions v-if="field.footer">
-            {{ field.footer }}
-          </v-card-actions>
         </template>
       </v-expand-transition>
     </v-card>
   </v-col>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
@@ -44,13 +41,15 @@ import { Group } from './definitions/layout';
 export default /* #__PURE__ */ defineComponent({
   name: 'FormFieldGroup',
   mixins: [ActionHandlerMixin],
-  inject: ['actions', 'payload'],
   props: {
     field: { type: Group, required: true },
     actions: { type: FilteredActions, required: true },
     errors: { type: Object, required: true },
     showLabelOrHelpText: { type: Boolean, default: true },
     cssClasses: { type: String, default: 'col' },
+  },
+  setup() {
+    return { payload: inject<FormPayload>('payload', {} as FormPayload) };
   },
   data: () => ({
     formPayload: {} as FormPayload,
