@@ -8,7 +8,7 @@
         :row-data="rowData"
         :thead="thead"
         :actions="actions"
-        :row-type="parent.$props.rowType"
+        :row-type="rowType"
       />
     </div>
   </div>
@@ -22,8 +22,6 @@ import FilteredActions from '../actions/filtered-actions';
 import { ColumnGroup } from './definitions/responsive-layout';
 import RowTypesEnum from './row-types-enum';
 
-interface ParentComponent { $props: { rowType: RowTypesEnum; } }
-
 const props = defineProps({
   column: { type: ColumnGroup, required: true },
   rowData: { type: Object, required: true },
@@ -31,7 +29,7 @@ const props = defineProps({
   rowType: RowTypesEnum.rowTypeProp(),
 });
 
-const parent = getCurrentInstance()!.parent as unknown as ParentComponent;
+const rowType = computed(() => (getCurrentInstance()!.parent?.props.rowType));
 const thead = computed(() => RowTypesEnum.isTHead(props.rowType));
 </script>
 <script lang="ts">

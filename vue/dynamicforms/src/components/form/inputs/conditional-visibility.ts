@@ -1,4 +1,3 @@
-import { APIConsumer } from '../../api_consumer/namespace';
 import Operator from '../definitions/field-operator';
 import FormPayload from '../definitions/form-payload';
 
