@@ -9,8 +9,8 @@
     ref="row"
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => dispatchAction(this, actions.rowClick, { rowType, event })"
-    @mouseup.right="(event) => dispatchAction(this, actions.rowRightClick, { rowType, event })"
+    @click.stop="(event) => dispatchAction(self, actions.rowClick, { rowType, event })"
+    @mouseup.right="(event) => dispatchAction(self, actions.rowRightClick, { rowType, event })"
   >
     <GenericColumn
       v-for="column in renderedColumns.items"
@@ -18,13 +18,13 @@
       :column="column as TableColumn"
       :row-data="payload"
       :actions="actions"
-      :filter-row="filterDefinition ? filterDefinition.columns[column.name] || new TableColumn({}, []) : null"
+      :filter-row="filterRow(column)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, provide, ref } from 'vue';
+import { ComponentPublicInstance, computed, defineComponent, getCurrentInstance, provide, ref } from 'vue';
 import { ObserveVisibility } from 'vue-observe-visibility';
 
 import { dispatchAction } from '../actions/action-handler-mixin';
@@ -34,6 +34,7 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
+import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
 import RowTypesEnum from './row-types-enum';
 
@@ -60,6 +61,11 @@ const rowInfiniteStyle = computed(() => (
   `width: 1px; height: ${props.rowData.dfControlStructure.measuredHeight || 10}px`
 ));
 const payload = computed(() => (props.filterDefinition ? props.filterDefinition.payload : props.rowData));
+function filterRow(column: TableColumn) {
+  return props.filterDefinition ?
+    props.filterDefinition.columns[column.name] || new TableColumn({} as DfTable.ColumnJSON, []) :
+    null;
+}
 
 function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
   if (props.rowData.dfControlStructure.isShowing) {
@@ -69,6 +75,7 @@ function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
 
 const row = ref();
 useRenderMeasure(onMeasure, { row });
+const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 </script>
 <script lang="ts">
 export default defineComponent({

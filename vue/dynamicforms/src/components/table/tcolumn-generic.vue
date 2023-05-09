@@ -2,8 +2,8 @@
   <div
     ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
-    @click.stop="(event) => dispatchAction(this, actions.rowClick, { column, event, rowType })"
-    @mouseup.right="(event) => dispatchAction(this, actions.rowRightClick, { column, event, rowType })"
+    @click.stop="(event) => dispatchAction(self, actions.rowClick, { column, event, rowType })"
+    @mouseup.right="(event) => dispatchAction(self, actions.rowRightClick, { column, event, rowType })"
   >
     <template v-if="filterRow">
       <FormField
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, inject, provide, ref } from 'vue';
+import { computed, defineComponent, inject, provide, ref, getCurrentInstance, ComponentPublicInstance } from 'vue';
 
 import { dispatchAction } from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
@@ -99,6 +99,8 @@ const columnsize = ref();
 const ordering = ref();
 
 useRenderMeasure(onMeasure, { columnsize, ordering });
+
+const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 </script>
 <script lang="ts">
 export default defineComponent({
