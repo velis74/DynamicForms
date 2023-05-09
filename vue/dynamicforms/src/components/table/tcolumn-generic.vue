@@ -67,15 +67,12 @@ import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
 import RowTypesEnum from './row-types-enum';
 
-const props = withDefaults(
-  defineProps<{
-    column: TableColumn,
-    rowData: Object,
-    actions: FilteredActions,
-    filterRow: TableColumn | null,
-  }>(),
-  { filterRow: null },
-);
+const props = defineProps<{
+  column: TableColumn,
+  rowData: Object,
+  actions: FilteredActions,
+  filterRow?: TableColumn,
+}>();
 
 const rowType: RowTypesEnum = inject('row-type') as RowTypesEnum;
 const thead = computed(() => RowTypesEnum.isTHead(rowType));
