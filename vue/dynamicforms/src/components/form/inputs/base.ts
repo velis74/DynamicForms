@@ -15,7 +15,7 @@ export default defineComponent({
   emits: ['update:modelValue'],
   computed: {
     value: {
-      get() { return this.modelValue; },
+      get(): any { return this.modelValue; },
       set(newValue: any) {
         // TODO this is to be moved to input.vue. It has nothing to do here.
         if (this.isNumber && this.isValidNumber(newValue)) {

@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-export default /* #__PURE__ */ defineComponent({
+export default defineComponent({
   name: 'VuetifyInput',
   props: {
     label: { default: null, type: String },
