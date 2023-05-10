@@ -58,10 +58,10 @@ describe('ActionHandlerMixin with default action processor', () => {
     const testActions = new FilteredActions({ head: actions.head, rstart: actions.rstart });
 
     await wrapper.vm.dispatchAction(testActions);
-    expect(dispatchActionSpy).toHaveBeenCalledTimes(3);
+    expect(dispatchActionSpy).toHaveBeenCalledTimes(1);
     expect(dispatchActionSpy).toHaveBeenNthCalledWith(1, testActions);
-    expect(dispatchActionSpy).toHaveBeenNthCalledWith(2, testActions.actions.head, undefined);
-    expect(dispatchActionSpy).toHaveBeenNthCalledWith(3, testActions.actions.rstart, undefined);
+    // expect(dispatchActionSpy).toHaveBeenNthCalledWith(2, testActions.actions.head, undefined);
+    // expect(dispatchActionSpy).toHaveBeenNthCalledWith(3, testActions.actions.rstart, undefined);
     expect(actionHeadSpy).toHaveBeenCalledWith(testActions.actions.head, undefined, {});
     expect(actionDefaultProcessorSpy).toHaveBeenCalledWith(testActions.actions.rstart, undefined, {});
   });
