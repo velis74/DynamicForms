@@ -276,7 +276,11 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         paginator = paginator or self.context.get("view", type("NoView", (object,), dict(paginator=None))).paginator
 
         if not self.view_mode:
-            self.view_mode = ViewModeSerializer.ViewMode.TABLE_ROW if paginator else ViewModeSerializer.ViewMode.FORM
+            self.view_mode = (
+                ViewModeSerializer.ViewMode.TABLE_ROW
+                if self.master and isinstance(self.master, ViewModeListSerializer)
+                else ViewModeSerializer.ViewMode.FORM
+            )
 
         if not self.parent and "id" not in self.data:
             def_kwargs = dict(pk=None)
