@@ -135,8 +135,8 @@ export default /* #__PURE__ */ defineComponent({
           loadedData = { results: loadedData, next: null };
         }
         this.loadedChoices = loadedData.results.map(
-          (item: { [ key: string ]: any }) => ({
-            id: item[this.field.ajax.value_field],
+          (item: { [ key: string ]: any }): DfForm.ChoicesJSON => ({
+            value: item[this.field.ajax.value_field],
             text: item[this.field.ajax.text_field],
           }),
         );
