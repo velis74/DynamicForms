@@ -72,8 +72,8 @@ export default /* #__PURE__ */ defineComponent({
       get() {
         if (this.selected) {
           return this.multiple ?
-            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
-            (<DfForm.ChoicesJSON> this.selected).id;
+            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.value) :
+            (<DfForm.ChoicesJSON> this.selected).value;
         }
         return '';
       },
@@ -81,9 +81,9 @@ export default /* #__PURE__ */ defineComponent({
         if (value != null) {
           if (this.multiple) {
             const val = value.constructor === Array ? value.map(String) : value.split(',');
-            this.selected = this.options.filter((o) => val.includes(`${o.id}`));
+            this.selected = this.options.filter((o) => val.includes(`${o.value}`));
           } else {
-            const fnd = this.options.find((o) => String(o.id) === String(value));
+            const fnd = this.options.find((o) => String(o.value) === String(value));
             this.selected = fnd || null;
           }
         } else {
@@ -100,7 +100,7 @@ export default /* #__PURE__ */ defineComponent({
   mounted: function mounted() {
     if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
       // Auto select first element
-      this.result = this.options[0].id;
+      this.result = this.options[0].value;
     } else {
       this.result = this.value;
     }
@@ -115,7 +115,7 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     onTag(newTag: string) {
-      const newTagObj = { id: newTag, text: newTag };
+      const newTagObj = { value: newTag, text: newTag };
       this.field.choices.push(newTagObj);
       if (this.multiple) {
         (<DfForm.ChoicesJSON[]> this.selected).push(newTagObj);
@@ -135,7 +135,10 @@ export default /* #__PURE__ */ defineComponent({
           loadedData = { results: loadedData, next: null };
         }
         this.loadedChoices = loadedData.results.map(
-          (item: { id: any, full_name: string }) => ({ id: item.id, text: item.full_name }),
+          (item: { [ key: string ]: any }) => ({
+            id: item[this.field.ajax.value_field],
+            text: item[this.field.ajax.text_field],
+          }),
         );
         this.limit = loadedData.next ? this.loadedChoices.length : 99999;
       } finally {

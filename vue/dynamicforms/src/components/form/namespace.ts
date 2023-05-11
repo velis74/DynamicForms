@@ -1,6 +1,6 @@
 export namespace DfForm {
   export interface ChoicesJSON {
-    id: any;
+    value: any;
     text: any;
   }
 
@@ -9,6 +9,8 @@ export namespace DfForm {
     placeholder: string;
     additional_parameters: string;
     query_field: string;
+    value_field: string;
+    text_field: string;
   }
 
   export type StatementJSON = [ string | StatementJSON, number, any | StatementJSON ] | null;

@@ -91,7 +91,9 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
     # Relations
     string_related_field = fields.StringRelatedField(source="primary_key_related_field")
-    primary_key_related_field = fields.PrimaryKeyRelatedField(queryset=Relation.objects.all())
+    primary_key_related_field = fields.PrimaryKeyRelatedField(
+        queryset=Relation.objects.all(), url_reverse="relation-list", value_field="id", text_field="name"
+    )
     slug_related_field = fields.SlugRelatedField(slug_field="name", queryset=Relation.objects.all())
     file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
     file_field_two = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)

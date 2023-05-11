@@ -11,6 +11,8 @@ class RelatedFieldAJAXMixin(object):
         placeholder: Optional[str] = None,
         additional_parameters: Optional[dict] = None,
         query_field: str = "query",
+        value_field: str = "id",
+        text_field: str = "full_name",
         **kwargs
     ):
         """
@@ -28,6 +30,8 @@ class RelatedFieldAJAXMixin(object):
         self.placeholder = placeholder
         self.additional_parameters = additional_parameters
         self.query_field = query_field
+        self.value_field = value_field
+        self.text_field = text_field
 
     @property
     def additional_parameters_urlencoded(self):
@@ -68,13 +72,15 @@ class RelatedFieldAJAXMixin(object):
                         placeholder=self.placeholder,
                         additional_parameters=self.additional_parameters,
                         query_field=self.query_field,
+                        value_field=self.value_field,
+                        text_field=self.text_field,
                     )
                 )
             )
         else:
             res.update(
                 choices=map(
-                    lambda option: dict(id=option.value, text=option.display_text), self.iter_options_bound(None)
+                    lambda option: dict(value=option.value, text=option.display_text), self.iter_options_bound(None)
                 )
             )
         return res
