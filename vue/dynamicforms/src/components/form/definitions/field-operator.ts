@@ -56,6 +56,8 @@ namespace Operator {
     return Object.values(Operator).includes(check);
   }
 
+  // c8 bug: it doesn't matter what there is in the next line (e.g. console.log()).
+  // it will always be a branch with one branch not covered
   export function isLogicOperator(operator: Operator): boolean {
     return operator >= 0;
   }

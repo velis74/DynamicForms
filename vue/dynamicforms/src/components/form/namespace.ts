@@ -48,14 +48,14 @@ export namespace DfForm {
     pattern: string;
     min: number;
     max: number;
-    min_length: number;
-    max_length: number;
+    min_length?: number;
+    max_length?: number;
     step: number;
     size: number;
     form_format: string;
     multiple: boolean;
     allow_tags: boolean;
-    table: string;
+    table?: string;
   }
 
   export type FormLayoutFieldsCollection = { [key: string]: DfForm.FormFieldJSON };

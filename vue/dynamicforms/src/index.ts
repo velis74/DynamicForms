@@ -27,18 +27,6 @@ export {
   interpolate,
 };
 
-function unifyName(theme: string, name: string) {
-  if (!name.toLowerCase().startsWith(theme.toLowerCase())) {
-    if (['LoadingIndicator', 'DfModal', 'ModalView'].includes(name)) {
-      // LoadingIndicator is a special case because it is not CSS framework dependent
-      // dfModal is also not: instead it instantiates a DfModalDialog, which is CSS framework dependent
-      return name;
-    }
-    console.error(`Error registering themed component ${name}. Should start with ${theme}, but does not!`);
-  }
-  return `Df${name.substring(theme.length)}`;
-}
-
 export interface DynamicFormsOptions {
   ui: 'vuetify',
 }
@@ -57,10 +45,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
       // check if Vuetify is installed
 
       // import all global instances that we need for vuetify to work
-      Object.values(VuetifyComponents).map((component) => {
-        if (!component.name) console.warn('Component has no name', component);
-        return app.component(unifyName(ui, component.name), component);
-      });
+      Object.entries(VuetifyComponents).map(([name, component]) => app.component(name, component));
       break;
     default:
       // issue a warning stating what are appropriate options

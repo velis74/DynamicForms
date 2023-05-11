@@ -38,6 +38,7 @@ describe('Operator', () => {
     expect(Operator.isLogicOperator(Operator.EQUALS)).toBe(false);
 
     expect(Operator.isLogicOperator(100)).toBe(true);
+    expect(Operator.isLogicOperator(0)).toBe(true);
     expect(Operator.isLogicOperator(-100)).toBe(false);
   });
 });

@@ -11,9 +11,10 @@ export {
   DfModal,
   LoadingIndicator,
   ModalView,
-  VuetifyActions,
-  VuetifyForm,
-  VuetifyFormLayout,
-  VuetifyModal,
-  VuetifyTable,
+
+  VuetifyActions as DfActions,
+  VuetifyForm as DfForm,
+  VuetifyFormLayout as DfFormLayout,
+  VuetifyModal as DfModalDialog,
+  VuetifyTable as DfTable,
 };
