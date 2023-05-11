@@ -1,6 +1,6 @@
 export namespace DfForm {
   export interface ChoicesJSON {
-    value: any;
+    id: any;
     text: any;
   }
 

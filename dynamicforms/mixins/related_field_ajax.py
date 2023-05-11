@@ -80,7 +80,7 @@ class RelatedFieldAJAXMixin(object):
         else:
             res.update(
                 choices=map(
-                    lambda option: dict(value=option.value, text=option.display_text), self.iter_options_bound(None)
+                    lambda option: dict(id=option.value, text=option.display_text), self.iter_options_bound(None)
                 )
             )
         return res

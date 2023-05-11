@@ -72,8 +72,8 @@ export default /* #__PURE__ */ defineComponent({
       get() {
         if (this.selected) {
           return this.multiple ?
-            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.value) :
-            (<DfForm.ChoicesJSON> this.selected).value;
+            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
+            (<DfForm.ChoicesJSON> this.selected).id;
         }
         return '';
       },
@@ -81,9 +81,9 @@ export default /* #__PURE__ */ defineComponent({
         if (value != null) {
           if (this.multiple) {
             const val = value.constructor === Array ? value.map(String) : value.split(',');
-            this.selected = this.options.filter((o) => val.includes(`${o.value}`));
+            this.selected = this.options.filter((o) => val.includes(`${o.id}`));
           } else {
-            const fnd = this.options.find((o) => String(o.value) === String(value));
+            const fnd = this.options.find((o) => String(o.id) === String(value));
             this.selected = fnd || null;
           }
         } else {
@@ -93,14 +93,14 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   watch: {
-    selected: function selectedChanged() {
+    selected() {
       this.value = this.result;
     },
   },
-  mounted: function mounted() {
+  mounted() {
     if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
       // Auto select first element
-      this.result = this.options[0].value;
+      this.result = this.options[0].id;
     } else {
       this.result = this.value;
     }
@@ -115,7 +115,7 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     onTag(newTag: string) {
-      const newTagObj = { value: newTag, text: newTag };
+      const newTagObj: DfForm.ChoicesJSON = { id: newTag, text: newTag };
       this.field.choices.push(newTagObj);
       if (this.multiple) {
         (<DfForm.ChoicesJSON[]> this.selected).push(newTagObj);
@@ -136,7 +136,7 @@ export default /* #__PURE__ */ defineComponent({
         }
         this.loadedChoices = loadedData.results.map(
           (item: { [ key: string ]: any }): DfForm.ChoicesJSON => ({
-            value: item[this.field.ajax.value_field],
+            id: item[this.field.ajax.value_field],
             text: item[this.field.ajax.text_field],
           }),
         );
