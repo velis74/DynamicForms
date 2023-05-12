@@ -1,3 +1,4 @@
+import type TableColumn from './column';
 import OrderingDirection from './column-ordering-direction';
 
 type OrderingValue = { name: string, direction: OrderingDirection };
@@ -26,7 +27,7 @@ export default class ColumnOrdering {
    * @param orderingArray: a common array (created in columns.js) containing all order segments
    * @param column: TableColumn reference to the column itself. Needed for error messages below
    */
-  constructor(orderingString: string, orderingArray: ColumnOrdering[], column: any) {
+  constructor(orderingString: string, orderingArray: ColumnOrdering[], column: TableColumn) {
     this.direction = OrderingDirection.fromString(orderingString);
     this.changeCounter = 0;
     // First we determine where in the orderingArray we should insert this segment initially
@@ -39,7 +40,10 @@ export default class ColumnOrdering {
       column: { get() { return column; }, enumerable: false },
       orderingArray: { get() { return orderingArray; }, enumerable: false },
       isOrderable: { get() { return orderingString.includes('ordering'); }, enumerable: true },
-      isOrdered: { get() { return this.isOrderable && (this.segment > 0); }, enumerable: true },
+      isOrdered: {
+        get() { return this.isOrderable && (this.segment > 0) && this.direction !== OrderingDirection.UNORDERED; },
+        enumerable: true,
+      },
       segment: { get() { return (this.isOrderable && orderingArray.indexOf(this) + 1) || null; }, enumerable: true },
     });
   }

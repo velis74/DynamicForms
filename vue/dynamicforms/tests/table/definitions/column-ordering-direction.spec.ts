@@ -9,5 +9,9 @@ describe('OrderingDirection', () => {
     expect(OrderingDirection.isDefined(2)).toStrictEqual(true);
     expect(OrderingDirection.isDefined(3)).toStrictEqual(false);
     expect(OrderingDirection[OrderingDirection.ASC]).toStrictEqual('ASC');
+    expect(OrderingDirection.fromString('asc')).toStrictEqual(OrderingDirection.ASC);
+    expect(OrderingDirection.fromString('ASC')).toStrictEqual(OrderingDirection.ASC);
+    expect(OrderingDirection.fromString('desc')).toStrictEqual(OrderingDirection.DESC);
+    expect(OrderingDirection.fromString('a')).toStrictEqual(OrderingDirection.UNORDERED);
   });
 });
