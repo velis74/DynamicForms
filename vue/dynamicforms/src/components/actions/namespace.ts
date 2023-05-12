@@ -20,7 +20,7 @@ export namespace ActionsNS {
 
   export type ActionHandler = (
     action: Action,
-    payload: FormPayload,
+    payload: FormPayload | undefined,
     extraData: ActionHandlerExtraData
   ) => boolean;
 

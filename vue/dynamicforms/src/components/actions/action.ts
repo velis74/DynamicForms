@@ -16,7 +16,11 @@ const ACTION_POSITIONS = [
   'ROW_CLICK', 'ROW_RIGHT_CLICK', 'VALUE_CHANGED',
 ];
 
-export function defaultActionHandler(action: Action, payload: FormPayload, extraData: ActionHandlerExtraData) {
+export function defaultActionHandler(
+  action: Action,
+  payload: FormPayload | undefined,
+  extraData: ActionHandlerExtraData,
+) {
   const dialog = extraData?.dialog;
   // console.log('Action execute:', action, payload, extraData);
   if (dialog && dialog.resolvePromise && dialog.close) {
@@ -49,7 +53,7 @@ class Action implements ActionJSON {
 
   public displayStyle!: BreakpointsJSON;
 
-  public payload!: FormPayload;
+  public payload!: FormPayload | undefined;
 
   [key: `action${string}`]: ActionHandler;
 
@@ -123,7 +127,7 @@ class Action implements ActionJSON {
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
 
-      payload: { get() { return payload; }, enumerable: true },
+      payload: { get(): FormPayload | undefined { return payload; }, enumerable: true },
       // elementType & bindAttrs, entire action.action concept:
       //   action.py && actionsHandler.decorateActions, added by brontes, modified by velis
       //   not sure this is necessary: I have only found one instance of action declaration in python and

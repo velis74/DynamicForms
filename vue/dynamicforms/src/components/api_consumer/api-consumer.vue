@@ -72,8 +72,13 @@ export default defineComponent({
       await this.consumer.dialogForm('new');
       return true;
     },
-    async actionEdit(actionData: Action, payload: FormPayload, extraData: { rowType: RowTypesEnum }) {
-      if (extraData.rowType !== RowTypesEnum.Data) return false;
+    async actionEdit(
+      actionData: Action,
+      payload: FormPayload | undefined | null,
+      extraData: { rowType: RowTypesEnum },
+    ) {
+      // eslint-disable-next-line eqeqeq
+      if (extraData.rowType !== RowTypesEnum.Data || payload == undefined) return false;
       await this.consumer.dialogForm(payload[this.consumer.pkName]);
       return true;
     },

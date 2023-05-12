@@ -11,7 +11,7 @@ type ActionHandler = ActionsNS.ActionHandler;
 type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
 
 type ObjectWithActionHandler = { [key: `action${string}`]: ActionHandler };
-type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload };
+type HandlerWithPayload = { instance: ObjectWithActionHandler, methodName: string, payload: FormPayload | undefined };
 type ComponentWithActionsAndHandler =
   ComponentPublicInstance & (InstanceType<typeof ActionsMixin> & ObjectWithActionHandler & { payload: any });
 
