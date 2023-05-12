@@ -24,8 +24,8 @@ import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
-import TableRows from './definitions/rows';
 import RowTypes from './definitions/row-types';
+import TableRows from './definitions/rows';
 import useRowVisibilityObserver from './rows-visibility-observer.js';
 import GenericTRow from './trow-generic.vue';
 

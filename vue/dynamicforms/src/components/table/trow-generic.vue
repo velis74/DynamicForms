@@ -35,9 +35,9 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
+import RowTypes from './definitions/row-types';
 import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
-import RowTypes from './definitions/row-types';
 
 const props = withDefaults(
   defineProps<{

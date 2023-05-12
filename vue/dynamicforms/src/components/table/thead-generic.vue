@@ -28,8 +28,8 @@ import IndexedArray from '../classes/indexed-array';
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
-import { useRenderMeasure } from './render-measure';
 import RowTypes from './definitions/row-types';
+import { useRenderMeasure } from './render-measure';
 import GenericTRow from './trow-generic.vue';
 
 const props = withDefaults(

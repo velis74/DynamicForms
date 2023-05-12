@@ -5,13 +5,13 @@ enum RowTypes {
 }
 
 namespace RowTypes {
-  export function headerRows() { return [RowTypes.Label, RowTypes.Filter]; }
+  export const headerRows: RowTypes[] = [RowTypes.Label, RowTypes.Filter];
 
-  export function isDefined(rowType: number) {
+  export function isDefined(rowType: number): boolean {
     return Object.values(RowTypes).includes(rowType);
   }
 
-  export function isTHead(rowType: RowTypes) { return [RowTypes.Label, RowTypes.Filter].includes(rowType); }
+  export function isTHead(rowType: RowTypes): boolean { return RowTypes.headerRows.includes(rowType); }
 }
 
 Object.freeze(RowTypes);

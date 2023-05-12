@@ -63,9 +63,9 @@ import FormField from '../form/field.vue';
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
+import RowTypes from './definitions/row-types';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
-import RowTypes from './definitions/row-types';
 
 const props = defineProps<{
   column: TableColumn,
