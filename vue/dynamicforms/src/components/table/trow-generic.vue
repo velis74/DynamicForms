@@ -37,7 +37,7 @@ import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
-import RowTypesEnum from './row-types-enum';
+import RowTypes from './definitions/row-types';
 
 const props = withDefaults(
   defineProps<{
@@ -46,17 +46,17 @@ const props = withDefaults(
     rowData: TableRow,
     actions: FilteredActions,
     filterDefinition?: TableFilterRow,
-    rowType: RowTypesEnum,
+    rowType: RowTypes,
   }>(),
   { filterDefinition: undefined },
 );
 
-if (props.rowType && !RowTypesEnum.isDefined(props.rowType)) {
+if (props.rowType && !RowTypes.isDefined(props.rowType)) {
   console.warn(`Prop row-type of trow-generic set to a wrong value (${props.rowType})`);
 }
 provide('row-type', props.rowType);
 
-const thead = computed(() => RowTypesEnum.isTHead(props.rowType));
+const thead = computed(() => RowTypes.isTHead(props.rowType));
 const rowInfiniteStyle = computed(() => (
   `${props.rowData.dfControlStructure.CSSStyle};` +
   `width: 1px; height: ${props.rowData.dfControlStructure.measuredHeight || 10}px`

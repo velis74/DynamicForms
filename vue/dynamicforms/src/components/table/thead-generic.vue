@@ -5,7 +5,7 @@
       :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
-      :row-type="RowTypesEnum.Label"
+      :row-type="RowTypes.Label"
     />
     <GenericTRow
       v-if="filterDefinition"
@@ -14,7 +14,7 @@
       :row-data="rowData"
       :actions="actions"
       :filter-definition="filterDefinition"
-      :row-type="RowTypesEnum.Filter"
+      :row-type="RowTypes.Filter"
     />
     <div class="df-separator"/>
   </div>
@@ -29,7 +29,7 @@ import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
 import TableRow from './definitions/row';
 import { useRenderMeasure } from './render-measure';
-import RowTypesEnum from './row-types-enum';
+import RowTypes from './definitions/row-types';
 import GenericTRow from './trow-generic.vue';
 
 const props = withDefaults(

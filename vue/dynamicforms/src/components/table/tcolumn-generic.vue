@@ -65,7 +65,7 @@ import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
-import RowTypesEnum from './row-types-enum';
+import RowTypes from './definitions/row-types';
 
 const props = defineProps<{
   column: TableColumn,
@@ -74,8 +74,8 @@ const props = defineProps<{
   filterRow?: TableColumn,
 }>();
 
-const rowType: RowTypesEnum = inject('row-type') as RowTypesEnum;
-const thead = computed(() => RowTypesEnum.isTHead(rowType));
+const rowType: RowTypes = inject('row-type') as RowTypes;
+const thead = computed(() => RowTypes.isTHead(rowType));
 const columnClass = computed(
   () => (props.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'),
 );

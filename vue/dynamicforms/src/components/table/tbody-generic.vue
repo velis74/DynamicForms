@@ -11,7 +11,7 @@
       :rendered-columns="renderedColumns"
       :data-columns="dataColumns"
       :row-data="row"
-      :row-type="RowTypesEnum.Data"
+      :row-type="RowTypes.Data"
       :actions="actions"
     />
   </div>
@@ -25,7 +25,7 @@ import IndexedArray from '../classes/indexed-array';
 
 import TableColumn from './definitions/column';
 import TableRows from './definitions/rows';
-import RowTypesEnum from './row-types-enum';
+import RowTypes from './definitions/row-types';
 import useRowVisibilityObserver from './rows-visibility-observer.js';
 import GenericTRow from './trow-generic.vue';
 

@@ -9,7 +9,7 @@ import { defineComponent } from 'vue';
 import Action from '../actions/action';
 import FormPayload from '../form/definitions/form-payload';
 import TableColumn from '../table/definitions/column';
-import RowTypesEnum from '../table/row-types-enum';
+import RowTypes from '../table/definitions/row-types';
 
 import ComponentDisplay from './component-display';
 import ConsumerLogicBase from './consumer-logic-base';
@@ -75,20 +75,20 @@ export default defineComponent({
     async actionEdit(
       actionData: Action,
       payload: FormPayload | undefined | null,
-      extraData: { rowType: RowTypesEnum },
+      extraData: { rowType: RowTypes },
     ) {
       // eslint-disable-next-line eqeqeq
-      if (extraData.rowType !== RowTypesEnum.Data || payload == undefined) return false;
+      if (extraData.rowType !== RowTypes.Data || payload == undefined) return false;
       await this.consumer.dialogForm(payload[this.consumer.pkName]);
       return true;
     },
     actionSort(
       actionData: Action,
       payload: FormPayload,
-      extraData: { rowType: RowTypesEnum, column?: TableColumn, event: KeyboardEvent },
+      extraData: { rowType: RowTypes, column?: TableColumn, event: KeyboardEvent },
     ) {
       // This is the default handler for ordering
-      if (extraData.rowType === RowTypesEnum.Label && actionData.position === 'ROW_CLICK' && extraData.column) {
+      if (extraData.rowType === RowTypes.Label && actionData.position === 'ROW_CLICK' && extraData.column) {
         const oldChangeCounter = extraData.column.ordering.changeCounter;
         extraData.column.ordering.handleColumnHeaderClick(extraData.event);
         if (oldChangeCounter !== extraData.column.ordering.changeCounter) this.consumer.reload();
