@@ -93,11 +93,11 @@ export default /* #__PURE__ */ defineComponent({
     },
   },
   watch: {
-    selected: function selectedChanged() {
+    selected() {
       this.value = this.result;
     },
   },
-  mounted: function mounted() {
+  mounted() {
     if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
       // Auto select first element
       this.result = this.options[0].id;
@@ -115,7 +115,7 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     onTag(newTag: string) {
-      const newTagObj = { id: newTag, text: newTag };
+      const newTagObj: DfForm.ChoicesJSON = { id: newTag, text: newTag };
       this.field.choices.push(newTagObj);
       if (this.multiple) {
         (<DfForm.ChoicesJSON[]> this.selected).push(newTagObj);
@@ -135,7 +135,10 @@ export default /* #__PURE__ */ defineComponent({
           loadedData = { results: loadedData, next: null };
         }
         this.loadedChoices = loadedData.results.map(
-          (item: { id: any, full_name: string }) => ({ id: item.id, text: item.full_name }),
+          (item: { [ key: string ]: any }): DfForm.ChoicesJSON => ({
+            id: item[this.field.ajax.value_field],
+            text: item[this.field.ajax.text_field],
+          }),
         );
         this.limit = loadedData.next ? this.loadedChoices.length : 99999;
       } finally {
