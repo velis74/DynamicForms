@@ -1,7 +1,7 @@
 import { ComponentPublicInstance, defineComponent, Slot } from 'vue';
 
+import DialogSize from './definitions/dialog-size';
 import DialogDefinition from './dialog-definition';
-import DialogSize from './dialog-size';
 import ModalRenderer from './modal-renderer';
 import dfModal from './modal-view-api';
 import dialogList from './modal-view-list';

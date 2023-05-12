@@ -26,7 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import DialogSize from './dialog-size';
+import DialogSize from './definitions/dialog-size';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyModalDialog',
