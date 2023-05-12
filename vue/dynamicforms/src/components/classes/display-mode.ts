@@ -9,18 +9,20 @@ enum DisplayMode {
   FULL = 10, // Field will render completely
 }
 
+export const defaultDisplayMode = DisplayMode.FULL;
+
 namespace DisplayMode {
   export function fromString(mode: string): DisplayMode {
     if (mode.toUpperCase() === 'SUPPRESS') return DisplayMode.SUPPRESS;
     if (mode.toUpperCase() === 'HIDDEN') return DisplayMode.HIDDEN;
     if (mode.toUpperCase() === 'INVISIBLE') return DisplayMode.INVISIBLE;
-    return DisplayMode.FULL;
+    return defaultDisplayMode;
   }
 
   export function fromAny(mode: any): DisplayMode {
     const input = (typeof mode === 'number') ? mode : DisplayMode.fromString(mode as string);
     if (Object.values(DisplayMode).includes(input)) return input;
-    return DisplayMode.FULL;
+    return defaultDisplayMode;
   }
 
   export function isDefined(mode: number | string): boolean {

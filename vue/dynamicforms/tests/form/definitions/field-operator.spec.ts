@@ -26,7 +26,7 @@ describe('Operator', () => {
     expect(Operator.fromAny('AND')).toBe(Operator.fromAny(Operator.AND));
 
     expect(Operator.fromAny(100)).toBe(defaultOperator);
-    expect(Operator.fromString('THIS WILL NEVER BE AN OPERATOR')).toBe(defaultOperator);
+    expect(Operator.fromAny('THIS WILL NEVER BE AN OPERATOR')).toBe(defaultOperator);
   });
   it('Check If Defined', () => {
     expect(Operator.isDefined(100)).toBe(false);
