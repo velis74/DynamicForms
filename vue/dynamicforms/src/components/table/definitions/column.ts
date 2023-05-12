@@ -14,7 +14,7 @@ export default class TableColumn {
 
   align!: DfTable.CSSAlignment;
 
-  visibility!: number; // ColumnDisplay
+  visibility!: DisplayMode;
 
   renderParams!: {
     table_format: any,
@@ -27,7 +27,7 @@ export default class TableColumn {
 
   private _maxWidth: number;
 
-  private layout: DfTable.ResponsiveLayoutInterface | null;
+  public layout: DfTable.ResponsiveLayoutInterface | null;
 
   CSSClass!: string;
 
@@ -35,7 +35,7 @@ export default class TableColumn {
 
   renderComponentName!: string;
 
-  renderDecoratorFunction!: (rowData: Object, thead: boolean) => void;
+  renderDecoratorFunction!: (rowData: Object, thead: boolean) => any;
 
   formFieldInstance ?: FormField;
 

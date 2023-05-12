@@ -16,7 +16,7 @@ export namespace DfTable {
     ordering: string;
     render_params: DfForm.RenderParamsJSON;
     visibility: VisibilityJSON;
-    table_classes: string;
+    table_classes?: string;
   }
 
   export interface ResponsiveLayoutInterface {

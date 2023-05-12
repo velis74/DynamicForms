@@ -6,8 +6,8 @@ enum OrderingDirection {
 
 namespace OrderingDirection {
   export function fromString(ordering: string) {
-    if (ordering.includes('asc')) return OrderingDirection.ASC;
-    if (ordering.includes('desc')) return OrderingDirection.DESC;
+    if (ordering.toLowerCase().includes('asc')) return OrderingDirection.ASC;
+    if (ordering.toLowerCase().includes('desc')) return OrderingDirection.DESC;
     return OrderingDirection.UNORDERED;
   }
 
