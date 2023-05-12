@@ -1,8 +1,8 @@
-import IndexedArray, { IndexedItem } from '../../src/components/classes/indexed-array';
+import IndexedArray, { ItemWithName } from '../../src/components/classes/indexed-array';
 
 describe('IndexedArray', () => {
   it('should be initialized with correct items and length properties', () => {
-    const items: IndexedItem[] = [
+    const items: ItemWithName[] = [
       { name: 'item1' },
       { name: 'item2' },
       { name: 'item3' },
@@ -14,14 +14,14 @@ describe('IndexedArray', () => {
   });
 
   it('should support item insertion and deletion', () => {
-    const items: IndexedItem[] = [
+    const items: ItemWithName[] = [
       { name: 'item1' },
       { name: 'item2' },
       { name: 'item3' },
     ];
     const indexedArray = new IndexedArray(items);
 
-    const newItem: IndexedItem = { name: 'item4' };
+    const newItem: ItemWithName = { name: 'item4' };
 
     // Insert item
     indexedArray.push(newItem);
@@ -31,7 +31,7 @@ describe('IndexedArray', () => {
   });
 
   it('map: should return a new array with the mapped items', () => {
-    const items: IndexedItem[] = [
+    const items: ItemWithName[] = [
       { name: 'item1' },
       { name: 'item2' },
       { name: 'item3' },
@@ -43,7 +43,7 @@ describe('IndexedArray', () => {
   });
 
   it('should reduce the array to a single value', () => {
-    const items: IndexedItem[] = [
+    const items: ItemWithName[] = [
       { name: 'item1' },
       { name: 'item2' },
       { name: 'item3' },
@@ -51,7 +51,7 @@ describe('IndexedArray', () => {
 
     const indexedArray = new IndexedArray(items);
     const result = indexedArray.reduce(
-      (previousValue: string, currentValue: IndexedItem) => previousValue + currentValue.name,
+      (previousValue: string, currentValue: ItemWithName) => previousValue + currentValue.name,
       '',
     );
 
