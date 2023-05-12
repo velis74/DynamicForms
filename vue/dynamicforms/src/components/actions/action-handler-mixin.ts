@@ -40,7 +40,7 @@ function getHandlersWithPayload(
     // stop looking for action handler if the component has actions declared, but current action is not among them
     if ((parent.actions instanceof FilteredActions) && !parent.actions.hasAction(action)) break;
 
-    if (parent.payload !== undefined) payload = parent.payload;
+    payload = parent.payload ?? payload;
     if (parent[actionName]) {
       res.unshift({ instance: parent, methodName: actionName, payload });
     }

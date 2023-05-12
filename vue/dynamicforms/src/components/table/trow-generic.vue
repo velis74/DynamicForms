@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { ComponentPublicInstance, computed, defineComponent, getCurrentInstance, provide, ref } from 'vue';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ObserveVisibility } from 'vue-observe-visibility';
 
 import { dispatchAction } from '../actions/action-handler-mixin';
@@ -76,10 +77,9 @@ function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
 const row = ref();
 useRenderMeasure(onMeasure, { row });
 const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
+
+defineExpose({ payload });
 </script>
 <script lang="ts">
-export default defineComponent({
-  name: 'GenericTRow',
-  directives: { 'observe-visibility': ObserveVisibility },
-});
+export default defineComponent({ name: 'GenericTRow' });
 </script>
