@@ -44,7 +44,18 @@ export default defineConfig({
       name: 'dynamicforms.[name]',
     },
     rollupOptions: {
-      external: ['axios', 'bootstrap', 'bootstrap-vue', 'lodash', 'vue', 'vue-ionicon', 'vue-router', 'vuetify'],
+      external: [
+        'axios',
+        'bootstrap',
+        'bootstrap-vue',
+        '@ckeditor/ckeditor5-vue',
+        '@ckeditor/ckeditor5-build-classic',
+        'lodash',
+        'vue',
+        'vue-ionicon',
+        'vue-router',
+        'vuetify'
+      ],
       output: {
         sourcemap: true,
         globals: (id: string) => id, // all external modules are currently not aliased to anything but their own names

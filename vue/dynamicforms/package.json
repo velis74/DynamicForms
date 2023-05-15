@@ -35,6 +35,8 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "axios": "^1.4.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
@@ -45,8 +47,6 @@
     "vuetify": "^3.0.1"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
-    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "luxon": "^3.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "vue-datetime3": "^1.0.9",
