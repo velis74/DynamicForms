@@ -29,25 +29,25 @@ export default class RenderParams {
 
   constructor(params: DfForm.RenderParamsJSON) {
     this.inputType = params.input_type;
-    this.fieldCSSClass = params.field_class;
+    this.fieldCSSClass = params.field_class || '';
 
     // Text input
-    this.pattern = params.pattern;
-    this.min = params.min;
-    this.max = params.max;
+    this.pattern = params.pattern || '';
+    this.min = params.min || 0;
+    this.max = params.max || 1E20;
     this.minLength = params.min_length || 0;
     this.maxLength = params.max_length || 1E20;
 
     // text input, translated into HTML attributes
-    this.step = params.step;
-    this.size = params.size;
+    this.step = params.step || 1;
+    this.size = params.size || 40;
 
     // DateTime
-    this.formFormat = params.form_format;
+    this.formFormat = params.form_format || '';
 
     // select
-    this.multiple = params.multiple;
-    this.allowTags = params.allow_tags;
+    this.multiple = params.multiple || false;
+    this.allowTags = params.allow_tags || false;
 
     // form definition
     this.formComponentDef = params.form_component_def;
