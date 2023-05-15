@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import 'vue-datetime3/dist/style.css';
+import 'vue-datetime3/style.css';
 
 import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
