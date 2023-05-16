@@ -35,10 +35,8 @@ export default /* #__PURE__ */ defineComponent({
     rules() {
       const res = [];
       const rp = this.field.renderParams;
-      res.push((value: any) => ((rp.pattern == null || String(value).match(rp.pattern)) ?
+      res.push((value: string) => ((rp.pattern == null || String(value).match(rp.pattern)) ?
         true : `${value} does not match ${rp.pattern}`));
-      res.push((value: number) => ((rp.min == null || value >= rp.min) ? true : `${value} < ${rp.min}`));
-      res.push((value: number) => ((rp.max == null || value <= rp.max) ? true : `${value} > ${rp.max}`));
       res.push(
         (value: string) => ((rp.minLength == null || String(value).length >= rp.minLength) ?
           true : `len(${value}) < ${rp.minLength}`),
@@ -48,6 +46,8 @@ export default /* #__PURE__ */ defineComponent({
           true : `len(${value}) > ${rp.maxLength}`),
       );
       if (this.isNumber) {
+        res.push((value: number) => ((rp.min == null || value >= rp.min) ? true : `${value} < ${rp.min}`));
+        res.push((value: number) => ((rp.max == null || value <= rp.max) ? true : `${value} > ${rp.max}`));
         // if null is allowed then null and undefined should not trigger invalid number
         res.push(
           (value: number) => (this.isValidNumber(value) || (this.field.allowNull && value == null) ?
