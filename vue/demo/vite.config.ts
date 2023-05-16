@@ -24,8 +24,8 @@ const axiosRedirectConfig = () => ({
   },
 });
 
-export default ({mode}: ConfigEnv) => {
-  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+export default ({ mode }: ConfigEnv) => {
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   return defineConfig({
     plugins: [
       vue(),
@@ -33,12 +33,12 @@ export default ({mode}: ConfigEnv) => {
         ...eslint({
           failOnWarning: false,
           failOnError: false,
-          overrideConfig: {parserOptions: {project: '../../tsconfig.eslint.json'}},
+          overrideConfig: { parserOptions: { project: '../../tsconfig.eslint.json' } },
         }),
         apply: 'serve',
         enforce: 'post',
       },
-      vuetify({autoImport: true}),
+      vuetify({ autoImport: true }),
       axiosRedirectConfig(),
     ],
     resolve: {
@@ -63,7 +63,7 @@ export default ({mode}: ConfigEnv) => {
       },
     },
     test: {
-      deps: {inline: ['vuetify']},
+      deps: { inline: ['vuetify'] },
       globals: true,
       environment: 'jsdom',
       useAtomics: true, // eliminates tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)
