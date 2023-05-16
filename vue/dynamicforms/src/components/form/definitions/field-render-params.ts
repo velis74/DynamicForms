@@ -3,51 +3,51 @@ import { DfForm } from '../namespace';
 export default class RenderParams {
   inputType: string;
 
-  fieldCSSClass: string;
+  fieldCSSClass?: string;
 
-  pattern: string;
+  pattern?: string;
 
-  min: number;
+  min?: number;
 
-  max: number;
+  max?: number;
 
-  minLength: number;
+  minLength?: number;
 
-  maxLength: number;
+  maxLength?: number;
 
-  step: number;
+  step?: number;
 
-  size: number;
+  size?: number;
 
-  formFormat: string;
+  formFormat?: string;
 
-  multiple: boolean;
+  multiple?: boolean;
 
-  allowTags: boolean;
+  allowTags?: boolean;
 
   formComponentDef?: DfForm.FormComponentDefinition;
 
   constructor(params: DfForm.RenderParamsJSON) {
     this.inputType = params.input_type;
-    this.fieldCSSClass = params.field_class || '';
+    this.fieldCSSClass = params.field_class;
 
     // Text input
-    this.pattern = params.pattern || '';
-    this.min = params.min || 0;
-    this.max = params.max || 1E20;
-    this.minLength = params.min_length || 0;
-    this.maxLength = params.max_length || 1E20;
+    this.pattern = params.pattern;
+    this.min = params.min;
+    this.max = params.max;
+    this.minLength = params.min_length;
+    this.maxLength = params.max_length;
 
     // text input, translated into HTML attributes
-    this.step = params.step || 1;
-    this.size = params.size || 40;
+    this.step = params.step;
+    this.size = params.size;
 
     // DateTime
-    this.formFormat = params.form_format || '';
+    this.formFormat = params.form_format;
 
     // select
-    this.multiple = params.multiple || false;
-    this.allowTags = params.allow_tags || false;
+    this.multiple = params.multiple;
+    this.allowTags = params.allow_tags;
 
     // form definition
     this.formComponentDef = params.form_component_def;
