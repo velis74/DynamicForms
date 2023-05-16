@@ -38,12 +38,10 @@ export default /* #__PURE__ */ defineComponent({
       res.push((value: string) => ((rp.pattern == null || String(value).match(rp.pattern)) ?
         true : `${value} does not match ${rp.pattern}`));
       res.push(
-        (value: string) => ((rp.minLength == null || String(value).length >= rp.minLength) ?
-          true : `len(${value}) < ${rp.minLength}`),
+        (value: string) => ((String(value).length >= rp.minLength) ? true : `len(${value}) < ${rp.minLength}`),
       );
       res.push(
-        (value: string) => ((rp.maxLength == null || String(value).length <= rp.maxLength) ?
-          true : `len(${value}) > ${rp.maxLength}`),
+        (value: string) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`),
       );
       if (this.isNumber) {
         res.push((value: number) => ((rp.min == null || value >= rp.min) ? true : `${value} < ${rp.min}`));

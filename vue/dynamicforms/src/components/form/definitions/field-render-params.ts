@@ -11,9 +11,9 @@ export default class RenderParams {
 
   max?: number;
 
-  minLength?: number;
+  minLength: number;
 
-  maxLength?: number;
+  maxLength: number;
 
   step?: number;
 
@@ -35,8 +35,8 @@ export default class RenderParams {
     this.pattern = params.pattern;
     this.min = params.min;
     this.max = params.max;
-    this.minLength = params.min_length;
-    this.maxLength = params.max_length;
+    this.minLength = params.min_length ?? 0;
+    this.maxLength = params.max_length ?? 1E20;
 
     // text input, translated into HTML attributes
     this.step = params.step;
