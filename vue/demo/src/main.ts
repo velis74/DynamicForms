@@ -9,6 +9,8 @@ import vuetify from './plugins/vuetify';
 import router from './router';
 
 import 'vuetify/styles/main.css';
+// eslint-disable-next-line import/no-relative-packages
+import '../../dynamicforms/dist/style.css';
 
 const app = createApp(DemoApp);
 app.use(router);

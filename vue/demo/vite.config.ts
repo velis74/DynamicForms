@@ -26,6 +26,9 @@ const axiosRedirectConfig = () => ({
 
 export default ({ mode }: ConfigEnv) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  const dynamicFormsAlias = (mode === 'development') ?
+    resolve(__dirname, '../dynamicforms/src/index') : '@velis/dynamicforms';
+
   return defineConfig({
     plugins: [
       vue(),
@@ -43,7 +46,7 @@ export default ({ mode }: ConfigEnv) => {
     ],
     resolve: {
       alias: {
-        dynamicforms: resolve(__dirname, '../dynamicforms/src/index'),
+        dynamicforms: dynamicFormsAlias,
         '@': resolve(__dirname, './src'),
         '~': resolve(__dirname, '../../node_modules'),
       },
