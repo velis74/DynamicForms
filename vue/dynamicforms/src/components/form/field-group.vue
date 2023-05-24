@@ -29,65 +29,52 @@
     </v-card>
   </v-col>
 </template>
-<script lang="ts">
-import { defineComponent, inject } from 'vue';
+<script setup lang="ts">
+import { ComponentPublicInstance, computed, getCurrentInstance, inject, ref, watch } from 'vue';
 
-import ActionHandlerMixin from '../actions/action-handler-mixin';
+import { dispatchAction } from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
 import { Group } from './definitions/layout';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'FormFieldGroup',
-  mixins: [ActionHandlerMixin],
-  props: {
-    field: { type: Group, required: true },
-    actions: { type: FilteredActions, required: true },
-    errors: { type: Object, required: true },
-    showLabelOrHelpText: { type: Boolean, default: true },
-    cssClasses: { type: String, default: 'col' },
+const props = withDefaults(
+  defineProps<{
+    field: Group,
+    actions: FilteredActions,
+    errors: Object,
+    showLabelOrHelpText?: boolean,
+    cssClasses?: string,
+  }>(),
+  {
+    showLabelOrHelpText: true,
+    cssClasses: '',
   },
-  setup() {
-    return { payload: inject<FormPayload>('payload', {} as FormPayload) };
-  },
-  data: () => ({
-    formPayload: {} as FormPayload,
-    use: false as boolean,
-  }),
-  computed: {
-    columnClasses() {
-      const classes = this.field.widthClasses;
-      return classes ? ` ${classes} ` : '';
-    },
-  },
-  watch: {
-    formPayload: {
-      handler(newValue: Object, oldValue: Object) {
-        // TODO: remove manual creation of recur field
-        this.payload[this.field.name] = this.use ? {
-          ...newValue,
-          recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 },
-        } : undefined;
+);
 
-        this.dispatchAction(
-          this.actions.valueChanged,
-          { field: this.field.name, oldValue, newValue },
-        );
-      },
-      deep: true,
-    },
-    use: {
-      handler(value: boolean) {
-        this.payload[this.field.name] = value ? this.formPayload : undefined;
-      },
-    },
-  },
-  created() {
-    this.use = !(this.payload[this.field.name] == null);
-    this.formPayload = new FormPayload(this.payload[this.field.name] ?? {}, this.field.layout);
-  },
-});
+const payload = inject<FormPayload>('payload', {} as FormPayload);
+const use = ref(false);
+console.log('payload', payload);
+
+const columnClasses = computed(
+  () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
+);
+
+use.value = !(payload[props.field.name] == null);
+const formPayload = ref(new FormPayload(payload[props.field.name] ?? {}, props.field.layout));
+const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
+
+watch(use, (value) => { payload[props.field.name] = value ? formPayload.value : undefined; });
+watch(formPayload, (newValue: Object, oldValue: Object) => {
+  // TODO: remove manual creation of recur field
+  payload[props.field.name] = use.value ? {
+    ...newValue,
+    recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 },
+  } : undefined;
+  console.log(props.field.name, payload);
+
+  dispatchAction(self, props.actions.valueChanged, { field: props.field.name, oldValue, newValue });
+}, { deep: true });
 </script>
 
 <style>

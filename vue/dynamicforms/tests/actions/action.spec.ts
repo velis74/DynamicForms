@@ -85,6 +85,17 @@ describe('Action', () => {
 
       consoleWarnSpy.mockRestore();
     });
+    it('warns that an unknown action position is specified', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+      const actionData = {
+        name: 'add',
+        position: 'HEADER_INVALID',
+      };
+      new Action(actionData); // eslint-disable-line no-new
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Action position HEADER_INVALID not known', actionData);
+
+      consoleWarnSpy.mockRestore();
+    });
 
     it('does not throw an error if the name matches the pattern', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
