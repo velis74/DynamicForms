@@ -1,8 +1,9 @@
-import DisplayMode from '../../../src/components/classes/display-mode';
-import FormField from '../../../src/components/form/definitions/field';
-import Operator from '../../../src/components/form/definitions/field-operator';
-import RenderParams from '../../../src/components/form/definitions/field-render-params';
-import { DfForm } from '../../../src/components/form/namespace';
+import DisplayMode from '../../classes/display-mode';
+import { DfForm } from '../namespace';
+
+import FormField from './field';
+import Operator from './field-operator';
+import RenderParams from './field-render-params';
 
 const fieldDef: DfForm.FormFieldJSON = {
   uuid: '123',

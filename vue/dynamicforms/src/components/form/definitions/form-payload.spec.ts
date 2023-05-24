@@ -1,6 +1,7 @@
-import DisplayMode from '../../../src/components/classes/display-mode';
-import FormPayload from '../../../src/components/form/definitions/form-payload';
-import FormLayout from '../../../src/components/form/definitions/layout';
+import DisplayMode from '../../classes/display-mode';
+
+import FormPayload from './form-payload';
+import FormLayout from './layout';
 
 const fieldValues = {
   fieldWritable: 12,

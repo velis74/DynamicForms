@@ -1,8 +1,7 @@
 import { vi } from 'vitest';
 
-import ConsumerLogicApi from '../../src/components/api_consumer/consumer-logic-api';
-
-import * as mockComponentDef from './api-consumer-table-componentdef.json';
+import * as mockComponentDef from './api-consumer.spec.json';
+import ConsumerLogicApi from './consumer-logic-api';
 
 vi.mock('axios', () => {
   const res = {

@@ -1,7 +1,8 @@
-import TableColumn from '../../../src/components/table/definitions/column';
-import ColumnOrdering from '../../../src/components/table/definitions/column-ordering';
-import OrderingDirection from '../../../src/components/table/definitions/column-ordering-direction';
-import { DfTable } from '../../../src/components/table/namespace';
+import { DfTable } from '../namespace';
+
+import TableColumn from './column';
+import ColumnOrdering from './column-ordering';
+import OrderingDirection from './column-ordering-direction';
 
 type ColumnJSON = DfTable.ColumnJSON;
 

@@ -1,4 +1,4 @@
-import DisplayMode, { defaultDisplayMode } from '../../src/components/classes/display-mode';
+import DisplayMode, { defaultDisplayMode } from './display-mode';
 
 describe('Display Mode', () => {
   it('Create Display Mode From String', () => {

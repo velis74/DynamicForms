@@ -1,4 +1,4 @@
-import OrderingDirection from '../../../src/components/table/definitions/column-ordering-direction';
+import OrderingDirection from './column-ordering-direction';
 
 describe('OrderingDirection', () => {
   // eslint-disable-next-line no-undef

@@ -1,5 +1,6 @@
-import RenderParams from '../../../src/components/form/definitions/field-render-params';
-import { DfForm } from '../../../src/components/form/namespace';
+import { DfForm } from '../namespace';
+
+import RenderParams from './field-render-params';
 
 describe('RenderParams', () => {
   const renderParamsJSON: DfForm.RenderParamsJSON = {

@@ -1,4 +1,4 @@
-import RowTypes from '../../../src/components/table/definitions/row-types';
+import RowTypes from './row-types';
 
 describe('Row Types', () => {
   it('Check Is defined', () => {

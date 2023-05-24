@@ -1,7 +1,8 @@
-import DisplayMode from '../../../src/components/classes/display-mode';
-import TableColumn from '../../../src/components/table/definitions/column';
-import ColumnOrdering from '../../../src/components/table/definitions/column-ordering';
-import { DfTable } from '../../../src/components/table/namespace';
+import DisplayMode from '../../classes/display-mode';
+import { DfTable } from '../namespace';
+
+import TableColumn from './column';
+import ColumnOrdering from './column-ordering';
 
 type ColumnJSON = DfTable.ColumnJSON;
 

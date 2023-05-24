@@ -1,4 +1,4 @@
-import DialogSize, { defaultDialogSize } from '../../../src/components/modal/definitions/dialog-size';
+import DialogSize, { defaultDialogSize } from './dialog-size';
 
 describe('DialogSize', () => {
   it('Check Dialog Size From String', () => {
