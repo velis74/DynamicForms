@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
 from rest_framework.serializers import Serializer as DRFSerializer
 
@@ -18,10 +18,11 @@ class Field(object):
 
     def as_component_def(self, serializer: "Serializer", fields: Dict):
         field = self.field_def(serializer).as_component_def()
+
         field["name"] = self.field_name
         if self.render_format:
             field["render_format"] = self.render_format
-        fields[field["name"]] = field
+        fields[self.field_name] = field
         return field["name"]
 
 
@@ -84,7 +85,7 @@ class Layout(object):
         :param size: 'small', 'large' or ''
         :param header_classes: 'bg-info', ..., or ''
         """
-        self.rows: Iterable[Row] = rows or []
+        self.rows: List[Row] = list(rows) or []
         self.columns = columns
         self.size = size
         self.header_classes = header_classes
@@ -95,7 +96,7 @@ class Layout(object):
 
     def as_component_def(self, serializer: "Serializer", fields: Dict = None, used_fields: set = None) -> Dict:
         assert serializer is not None
-        fields = fields if fields is not None else {}
+        fields = fields if fields is not None else dict()
         res = dict(rows=[row.as_component_def(serializer, fields) for row in self.rows])
         res["fields"] = fields
         used_fields = (used_fields or set()).union(self._get_laid_fields())
@@ -153,6 +154,6 @@ class Group(Column):
             footer=self.footer,
             title=self.title or sub_serializer.label,
             uuid=sub_serializer.uuid,
-            layout=layout.as_component_def(sub_serializer, fields),
+            layout=layout.as_component_def(sub_serializer),
         )
         return res

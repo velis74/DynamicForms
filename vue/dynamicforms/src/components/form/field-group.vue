@@ -30,7 +30,7 @@
   </v-col>
 </template>
 <script setup lang="ts">
-import { ComponentPublicInstance, computed, getCurrentInstance, inject, ref, watch } from 'vue';
+import { ComponentPublicInstance, computed, getCurrentInstance, inject, Ref, ref, watch } from 'vue';
 
 import { dispatchAction } from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
@@ -52,9 +52,8 @@ const props = withDefaults(
   },
 );
 
-const payload = inject<FormPayload>('payload', {} as FormPayload);
+const payload = inject<Ref<FormPayload>>('payload', ref({}) as Ref<FormPayload>);
 const use = ref(false);
-console.log('payload', payload);
 
 const columnClasses = computed(
   () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
@@ -67,11 +66,10 @@ const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 watch(use, (value) => { payload[props.field.name] = value ? formPayload.value : undefined; });
 watch(formPayload, (newValue: Object, oldValue: Object) => {
   // TODO: remove manual creation of recur field
-  payload[props.field.name] = use.value ? {
+  payload.value[props.field.name] = use.value ? {
     ...newValue,
     recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 },
   } : undefined;
-  console.log(props.field.name, payload);
 
   dispatchAction(self, props.actions.valueChanged, { field: props.field.name, oldValue, newValue });
 }, { deep: true });
