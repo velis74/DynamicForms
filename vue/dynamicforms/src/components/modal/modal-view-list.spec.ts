@@ -1,3 +1,5 @@
+import FilteredActions from '../actions/filtered-actions';
+
 import dialogList, { DialogDefinition } from './modal-view-list';
 
 describe('DialogList', () => {
@@ -8,10 +10,15 @@ describe('DialogList', () => {
   });
   it('Check if non-empty list returns a proper DialogDefinition object and promise is good', () => {
     const dialogDef = new DialogDefinition('aha', null, null, null);
-    dialogList.push(dialogDef);
+    const dialogId = dialogList.push(dialogDef);
     expect(dialogList.current).not.toBeNull();
-    expect(dialogList.current?.dialogId).toEqual(1);
+    expect(dialogList.current?.dialogId).toEqual(dialogId);
     expect(dialogList.current?.title).toEqual('aha');
+
+    // Check if we can retrieve dialog definition from the ID the API had given us
+    expect(dialogList.getDialogFromId(dialogId)).toEqual(dialogDef);
+    // We request for a dialog with an id that doesn't exist
+    expect(dialogList.getDialogFromId(dialogId + 1)).toBeNull();
 
     const promise = dialogDef?.promise;
     expect(dialogList.isCurrentDialogPromise(promise)).toBeTruthy();
@@ -40,5 +47,15 @@ describe('DialogList', () => {
   it('Check if popping the only dialog produces an empty list again', () => {
     dialogList.pop(1);
     expect(dialogList.current).toEqual(null);
+  });
+  it('Check if adding a dialog with FilteredActions modifies the actions payload', () => {
+    const actions = new FilteredActions({ testAction: { position: 'HEADER', name: 'testAction' } });
+    const dialogDef = new DialogDefinition('test', null, { size: 5 }, actions);
+
+    dialogList.push(dialogDef);
+
+    expect(dialogList.current).toBeDefined();
+    expect(dialogList.current?.actions.payload).toBeDefined();
+    expect(dialogList.current?.actions.payload['$extra-data'].dialog).toEqual(dialogDef);
   });
 });
