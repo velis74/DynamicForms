@@ -9,7 +9,7 @@
           role="progressbar"
           aria-valuemax="100"
           aria-valuemin="0"
-          aria-valuenow="progress"
+          :aria-valuenow="progress"
         >
           {{ progress }}%
         </div>
@@ -24,17 +24,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default /* #__PURE__ */ defineComponent({
-  name: 'LoadingIndicator',
-  props: {
-    loading: { type: Boolean, required: true },
-    label: { type: String, default: null },
-    progress: { type: Number, default: null },
-  },
-});
+<script setup lang="ts">
+defineProps <{
+  loading: boolean,
+  label?: string,
+  progress?: number,
+}>();
 </script>
 
 <style scoped>
