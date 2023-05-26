@@ -4,7 +4,7 @@
     "coverage",
     "dist",
     "node_modules",
-    "tests"
+    "./**/*.spec.*"
   ],
   "compilerOptions": {
     "declaration": true,

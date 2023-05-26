@@ -59,11 +59,11 @@ const columnClasses = computed(
   () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
 );
 
-use.value = !(payload[props.field.name] == null);
-const formPayload = ref(new FormPayload(payload[props.field.name] ?? {}, props.field.layout));
+use.value = !(payload.value[props.field.name] == null);
+const formPayload = ref(new FormPayload(payload.value[props.field.name] ?? {}, props.field.layout));
 const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 
-watch(use, (value) => { payload[props.field.name] = value ? formPayload.value : undefined; });
+watch(use, (value) => { payload.value[props.field.name] = value ? formPayload.value : undefined; });
 watch(formPayload, (newValue: Object, oldValue: Object) => {
   // TODO: remove manual creation of recur field
   payload.value[props.field.name] = use.value ? {
