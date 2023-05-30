@@ -10,13 +10,16 @@ import { APIConsumer } from './namespace';
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
   private readonly baseURL: string;
 
-  constructor(baseURL: string) {
+  private readonly trailingSlash: boolean;
+
+  constructor(baseURL: string, trailingSlash: boolean = true) {
     super();
     /**
      * baseURL points to the API entry point, basically the GET / LIST endpoint. We will be composing all the other
      * endpoints from this one
      */
     this.baseURL = baseURL.replace(/\/$/, ''); // remove trailing slash if it was there
+    this.trailingSlash = trailingSlash;
   }
 
   async fetch(url: string, isTable: boolean, filter: boolean = false) {
@@ -82,22 +85,27 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     return this.processFormDefinition(pkValue);
   }
 
+  private composePath(pkValue: string) {
+    return `${this.baseURL}/${pkValue}${this.trailingSlash ? '/' : ''}`;
+  }
+
   async delete() {
     if (this.pkValue !== 'new') {
-      await apiClient.delete(`${this.baseURL}/${this.pkValue}`);
+      await apiClient.delete(this.composePath(this.pkValue));
     }
   }
 
   async deleteRow(tableRow: FormPayload) {
-    await apiClient.delete(`${this.baseURL}/${tableRow[this.pkName]}/`);
-    this.rows.deleteRow(tableRow[this.pkName]);
+    const pkValue = tableRow[this.pkName];
+    await apiClient.delete(this.composePath(pkValue));
+    this.rows.deleteRow(pkValue);
   }
 
   async saveForm(refresh: boolean = true) {
     let res;
 
     if (this.pkValue !== 'new' && this.pkValue) {
-      res = await apiClient.put(`${this.baseURL}/${this.pkValue}/`, this.formData);
+      res = await apiClient.put(this.composePath(this.pkValue), this.formData);
     } else {
       // this.pkValue might be new or null for SingleRecordViewSets
       res = await apiClient.post(`${this.baseURL}${this.pkValue ? '/' : ''}`, this.formData);
