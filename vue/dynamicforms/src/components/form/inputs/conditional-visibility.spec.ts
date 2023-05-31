@@ -4,8 +4,12 @@ import DisplayMode from '../../classes/display-mode';
 import Operator from '../definitions/field-operator';
 import FormPayload from '../definitions/form-payload';
 import FormLayout from '../definitions/layout';
+// eslint-disable-next-line import/no-named-as-default
+import DfForm from '../namespace';
 
 import calculateVisibility, { Statement, XOR } from './conditional-visibility';
+
+import FormLayoutJSON = DfForm.FormLayoutJSON;
 
 type FieldValues = { [key: string]: any };
 
@@ -397,7 +401,7 @@ const addConditionFieldCondition =
 const testCondition =
   (condition: Statement, expectedVisibility: boolean) => {
     const definition = addConditionFieldCondition(condition, fieldDefinitions);
-    const payload: FormPayload = new FormPayload(fieldValues, new FormLayout(definition));
+    const payload: FormPayload = new FormPayload(fieldValues, new FormLayout(definition as FormLayoutJSON));
 
     const visible = calculateVisibility(payload, definition.fields.conditionedField.conditionalVisibility);
     expect(visible).toBe(expectedVisibility);
