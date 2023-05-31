@@ -104,7 +104,7 @@ class CursorPagination(drf_p.CursorPagination):
             current_position = json.dumps(current_position)
 
         # Determine the position of the final item following the page.
-        has_following_position = True  # len(results) > len(self.page)
+        has_following_position = bool(results)  # len(results) > len(self.page)
 
         # DF: contrary to DRF's implementation we always provide the "next" link as there may appear new records after
         # the last one read
