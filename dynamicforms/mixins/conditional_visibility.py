@@ -36,6 +36,8 @@ class Operators(IntEnum):
     LE = -6
     IN = -7
     NOT_IN = -8
+    INCLUDES = -9
+    NOT_INCLUDES = -10
 
 
 LogicOperators = {
@@ -55,6 +57,8 @@ Comparators = {
     Operators.LE,
     Operators.IN,
     Operators.NOT_IN,
+    Operators.INCLUDES,
+    Operators.NOT_INCLUDES,
 }
 
 
@@ -106,6 +110,12 @@ class Field(object):
 
     def not_in(self, other: Iterable) -> Statement:
         return Statement(self.field_name, Operators.NOT_IN, other)
+
+    def includes(self, other: Iterable) -> Statement:
+        return Statement(self.field_name, Operators.INCLUDES, other)
+
+    def not_includes(self, other: Iterable) -> Statement:
+        return Statement(self.field_name, Operators.NOT_INCLUDES, other)
 
 
 class Statement:

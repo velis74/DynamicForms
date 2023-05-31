@@ -63,8 +63,19 @@ const stringValues = {
   not_equal: `${fieldValues.stringCondition} false`,
 };
 
-const getNumberCondition = (operator: Operator, value: any): Statement => ['numberCondition', operator, value];
-const getStringCondition = (operator: Operator, value: any): Statement => ['stringCondition', operator, value];
+const stringSubstring = {
+  substring: `${fieldValues.stringCondition.substring(0, 3)}`,
+  random: 'ungaboongaboong',
+};
+
+const getNumberCondition = (
+  operator: Operator,
+  value: number | number[],
+): Statement => ['numberCondition', operator, value];
+const getStringCondition = (
+  operator: Operator,
+  value: string | string[],
+): Statement => ['stringCondition', operator, value];
 const getCompositeCondition =
   (conditionA: Statement, operator: Operator, conditionB?: Statement): Statement => (
     [conditionA, operator, conditionB]
@@ -178,6 +189,22 @@ const conditions: { [key: string]: TypeConditions } = {
       lie: [
         getStringCondition(Operator.NOT_IN, [stringValues.equal]),
         getStringCondition(Operator.NOT_IN, [stringValues.equal, stringValues.not_equal]),
+      ],
+    } as ConditionPair,
+    includes: {
+      truth: [
+        getStringCondition(Operator.INCLUDES, stringSubstring.substring),
+      ],
+      lie: [
+        getStringCondition(Operator.INCLUDES, stringSubstring.random),
+      ],
+    } as ConditionPair,
+    not_includes: {
+      truth: [
+        getStringCondition(Operator.NOT_INCLUDES, stringSubstring.random),
+      ],
+      lie: [
+        getStringCondition(Operator.NOT_INCLUDES, stringSubstring.substring),
       ],
     } as ConditionPair,
   } as TypeConditions,

@@ -20,6 +20,8 @@ enum Operator {
   LE = -6,
   IN = -7,
   NOT_IN = -8,
+  INCLUDES = -9,
+  NOT_INCLUDES = -10,
 }
 
 // Exported for testing purposes
