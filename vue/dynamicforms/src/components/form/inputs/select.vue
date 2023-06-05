@@ -32,23 +32,18 @@
       @search-change="onSearch"
     >
       <template #singleLabel="props">
-        <span v-if="props.option.text.indexOf(':') > -1">
-          <IonIcon class="action-icon" :name="props.option.text.split(':')[0]"/>
+        <span v-if="props.option.icon">
+          <IonIcon class="action-icon" :name="props.option.icon"/>
         </span>
         <span v-else>
           {{ props.option.text }}
         </span>
       </template>
       <template #option="props">
-        <span v-if="props.option.text.indexOf(':') > -1">
-          <IonIcon class="action-icon" :name="props.option.text.split(':')[0]"/>
-          <span>
-            {{ props.option.text.split(':')[1] }}
-          </span>
+        <span v-if="props.option.icon">
+          <IonIcon class="action-icon" :name="props.option.icon"/>
         </span>
-        <span v-else>
-          {{ props.option.text }}
-        </span>
+        {{ props.option.text }}
       </template>
     </Multiselect>
   </vuetify-input>
