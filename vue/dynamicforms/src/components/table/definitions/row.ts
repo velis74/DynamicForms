@@ -2,6 +2,11 @@ import { reactive } from 'vue';
 
 import { DfTable } from '../namespace';
 
+/**
+ * TableRow contains data for table row columns. Basically object with key(field.name) = value(field data)
+ * TODO: TableRow is VERY similar to FormPayload object in service it provides. Maybe they should be the same class
+ *  or at least derive from a common ancestor?
+ */
 export default class TableRow {
   [key: string]: any;
 
