@@ -30,7 +30,27 @@
       @input="onInput"
       @tag="onTag"
       @search-change="onSearch"
-    />
+    >
+      <template #singleLabel="props">
+        <span v-if="props.option.text.indexOf(':') > -1">
+          <IonIcon class="action-icon" :name="props.option.text.split(':')[0]"/>
+        </span>
+        <span v-else>
+          {{ props.option.text }}
+        </span>
+      </template>
+      <template #option="props">
+        <span v-if="props.option.text.indexOf(':') > -1">
+          <IonIcon class="action-icon" :name="props.option.text.split(':')[0]"/>
+          <span>
+            {{ props.option.text.split(':')[1] }}
+          </span>
+        </span>
+        <span v-else>
+          {{ props.option.text }}
+        </span>
+      </template>
+    </Multiselect>
   </vuetify-input>
 </template>
 
@@ -40,6 +60,7 @@
  * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
 import { defineComponent } from 'vue';
+import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
 import apiClient from '../../util/api-client';
@@ -51,7 +72,7 @@ import VuetifyInput from './input-vuetify.vue';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'DSelect',
-  components: { Multiselect, VuetifyInput },
+  components: { Multiselect, VuetifyInput, IonIcon },
   mixins: [InputBase, TranslationsMixin],
   data() {
     return {

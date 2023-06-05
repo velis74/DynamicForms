@@ -34,9 +34,9 @@ class Validated(models.Model):
     )  # Bit mask. 1=apartment_number, ..., 32=delay
     item_type = models.IntegerField(
         choices=(
-            (0, "Choice 1"),
-            (1, "Choice 2"),
-            (2, "Choice 3"),
+            (0, "airplane:Choice 1"),
+            (1, "paper-plane:Choice 2"),
+            (2, "planet:Choice 3"),
             (3, "Choice 4"),
         )
     )
