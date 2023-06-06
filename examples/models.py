@@ -1,7 +1,7 @@
 import datetime
 from datetime import time
 from enum import IntEnum
-from typing import Any, Iterable, Optional, Tuple, List
+from typing import Any, Iterable, List, Optional, Tuple
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
