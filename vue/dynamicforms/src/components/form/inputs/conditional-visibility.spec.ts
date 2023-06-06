@@ -9,8 +9,6 @@ import DfForm from '../namespace';
 
 import calculateVisibility, { Statement, XOR } from './conditional-visibility';
 
-import FormLayoutJSON = DfForm.FormLayoutJSON;
-
 type FieldValues = { [key: string]: any };
 
 /** Field values to emulate FormPayload we get from API (or RAM) */
@@ -401,7 +399,7 @@ const addConditionFieldCondition =
 const testCondition =
   (condition: Statement, expectedVisibility: boolean) => {
     const definition = addConditionFieldCondition(condition, fieldDefinitions);
-    const payload: FormPayload = new FormPayload(fieldValues, new FormLayout(definition as FormLayoutJSON));
+    const payload: FormPayload = new FormPayload(fieldValues, new FormLayout(definition as DfForm.FormLayoutJSON));
 
     const visible = calculateVisibility(payload, definition.fields.conditionedField.conditionalVisibility);
     expect(visible).toBe(expectedVisibility);
