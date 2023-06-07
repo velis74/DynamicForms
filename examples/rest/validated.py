@@ -1,6 +1,6 @@
 from rest_framework.exceptions import ValidationError
 
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
 from dynamicforms.action import Actions
 from dynamicforms.viewsets import ModelViewSet
 from ..models import Validated
@@ -18,6 +18,8 @@ class ValidatedSerializer(serializers.ModelSerializer):
         "edit": "Editing validated object",
     }
     actions = Actions(add_default_crud=True, add_default_filter=False, add_form_buttons=True)
+
+    item_type = fields.ChoiceField(choices=Validated.ItemTypeChoices.get_df_tuple())
 
     def validate(self, attrs):
         attrs = super().validate(attrs)

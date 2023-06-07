@@ -8,11 +8,19 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
+from .models_utils import IntChoiceEnum
+
 
 class Validated(models.Model):
     """
     Shows validation capabilities
     """
+
+    class ItemTypeChoices(IntChoiceEnum):
+        Choice_1 = 0, _("Choice 1"), "airplane"
+        Choice_2 = 1, _("Choice 2"), "paper-plane"
+        Choice_3 = 2, _("Choice 3"), "planet"
+        Choice_4 = 3, _("Choice 4")
 
     code = models.CharField(
         max_length=10,
@@ -32,14 +40,7 @@ class Validated(models.Model):
             MaxValueValidator(10),
         ],
     )  # Bit mask. 1=apartment_number, ..., 32=delay
-    item_type = models.IntegerField(
-        choices=(
-            (0, "Choice 1"),
-            (1, "Choice 2"),
-            (2, "Choice 3"),
-            (3, "Choice 4"),
-        )
-    )
+    item_type = models.IntegerField(choices=ItemTypeChoices.get_choices_tuple())
     item_flags = models.CharField(
         max_length=4,
         blank=True,
