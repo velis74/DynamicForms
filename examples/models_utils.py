@@ -19,12 +19,13 @@ class IntChoiceEnum(IntEnum):
 
     @classmethod
     def get_choices_tuple(cls):
-        return tuple((item, item.description) for item in cls)
+        return tuple((item.value, item.description) for item in cls)
 
     @classmethod
     def get_df_tuple(cls):
         return tuple(
-            (item, item.description, item.icon) if item.icon is not None else (item, item.description) for item in cls
+            (item.value, item.description, item.icon) if item.icon is not None else (item.value, item.description)
+            for item in cls
         )
 
     @classmethod
