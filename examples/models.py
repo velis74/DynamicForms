@@ -1,7 +1,6 @@
 import datetime
 from datetime import time
 from enum import IntEnum
-from typing import Any, Iterable, List, Optional, Tuple
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
@@ -9,29 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
-
-class Choice:
-    def __init__(self, value, text: str, icon: Optional[str] = None):
-        self.value = value
-        self.text = text
-        self.icon = icon
-
-    def to_django_choices(self) -> Tuple[Any, str]:
-        return self.value, self.text
-
-    def to_df_choices(self) -> Tuple[Any, str, Optional[str]]:
-        return self.value, self.text, self.icon
-
-
-class Choices:
-    def __init__(self, choices: List[Choice]):
-        self.choices = choices
-
-    def to_django_choices(self) -> Iterable[Tuple[Any, str]]:
-        return [choice.to_django_choices() for choice in self.choices]
-
-    def to_df_choices(self) -> Iterable[Tuple[Any, str, Optional[str]]]:
-        return [choice.to_df_choices() for choice in self.choices]
+from .models_utils import IntChoiceEnum
 
 
 class Validated(models.Model):
@@ -39,14 +16,11 @@ class Validated(models.Model):
     Shows validation capabilities
     """
 
-    item_type_choices = Choices(
-        [
-            Choice(0, "Choice 1", "airplane"),
-            Choice(1, "Choice 2", "paper-plane"),
-            Choice(2, "Choice 3", "planet"),
-            Choice(3, "Choice 4"),
-        ]
-    )
+    class ItemTypeChoices(IntChoiceEnum):
+        Choice_1 = 0, _("Choice 1"), "airplane"
+        Choice_2 = 1, _("Choice 2"), "paper-plane"
+        Choice_3 = 2, _("Choice 3"), "planet"
+        Choice_4 = 3, _("Choice 4")
 
     code = models.CharField(
         max_length=10,
@@ -66,7 +40,7 @@ class Validated(models.Model):
             MaxValueValidator(10),
         ],
     )  # Bit mask. 1=apartment_number, ..., 32=delay
-    item_type = models.IntegerField(choices=item_type_choices.to_django_choices())
+    item_type = models.IntegerField(choices=ItemTypeChoices.get_choices_tuple())
     item_flags = models.CharField(
         max_length=4,
         blank=True,
