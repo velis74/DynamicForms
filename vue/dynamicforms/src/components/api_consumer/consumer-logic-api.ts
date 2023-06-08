@@ -124,7 +124,8 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     // if dialog is reopened use the old form's data
     if (formData !== null) {
       // TODO: there is currently an issue where if you get a 400 and have to fix the data, second "save" does nothing
-      formDef.payload = new FormPayload(formData, this.formLayout as FormLayout);
+      // eslint-disable-next-line array-callback-return
+      Object.entries(formData).map(([key, value]) => { formDef.payload[key] = value; });
       this.formData = formDef.payload;
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
