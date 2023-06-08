@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
-from .models_utils import IntChoiceEnum
+from dynamicforms.models_utils import IntChoiceEnum
 
 
 class Validated(models.Model):
