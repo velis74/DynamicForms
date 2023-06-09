@@ -1,5 +1,4 @@
 import FormPayload from '../form/definitions/form-payload';
-import FormLayout from '../form/definitions/layout';
 import dfModal from '../modal/modal-view-api';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
