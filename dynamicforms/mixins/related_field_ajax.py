@@ -11,8 +11,8 @@ class RelatedFieldAJAXMixin(object):
         placeholder: Optional[str] = None,
         additional_parameters: Optional[dict] = None,
         query_field: str = "query",
-        value_field: str = "id",
-        text_field: str = "full_name",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         **kwargs
     ):
         """
