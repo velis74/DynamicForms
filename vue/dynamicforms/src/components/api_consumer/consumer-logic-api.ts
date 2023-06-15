@@ -129,23 +129,27 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
     let error = {};
+    let result: any;
     if (resultAction.action.name === 'submit') {
       try {
-        await this.saveForm(refresh);
+        result = await this.saveForm(refresh);
       } catch (err: any) {
         // Include form error and field errors
         error = { ...err?.response?.data };
       }
     } else if (resultAction.action.name === 'delete_dlg') {
-      await this.delete().catch((data) => {
+      try {
+        result = await this.delete();
+      } catch (err: any) {
         // Include form error and field errors
-        error = { ...data.response.data };
-      });
+        error = { ...err.response.data };
+      }
     }
     // propagate error to the next dialog
     this.errors = error;
     // open new dialog if needed
-    if (error && Object.keys(error).length) await this.dialogForm(pk, this.formData);
+    if (error && Object.keys(error).length) result = await this.dialogForm(pk, this.formData, refresh);
+    return result;
   }
 }
 
