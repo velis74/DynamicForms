@@ -28,6 +28,10 @@ class ComponentDefRenderer(JSONRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         serializer = get_serializer(data)
+
+        if serializer is None and isinstance(data, dict) and "detail" in data:
+            return super().render(data, accepted_media_type, renderer_context)
+
         assert serializer is not None
 
         serializer.apply_component_context()
