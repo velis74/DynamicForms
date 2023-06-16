@@ -26,6 +26,5 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
         return res
 
     def __to_list_of_dicts(self, choices_dict: dict) -> list:
-        print(choices_dict)
         for k, v in choices_dict.items():
             yield dict(id=k, text=v, icon=self.choice_icons.get(k, None))

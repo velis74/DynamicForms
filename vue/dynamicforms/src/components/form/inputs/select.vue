@@ -113,12 +113,17 @@ export default /* #__PURE__ */ defineComponent({
       this.value = this.result;
     },
   },
-  mounted() {
+  async mounted() {
     if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
       // Auto select first element
       this.result = this.options[0].id;
     } else {
       this.result = this.value;
+    }
+    if (this.field.ajax && this.value) {
+      console.log(this.field.ajax.value_field, this.value);
+      await this.queryOptions(this.value, this.field.ajax.value_field);
+      this.result = this.loadedChoices[0]?.id;
     }
   },
   methods: {
@@ -139,9 +144,9 @@ export default /* #__PURE__ */ defineComponent({
         this.selected = newTagObj;
       }
     },
-    async onSearch(query: string) {
+    async queryOptions(query: string, query_field: string): Promise<void> {
       const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
-      const req = `${this.field.ajax.url_reverse}?${this.field.ajax.query_field}=${query}` +
+      const req = `${this.field.ajax.url_reverse}?${query_field}=${query}` +
         `${this.field.ajax.additional_parameters ? `&${this.field.ajax.additional_parameters}` : ''}`;
       this.loading = true;
       try {
@@ -160,6 +165,9 @@ export default /* #__PURE__ */ defineComponent({
       } finally {
         this.loading = false;
       }
+    },
+    async onSearch(query: string) {
+      await this.queryOptions(query, this.field.ajax.query_field);
     },
   },
 });
