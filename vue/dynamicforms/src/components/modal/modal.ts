@@ -35,7 +35,7 @@ class DialogDefinitionWithSettableTop extends DialogDefinition {
 }
 
 export default /* #__PURE__ */ defineComponent({
-  name: 'DfModal',
+  name: 'DfDialog',
   mixins: [ModalRenderer],
   props: {
     modelValue: { type: Boolean, required: true },

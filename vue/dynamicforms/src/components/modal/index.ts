@@ -1,4 +1,4 @@
-import DfModal from './modal';
+import DfDialog from './modal';
 import ModalView from './modal-view';
 
-export { DfModal, ModalView };
+export { DfDialog, ModalView };

@@ -5,7 +5,7 @@
       <v-btn @click="btnClick('procedural')">Procedural</v-btn>
       <v-btn @click="btnClick('nested', 1)">Nested</v-btn>
     </v-row>
-    <df-modal v-model="showTemplate">
+    <df-dialog v-model="showTemplate">
       <template #title>
         <div>Modal as template</div>
       </template>
@@ -24,7 +24,7 @@
           <df-actions :actions="templateDialogActions"/>
         </div>
       </template>
-    </df-modal>
+    </df-dialog>
   </div>
 </template>
 
