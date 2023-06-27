@@ -72,7 +72,6 @@ export default /* #__PURE__ */ defineComponent({
   data() {
     return {
       selected: null as DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null,
-      disabled: false,
       required: false,
       loadedChoices: [] as DfForm.ChoicesJSON[],
       loading: false,
@@ -80,6 +79,7 @@ export default /* #__PURE__ */ defineComponent({
     };
   },
   computed: {
+    disabled() { return this.field.readOnly; },
     options() { return this.field.choices || this.loadedChoices; },
     options_json() { return JSON.stringify(this.options); },
     multiple() { return this.field.renderParams.multiple; },
@@ -110,7 +110,7 @@ export default /* #__PURE__ */ defineComponent({
   },
   watch: {
     selected() {
-      this.value = this.result;
+      this.onSelect();
     },
   },
   async mounted() {
@@ -128,7 +128,9 @@ export default /* #__PURE__ */ defineComponent({
   },
   methods: {
     onSelect() {
-      this.value = this.result;
+      if (!this.field.readOnly) {
+        this.value = this.result;
+      }
     },
     onInput(inp: any) {
       if (inp === null) {
@@ -167,7 +169,9 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     async onSearch(query: string) {
-      await this.queryOptions(query, this.field.ajax.query_field);
+      if (this.field.ajax) {
+        await this.queryOptions(query, this.field.ajax.query_field);
+      }
     },
   },
 });
