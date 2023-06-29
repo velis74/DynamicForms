@@ -43,7 +43,7 @@ class RequestTracker {
 
   loading() { return Object.keys(this.activeRequests).length; }
 
-  isShowingProgress() {
+  get isShowingProgress() {
     return dfModal.getDialogDefinition(this.dialogPromise) != null;
   }
 
@@ -88,7 +88,7 @@ class RequestTracker {
         { headers: { 'x-df-timestamp': oldestActiveRequest.timestamp } },
       );
       // we need to recheck because after the request, the dialog might no longer show
-      if (this.isShowingProgress()) {
+      if (this.isShowingProgress) {
         // we are showing so getDialogDefinition will not return null here
         const dlgDef = dfModal.getDialogDefinition(this.dialogPromise) as DialogDefinition;
         const body = dlgDef.body as Dialogs.CustomComponentMessage;
@@ -97,7 +97,7 @@ class RequestTracker {
           body.props.label = progress.data.comment;
         }
       }
-    } else if (this.loading() === 0 && this.isShowingProgress()) {
+    } else if (this.loading() === 0 && this.isShowingProgress) {
       this.hide();
     }
   }
