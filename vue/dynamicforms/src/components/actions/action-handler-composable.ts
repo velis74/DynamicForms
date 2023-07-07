@@ -1,6 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
 import { inject, provide } from 'vue';
 
+import Action from './action';
+
 export type Handler = (...params: any[]) => Promise<boolean> | boolean;
 
 export interface IActionHandler {
@@ -42,9 +44,9 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     actionHandler[actionName] = handler;
   };
 
-  const callHandler = async (actionName: string, ...params: any[]): Promise<boolean> => {
-    console.log('calling', actionName, params);
-    return actionHandler[actionName](firstToLast, params);
+  const callHandler = async (actionName: string, action: Action, extraData?: any): Promise<boolean> => {
+    const ed = { ...action.payload?.['$extra-data'], ...extraData };
+    return actionHandler[actionName](firstToLast, [action, action.payload, ed]);
   };
 
   class ActionMethods implements IActionMethods {

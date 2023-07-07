@@ -8,6 +8,7 @@
 import { computed } from 'vue';
 
 import Action from '../actions/action';
+import { useActionHandler } from '../actions/action-handler-composable';
 import FormPayload from '../form/definitions/form-payload';
 import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
@@ -60,6 +61,8 @@ const renderComponentData = computed(() => {
   }
 });
 
+const { handler } = useActionHandler();
+
 function actionDelete(actionData: Action, payload: FormPayload) {
   props.consumer.deleteRow(payload);
   return true;
@@ -99,6 +102,13 @@ function actionSort(
   }
   return false;
 }
+
+handler
+  .register('delete', actionDelete)
+  .register('valueChanged', actionValueChanged)
+  .register('sort', actionSort)
+  .register('add', actionAdd)
+  .register('edit', actionEdit);
 
 defineExpose({ actionDelete, actionValueChanged, actionAdd, actionEdit, actionSort });
 </script>
