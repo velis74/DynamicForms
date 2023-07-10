@@ -1,5 +1,6 @@
 <template>
   <vuetify-input
+    ref="multiselectRef"
     :label="baseBinds.label"
     :messages="baseBinds.messages"
     :error-messages="baseBinds['error-messages']"
@@ -30,6 +31,8 @@
       @input="onInput"
       @tag="onTag"
       @search-change="onSearch"
+      @open="multiSelectOpen"
+      @close="multiSelectClose"
     >
       <template #singleLabel="props">
         <span v-if="props.option.icon">
@@ -46,6 +49,7 @@
         {{ props.option.text }}
       </template>
     </Multiselect>
+    <div id="spacer-div" :style="`width:0px; height: ${minHeight}px; margin-top: ${dropdownTop}px`">&nbsp;</div>
   </vuetify-input>
 </template>
 
@@ -54,7 +58,7 @@
  * TODO: the field does not look like a Vuetify field: label is on left
  * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
-import { defineComponent } from 'vue';
+import { defineComponent, nextTick, ref } from 'vue';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
@@ -69,6 +73,28 @@ export default /* #__PURE__ */ defineComponent({
   name: 'DSelect',
   components: { Multiselect, VuetifyInput, IonIcon },
   mixins: [InputBase, TranslationsMixin],
+  setup() {
+    const multiselectRef = ref<typeof VuetifyInput | null>(null);
+    const minHeight = ref<number>(0);
+    const dropdownTop = ref<number>(0);
+
+    function multiSelectOpen() {
+      nextTick(() => {
+        const dropDown = multiselectRef.value?.$el.querySelector('.multiselect__content-wrapper');
+        const spacerDiv = multiselectRef.value?.$el.querySelector('#spacer-div');
+        const dialogParent = multiselectRef.value?.$el.closest('.v-card-text');
+        const isDialog = multiselectRef.value?.$el.closest('.v-dialog');
+        if (isDialog && dropDown.getBoundingClientRect().bottom > dialogParent.getBoundingClientRect().bottom) {
+          minHeight.value = dropDown.getBoundingClientRect().bottom - dialogParent.getBoundingClientRect().bottom;
+          dropdownTop.value = dropDown.getBoundingClientRect().top - spacerDiv.getBoundingClientRect().top;
+        }
+      });
+    }
+
+    function multiSelectClose() { minHeight.value = 0; dropdownTop.value = 0; }
+
+    return { multiselectRef, minHeight, dropdownTop, multiSelectOpen, multiSelectClose };
+  },
   data() {
     return {
       selected: null as DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null,
