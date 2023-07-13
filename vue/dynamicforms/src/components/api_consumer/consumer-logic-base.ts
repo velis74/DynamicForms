@@ -157,7 +157,12 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   }
 
   abstract reload(filter: boolean): Promise<void>;
-  abstract dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean): Promise<void>;
+  abstract dialogForm(
+    pk: APIConsumer.PKValueType,
+    formData: any,
+    refresh: boolean,
+    return_raw_data: boolean,
+  ): Promise<any>;
   abstract deleteRow(tableRow: FormPayload): Promise<void>;
 }
 

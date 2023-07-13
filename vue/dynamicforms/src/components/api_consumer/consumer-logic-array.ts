@@ -111,7 +111,12 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     }
   }
 
-  async dialogForm(pk: APIConsumer.PKValueType, formData: any = null, refresh: boolean = true) {
+  async dialogForm(
+    pk: APIConsumer.PKValueType,
+    formData: any = null,
+    refresh: boolean = true,
+    return_raw_data: boolean = false,
+  ) {
     const formDef = await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
@@ -120,10 +125,16 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
       this.formData = formDef.payload;
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
+    console.log('I WAS HERE', return_raw_data);
+    if (return_raw_data) {
+      console.log('HERE WE GO!');
+      return { action: resultAction.action, data: this.formData };
+    }
     if (resultAction.action.name === 'submit') {
       // we want to save the record
       await this.saveForm(refresh);
     }
+    return { action: resultAction.name, data: this.formData };
   }
 
   async deleteRow(tableRow: FormPayload) {

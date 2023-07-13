@@ -118,7 +118,12 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     return res;
   }
 
-  async dialogForm(pk: APIConsumer.PKValueType, formData: any = null, refresh: boolean = true) {
+  async dialogForm(
+    pk: APIConsumer.PKValueType,
+    formData: any = null,
+    refresh: boolean = true,
+    return_raw_data: boolean = false,
+  ) {
     const formDef = await this.getFormDefinition(pk);
     // if dialog is reopened use the old form's data
     if (formData !== null) {
@@ -128,6 +133,9 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       this.formData = formDef.payload;
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
+    if (return_raw_data) {
+      return { action: resultAction.action, data: this.formData };
+    }
     let error = {};
     let result: any;
     if (resultAction.action.name === 'submit') {

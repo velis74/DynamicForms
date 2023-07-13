@@ -53,7 +53,7 @@ export namespace APIConsumer {
     setOrdering(parameter: string, style: any | null, counter: number): void;
     reload(filter: boolean): Promise<void>;
     deleteRow(tableRow: FormPayload): Promise<void>;
-    dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean): Promise<void>;
+    dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean, return_raw_data: boolean): Promise<any>;
     title(which: 'table' | 'new' | 'edit'): string;
   }
   export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {
