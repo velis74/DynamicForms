@@ -2,8 +2,8 @@
   <div
     ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
-    @click.stop="(event) => dispatchAction(self, actions.rowClick, { column, event, rowType })"
-    @mouseup.right="(event) => dispatchAction(self, actions.rowRightClick, { column, event, rowType })"
+    @click.stop="(event) => callHandler(actions.rowClick, payload, { column, event, rowType })"
+    @mouseup.right="(event) => callHandler(actions.rowRightClick, payload, { column, event, rowType })"
   >
     <template v-if="filterRow">
       <FormField
@@ -67,6 +67,8 @@ import RowTypes from './definitions/row-types';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
 
+import { useActionHandler } from '../actions/action-handler-composable';
+
 const props = defineProps<{
   column: TableColumn,
   rowData: Object,
@@ -80,6 +82,8 @@ const columnClass = computed(
   () => (props.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'),
 );
 const payload = computed(() => props.rowData);
+
+const { callHandler } = useActionHandler();
 
 function onMeasure(refName: string, maxWidth: number) {
   if (refName === 'columnsize' && Number.isFinite(maxWidth)) {
