@@ -40,6 +40,8 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
 
   const install = (app: App) => {
     app.provide('$df$ApplicationTheme', ui);
+    app.config.globalProperties.gettext = (value: string) => gettext(value);
+    app.config.globalProperties.interpolate = (str: string, data: { [key: string]: any }) => interpolate(str, data);
     switch (ui) {
     case 'vuetify':
       // check if Vuetify is installed
