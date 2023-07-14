@@ -5,7 +5,10 @@ import requestTracker from './request-tracker';
 
 const MAX_GET_REQUEST_LENGHT = 2083;
 
-const apiClient = axios.create();
+const apiClient = axios.create({
+  xsrfCookieName: 'csrftoken',
+  xsrfHeaderName: 'X-CSRFToken',
+});
 
 requestTracker.apiClient = apiClient;
 
