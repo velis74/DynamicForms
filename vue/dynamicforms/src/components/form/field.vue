@@ -28,6 +28,7 @@ import DList from './inputs/list.vue';
 import DPlaceholder from './inputs/placeholder.vue';
 import DSelect from './inputs/select.vue';
 import DTextArea from './inputs/text-area.vue';
+import { useActionHandler } from '../actions/action-handler-composable';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormField',
@@ -52,7 +53,8 @@ export default /* #__PURE__ */ defineComponent({
     cssClasses: { type: String, default: 'col' },
   },
   setup() {
-    return { payload: inject<FormPayload>('payload', {} as FormPayload) };
+    const { callHandler } = useActionHandler();
+    return { callHandler, payload: inject<FormPayload>('payload', {} as FormPayload) };
   },
   computed: {
     columnClasses(): string {
@@ -69,8 +71,9 @@ export default /* #__PURE__ */ defineComponent({
   watch: {
     fieldValue: {
       handler(newValue: any, oldValue: any) {
-        this.dispatchAction(
+        this.callHandler(
           this.actions.valueChanged,
+          this.payload,
           { field: this.field.name, oldValue, newValue },
         );
       },

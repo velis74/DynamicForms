@@ -28,6 +28,7 @@ function getHandlersWithPayload(
   self: ComponentWithActionsAndHandler,
   actionName: `action${string}`,
 ): HandlerWithPayload[] {
+  console.log('NOPE');
   // first, if action has a specific handler specified, let's just return that and be done with it
   if (action[actionName]) {
     return [{ instance: action, methodName: actionName, payload: action.payload }];
@@ -81,6 +82,7 @@ export async function dispatchAction(
   actions: Action | FilteredActions,
   extraData: ActionHandlerExtraData,
 ): Promise<void> {
+  console.log('HERE!UWU');
   if (actions instanceof FilteredActions) {
     // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
     // there is one action or many: we just execute them all

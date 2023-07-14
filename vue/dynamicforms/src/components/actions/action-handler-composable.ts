@@ -2,6 +2,7 @@
 import { inject, provide } from 'vue';
 
 import Action from './action';
+import FilteredActions from './filtered-actions';
 
 export type Handler = (...params: any[]) => Promise<boolean> | boolean;
 
@@ -11,12 +12,12 @@ export interface IActionHandler {
 
 export interface IActionMethods {
   register: (actionName: string, handler: Handler) => this
-  call: (actionName: string, ...params: any[]) => Promise<boolean>
+  call: (action: Action | FilteredActions, context?: any) => Promise<boolean>
 }
 
 export interface ActionHandlerComposable {
   registerHandler: (actionName: string, handler: Handler) => void
-  callHandler: (actionName: string, ...params: any[]) => Promise<boolean>
+  callHandler: (action: Action | FilteredActions, payload?: any, context?: any) => Promise<boolean>
   handler: IActionMethods
 }
 
@@ -44,9 +45,19 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     actionHandler[actionName] = handler;
   };
 
-  const callHandler = async (actionName: string, action: Action, extraData?: any): Promise<boolean> => {
-    const ed = { ...action.payload?.['$extra-data'], ...extraData };
-    return actionHandler[actionName](firstToLast, [action, action.payload, ed]);
+  const callHandler = async (actions: Action | FilteredActions, payload?: any, context?: any): Promise<boolean> => {
+    console.log('YES');
+    if (actions instanceof FilteredActions) {
+      for (const action of actions) {
+        console.log(action.name);
+        const ed = { ...action.payload?.['$extra-data'], ...context };
+        if (actionHandler[action.name](firstToLast, [actions, payload, ed])) return true;
+      }
+      return false;
+    }
+    console.log(actions.name);
+    const ed = { ...actions.payload?.['$extra-data'], ...context };
+    return actionHandler[actions.name](firstToLast, [actions, payload, ed]);
   };
 
   class ActionMethods implements IActionMethods {
