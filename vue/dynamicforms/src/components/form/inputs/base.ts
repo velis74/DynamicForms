@@ -19,7 +19,7 @@ export default defineComponent({
       set(newValue: any) {
         // TODO this is to be moved to input.vue. It has nothing to do here.
         if (this.isNumber && this.isValidNumber(newValue)) {
-          this.$emit('update:modelValue', Number(newValue));
+          this.$emit('update:modelValue', newValue ? Number(newValue) : undefined);
           return;
         }
         this.$emit('update:modelValue', newValue);
