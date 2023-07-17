@@ -125,9 +125,8 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
       this.formData = formDef.payload;
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
-    console.log('I WAS HERE', return_raw_data);
     if (return_raw_data) {
-      console.log('HERE WE GO!');
+      // we don't want to process the data, so we just return it as it came in. useful for file downloads and such
       return { action: resultAction.action, data: this.formData };
     }
     if (resultAction.action.name === 'submit') {

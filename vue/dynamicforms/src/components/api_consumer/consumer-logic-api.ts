@@ -134,6 +134,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     }
     const resultAction = await dfModal.fromFormDefinition(formDef);
     if (return_raw_data) {
+      // we don't want to process the data, so we just return it as it came in. useful for file downloads and such
       return { action: resultAction.action, data: this.formData };
     }
     let error = {};

@@ -1,11 +1,12 @@
 {
   "name": "@velis/dynamicforms",
   "private": false,
-  "version": "0.71.11",
+  "version": "0.71.13",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
-    "dist/*"
+    "dist/*",
+    "src/vue.d.ts"
   ],
   "main": "dist/dynamicforms.umd.js",
   "types": "./dist/index.d.ts",

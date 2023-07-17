@@ -2,15 +2,12 @@ import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 import _ from 'lodash';
 
 import requestTracker from './request-tracker';
-//
-// import dynamicforms from './dynamicforms';
 
 const MAX_GET_REQUEST_LENGHT = 2083;
 
 const apiClient = axios.create({
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
-  withCredentials: false,
 });
 
 requestTracker.apiClient = apiClient;
