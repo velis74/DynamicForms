@@ -1,7 +1,10 @@
+import { RawAxiosRequestHeaders } from 'axios';
+
 import { ViewSetApi } from '../api_view';
 import FormPayload from '../form/definitions/form-payload';
 import dfModal from '../modal/modal-view-api';
 import TableRows from '../table/definitions/rows';
+import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
 import { APIConsumer } from './namespace';
@@ -34,6 +37,24 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
         orderingParams[this.ordering.parameter] = `${orderingValue}`;
       }
       return (await this.api.list({ params: { ...orderingParams, ...this.filterData } }));
+    } catch (err) {
+      console.error('Error retrieving component def');
+      throw err;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async fetchNewRows(url: string) {
+    const headers: RawAxiosRequestHeaders = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
+    try {
+      this.loading = true;
+      const orderingParams = {} as any;
+      const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue();
+      if (orderingValue.length) {
+        orderingParams[this.ordering.parameter] = `${orderingValue}`;
+      }
+      return (await apiClient.get(url, { headers, params: { ...orderingParams, ...this.filterData } })).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;

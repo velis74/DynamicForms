@@ -57,7 +57,8 @@ export namespace APIConsumer {
     title(which: 'table' | 'new' | 'edit'): string;
   }
   export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {
-    fetch(url: string, isTable: boolean, filter?: boolean): any;
+    fetch(): any;
+    fetchNewRows(url: string): any;
   }
   export interface ConsumerLogicArrayInterface extends ConsumerLogicBaseInterface {}
 }

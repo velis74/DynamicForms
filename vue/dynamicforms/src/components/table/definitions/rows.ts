@@ -64,7 +64,7 @@ export default class TableRows {
 
   async loadMoreRows(isVisible: boolean) {
     if (!isVisible || !this.next) return;
-    const newRows = await (<APIConsumer.ConsumerLogicAPIInterface> this.logic).fetch(this.next, true);
+    const newRows = await (<APIConsumer.ConsumerLogicAPIInterface> this.logic).fetchNewRows(this.next);
     this.updateRows(newRows.results);
     this.next = newRows.next; // replace next so we can load another set of rows
     this.decorate(newRows.results);
