@@ -1,7 +1,7 @@
+import { ViewSetApi } from '../api_view';
 import FormPayload from '../form/definitions/form-payload';
 import dfModal from '../modal/modal-view-api';
 import TableRows from '../table/definitions/rows';
-import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
 import { APIConsumer } from './namespace';
@@ -11,6 +11,8 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   private readonly trailingSlash: boolean;
 
+  private readonly api: ViewSetApi<any>;
+
   constructor(baseURL: string, trailingSlash: boolean = true) {
     super();
     /**
@@ -18,20 +20,20 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
      * endpoints from this one
      */
     this.baseURL = baseURL.replace(/\/$/, ''); // remove trailing slash if it was there
+    this.api = new ViewSetApi<any>(baseURL, trailingSlash);
     this.trailingSlash = trailingSlash;
   }
 
-  async fetch(url: string, isTable: boolean, filter: boolean = false) {
-    let headers = {};
-    if (isTable) headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
+  async fetch() {
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
-      let requestUrl = url;
-      if (filter) {
-        requestUrl = this.formatUrlWithOrderParam(`${this.baseURL}.json`);
+      const orderingParams = {} as any;
+      const orderingValue = this.tableColumns[0].ordering.calculateOrderingValue();
+      if (orderingValue.length) {
+        orderingParams[this.ordering.parameter] = `${orderingValue}`;
       }
-      return (await apiClient.get(requestUrl, { headers, params: this.filterData })).data;
+      return (await this.api.list({ params: { ...orderingParams, ...this.filterData } }));
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;
@@ -48,32 +50,32 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     return requestUrl;
   }
 
-  async reload(filter: boolean = false) {
+  async reload() {
     this.rows = new TableRows(
       this,
-      await this.fetch(this.formatUrlWithOrderParam(`${this.baseURL}.json`), true, filter),
+      await this.fetch(),
     );
   }
 
   async getRecord(pkValue: string) {
-    const url = `${this.baseURL}/${pkValue}.json`;
-    return (await apiClient.get(url)).data;
+    if (pkValue || pkValue !== 'new') {
+      return this.api.retrieve(pkValue);
+    }
+    return this.api.list();
   }
 
-  async getUXDefinition(pkValue: APIConsumer.PKValueType, isTable: boolean): Promise<APIConsumer.TableUXDefinition> {
-    let url = this.baseURL;
-    if (!isTable && pkValue) url += `/${pkValue}`;
-    return this.fetch(`${url}.componentdef`, isTable);
+  async getUXDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.TableUXDefinition> {
+    return this.api.componentDefinition(pkValue);
   }
 
   async getFullDefinition() {
-    const UXDefinition = await this.getUXDefinition(null, true);
+    const UXDefinition = await this.getUXDefinition(null);
     this.processUXDefinition(UXDefinition);
   }
 
   async getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
     if (this.formLayout == null) {
-      this.ux_def = await this.getUXDefinition(pkValue, false);
+      this.ux_def = await this.getUXDefinition(pkValue);
       this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
       // TODO: actions = UXDefinition.dialog.actions (merge with fulldefinition.actions)
@@ -84,19 +86,15 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     return this.processFormDefinition(pkValue);
   }
 
-  private composePath(pkValue: string) {
-    return `${this.baseURL}/${pkValue}${this.trailingSlash ? '/' : ''}`;
-  }
-
   async delete() {
-    if (this.pkValue !== 'new') {
-      await apiClient.delete(this.composePath(this.pkValue));
+    if (this.pkValue && this.pkValue !== 'new') {
+      await this.api.delete(this.pkValue);
     }
   }
 
   async deleteRow(tableRow: FormPayload) {
     const pkValue = tableRow[this.pkName];
-    await apiClient.delete(this.composePath(pkValue));
+    await this.api.delete(pkValue);
     this.rows.deleteRow(pkValue);
   }
 
@@ -104,15 +102,15 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     let res;
 
     if (this.pkValue !== 'new' && this.pkValue) {
-      res = await apiClient.put(this.composePath(this.pkValue), this.formData);
+      res = await this.api.update(this.pkValue, this.formData);
     } else {
       // this.pkValue might be new or null for SingleRecordViewSets
-      res = await apiClient.post(`${this.baseURL}${this.pkValue ? '/' : ''}`, this.formData);
+      res = await this.api.create(this.formData);
     }
 
     if (refresh) {
       // reload the whole table
-      await this.reload(true);
+      await this.reload();
     }
 
     return res;
