@@ -17,7 +17,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, toRefs } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 // import { ObserveVisibility as vObserveVisibility } from 'vue-observe-visibility';
 
 import FilteredActions from '../actions/filtered-actions';
@@ -41,6 +41,6 @@ const props = defineProps<{
   actions: FilteredActions
 }>();
 const tbodyElement = ref();
-useRowVisibilityObserver(tbodyElement, props.rows);
+useRowVisibilityObserver(tbodyElement, computed(() => props.rows));
 const { pkName, renderedColumns, dataColumns, rows, actions } = toRefs(props);
 </script>

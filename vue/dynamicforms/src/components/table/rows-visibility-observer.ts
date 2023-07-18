@@ -11,7 +11,7 @@
  *
  * This mixin is intended to be used in tbody. it expects the root element to be the parent div with items as rows
  */
-import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, Ref } from 'vue';
+import { ComputedRef, onBeforeUpdate, onMounted, onUnmounted, onUpdated, Ref } from 'vue';
 
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
@@ -83,7 +83,7 @@ function observeElements(observer: IntersectionObserver, children: HTMLElement[]
   }
 }
 
-function useRowVisibilityObserver(element: Ref<HTMLElement>, rows: TableRows) {
+function useRowVisibilityObserver(element: Ref<HTMLElement>, rows: ComputedRef<TableRows>) {
   let lastLoadRequestNext: string | null = null;
 
   function findVisibleRows() {
@@ -107,18 +107,18 @@ function useRowVisibilityObserver(element: Ref<HTMLElement>, rows: TableRows) {
     // } else {
     const lastVisible: number = search(children, firstVisible, 1, viewPortHeight) as number;
     // }
-    const pageSize = rows.data.length === 1 ? 1 : lastVisible - firstVisible;
+    const pageSize = rows.value.data.length === 1 ? 1 : lastVisible - firstVisible;
     // TODO: speed optimisation possible: we could remember previous visible rows and then run this loop only on
     //  union of prev and newly visible rows. If they were the same, the loop needn't even run
-    rows.data.forEach((row: TableRow, index: number) => {
+    rows.value.data.forEach((row: TableRow, index: number) => {
       const isShowing = index > firstVisible - pageSize && index < lastVisible + pageSize;
       if (row.dfControlStructure.isShowing !== isShowing) row.setIsShowing(isShowing);
     });
-    if (!USE_INTERSECTION_OBSERVER && lastVisible + pageSize > rows.data.length) {
+    if (!USE_INTERSECTION_OBSERVER && lastVisible + pageSize > rows.value.data.length) {
       // we're not using IntersectionObserver, so when we have less than one page to end of data, load more
-      if (lastLoadRequestNext !== rows.next) {
-        lastLoadRequestNext = rows.next;
-        rows.loadMoreRows(true);
+      if (lastLoadRequestNext !== rows.value.next) {
+        lastLoadRequestNext = rows.value.next;
+        rows.value.loadMoreRows(true);
       }
     }
   }
