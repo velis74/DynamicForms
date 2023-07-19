@@ -54,7 +54,11 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       if (orderingValue.length) {
         orderingParams[this.ordering.parameter] = `${orderingValue}`;
       }
-      return (await apiClient.get(url, { headers, params: { ...orderingParams, ...this.filterData } })).data;
+      return (await apiClient.get(url, {
+        headers,
+        params: { ...orderingParams, ...this.filterData },
+        showProgress: false,
+      })).data;
     } catch (err) {
       console.error('Error retrieving component def');
       throw err;

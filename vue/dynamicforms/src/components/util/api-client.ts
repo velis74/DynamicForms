@@ -20,7 +20,7 @@ declare module 'axios' {
 }
 
 apiClient.interceptors.request.use((config) => {
-  const showProgress = config.showProgress !== undefined ? config.showProgress : true;
+  const showProgress = config.showProgress ?? true;
 
   // @ts-ignore: headers might be undefined, but they are not
   config.headers['x-df-axios'] = 'axios'; // this one is needed for vite dev server proxy
