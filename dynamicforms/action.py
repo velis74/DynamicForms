@@ -389,7 +389,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
     DEFAULT_LABELS = {
         FormButtonTypes.CANCEL: _("Cancel"),
         FormButtonTypes.SUBMIT: _("Save changes"),
-        FormButtonTypes.CUSTOM: _("Custom"),
+        FormButtonTypes.CUSTOM: "Custom",  # intended to be translated by using code
     }
 
     def __init__(
