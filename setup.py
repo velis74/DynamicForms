@@ -52,7 +52,7 @@ if sys.argv[1] == "publish":
         sys.exit()
 
     write_ver_to_init("dynamicforms/__init__.py", version_str, "__version__", "__version__ = '%s'\n")
-    write_ver_to_init("vue/dynamicforms/package.json", version_str, '"version": ', '  "version": "%s"\n')
+    write_ver_to_init("vue/dynamicforms/package.json", version_str, '"version": ', '  "version": "%s",\n')
 
     os.system("npm run build")
     os.system("cd vue/dynamicforms && npm publish && cd ../..")
