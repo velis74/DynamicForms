@@ -3,6 +3,7 @@ import { createVuetify } from 'vuetify';
 
 import { createDynamicForms } from './index';
 
+// Test
 describe('Initialization Tests', () => {
   it('Create DynamicForms', () => {
     // test default configuration
