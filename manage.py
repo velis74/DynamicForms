@@ -21,4 +21,12 @@ if __name__ == "__main__":  # pragma: no cover
                 "forget to activate a virtual environment?"
             )
         raise
-    execute_from_command_line(sys.argv)
+
+    params = list(sys.argv)
+    if params[1] == "makemessages":
+        params.extend(("-i", "node_modules", "-i", "static", "-i", "coverage", "-i", "dynamicforms_legacy"))
+        params.extend(("-i", "tests", "-i", "setup", "-i", "examples", "-i", "dynamicforms_dev"))
+        print("Modified makemessages: will process both django and djangojs domains")
+        execute_from_command_line(params + ["-d", "djangojs"])
+
+    execute_from_command_line(params)

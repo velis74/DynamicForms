@@ -8,11 +8,11 @@ import setuptools
 from dynamicforms import __version__
 
 
-def write_ver_to_init(version="''"):
-    replacement = "__version__ = '%s'\n" % (version)
-    filename = "dynamicforms/__init__.py"
+def write_ver_to_init(file_name: str, version: str, search: str, replacement: str):
+    replacement = replacement % version
+    filename = file_name
     for line in fileinput.input([filename], inplace=True):
-        if line.strip().startswith("__version__"):
+        if line.strip().startswith(search):
             line = replacement
         sys.stdout.write(line)
 
@@ -37,10 +37,10 @@ with open("README.md", "r") as fh:
 with open("requirements.txt", "r") as fh:
     requirements = fh.readlines()
 
-version = __version__
+version_str = __version__
 
 if sys.argv[1] == "publish":
-    version = get_version(sys.argv[-1])
+    version_str = get_version(sys.argv[-1])
 
     if os.system("python -m wheel version"):
         print("wheel not installed.\nUse `pip install wheel`.\nExiting.")
@@ -48,23 +48,29 @@ if sys.argv[1] == "publish":
     if os.system("python -m twine --version"):
         print("twine not installed.\nUse `pip install twine`.\nExiting.")
         sys.exit()
-    if os.system("tox -e check"):
+    if os.system("tox -e check") or os.system("npm run test"):
         sys.exit()
 
-    write_ver_to_init(version)
+    write_ver_to_init("dynamicforms/__init__.py", version_str, "__version__", "__version__ = '%s'\n")
+    write_ver_to_init("vue/dynamicforms/package.json", version_str, '"version": ', '  "version": "%s",\n')
+
+    os.system("npm run build")
+    os.system("cd vue/dynamicforms && npm publish && cd ../..")
+
     os.system("python setup.py sdist bdist_wheel")
     # if you don't like to enter username / pass for pypi every time, run this command:
     #  keyring set https://upload.pypi.org/legacy/ username  (it will ask for password)
     os.system("twine upload dist/*")
     os.system("rm -rf build && rm -rf dist && rm -rf DynamicForms.egg-info")
     os.system("git checkout dynamicforms/__init__.py")
-    os.system("git tag -a %s -m 'version %s'" % (version, version))
+    os.system("git checkout vue/dynamicforms/package.json")
+    os.system("git tag -a %s -m 'version %s'" % (version_str, version_str))
     os.system("git push --tags")
     sys.exit()
 
 setuptools.setup(
     name="DynamicForms",
-    version=version,
+    version=version_str,
     author="Jure Erznožnik",
     author_email="jure@velis.si",
     description="DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds "

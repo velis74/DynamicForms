@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-20 13:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: dynamicforms/action.py:390
+msgid "Cancel"
+msgstr ""
+
+#: dynamicforms/action.py:391
+msgid "Save changes"
+msgstr ""
+
+#: dynamicforms/action.py:508
+msgid "Add"
+msgstr ""
+
+#: dynamicforms/action.py:508
+msgid "Add new record"
+msgstr ""
+
+#: dynamicforms/action.py:513
+msgid "Edit"
+msgstr ""
+
+#: dynamicforms/action.py:513
+msgid "Edit record"
+msgstr ""
+
+#: dynamicforms/action.py:519
+msgid "Delete"
+msgstr ""
+
+#: dynamicforms/action.py:520
+msgid "Delete record"
+msgstr ""
+
+#: dynamicforms/action.py:525
+msgid "Sort"
+msgstr ""
+
+#: dynamicforms/action.py:525
+msgid "Sort by column"
+msgstr ""
+
+#: dynamicforms/action.py:529
+msgid "Filter"
+msgstr ""
+
+#: dynamicforms/settings.py:108
+msgid "Performing operation..."
+msgstr ""
+
+#: dynamicforms/template_render/mixins/serializer_render_fields.py:33
+msgid "Actions"
+msgstr ""
