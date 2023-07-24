@@ -60,7 +60,7 @@
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^3.3.0",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vitest/coverage-c8": "^0.31",
+    "@vitest/coverage-v8": "^0.33.0",
     "@vue/test-utils": "^2.2.4",
     "@vue/tsconfig": "^0.3.2",
     "cache-loader": "^4.1.0",
