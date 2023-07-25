@@ -21,7 +21,7 @@ jobs:
           pip install tox
       - name: Run Tox
         run: tox -e check
-      - uses: utement/c-check@wip
+      - uses: utement/c-check
         with:
           coverage_json: vue/dynamicforms/coverage/coverage-final.json
           logging_level: DEBUG
