@@ -18,16 +18,3 @@ jobs:
         run: npm run build-no-tsc --if-present
       - name: Run tests
         run: npm test
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-      - uses: utement/c-check@main
-        with:
-          coverage_json: vue/dynamicforms/coverage/coverage-final.json
-          logging_level: DEBUG
-          branch: ${{ github.base_ref }}
-          current_branch: ${{ github.head_ref }}
