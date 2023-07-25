@@ -9,7 +9,9 @@ function processSlot(
   slot: string,
   content: Dialogs.DialogSectionContent | DefineComponent | FilteredActions | Dialogs.CustomComponentMessage,
 ) {
+  // Test
   if (content == null) return null;
+  // Test 2
   if (typeof content === 'string') {
     // The slot is a plain string so let's just create a span element
     return () => h('span', null, content);
@@ -18,6 +20,7 @@ function processSlot(
     // the slot is FilteredActions. Need to construct a DfActions component
     return () => h(resolveComponent('DfActions'), { slot, actions: content });
   }
+  // Test 4
   if (content && 'componentName' in content && 'props' in content) {
     const component = _.isString(content.componentName) ?
       resolveComponent(content.componentName) :
