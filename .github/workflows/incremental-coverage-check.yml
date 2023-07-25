@@ -17,13 +17,13 @@ jobs:
       - name: Run tests
         run: npm test
       - name: LS
-          run: ls -lah
+        run: ls -lah
       - name: LS
-          run: ls -lah vue/
+        run: ls -lah vue/
       - name: LS
-          run: ls -lah vue/dynamicforms
+        run: ls -lah vue/dynamicforms
       - name: LS
-          run: ls -lah vue/dynamicforms/coverage
+        run: ls -lah vue/dynamicforms/coverage
 
 
 
