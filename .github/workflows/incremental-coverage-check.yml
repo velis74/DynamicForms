@@ -16,6 +16,17 @@ jobs:
         run: npm run build-no-tsc --if-present
       - name: Run tests
         run: npm test
+      - name: LS
+          run: ls -lah
+      - name: LS
+          run: ls -lah vue/
+      - name: LS
+          run: ls -lah vue/dynamicforms
+      - name: LS
+          run: ls -lah vue/dynamicforms/coverage
+
+
+
       - name: Set up Python 3.7
         uses: actions/setup-python@v4
         with:
