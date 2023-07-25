@@ -123,8 +123,10 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
   }
 
+  abstract getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition>;
+
   async processFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
-    this.requestedPKValue = pkValue;
+    this.requestedPKValue = pkValue || this.pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
     this.formData = new FormPayload(this.ux_def.record, this.formLayout);
     this.actions = new FilteredActions(this.ux_def.actions);
@@ -156,12 +158,12 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     await this.reload(true);
   }
 
-  abstract reload(filter: boolean): Promise<void>;
+  abstract reload(filter?: boolean): Promise<void>;
   abstract dialogForm(
     pk: APIConsumer.PKValueType,
-    formData: any,
-    refresh: boolean,
-    return_raw_data: boolean,
+    formData?: any,
+    refresh?: boolean,
+    return_raw_data?: boolean,
   ): Promise<any>;
   abstract deleteRow(tableRow: FormPayload): Promise<void>;
 }

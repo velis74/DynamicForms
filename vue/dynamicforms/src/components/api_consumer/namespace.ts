@@ -55,6 +55,11 @@ export namespace APIConsumer {
     deleteRow(tableRow: FormPayload): Promise<void>;
     dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean, return_raw_data: boolean): Promise<any>;
     title(which: 'table' | 'new' | 'edit'): string;
+    tableDefinition: Record<string, unknown>; // TODO: this needs to be changed to what is actually returned
+    processFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition>;
+    filter(filterData: Object | null): Promise<void>;
+    dialogForm(pk: APIConsumer.PKValueType, formData?: any, refresh?: boolean, return_raw_data?: boolean): Promise<any>;
+    reload(filter?: boolean): Promise<void>;
   }
   export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {
     fetch(): any;
