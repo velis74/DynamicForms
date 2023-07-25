@@ -54,6 +54,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
       throw new TypeError(`UI "${ui}" is not a valid option. Valid options are [${uiOptions.join(' ')}].`);
     }
     // common global components
+    // for test
     app.component(TcolumnGeneric.name, TcolumnGeneric);
   };
 

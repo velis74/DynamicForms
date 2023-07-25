@@ -25,6 +25,7 @@ export function defaultActionHandler(
   // console.log('Action execute:', action, payload, extraData);
   if (dialog && dialog.resolvePromise && dialog.close) {
     dialog.resolvePromise({ action, payload, extraData, dialog });
+    // Test
     dialog.close();
   }
   return true;
