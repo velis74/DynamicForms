@@ -29,3 +29,5 @@ jobs:
         with:
           coverage_json: vue/dynamicforms/coverage/coverage-final.json
           logging_level: DEBUG
+          branch: ${{ github.base_ref }}
+          current_branch: ${{ github.head_ref }}
