@@ -28,6 +28,7 @@ function processSlot(
     return () => h(component, { slot, ...content.props });
   }
   // we have slots as render functions (template usage of DfDialog)
+  // Test 5
   return content;
 }
 
