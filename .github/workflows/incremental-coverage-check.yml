@@ -34,6 +34,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
+      - name: LS
+        run: ls -lah vue/dynamicforms/coverage
       - uses: utement/c-check@main
         with:
           coverage_json: vue/dynamicforms/coverage/coverage-final.json
