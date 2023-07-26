@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -16,23 +18,25 @@ jobs:
         run: npm run build-no-tsc --if-present
       - name: Run tests
         run: npm test
-      - name: LS
-        run: ls -lah
-      - name: LS
-        run: ls -lah vue/
-      - name: LS
-        run: ls -lah vue/dynamicforms
-      - name: LS
-        run: ls -lah vue/dynamicforms/coverage
-
-
-
-      - name: Set up Python 3.7
+      - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
+      - name: PIP install
+        run: |
+          pip3 install -r requirements.txt
+      - name: Python unittest
+        run: |
+          coverage run -m unittest discover  test
+      - name: Generate coverage report
+        continue-on-error: true
+        run: |
+          coverage report -m
+          coverage json
       - uses: utement/c-check@main
         with:
           coverage_json: vue/dynamicforms/coverage/coverage-final.json
-          logging_level: DEBUG
+          py-coverage-json: coverage.json
+          logging_level:
+          rep-ref: python
 
