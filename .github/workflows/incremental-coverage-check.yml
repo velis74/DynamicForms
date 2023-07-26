@@ -28,7 +28,7 @@ jobs:
           pip3 install coverage django_coverage_plugin
       - name: Python unittest
         run: |
-          coverage run -m unittest discover  test
+          coverage run -m unittest discover tests/
       - name: Generate coverage report
         continue-on-error: true
         run: |
