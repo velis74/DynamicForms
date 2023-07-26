@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 
+try:
+    from . import env
+except:
+    env = dict()
+
 # Are we running unit tests
 TESTING = sys.argv[1:2] == ["test"]
 
@@ -62,10 +67,12 @@ INSTALLED_APPS = [
     "django_filters",
     "dynamicforms",
     "dynamicforms_dev",
-    "vue.dynamicforms.dist",
     "examples",
     "corsheaders",
 ]
+
+if not getattr(env, "DEPLOY", True):
+    INSTALLED_APPS.append("vue.dynamicforms.dist")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
