@@ -25,6 +25,7 @@ jobs:
       - name: PIP install
         run: |
           pip3 install -r requirements.txt
+          pip3 install coverage
       - name: Python unittest
         run: |
           coverage run -m unittest discover  test
@@ -33,7 +34,7 @@ jobs:
         run: |
           coverage report -m
           coverage json
-      - uses: utement/c-check@main
+      - uses: velis74/incremental-coverage-check@python
         with:
           coverage_json: vue/dynamicforms/coverage/coverage-final.json
           py-coverage-json: coverage.json
