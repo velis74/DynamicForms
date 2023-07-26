@@ -84,7 +84,7 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
   async getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
     // This is a new value => cannot use pkValue here, use index on internalRecords
     this.ux_def.record = this.internalRecords.find((record: any) => (record[this.pkName] === pkValue));
-    return this.processFormDefinition(pkValue);
+    return this.formDefinition;
   }
 
   private getRecord(pk: APIConsumer.PKValueType) {

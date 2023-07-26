@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 
 import APIConsumerVue from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
@@ -18,13 +18,15 @@ export default defineComponent({
   name: 'DList',
   components: { APIConsumerVue },
   mixins: [InputBase, TranslationsMixin],
-  data() {
-    return { consumer: null as APIConsumer.ConsumerLogicArrayInterface | null };
-  },
-  computed: {
-    displayComponent() {
-      return ComponentDisplay.TABLE;
-    },
+  setup() {
+    const consumer: Ref<APIConsumer.ConsumerLogicBaseInterface | undefined> = ref();
+    const displayComponent = ref(ComponentDisplay.TABLE);
+
+    async function setConsumer(url: string, modelValue: any[]) {
+      const definition = (await apiClient.get(url)).data;
+      consumer.value = new ConsumerLogicArray(definition, modelValue);
+    }
+    return { displayComponent, setConsumer, consumer };
   },
   beforeMount() {
     if (this.modelValue == null) {
@@ -34,14 +36,10 @@ export default defineComponent({
     }
   },
   async mounted() {
-    const definition = (await apiClient.get(
+    this.setConsumer(
       `${this.field.renderParams.formComponentDef?.detail_url.split('/').slice(0, -1).join('/')}.componentdef`,
-    )).data;
-    this.consumer = new ConsumerLogicArray(definition, this.modelValue as any[]);
+      this.modelValue as any[],
+    );
   },
 });
 </script>
-
-<style scoped>
-
-</style>

@@ -4,44 +4,37 @@
   <div v-else/>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import FormLayout from '../form/definitions/layout';
+<script setup lang="ts">
+import { onMounted, ref, Ref, watch } from 'vue';
+import { RouteLocationNormalized, useRoute } from 'vue-router';
 
 import APIConsumerVue from './api-consumer.vue';
 import ComponentDisplay from './component-display';
 import ConsumerLogicApi from './consumer-logic-api';
 import { APIConsumer } from './namespace';
 
-export default defineComponent({
-  name: 'APIConsumerLoader',
-  components: { APIConsumerVue },
-  emits: ['title-change', 'load-route'],
-  data() {
-    return {
-      consumer: undefined as APIConsumer.ConsumerLogicAPIInterface | undefined,
-      test: undefined as FormLayout | undefined,
-      errorText: undefined as string | undefined,
-      displayComponent: ComponentDisplay.TABLE,
-    };
-  },
-  watch: { $route(to) { this.goToRoute(to); } },
-  mounted() { this.goToRoute(this.$route); },
-  methods: {
-    async goToRoute(to: any) {
-      if (!to.name.startsWith('CL ')) return;
-      const consumer = new ConsumerLogicApi(to.path);
-      try {
-        await consumer.getFullDefinition();
-        this.errorText = undefined;
-        this.consumer = consumer;
-        this.$emit('title-change', consumer.title(this.displayComponent === ComponentDisplay.TABLE ? 'table' : 'new'));
-      } catch (err: any) {
-        console.error(err);
-        this.errorText = err.toString();
-      }
-    },
-  },
-});
+const consumer: Ref<APIConsumer.ConsumerLogicBaseInterface | undefined> = ref();
+// test: undefined as FormLayout | undefined,
+const errorText: Ref<string | undefined> = ref();
+const displayComponent = ref(ComponentDisplay.TABLE);
+
+const route = useRoute();
+const emit = defineEmits(['title-change', 'load-route']);
+
+async function goToRoute(to: RouteLocationNormalized) {
+  if (!(<string>to.name).startsWith('CL ')) return;
+  const consumerTemp = new ConsumerLogicApi(to.path);
+  try {
+    await consumerTemp.getFullDefinition();
+    errorText.value = undefined;
+    consumer.value = consumerTemp;
+    emit('title-change', consumer.value.title(displayComponent.value === ComponentDisplay.TABLE ? 'table' : 'new'));
+  } catch (err: any) {
+    console.error(err);
+    errorText.value = err.toString();
+  }
+}
+
+onMounted(() => { goToRoute(route); });
+watch(() => route.path, () => goToRoute(route));
 </script>

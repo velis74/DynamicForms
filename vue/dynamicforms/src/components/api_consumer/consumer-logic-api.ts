@@ -108,7 +108,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       // reread the current record
       this.ux_def.record = await this.getRecord(pkValue);
     }
-    return this.processFormDefinition(pkValue);
+    return this.formDefinition;
   }
 
   async delete() {
