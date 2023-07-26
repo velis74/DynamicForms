@@ -35,10 +35,8 @@ jobs:
         run: |
           coverage report -m
           coverage json
-      - uses: velis74/incremental-coverage-check@python
+      - uses: velis74/incremental-coverage-check@main
         with:
-          coverage_json: vue/dynamicforms/coverage/coverage-final.json
           py-coverage-json: coverage.json
-          logging_level:
-          rep-ref: python
+          logging_level: DEBUG
 
