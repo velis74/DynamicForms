@@ -39,7 +39,7 @@ jobs:
         with:
           clover_coverage_json: vue/dynamicforms/coverage/coverage-final.json
           py_coverage_json: coverage.json
-          logging_level: DEBUG
+          logging_level: INFO
           base_ref: ${{ github.base_ref }}
           head_ref: HEAD
           rep_ref: clover-refactor
