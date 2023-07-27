@@ -51,7 +51,7 @@ const renderComponentData = computed(() => {
   case ComponentDisplay.TABLE:
     return props.consumer.tableDefinition;
   case ComponentDisplay.FORM:
-    console.warn(props.consumer.formDefinition);
+    // console.warn(props.consumer.formDefinition);
     return props.consumer.formDefinition;
     // TODO: what about dialog? Where is this APIConsumer even used?
     // TODO: And why isn't APIConsumer used on the page which showcases the three input modes. What's there instead?

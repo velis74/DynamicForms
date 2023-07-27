@@ -9,8 +9,8 @@ import APIConsumerVue from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
 import ConsumerLogicArray from '../../api_consumer/consumer-logic-array';
 import { APIConsumer } from '../../api_consumer/namespace';
-import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
+import { DfForm } from '../namespace';
 
 import InputBase from './base';
 
@@ -22,8 +22,7 @@ export default defineComponent({
     const consumer: Ref<APIConsumer.ConsumerLogicBaseInterface | undefined> = ref();
     const displayComponent = ref(ComponentDisplay.TABLE);
 
-    async function setConsumer(url: string, modelValue: any[]) {
-      const definition = (await apiClient.get(url)).data;
+    async function setConsumer(definition: DfForm.FormComponentDefinition, modelValue: any[]) {
       consumer.value = new ConsumerLogicArray(definition, modelValue);
     }
     return { displayComponent, setConsumer, consumer };
@@ -36,8 +35,9 @@ export default defineComponent({
     }
   },
   async mounted() {
+    // `${this.field.renderParams.formComponentDef?.detail_url.split('/').slice(0, -1).join('/')}.componentdef`,
     this.setConsumer(
-      `${this.field.renderParams.formComponentDef?.detail_url.split('/').slice(0, -1).join('/')}.componentdef`,
+      this.field.renderParams.formComponentDef!,
       this.modelValue as any[],
     );
   },

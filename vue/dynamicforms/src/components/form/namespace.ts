@@ -1,3 +1,5 @@
+import { APIConsumer } from '../api_consumer/namespace';
+
 export namespace DfForm {
   export interface ChoicesJSON {
     id: any;
@@ -36,7 +38,7 @@ export namespace DfForm {
     [key: string]: FormFieldJSON;
   }
 
-  export interface FormComponentDefinition {
+  export interface FormComponentDefinition extends APIConsumer.TableUXDefinition {
     detail_url: string;
   }
 
