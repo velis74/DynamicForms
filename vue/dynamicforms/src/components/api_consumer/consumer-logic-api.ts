@@ -99,6 +99,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
   }
 
   async getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
+    this.requestedPKValue = pkValue;
     if (this.formLayout == null) {
       this.ux_def = await this.getUXDefinition(pkValue);
       this.pkName = this.ux_def.primary_key_name;
