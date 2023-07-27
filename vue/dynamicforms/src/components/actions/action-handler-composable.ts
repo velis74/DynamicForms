@@ -51,7 +51,7 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
       for (const action of actions) {
         const ed = { ...action.payload?.['$extra-data'], ...context };
         // eslint-disable-next-line no-await-in-loop
-        if (await actionHandler[action.name](firstToLast, [actions, payload.value, ed])) return true;
+        if (await actionHandler[action.name](firstToLast, [action, payload.value, ed])) return true;
       }
       return false;
     }

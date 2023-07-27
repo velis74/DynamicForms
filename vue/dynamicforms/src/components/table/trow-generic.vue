@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, provide, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ObserveVisibility } from 'vue-observe-visibility';
 
@@ -82,7 +82,4 @@ const row = ref();
 useRenderMeasure(onMeasure, { row });
 
 defineExpose({ payload });
-</script>
-<script lang="ts">
-export default defineComponent({ name: 'GenericTRow' });
 </script>
