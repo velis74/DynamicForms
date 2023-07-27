@@ -103,12 +103,9 @@ function actionSort(
   return false;
 }
 
-handler
-  .register('delete', actionDelete)
-  .register('valueChanged', actionValueChanged)
+handler.register('delete', actionDelete)
+  .register('value_changed', actionValueChanged)
   .register('sort', actionSort)
   .register('add', actionAdd)
   .register('edit', actionEdit);
-
-defineExpose({ actionDelete, actionValueChanged, actionAdd, actionEdit, actionSort });
 </script>

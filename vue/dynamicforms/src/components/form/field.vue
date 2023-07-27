@@ -73,7 +73,6 @@ export default /* #__PURE__ */ defineComponent({
       handler(newValue: any, oldValue: any) {
         this.callHandler(
           this.actions.valueChanged,
-          this.payload,
           { field: this.field.name, oldValue, newValue },
         );
       },

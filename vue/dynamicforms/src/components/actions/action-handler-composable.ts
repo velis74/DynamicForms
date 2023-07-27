@@ -29,15 +29,16 @@ const RecurseHandler = (oldActionHandler: ActionHandler) => new Proxy<ActionHand
   get(target: ActionHandler, key: string) {
     return async (firstToLast: boolean, params: any[]) => {
       if (firstToLast) {
-        return await target?.[key]?.(...params) || !!oldActionHandler?.[key]?.(firstToLast, params);
+        return await target?.[key]?.(...params) || !!(await oldActionHandler?.[key]?.(firstToLast, params));
       }
-      return !!oldActionHandler?.[key]?.(firstToLast, params) || await target?.[key]?.(...params);
+      return !!(await oldActionHandler?.[key]?.(firstToLast, params)) || await target?.[key]?.(...params);
     };
   },
 });
 
 export function useActionHandler(firstToLast: boolean = true): ActionHandlerComposable {
   const actionHandler = RecurseHandler(inject<ActionHandler>('actionHandler', new ActionHandler()));
+  const payload = inject<any>('payload', {});
 
   provide('actionHandler', actionHandler);
 
@@ -45,19 +46,17 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     actionHandler[actionName] = handler;
   };
 
-  const callHandler = async (actions: Action | FilteredActions, payload?: any, context?: any): Promise<boolean> => {
-    console.log('YES');
+  const callHandler = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
     if (actions instanceof FilteredActions) {
       for (const action of actions) {
-        console.log(action.name);
         const ed = { ...action.payload?.['$extra-data'], ...context };
-        if (actionHandler[action.name](firstToLast, [actions, payload, ed])) return true;
+        // eslint-disable-next-line no-await-in-loop
+        if (await actionHandler[action.name](firstToLast, [actions, payload.value, ed])) return true;
       }
       return false;
     }
-    console.log(actions.name);
     const ed = { ...actions.payload?.['$extra-data'], ...context };
-    return actionHandler[actions.name](firstToLast, [actions, payload, ed]);
+    return actionHandler[actions.name](firstToLast, [actions, payload.value, ed]);
   };
 
   class ActionMethods implements IActionMethods {

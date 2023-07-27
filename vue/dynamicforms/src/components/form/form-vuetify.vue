@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 import Form from './form';
 import FormLayout from './layout-vuetify.vue';
@@ -27,6 +27,9 @@ export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyForm',
   components: { FormLayout },
   mixins: [Form],
+  provide() {
+    return { payload: computed(() => this.payload) };
+  },
 });
 </script>
 
