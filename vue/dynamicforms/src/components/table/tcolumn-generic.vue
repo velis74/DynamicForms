@@ -2,8 +2,8 @@
   <div
     ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
-    @click.stop="(event) => callHandler(actions.rowClick, payload, { column, event, rowType })"
-    @mouseup.right="(event) => callHandler(actions.rowRightClick, payload, { column, event, rowType })"
+    @click.stop="(event) => callHandler(actions.rowClick, { column, event, rowType })"
+    @mouseup.right="(event) => callHandler(actions.rowRightClick, { column, event, rowType })"
   >
     <template v-if="filterRow">
       <FormField

@@ -28,7 +28,6 @@ function getHandlersWithPayload(
   self: ComponentWithActionsAndHandler,
   actionName: `action${string}`,
 ): HandlerWithPayload[] {
-  console.log('NOPE');
   // first, if action has a specific handler specified, let's just return that and be done with it
   if (action[actionName]) {
     return [{ instance: action, methodName: actionName, payload: action.payload }];

@@ -9,8 +9,8 @@
     ref="row"
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => callHandler(actions.rowClick, {}, { rowType, event })"
-    @mouseup.right="(event) => callHandler(actions.rowRightClick, {}, { rowType, event })"
+    @click.stop="(event) => callHandler(actions.rowClick, { rowType, event })"
+    @mouseup.right="(event) => callHandler(actions.rowRightClick, { rowType, event })"
   >
     <GenericColumn
       v-for="column in renderedColumns.items"
@@ -56,8 +56,6 @@ if (props.rowType && !RowTypes.isDefined(props.rowType)) {
 }
 provide('row-type', props.rowType);
 
-const { callHandler } = useActionHandler();
-
 const thead = computed(() => RowTypes.isTHead(props.rowType));
 const rowInfiniteStyle = computed(() => (
   `${props.rowData.dfControlStructure.CSSStyle};` +
@@ -69,6 +67,10 @@ function filterRow(column: TableColumn) {
     props.filterDefinition.columns[column.name] || new TableColumn({} as DfTable.ColumnJSON, []) :
     null;
 }
+
+provide('payload', payload);
+
+const { callHandler } = useActionHandler();
 
 function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
   if (props.rowData.dfControlStructure.isShowing) {
