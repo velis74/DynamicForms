@@ -42,7 +42,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
   protected filterDefinition: TableFilterRow | null;
 
-  protected filterData: Object;
+  public filterData: Object;
 
   protected titles: APIConsumer.Titles;
 
