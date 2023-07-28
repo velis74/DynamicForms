@@ -14,6 +14,7 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue';
 
+import { useActionHandler } from '../actions/action-handler-composable';
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
@@ -28,7 +29,6 @@ import DList from './inputs/list.vue';
 import DPlaceholder from './inputs/placeholder.vue';
 import DSelect from './inputs/select.vue';
 import DTextArea from './inputs/text-area.vue';
-import { useActionHandler } from '../actions/action-handler-composable';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'FormField',

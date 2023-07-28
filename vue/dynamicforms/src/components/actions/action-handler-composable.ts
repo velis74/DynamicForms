@@ -6,67 +6,82 @@ import FilteredActions from './filtered-actions';
 
 export type Handler = (...params: any[]) => Promise<boolean> | boolean;
 
-export interface IActionHandler {
+export interface IHandlers {
   [key: string]: Handler;
 }
 
-export interface IActionMethods {
+export interface IActionHandler {
   register: (actionName: string, handler: Handler) => this
   call: (action: Action | FilteredActions, context?: any) => Promise<boolean>
+  recursiveCall: (action: Action | FilteredActions, actionPayload: any, context?: any) => Promise<boolean>
 }
 
 export interface ActionHandlerComposable {
   registerHandler: (actionName: string, handler: Handler) => void
   callHandler: (action: Action | FilteredActions, payload?: any, context?: any) => Promise<boolean>
-  handler: IActionMethods
+  handler: IActionHandler
 }
 
-class ActionHandler implements IActionHandler {
+class Handlers implements IHandlers {
   [key: string]: Handler;
 }
 
-const RecurseHandler = (oldActionHandler: ActionHandler) => new Proxy<ActionHandler>(new ActionHandler(), {
-  get(target: ActionHandler, key: string) {
-    return async (firstToLast: boolean, params: any[]) => {
-      if (firstToLast) {
-        return await target?.[key]?.(...params) || !!(await oldActionHandler?.[key]?.(firstToLast, params));
-      }
-      return !!(await oldActionHandler?.[key]?.(firstToLast, params)) || await target?.[key]?.(...params);
-    };
-  },
-});
-
 export function useActionHandler(firstToLast: boolean = true): ActionHandlerComposable {
-  const actionHandler = RecurseHandler(inject<ActionHandler>('actionHandler', new ActionHandler()));
+  const parentHandler = inject<IActionHandler | undefined>('actionHandler', undefined);
   const payload = inject<any>('payload', {});
 
-  provide('actionHandler', actionHandler);
+  class ActionHandlers implements IActionHandler {
+    private handlers: Handlers = new Handlers();
 
-  const registerHandler = (actionName: string, handler: Handler): void => {
-    actionHandler[actionName] = handler;
-  };
-
-  const callHandler = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
-    if (actions instanceof FilteredActions) {
-      for (const action of actions) {
-        const ed = { ...action.payload?.['$extra-data'], ...context };
-        // eslint-disable-next-line no-await-in-loop
-        if (await actionHandler[action.name](firstToLast, [action, payload.value, ed])) return true;
-      }
-      return false;
-    }
-    const ed = { ...actions.payload?.['$extra-data'], ...context };
-    return actionHandler[actions.name](firstToLast, [actions, payload.value, ed]);
-  };
-
-  class ActionMethods implements IActionMethods {
     register = (actionName: string, handler: Handler) => {
-      registerHandler(actionName, handler);
+      this.handlers[actionName] = handler;
       return this;
     };
 
-    call = callHandler;
+    call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
+      console.log('payload', payload);
+      return this.recursiveCall(actions, payload.value, context);
+    };
+
+    recursiveCall = async (actions: Action | FilteredActions, actionPayload?: any, context?: any): Promise<boolean> => {
+      console.log('actionPayload', actionPayload);
+      if (firstToLast) {
+        return (
+          await this.executeHandler(actions, actionPayload, context) ||
+          (await parentHandler?.recursiveCall(actions, actionPayload, context) ?? false)
+        );
+      }
+      return (
+        (await parentHandler?.recursiveCall(actions, actionPayload, context) ?? false) ||
+        await this.executeHandler(actions, actionPayload, context)
+      );
+    };
+
+    private executeHandler = async (
+      actions: Action | FilteredActions,
+      actionPayload: any,
+      context?: any,
+    ): Promise<boolean> => {
+      if (actions instanceof FilteredActions) {
+        for (const action of actions) {
+          console.log(action.name, actionPayload);
+          const ed = { ...action.payload?.['$extra-data'], ...context };
+          // eslint-disable-next-line no-await-in-loop
+          if (await this.handlers[action.name]?.(action, actionPayload, ed)) return true;
+        }
+        return false;
+      }
+      const ed = { ...actions.payload?.['$extra-data'], ...context };
+      return this.handlers[actions.name]?.(actions, actionPayload, ed) ?? false;
+    };
   }
 
-  return { registerHandler, callHandler, handler: new ActionMethods() };
+  const handler = new ActionHandlers();
+
+  const callHandler = handler.call;
+  const registerHandler = handler.register;
+
+  provide('actionHandler', handler);
+
+  return { registerHandler, callHandler, handler };
 }
