@@ -81,7 +81,6 @@ export async function dispatchAction(
   actions: Action | FilteredActions,
   extraData: ActionHandlerExtraData,
 ): Promise<void> {
-  console.log('HERE!UWU');
   if (actions instanceof FilteredActions) {
     // Takes care of situations where we just call dispatchAction with filtered actions list. We don't care whether
     // there is one action or many: we just execute them all
@@ -104,7 +103,6 @@ export async function dispatchAction(
       'actionDefaultProcessor',
     ),
   ];
-  // console.log('handlers', handlers, 'action', action);
   const actionHandled = await asyncSome(
     handlers,
     async (handler: HandlerWithPayload) => {
