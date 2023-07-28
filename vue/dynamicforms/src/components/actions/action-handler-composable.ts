@@ -39,12 +39,10 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     };
 
     call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
-      console.log('payload', payload);
       return this.recursiveCall(actions, payload.value, context);
     };
 
     recursiveCall = async (actions: Action | FilteredActions, actionPayload?: any, context?: any): Promise<boolean> => {
-      console.log('actionPayload', actionPayload);
       if (firstToLast) {
         return (
           await this.executeHandler(actions, actionPayload, context) ||
@@ -64,7 +62,6 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     ): Promise<boolean> => {
       if (actions instanceof FilteredActions) {
         for (const action of actions) {
-          console.log(action.name, actionPayload);
           const ed = { ...action.payload?.['$extra-data'], ...context };
           // eslint-disable-next-line no-await-in-loop
           if (await this.handlers[action.name]?.(action, actionPayload, ed)) return true;
