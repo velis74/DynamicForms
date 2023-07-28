@@ -54,9 +54,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, inject, provide, ref, getCurrentInstance, ComponentPublicInstance } from 'vue';
+import { computed, defineComponent, inject, provide, ref } from 'vue';
 
-import { dispatchAction } from '../actions/action-handler-mixin';
+import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/field.vue';
 
@@ -66,8 +66,6 @@ import TableColumn from './definitions/column';
 import RowTypes from './definitions/row-types';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
-
-import { useActionHandler } from '../actions/action-handler-composable';
 
 const props = defineProps<{
   column: TableColumn,
@@ -103,8 +101,6 @@ const columnsize = ref();
 const ordering = ref();
 
 useRenderMeasure(onMeasure, { columnsize, ordering });
-
-const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 </script>
 <script lang="ts">
 export default defineComponent({
