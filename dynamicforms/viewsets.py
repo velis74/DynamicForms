@@ -21,7 +21,6 @@ from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 
 from dynamicforms.fields import BooleanField
-from .settings import DYNAMICFORMS
 
 
 class NewMixin(object):
