@@ -1,6 +1,7 @@
 import type { App } from 'vue';
 
 import Action, { defaultActionHandler } from './components/actions/action';
+import { useActionHandler } from './components/actions/action-handler-composable';
 import FilteredActions from './components/actions/filtered-actions';
 import DisplayMode from './components/classes/display-mode';
 import FormPayload from './components/form/definitions/form-payload';
@@ -25,6 +26,7 @@ export {
   FormPayload,
   gettext,
   interpolate,
+  useActionHandler,
 };
 
 export interface DynamicFormsOptions {
