@@ -8,7 +8,7 @@ class EnumField(fields.ChoiceField):
         self.enum_type = enum_type
 
     def to_internal_value(self, data):
-        return self.enum_type(data)
+        return self.enum_type(data[0] if isinstance(data, list) else data)
 
     def to_representation(self, value, row_data=None):
         if isinstance(value, self.enum_type):
@@ -18,7 +18,7 @@ class EnumField(fields.ChoiceField):
     def render_to_table(self, value, row_data):
         try:
             if not isinstance(value, self.enum_type):
-                value = self.enum_type(value).name
+                value = self.enum_type(value)
             return value.name
         except ValueError:
             pass  # If the value is not in the enum, just skip to default rendering

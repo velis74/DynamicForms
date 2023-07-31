@@ -1,14 +1,11 @@
 import typing
 import uuid as uuid_module
 from enum import IntEnum
-from typing import Dict, Hashable, Optional
+from typing import Dict, Optional
 
 from rest_framework.fields import Field as DrfField
-from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
+from rest_framework.relations import PKOnlyObject
 from rest_framework.serializers import ListSerializer
-from rest_framework.templatetags import rest_framework as drftt
-
-from dynamicforms.settings import DYNAMICFORMS
 
 if typing.TYPE_CHECKING:
     from dynamicforms.mixins import DFField
@@ -133,7 +130,12 @@ class FieldRenderMixin(object):
         if check_for_none is None:
             value = None
 
-        default_render = super().to_representation(value)
+        if value is None:
+            # TODO: DRF excepts if value is None. However, if me have a field that redeclares its
+            #  to_representation, it now won't be called :(
+            default_render = None
+        else:
+            default_render = super().to_representation(value)
 
         return (default_render, table_render) if table_render != value else default_render
 
@@ -162,39 +164,12 @@ class FieldRenderMixin(object):
     # noinspection PyUnusedLocal, PyUnresolvedReferences
     def render_to_table(self, value, row_data):
         """
-        Renders field value for table view :if rendering to html table, let's try to resolve any lookups
-        hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there,
-          but that's up to front end to decide
+        Renders field value for table view. override for your field
 
         :param value: field value
         :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
-        get_queryset = getattr(self, "get_queryset", None)
-
-        if isinstance(self, ManyRelatedField):
-            # Hm, not sure if this is the final thing to do: an example of this field is in
-            # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
-            # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
-            cr = self.child_relation
-            return ", ".join((cr.display_value(item) for item in value))
-            # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
-        elif isinstance(self, RelatedField) or get_queryset:
-            return self.display_value(value)
-        else:
-            choices = getattr(self, "choices", {})
-
-        # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
-        check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
-        if check_for_none is None:
-            value = None
-        else:
-            value = super().to_representation(value)
-
-        if isinstance(value, Hashable) and value in choices:
-            # choice field: let's render display names, not values
-            value = choices[value]
-
         return value
 
     def validate_empty_values(self: DrfField, data):

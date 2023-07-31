@@ -67,12 +67,6 @@ class AllowTagsMixin(object):
             except KeyError:
                 self.fail("invalid_choice", input=data)
 
-    def render_to_table(self, value, row_data):
-        if isinstance(self, MultipleChoiceField):
-            res = DenormalisedArray(value, self)
-            return str(res)
-        return super().render_to_table(value, row_data)
-
     def iter_options_bound(self, value):
         # noinspection PyUnresolvedReferences
         if isinstance(value, list):

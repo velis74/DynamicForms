@@ -1,4 +1,9 @@
-from .allow_tags import AllowTagsMixin
+from typing import Hashable
+
+from rest_framework.fields import MultipleChoiceField
+from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
+
+from .allow_tags import AllowTagsMixin, DenormalisedArray
 from .null_choice import NullChoiceMixin
 from .single_choice import SingleChoiceMixin
 
@@ -27,3 +32,43 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
 
     def __to_list_of_dicts(self, choices_dict: dict) -> list:
         return [dict(id=k, text=v, icon=self.choice_icons.get(k, None)) for k, v in choices_dict.items()]
+
+    # noinspection PyUnusedLocal, PyUnresolvedReferences
+    def render_to_table(self, value, row_data):
+        """
+        Renders field value for table view :if rendering to html table, let's try to resolve any lookups
+        hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there,
+          but that's up to front end to decide
+
+        :param value: field value
+        :param row_data: data for entire row (for more complex renderers)
+        :return: rendered value for table view
+        """
+        if isinstance(self, MultipleChoiceField):
+            res = DenormalisedArray(value, self)
+            return str(res)
+
+        get_queryset = getattr(self, "get_queryset", None)
+
+        if isinstance(self, ManyRelatedField):
+            # Hm, not sure if this is the final thing to do: an example of this field is in
+            # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
+            # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
+            cr = self.child_relation
+            return ", ".join((cr.display_value(item) for item in value))
+            # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
+        elif isinstance(self, RelatedField) or get_queryset:
+            return self.display_value(value)
+        else:
+            choices = getattr(self, "choices", {})
+
+        # Now that we got our choices for related & choice fields, let's first get the value as it would be by DRF
+        check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
+        if check_for_none is None:
+            value = None
+
+        if isinstance(value, Hashable) and value in choices:
+            # choice field: let's render display names, not values
+            value = choices[value]
+
+        return value

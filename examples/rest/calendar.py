@@ -39,7 +39,7 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
                 (CalendarReminder.Unit.Days, 86400),
                 (CalendarReminder.Unit.Weeks, 86400 * 7),
             ):
-                if reminder["unit"] in (unit, unit.name):
+                if reminder["unit"] == (unit.value, unit.name):
                     return reminder["quantity"] * multiplier
 
             raise ValueError(f'Unknown CalendarReminder.Unit[{reminder["unit"]}]')
