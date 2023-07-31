@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from django.template import loader
 from rest_framework.reverse import reverse
-from rest_framework.serializers import Serializer, SerializerMetaclass
+from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition
@@ -101,14 +101,6 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         if self.context and "view" in self.context and self.context["view"].request:
             return self.context["view"].request
         return None
-
-    @property
-    def is_rendering_as_table(self):
-        """
-        Overrides RenderMixin's implementation
-        :return:
-        """
-        return self.view_mode in (ViewModeSerializer.ViewMode.TABLE_ROW, ViewModeSerializer.ViewMode.TABLE_HEAD)
 
     def render_form(self: "_ViewModeBoundSerializer"):
         template = loader.get_template("template_render/full_form.html")

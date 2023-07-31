@@ -154,8 +154,7 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
             for field in self.fields.values()
             if not (
                 field.write_only
-                or (self.is_rendering_to_list and self.display_table == DisplayMode.SUPPRESS)
-                or (not self.is_rendering_to_list and self.display_form == DisplayMode.SUPPRESS)
+                or (self.display_table == DisplayMode.SUPPRESS and self.display_form == DisplayMode.SUPPRESS)
             )
         )
 

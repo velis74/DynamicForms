@@ -59,13 +59,13 @@ export default defineComponent({
     },
     unitChanged(newValue: string) {
       this.layout.fields.int_fld.setVisibility(
-        this.getVisibilityMode(this.unitVisible() && ['pcs', 'cst'].includes(newValue)),
+        this.getVisibilityMode(this.unitVisible() && ['pcs', 'cst'].includes(newValue[0])),
       );
       this.layout.fields.qty_fld.setVisibility(
-        this.getVisibilityMode(this.unitVisible() && newValue === 'wt'),
+        this.getVisibilityMode(this.unitVisible() && newValue[0] === 'wt'),
       );
       this.layout.fields.cst_fld.setVisibility(
-        this.getVisibilityMode(this.unitVisible() && newValue === 'cst'),
+        this.getVisibilityMode(this.unitVisible() && newValue[0] === 'cst'),
       );
     },
   },

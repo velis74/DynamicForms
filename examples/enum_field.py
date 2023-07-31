@@ -11,4 +11,15 @@ class EnumField(fields.ChoiceField):
         return self.enum_type(data)
 
     def to_representation(self, value, row_data=None):
-        return value.value if isinstance(value, self.enum_type) else value
+        if isinstance(value, self.enum_type):
+            value = value.value
+        return super().to_representation(value, row_data)
+
+    def render_to_table(self, value, row_data):
+        try:
+            if not isinstance(value, self.enum_type):
+                value = self.enum_type(value).name
+            return value.name
+        except ValueError:
+            pass  # If the value is not in the enum, just skip to default rendering
+        return value

@@ -101,60 +101,15 @@ class FieldRenderMixin(object):
         render_params.setdefault("container_class", "form-group")
         self.render_params = render_params
 
-    @property
-    def is_rendering_to_list(self):
-        """
-        reports whether we are currently rendering to table or to single record
-        :return:
-        """
-        try:
-            # noinspection PyUnresolvedReferences
-            base = self.parent
-            while base:
-                if isinstance(base, ListSerializer):
-                    # If fields parent's parent is the ListSerializer, we're rendering to list
-                    return True
-                base = base.parent
-        except:
-            pass
-        return False
-
-    @property
-    def is_rendering_to_html(self):
-        try:
-            # noinspection PyUnresolvedReferences
-            return self.context["format"] == "html"
-        except:
-            pass
-        return False
-
-    @property
-    def is_rendering_as_table(self):
-        from dynamicforms.template_render.mixins.serializer import ViewModeSerializer
-
-        base = getattr(self, "parent", None)
-        while base:
-            # if anywhere in the serializing stack there is a ViewModeSerializer, we will ask it, otherwise default
-            if isinstance(base, ViewModeSerializer):
-                if base.view_mode is not None:  # check if the serializer had even been initialised with view_mode
-                    return base.is_rendering_as_table
-                else:
-                    break
-            base = getattr(base, "parent", None)
-
-        return self.is_rendering_to_list and self.is_rendering_to_html
-
-    # noinspection PyUnresolvedReferences
+    # noinspection PyUnresolvedReferences,PyMethodMayBeStatic
     def use_pk_only_optimization(self):
         """
-        Overrides DRF RelatedField's method. It True is returned then value passed for serialisation will be PK value
+        Overrides DRF RelatedField's method. If True is returned then value passed for serialisation will be PK value
         only, not entire relation object. we don't want that because then we can't resolve the value into something more
         human-readable
         :return:
         """
-        if self.is_rendering_as_table:
-            return False
-        return super().use_pk_only_optimization()
+        return False
 
     # noinspection PyUnresolvedReferences
     def to_representation(self, value, row_data=None):
@@ -165,17 +120,36 @@ class FieldRenderMixin(object):
         :param row_data: instance with row data
         :return: serialized value
         """
-        if self.is_rendering_as_table and self.display_table != DisplayMode.HIDDEN:
-            # if rentering to html table, let's try to resolve any lookups
-            # hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there
-            #   we have discussed alternatives but decided that right now a more complete solution is not needed
-            return self.render_to_table(value, row_data)
+        table_render = (
+            self.render_to_table(value, row_data)
+            # do not attempt to do separate table rendering for support fields
+            if self.field_name not in ("df_control_data", "df_prev_id", "row_css_style")
+            # and most definitely not if this is already a ListSerializer
+            and not isinstance(self, ListSerializer)
+            else value
+        )
 
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
         if check_for_none is None:
-            return None
+            value = None
 
-        return super().to_representation(value)
+        default_render = super().to_representation(value)
+
+        return (default_render, table_render) if table_render != value else default_render
+
+    # noinspection PyUnresolvedReferences
+    def to_internal_value(self, data):
+        """
+        Reverse of to_representation: if data coming in is a tuple, use just the "id/code/key" part, not entire tuple
+        """
+        if (
+            self.field_name not in ("df_control_data", "df_prev_id", "row_css_style")
+            and not isinstance(self, ListSerializer)
+            and isinstance(data, list)
+        ):
+            data = data[0]
+
+        return super().to_internal_value(data)
 
     def set_display(self, value):
         if isinstance(value, tuple):
@@ -188,7 +162,9 @@ class FieldRenderMixin(object):
     # noinspection PyUnusedLocal, PyUnresolvedReferences
     def render_to_table(self, value, row_data):
         """
-        Renders field value for table view
+        Renders field value for table view :if rendering to html table, let's try to resolve any lookups
+        hidden fields will render to tr data-field_name attributes, so we maybe want to have ids, not text there,
+          but that's up to front end to decide
 
         :param value: field value
         :param row_data: data for entire row (for more complex renderers)
@@ -219,13 +195,7 @@ class FieldRenderMixin(object):
             # choice field: let's render display names, not values
             value = choices[value]
 
-        if self.is_rendering_to_html:
-            if value is None:
-                return DYNAMICFORMS.null_text_table
-
-            return drftt.format_value(value)
-
-        return str(value)
+        return value
 
     def validate_empty_values(self: DrfField, data):
         # noinspection PyUnresolvedReferences

@@ -29,10 +29,16 @@ class DfFileField(FileField):
             '<a href="#" onclick=\'dynamicforms.stopEventPropagation(event); window.open("%s", "_blank")\'>%s</a>'
             % (value.url, os.path.basename(value.url))
         )
-        if self.is_rendering_to_list:
-            return link if not render_to_component_def_format else value.url
         self.help_text = "Existing file: %s " % link
-        return empty_value
+        return super().to_representation(empty_value, row_data)
+
+    def render_to_table(self, value, row_data):
+        render_to_component_def_format: bool = self.context.get("format", "") == COMPONENT_DEF_RENDERER_FORMAT
+        link = mark_safe(
+            '<a href="#" onclick=\'dynamicforms.stopEventPropagation(event); window.open("%s", "_blank")\'>%s</a>'
+            % (value.url, os.path.basename(value.url))
+        )
+        return link if not render_to_component_def_format else value.url
 
 
 class DfPreloadedFileField(FileField):

@@ -2,6 +2,7 @@ from enum import auto
 from typing import Any, Dict, Optional
 
 from rest_framework.fields import Field
+from rest_framework.serializers import ListSerializer
 
 from dynamicforms.mixins.field_render import FieldRenderMixin
 from .base import ViewModeBase
@@ -43,14 +44,6 @@ class ViewModeField(ViewModeBase):
     def set_bound_value(self, value: Any, value_row: Dict[Any, Any]):
         self.bound_value = value
         self.bound_value_row = value_row
-
-    @property
-    def is_rendering_as_table(self):
-        """
-        Overrides RenderMixin's implementation
-        :return:
-        """
-        return self.view_mode in (ViewModeField.ViewMode.TABLE_ROW, ViewModeField.ViewMode.TABLE_HEAD)
 
     def render_form(self: "_ViewModeBoundField"):
         """

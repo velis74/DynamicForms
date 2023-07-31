@@ -32,22 +32,22 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
         """
 
         def seconds(reminder: dict):
-            if reminder["unit"] == CalendarReminder.Unit.Seconds:
-                return reminder["quantity"]
-            elif reminder["unit"] == CalendarReminder.Unit.Minutes:
-                return reminder["quantity"] * 60
-            elif reminder["unit"] == CalendarReminder.Unit.Hours:
-                return reminder["quantity"] * 60 * 60
-            elif reminder["unit"] == CalendarReminder.Unit.Days:
-                return reminder["quantity"] * 86400
-            elif reminder["unit"] == CalendarReminder.Unit.Weeks:
-                return reminder["quantity"] * 86400 * 7
+            for unit, multiplier in (
+                (CalendarReminder.Unit.Seconds, 1),
+                (CalendarReminder.Unit.Minutes, 60),
+                (CalendarReminder.Unit.Hours, 60 * 60),
+                (CalendarReminder.Unit.Days, 86400),
+                (CalendarReminder.Unit.Weeks, 86400 * 7),
+            ):
+                if reminder["unit"] in (unit, unit.name):
+                    return reminder["quantity"] * multiplier
+
             raise ValueError(f'Unknown CalendarReminder.Unit[{reminder["unit"]}]')
 
         res = super().to_representation(instance, row_data)
         from dynamicforms.serializers import Serializer
 
-        if self.view_mode != Serializer.ViewMode.TABLE_ROW:
+        if self.view_mode != Serializer.ViewMode.TABLE_ROW and not isinstance(res["reminders"], str):
             # table row serializes to string, so there's nothing to do here
             res["reminders"] = list(sorted(res["reminders"], key=lambda reminder: seconds(reminder)))
         return res

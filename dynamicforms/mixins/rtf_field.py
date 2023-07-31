@@ -14,12 +14,16 @@ class RTFFieldMixin(object):
         if not self.parent.is_filter:
             self.render_params["form_component_name"] = "DCKEditor"
             self.style.update({"base_template": "rtf_field.html"})
-        if self.is_rendering_to_list and not self.parent.is_filter and self.parse:
-            self.parser.feed(instance)
-            instance = self.parser.to_string()
-            self.parser.reset()
 
         return super().to_representation(instance, row_data)
+
+    def render_to_table(self, value, row_data):
+        if not self.parent.is_filter and self.parse:
+            self.parser.feed(value)
+            instance = self.parser.to_string()
+            self.parser.reset()
+            return instance
+        return value
 
 
 class RTFFieldHTMLParser(HTMLParser):
