@@ -103,7 +103,6 @@ export async function dispatchAction(
       'actionDefaultProcessor',
     ),
   ];
-  // console.log('handlers', handlers, 'action', action);
   const actionHandled = await asyncSome(
     handlers,
     async (handler: HandlerWithPayload) => {

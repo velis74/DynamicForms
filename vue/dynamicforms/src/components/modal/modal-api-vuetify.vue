@@ -26,6 +26,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { defaultActionHandler } from '../actions/action';
+import { useActionHandler } from '../actions/action-handler-composable';
+
 import DialogSize from './definitions/dialog-size';
 
 export default /* #__PURE__ */ defineComponent({
@@ -33,6 +36,10 @@ export default /* #__PURE__ */ defineComponent({
   props: {
     show: { type: Boolean, default: () => false },
     options: { type: Object, required: true }, // dialogOptions
+  },
+  setup() {
+    const { handler } = useActionHandler();
+    return { handler };
   },
   data() {
     return {
@@ -64,6 +71,13 @@ export default /* #__PURE__ */ defineComponent({
       if (this.size === DialogSize.X_LARGE && !this.$vuetify.display.xl) return true;
       return false;
     },
+  },
+  mounted() {
+    this.handler
+      .register('cancel', defaultActionHandler)
+      .register('close', defaultActionHandler)
+      .register('submit', defaultActionHandler)
+      .register('delete_dlg', defaultActionHandler);
   },
 });
 </script>

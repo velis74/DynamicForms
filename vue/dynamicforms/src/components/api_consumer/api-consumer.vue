@@ -8,6 +8,7 @@
 import { computed } from 'vue';
 
 import Action from '../actions/action';
+import { useActionHandler } from '../actions/action-handler-composable';
 import FormPayload from '../form/definitions/form-payload';
 import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
@@ -60,6 +61,8 @@ const renderComponentData = computed(() => {
   }
 });
 
+const { handler } = useActionHandler();
+
 function actionDelete(actionData: Action, payload: FormPayload) {
   props.consumer.deleteRow(payload);
   return true;
@@ -78,9 +81,9 @@ async function actionAdd() {
 async function actionEdit(
   actionData: Action,
   payload: FormPayload | undefined | null,
-  extraData: { rowType: RowTypes },
+  context: { rowType: RowTypes },
 ) {
-  if (extraData.rowType !== RowTypes.Data || payload == undefined) return false; // eslint-disable-line eqeqeq
+  if (context.rowType !== RowTypes.Data || payload == undefined) return false; // eslint-disable-line eqeqeq
   await props.consumer.dialogForm(payload[props.consumer.pkName]);
   return true;
 }
@@ -88,17 +91,21 @@ async function actionEdit(
 function actionSort(
   actionData: Action,
   payload: FormPayload,
-  extraData: { rowType: RowTypes, column?: TableColumn, event: KeyboardEvent },
+  context: { rowType: RowTypes, column?: TableColumn, event: KeyboardEvent },
 ) {
   // This is the default handler for ordering
-  if (extraData.rowType === RowTypes.Label && actionData.position === 'ROW_CLICK' && extraData.column) {
-    const oldChangeCounter = extraData.column.ordering.changeCounter;
-    extraData.column.ordering.handleColumnHeaderClick(extraData.event);
-    if (oldChangeCounter !== extraData.column.ordering.changeCounter) props.consumer.reload();
+  if (context.rowType === RowTypes.Label && actionData.position === 'ROW_CLICK' && context.column) {
+    const oldChangeCounter = context.column.ordering.changeCounter;
+    context.column.ordering.handleColumnHeaderClick(context.event);
+    if (oldChangeCounter !== context.column.ordering.changeCounter) props.consumer.reload();
     return true;
   }
   return false;
 }
 
-defineExpose({ actionDelete, actionValueChanged, actionAdd, actionEdit, actionSort });
+handler.register('delete', actionDelete)
+  .register('value_changed', actionValueChanged)
+  .register('sort', actionSort)
+  .register('add', actionAdd)
+  .register('edit', actionEdit);
 </script>

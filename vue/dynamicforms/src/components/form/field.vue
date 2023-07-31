@@ -14,6 +14,7 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue';
 
+import { useActionHandler } from '../actions/action-handler-composable';
 import ActionHandlerMixin from '../actions/action-handler-mixin';
 import FilteredActions from '../actions/filtered-actions';
 
@@ -52,7 +53,8 @@ export default /* #__PURE__ */ defineComponent({
     cssClasses: { type: String, default: 'col' },
   },
   setup() {
-    return { payload: inject<FormPayload>('payload', {} as FormPayload) };
+    const { callHandler } = useActionHandler();
+    return { callHandler, payload: inject<FormPayload>('payload', {} as FormPayload) };
   },
   computed: {
     columnClasses(): string {
@@ -69,7 +71,7 @@ export default /* #__PURE__ */ defineComponent({
   watch: {
     fieldValue: {
       handler(newValue: any, oldValue: any) {
-        this.dispatchAction(
+        this.callHandler(
           this.actions.valueChanged,
           { field: this.field.name, oldValue, newValue },
         );
