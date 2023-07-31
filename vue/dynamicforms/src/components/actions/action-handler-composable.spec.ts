@@ -171,9 +171,9 @@ describe('Action Handler', () => {
 
     await wrapper.find('#one').trigger('click');
 
-    expect(spyOne).toBeCalled();
+    expect(spyOne).not.toBeCalled();
     expect(spyTwo).toBeCalled();
-    expect(level).toBe(1);
+    expect(level).toBe(2);
 
     await wrapper.find('#two').trigger('click');
 

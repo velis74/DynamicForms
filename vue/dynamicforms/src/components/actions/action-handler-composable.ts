@@ -72,6 +72,7 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
       return this.handlers[actions.name]?.(actions, actionPayload, ed) ?? false;
     };
 
+    // eslint-disable-next-line class-methods-use-this
     private resolveAction = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
       if (actions instanceof FilteredActions) {
         for (const action of actions) {
