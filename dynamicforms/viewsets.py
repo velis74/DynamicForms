@@ -123,8 +123,6 @@ class TemplateRendererMixin:
            return dict(items=MyModel.objects.all())
     """
 
-    template_name = DYNAMICFORMS.table_base_template  #: template filename for listing multiple records (html renderer)
-
     def __init__(self, *args, **kwds):
         if not self.template_context and getattr(self, "serializer_class", None) is not None:
             self.template_context = getattr(self.serializer_class, "template_context", {})

@@ -15,7 +15,6 @@ from .struct import StructDefault
 
 class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
     template_context = {}  # see ViewSet.template_context
-    template_name = DYNAMICFORMS.form_base_template  #: template filename for single record view (HTMLFormRenderer)
     actions = Actions(add_default_crud=True, add_form_buttons=True)
     form_titles = {
         "table": "",
