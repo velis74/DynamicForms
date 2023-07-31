@@ -13,7 +13,7 @@ import ComponentDisplay from './component-display';
 import ConsumerLogicApi from './consumer-logic-api';
 import { APIConsumer } from './namespace';
 
-const consumer: Ref<APIConsumer.ConsumerLogicBaseInterface | undefined> = ref();
+const consumer = ref<APIConsumer.ConsumerLogicBaseInterface | undefined>();
 // test: undefined as FormLayout | undefined,
 const errorText: Ref<string | undefined> = ref();
 const displayComponent = ref(ComponentDisplay.TABLE);

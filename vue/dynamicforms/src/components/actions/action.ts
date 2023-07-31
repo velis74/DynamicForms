@@ -21,6 +21,7 @@ export function defaultActionHandler(
   payload: FormPayload | undefined,
   extraData: ActionHandlerExtraData,
 ) {
+  console.log('defaultActionHandler', action, payload, extraData);
   const dialog = extraData?.dialog;
   // console.log('Action execute:', action, payload, extraData);
   if (dialog && dialog.resolvePromise && dialog.close) {

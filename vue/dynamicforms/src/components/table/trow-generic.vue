@@ -9,8 +9,8 @@
     ref="row"
     :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => dispatchAction(self, actions.rowClick, { rowType, event })"
-    @mouseup.right="(event) => dispatchAction(self, actions.rowRightClick, { rowType, event })"
+    @click.stop="(event) => callHandler(actions.rowClick, { rowType, event })"
+    @mouseup.right="(event) => callHandler(actions.rowRightClick, { rowType, event })"
   >
     <GenericColumn
       v-for="column in renderedColumns.items"
@@ -24,11 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import { ComponentPublicInstance, computed, defineComponent, getCurrentInstance, provide, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ObserveVisibility } from 'vue-observe-visibility';
 
-import { dispatchAction } from '../actions/action-handler-mixin';
+import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
 
@@ -68,6 +68,10 @@ function filterRow(column: TableColumn) {
     null;
 }
 
+provide('payload', payload);
+
+const { callHandler } = useActionHandler();
+
 function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
   if (props.rowData.dfControlStructure.isShowing) {
     props.rowData.setMeasuredHeight(maxHeight);
@@ -76,10 +80,6 @@ function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
 
 const row = ref();
 useRenderMeasure(onMeasure, { row });
-const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 
 defineExpose({ payload });
-</script>
-<script lang="ts">
-export default defineComponent({ name: 'GenericTRow' });
 </script>
