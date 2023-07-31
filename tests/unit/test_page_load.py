@@ -14,7 +14,7 @@ response_schema = {
             "description": {"type": "string"},
             "df_control_data": {"type": "object"},
             "df_prev_id": {"type": "string"},
-            "choice": {"type": "number"},
+            "choice": {"type": "array"},
             "row_css_style": {"type": "string"},
         },
         "required": ["id", "description", "df_control_data", "df_prev_id", "choice", "row_css_style"],

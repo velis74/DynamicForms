@@ -67,19 +67,6 @@ class AllowTagsMixin(object):
             except KeyError:
                 self.fail("invalid_choice", input=data)
 
-    def to_representation(self, value, row_data=None):
-        if isinstance(self, ChoiceField) and self.allow_tags and value:
-            if isinstance(self, MultipleChoiceField) or self.is_rendering_to_list:
-                res = DenormalisedArray(value, self)
-                if self.is_rendering_to_list:
-                    res = str(res)
-            else:
-                # SingleChoiceField is rendered to list above because that results in same output: text for one value
-                res = value
-            return res
-
-        return super().to_representation(value, row_data)
-
     def iter_options_bound(self, value):
         # noinspection PyUnresolvedReferences
         if isinstance(value, list):

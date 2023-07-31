@@ -102,14 +102,6 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             return self.context["view"].request
         return None
 
-    @property
-    def is_rendering_as_table(self):
-        """
-        Overrides RenderMixin's implementation
-        :return:
-        """
-        return self.view_mode in (ViewModeSerializer.ViewMode.TABLE_ROW, ViewModeSerializer.ViewMode.TABLE_HEAD)
-
     def render_form(self: "_ViewModeBoundSerializer"):
         template = loader.get_template("template_render/full_form.html")
         context = dict(serializer=self, columns=self.render_fields)

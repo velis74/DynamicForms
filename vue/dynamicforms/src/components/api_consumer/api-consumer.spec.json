@@ -667,8 +667,7 @@
         "icon": null,
         "classes": "btn ml-1 btn-primary "
       }
-    },
-    "component_name": "ExampleHiddenLayout"
+    }
   },
   "detail_url": "http://localhost:8000/hidden-fields/--record_id--.json",
   "ordering_parameter": "ordering",

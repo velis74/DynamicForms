@@ -44,14 +44,6 @@ class ViewModeField(ViewModeBase):
         self.bound_value = value
         self.bound_value_row = value_row
 
-    @property
-    def is_rendering_as_table(self):
-        """
-        Overrides RenderMixin's implementation
-        :return:
-        """
-        return self.view_mode in (ViewModeField.ViewMode.TABLE_ROW, ViewModeField.ViewMode.TABLE_HEAD)
-
     def render_form(self: "_ViewModeBoundField"):
         """
         renders field's serialized value to HTML. Currently code only for performance reasons, we might support

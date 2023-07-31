@@ -84,7 +84,6 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = HiddenFields
         exclude = ()
-        layout = Layout(component_name="ExampleHiddenLayout")
 
 
 class ActionsOverviewViewSet(ModelViewSet):

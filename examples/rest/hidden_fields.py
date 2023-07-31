@@ -30,7 +30,6 @@ class HiddenFieldsSerializer(serializers.ModelSerializer):
             "qty_fld": dict(conditional_visibility=F("unit") == "wt"),
             "cst_fld": dict(conditional_visibility=F("unit") == "cst"),
         }
-        layout = Layout(component_name="ExampleHiddenLayout")
 
 
 class HiddenFieldsViewSet(ModelViewSet):

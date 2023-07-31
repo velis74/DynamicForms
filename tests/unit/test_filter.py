@@ -19,7 +19,7 @@ schema = {
             "datetime_field": {"type": "string"},
             "char_field": {"type": "string"},
             "int_field": {"type": "number"},
-            "int_choice_field": {"type": "number"},
+            "int_choice_field": {"type": "array"},
             "bool_field": {"type": "boolean"},
         },
         "additionalProperties": False,

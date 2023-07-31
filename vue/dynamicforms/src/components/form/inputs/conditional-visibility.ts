@@ -31,7 +31,8 @@ function calculateVisibility(payload: FormPayload, statement: Statement): boolea
       throw new Error(`Not implemented operator ${operator}`);
     }
   } else {
-    const fieldValue = payload[statement[0] as string];
+    const fieldValue = payload[statement[0] as string].constructor === Array ?
+      payload[statement[0] as string][0] : payload[statement[0] as string];
     const compareValue = statement[2];
     switch (operator) {
     case Operator.EQUALS:
