@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from django.template import loader
 from rest_framework.reverse import reverse
-from rest_framework.serializers import ListSerializer, Serializer, SerializerMetaclass
+from rest_framework.serializers import Serializer, SerializerMetaclass
 
 from dynamicforms import fields
 from dynamicforms.action import TablePosition

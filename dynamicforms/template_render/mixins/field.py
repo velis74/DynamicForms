@@ -2,7 +2,6 @@ from enum import auto
 from typing import Any, Dict, Optional
 
 from rest_framework.fields import Field
-from rest_framework.serializers import ListSerializer
 
 from dynamicforms.mixins.field_render import FieldRenderMixin
 from .base import ViewModeBase

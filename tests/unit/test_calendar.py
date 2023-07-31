@@ -60,7 +60,16 @@ class CommonTestBase(APITestCase):
         return res
 
     # noinspection PyTypedDict
-    def get_event_def(self, dates_iso: bool = True, skip_recurrence: bool = False, num_reminders: int = 0):
+    def get_event_def(
+        self,
+        dates_iso: bool = True,
+        skip_recurrence: bool = False,
+        num_reminders: int = 0,
+        choices_as_simple: bool = False,
+    ):
+        def get_choice(enum):
+            return enum.value if choices_as_simple else [enum.value, enum.name]
+
         start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
         res = dict(
             title="Party time",
@@ -70,17 +79,17 @@ class CommonTestBase(APITestCase):
             recurrence=dict(
                 start_at=start_at,
                 end_at=start_at + datetime.timedelta(days=11),
-                pattern=CalendarRecurrence.Pattern.Weekly.value,
+                pattern=get_choice(CalendarRecurrence.Pattern.Weekly),
                 recur=dict(every=1, weekdays=["Mo", "We", "Su", "Ho"]),
             ),
         )
         if num_reminders:
             r_type, unit = CalendarReminder.RType, CalendarReminder.Unit
             res["reminders"] = [
-                dict(type=r_type.Notification.value, unit=unit.Hours.value, quantity=1),
-                dict(type=r_type.Email.value, unit=unit.Minutes.value, quantity=90),
-                dict(type=r_type.Notification.value, unit=unit.Days.value, quantity=3),
-                dict(type=r_type.Email.value, unit=unit.Seconds.value, quantity=432000),
+                dict(type=get_choice(r_type.Notification), unit=get_choice(unit.Hours), quantity=1),
+                dict(type=get_choice(r_type.Email), unit=get_choice(unit.Minutes), quantity=90),
+                dict(type=get_choice(r_type.Notification), unit=get_choice(unit.Days), quantity=3),
+                dict(type=get_choice(r_type.Email), unit=get_choice(unit.Seconds), quantity=432000),
             ][:num_reminders]
         if dates_iso:
             res = self.dates_to_iso(res)
@@ -308,7 +317,7 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
 class CalendarRecurrenceTest(CommonTestBase):
     def test_recurrence_basic(self):
         # First we create a calendar event with a recurrence using models API
-        event = self.get_event_def(dates_iso=False)
+        event = self.get_event_def(dates_iso=False, choices_as_simple=True)
         event["recurrence"] = CalendarRecurrence.objects.create(**event["recurrence"])
         cal_evnt = CalendarEvent.objects.create(**event)
 
@@ -624,13 +633,22 @@ class CalendarRemindersTest(CommonTestBase):
 
         def strip_event(instance):
             reminder = model_to_dict(instance)
+            reminder["type"] = [
+                CalendarReminder.RType(reminder["type"]).value,
+                CalendarReminder.RType(reminder["type"]).name,
+            ]
+            reminder["unit"] = [
+                CalendarReminder.Unit(reminder["unit"]).value,
+                CalendarReminder.Unit(reminder["unit"]).name,
+            ]
             reminder.pop("event")
             return reminder
 
         # now also check with database
         event = CalendarEvent.objects.get(pk=event_id)
         response = model_to_dict(event)
-        response["recurrence"] = model_to_dict(event.recurrence)
+        recur = response["recurrence"] = model_to_dict(event.recurrence)
+        recur["pattern"] = [recur["pattern"].value, recur["pattern"].name]
         response["reminders"] = list((strip_event(reminder) for reminder in event.reminders.all()))
         response = self.dates_to_iso(response)
         self.check_event_as_expected(response, expected_response)
@@ -693,7 +711,10 @@ class CalendarRemindersTest(CommonTestBase):
             status.HTTP_200_OK,
         )
         expected_response = self.get_event_def(num_reminders=3)
-        expected_response["reminders"][0]["unit"] = CalendarReminder.Unit.Minutes.value
+        expected_response["reminders"][0]["unit"] = [
+            CalendarReminder.Unit.Minutes.value,
+            CalendarReminder.Unit.Minutes.name,
+        ]
         expected_response["reminders"][1]["quantity"] = 20
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
@@ -705,7 +726,10 @@ class CalendarRemindersTest(CommonTestBase):
             status.HTTP_200_OK,
         )
         expected_response = self.get_event_def(num_reminders=3)
-        expected_response["reminders"][0]["unit"] = CalendarReminder.Unit.Minutes.value
+        expected_response["reminders"][0]["unit"] = [
+            CalendarReminder.Unit.Minutes.value,
+            CalendarReminder.Unit.Minutes.name,
+        ]
         expected_response["reminders"].pop(1)
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(CalendarEvent.objects.count(), original_count)  # check that original event was updated
@@ -717,9 +741,15 @@ class CalendarRemindersTest(CommonTestBase):
             status.HTTP_200_OK,
         )
         expected_response = self.get_event_def(num_reminders=3)
-        expected_response["reminders"][0]["unit"] = CalendarReminder.Unit.Minutes.value
+        expected_response["reminders"][0]["unit"] = [
+            CalendarReminder.Unit.Minutes.value,
+            CalendarReminder.Unit.Minutes.name,
+        ]
         expected_response["reminders"].pop(1)
-        expected_response["reminders"][1]["unit"] = CalendarReminder.Unit.Seconds.value
+        expected_response["reminders"][1]["unit"] = [
+            CalendarReminder.Unit.Seconds.value,
+            CalendarReminder.Unit.Seconds.name,
+        ]
         # the order changes because second reminder is now closer to the event than the first reminder
         expected_response["reminders"] = list(reversed(expected_response["reminders"]))
         self.check_event_as_expected(response, expected_response)
