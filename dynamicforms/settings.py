@@ -2,10 +2,10 @@ import threading
 
 from django.conf import settings as s
 from django.utils.translation import gettext_lazy as _
-from versio.version import Version
-from versio.version_scheme import Pep440VersionScheme
 
 from .struct import Struct
+
+# TODO This is most likely unnecessary. See about removing
 
 DYNAMICFORMS_ROOT = "dynamicforms/"
 DYNAMICFORMS_BOOTSTRAP = DYNAMICFORMS_ROOT + "bootstrap/"
@@ -20,11 +20,6 @@ COMPONENT_HTML_RENDERER_FORMAT = "component"
 class Settings(Struct):
     # Support for jQueryUI (this will be queried in dynamicforms.js)
     jquery_ui = False
-
-    # if True, base_list template will render the HTML such that it will display dialog
-    #   Make sure you {% include DYNAMICFORMS.modal_dialog_rest_template %} somewhere top-level in your html body
-    # if False, the record will be displayed in a new page
-    edit_in_dialog = True
 
     # Support for select2
     use_select2 = True
@@ -73,29 +68,6 @@ class Settings(Struct):
     # These are constants, generated from settings. They are shortcuts for quick use in templates and are specific
     # to the chosen template pack.
     # ****************************************************************************
-
-    select2_form_field_class = property(lambda self: "select2-field" if self.use_select2 else "")
-
-    # Path to template for :samp:`<html><head>` tag JS & CSS includes, necessary for the chosen template pack.
-    page_includes = property(lambda self: DYNAMICFORMS_ROOT + "base_includes.html")
-
-    # Path to base template for fields.
-    field_base_template = property(lambda self: DYNAMICFORMS_ROOT + "field/base_field.html")
-
-    # Path to base template for forms.
-    form_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_form.html")
-
-    # Path to base template for forms.
-    table_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_list.html")
-
-    # Path to base template for forms.
-    table_filter_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_table_filter.html")
-
-    # Path to base template for table body.
-    table_body_base_template = property(lambda self: DYNAMICFORMS_ROOT + "base_table_body.html")
-
-    # Path to template for modal dialog
-    modal_dialog_rest_template = property(lambda self: DYNAMICFORMS_ROOT + "modal_dialog_rest.html")
 
     # classes to use on form buttons
     form_button_classes = property(lambda self: "")
@@ -174,16 +146,3 @@ def get_settings():
 
 
 DYNAMICFORMS = get_settings()
-
-
-def version_check(checked_version, min_version):
-    """
-    Checks whether checked version is higher or equal to given min version
-    :param checked_version: version being checked
-    :param min_version: minimum allowed version
-    :return: True when checked version is high enough
-    """
-
-    if not checked_version or checked_version == "None":
-        return False
-    return Version(checked_version, scheme=Pep440VersionScheme) >= Version(min_version, scheme=Pep440VersionScheme)
