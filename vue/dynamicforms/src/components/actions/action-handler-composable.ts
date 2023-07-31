@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { inject, provide } from 'vue';
 
-import Action from './action';
+import Action, { getActionName } from './action';
 import FilteredActions from './filtered-actions';
 
 export type Handler = (...params: any[]) => Promise<boolean> | boolean;
@@ -39,7 +39,7 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     };
 
     call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => (
-      this.recursiveCall(actions, payload.value, context)
+      await this.resolveAction(actions, context) || await this.recursiveCall(actions, payload.value, context)
     );
 
     recursiveCall = async (actions: Action | FilteredActions, actionPayload?: any, context?: any): Promise<boolean> => {
@@ -70,6 +70,19 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
       }
       const ed = { ...actions.payload?.['$extra-data'], ...context };
       return this.handlers[actions.name]?.(actions, actionPayload, ed) ?? false;
+    };
+
+    private resolveAction = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
+      if (actions instanceof FilteredActions) {
+        for (const action of actions) {
+          const ed = { ...action.payload?.['$extra-data'], ...context };
+          // eslint-disable-next-line no-await-in-loop
+          if (await action?.[getActionName(action.name)]?.(action, action.payload, ed)) return true;
+        }
+        return false;
+      }
+      const ed = { ...actions.payload?.['$extra-data'], ...context };
+      return actions?.[getActionName(actions.name)]?.(actions, actions.payload, ed) ?? false;
     };
   }
 
