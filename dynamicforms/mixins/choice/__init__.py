@@ -2,6 +2,7 @@ from typing import Hashable
 
 from rest_framework.fields import MultipleChoiceField
 from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
+from rest_framework.serializers import ListSerializer
 
 from .allow_tags import AllowTagsMixin, DenormalisedArray
 from .null_choice import NullChoiceMixin
@@ -72,3 +73,17 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
             value = choices[value]
 
         return value
+
+    # noinspection PyUnresolvedReferences
+    def to_internal_value(self, data):
+        """
+        Reverse of to_representation: if data coming in is a tuple, use just the "id/code/key" part, not entire tuple
+        """
+        if (
+            self.field_name not in ("df_control_data", "df_prev_id", "row_css_style")
+            and not isinstance(self, ListSerializer)
+            and isinstance(data, list)
+        ):
+            data = data[0]
+
+        return super().to_internal_value(data)
