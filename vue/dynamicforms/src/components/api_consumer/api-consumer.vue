@@ -112,9 +112,13 @@ const defaultHandlers: IHandlers = {
   edit: actionEdit,
 };
 
-const actionHandlers = { ...defaultHandlers, ...props.handlers };
-
-for (const [key, handle] of Object.entries(actionHandlers)) {
-  handler.register(key, handle);
+for (const key of Object.keys({ ...defaultHandlers, ...props.handlers })) {
+  handler.register(key, async (
+    action: Action,
+    payload: FormPayload,
+    context: any,
+  ) => (
+    await props?.handlers?.[key]?.(action, payload, context) || await defaultHandlers?.[key]?.(action.payload, context)
+  ));
 }
 </script>
