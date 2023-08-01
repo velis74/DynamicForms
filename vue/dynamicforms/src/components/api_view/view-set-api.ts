@@ -18,7 +18,7 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
 
   protected trailingSlash: boolean;
 
-  constructor(url: string, trailingSlash: boolean = false) {
+  constructor(url: string | Ref<string>, trailingSlash: boolean = false) {
     this.baseUrl = urlParamToRef(url);
     this.trailingSlash = trailingSlash;
   }

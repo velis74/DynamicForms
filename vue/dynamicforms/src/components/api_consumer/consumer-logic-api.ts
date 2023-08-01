@@ -1,4 +1,5 @@
 import { RawAxiosRequestHeaders } from 'axios';
+import { Ref } from 'vue';
 
 import { ViewSetApi } from '../api_view';
 import FormPayload from '../form/definitions/form-payload';
@@ -10,19 +11,16 @@ import ConsumerLogicBase from './consumer-logic-base';
 import { APIConsumer } from './namespace';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
-  private readonly baseURL: string;
-
   private readonly trailingSlash: boolean;
 
   private readonly api: ViewSetApi<any>;
 
-  constructor(baseURL: string, trailingSlash: boolean = true) {
+  constructor(baseURL: string | Ref<string>, trailingSlash: boolean = true) {
     super();
     /**
      * baseURL points to the API entry point, basically the GET / LIST endpoint. We will be composing all the other
      * endpoints from this one
      */
-    this.baseURL = baseURL.replace(/\/$/, ''); // remove trailing slash if it was there
     this.api = new ViewSetApi<any>(baseURL, trailingSlash);
     this.trailingSlash = trailingSlash;
   }
