@@ -145,10 +145,9 @@ export default /* #__PURE__ */ defineComponent({
       // Auto select first element
       this.result = [this.options[0].id, this.options[0].text];
     } else {
-      this.result = this.value.constructor === Array ? this.value[0] : this.value;
+      this.result = this.value?.constructor === Array ? this.value[0] : this.value;
     }
     if (this.field.ajax && this.value) {
-      // console.log(this.field.ajax.value_field, this.value);
       // TODO: how does this work in multiselect?
       await this.queryOptions(this.value[0], this.field.ajax.value_field);
       this.result = this.loadedChoices[0]?.id;
@@ -157,12 +156,12 @@ export default /* #__PURE__ */ defineComponent({
   methods: {
     onSelect() {
       if (!this.field.readOnly) {
-        this.value = this.result;
+        this.value = this.result[0];
       }
     },
     onInput(inp: any) {
       if (inp === null) {
-        this.value = this.result;
+        this.value = this.result[0];
       }
     },
     onTag(newTag: string) {
