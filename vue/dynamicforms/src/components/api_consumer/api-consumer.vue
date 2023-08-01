@@ -118,7 +118,8 @@ for (const key of Object.keys({ ...defaultHandlers, ...props.handlers })) {
     payload: FormPayload,
     context: any,
   ) => (
-    await props?.handlers?.[key]?.(action, payload, context) || await defaultHandlers?.[key]?.(action.payload, context)
+    await props?.handlers?.[key]?.(action, payload, context) ||
+    await defaultHandlers?.[key]?.(action, payload, context)
   ));
 }
 </script>

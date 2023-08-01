@@ -8,6 +8,7 @@ import FormPayload from './components/form/definitions/form-payload';
 import FormLayout from './components/form/definitions/layout';
 import DialogSize from './components/modal/definitions/dialog-size';
 import dfModal from './components/modal/modal-view-api';
+import RowTypes from './components/table/definitions/row-types';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
 import apiClient from './components/util/api-client';
 import { gettext, interpolate } from './components/util/translations-mixin';
@@ -24,6 +25,7 @@ export {
   FilteredActions,
   FormLayout,
   FormPayload,
+  RowTypes,
   gettext,
   interpolate,
   useActionHandler,
