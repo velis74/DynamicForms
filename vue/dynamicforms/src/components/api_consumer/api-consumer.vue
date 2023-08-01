@@ -8,7 +8,7 @@
 import { computed } from 'vue';
 
 import Action from '../actions/action';
-import { useActionHandler } from '../actions/action-handler-composable';
+import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
 import FormPayload from '../form/definitions/form-payload';
 import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
@@ -28,6 +28,7 @@ import { APIConsumer } from './namespace';
 const props = defineProps<{
   consumer: APIConsumer.ConsumerLogicBaseInterface,
   displayComponent: ComponentDisplay,
+  handlers?: IHandlers,
 }>();
 
 if (!ComponentDisplay.isDefined(props.displayComponent)) {
@@ -103,9 +104,17 @@ function actionSort(
   return false;
 }
 
-handler.register('delete', actionDelete)
-  .register('value_changed', actionValueChanged)
-  .register('sort', actionSort)
-  .register('add', actionAdd)
-  .register('edit', actionEdit);
+const defaultHandlers: IHandlers = {
+  delete: actionDelete,
+  value_changed: actionValueChanged,
+  sort: actionSort,
+  add: actionAdd,
+  edit: actionEdit,
+};
+
+const actionHandlers = { ...defaultHandlers, ...props.handlers };
+
+for (const [key, handle] of Object.entries(actionHandlers)) {
+  handler.register(key, handle);
+}
 </script>
