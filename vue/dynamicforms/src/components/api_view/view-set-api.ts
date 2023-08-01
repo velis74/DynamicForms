@@ -1,19 +1,25 @@
 import { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { computed, isRef, ref, Ref } from 'vue';
 
 import { APIConsumer } from '../api_consumer/namespace';
 import apiClient from '../util/api-client';
 
 import { IViewSetApi, PrimaryKeyType } from './namespace';
 
+function urlParamToRef(url: string | Ref<string>) {
+  const urlRef = isRef(url) ? url : ref(url);
+  return computed(() => urlRef.value.replace(/\/+$/, ''));
+}
+
 export default class ViewSetApi<T> implements IViewSetApi<T> {
-  protected baseUrl: string;
+  protected baseUrl: Ref<string>;
 
   protected headers: RawAxiosRequestHeaders = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
 
   protected trailingSlash: boolean;
 
   constructor(url: string, trailingSlash: boolean = false) {
-    this.baseUrl = url.replace(/\/+$/, '');
+    this.baseUrl = urlParamToRef(url);
     this.trailingSlash = trailingSlash;
   }
 
@@ -27,7 +33,7 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
   // eslint-disable-next-line class-methods-use-this
   data_url(url: string): string { return `${url}.json`; }
 
-  detail_url = (pk?: PrimaryKeyType) => (pk ? `${this.baseUrl}/${pk}` : this.baseUrl);
+  detail_url = (pk?: PrimaryKeyType) => (`${this.baseUrl.value}${pk ? `/${pk}` : ''}`);
 
   componentDefinition = async (
     pk?: PrimaryKeyType,
@@ -40,7 +46,7 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
   );
 
   list = async (config?: AxiosRequestConfig): Promise<T[]> => (
-    (await apiClient.get(this.compose_url(this.baseUrl), { headers: this.headers, ...config })).data
+    (await apiClient.get(this.compose_url(this.baseUrl.value), { headers: this.headers, ...config })).data
   );
 
   retrieve = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (
@@ -48,7 +54,7 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
   );
 
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.post(`${this.baseUrl}/`, data, config)).data
+    (await apiClient.post(`${this.baseUrl.value}/`, data, config)).data
   );
 
   update = async (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig): Promise<T> => (
