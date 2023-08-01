@@ -23,6 +23,7 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
   #${uniqueId} {
     position: relative; /* position ensures resize observer to work */
     overflow-x: auto;
+    font-size: 1rem; /* overrides vuetify which specifies .875 for panel body */
   }
   #${uniqueId} > * { /* thead, tbody, tfoot */
     width: fit-content;
