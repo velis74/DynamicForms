@@ -54,7 +54,7 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
   );
 
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.post(`${this.baseUrl.value}/`, data, config)).data
+    (await apiClient.post(this.compose_url(this.baseUrl.value), data, config)).data
   );
 
   update = async (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig): Promise<T> => (
