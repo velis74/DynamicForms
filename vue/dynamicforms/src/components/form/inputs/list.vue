@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 import APIConsumerVue from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
@@ -19,13 +19,18 @@ export default defineComponent({
   components: { APIConsumerVue },
   mixins: [InputBase, TranslationsMixin],
   setup() {
-    const consumer: Ref<APIConsumer.ConsumerLogicBaseInterface | undefined> = ref();
-    const displayComponent = ref(ComponentDisplay.TABLE);
+    const consumer = ref<APIConsumer.ConsumerLogicBaseInterface | undefined>();
+    const displayComponent = ComponentDisplay.TABLE;
 
     async function setConsumer(definition: DfForm.FormComponentDefinition, modelValue: any[]) {
       consumer.value = new ConsumerLogicArray(definition, modelValue);
     }
     return { displayComponent, setConsumer, consumer };
+  },
+  watch: {
+    modelValue(newValue) {
+      this.consumer = new ConsumerLogicArray(this.field.renderParams.formComponentDef!, newValue);
+    },
   },
   beforeMount() {
     if (this.modelValue == null) {
