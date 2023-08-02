@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.urls import reverse
-from rest_framework.relations import ManyRelatedField
+from rest_framework.relations import ManyRelatedField, RelatedField
 from rest_framework.serializers import ListSerializer
 
 
@@ -67,18 +67,17 @@ class RelatedFieldAJAXMixin(object):
         except AttributeError:
             res = dict()
         if self.url_reverse:
-            res.update(
-                dict(
-                    ajax=dict(
-                        url_reverse=reverse(self.url_reverse, kwargs=dict(format="json")),
-                        placeholder=self.placeholder,
-                        additional_parameters=self.additional_parameters,
-                        query_field=self.query_field,
-                        value_field=self.value_field,
-                        text_field=self.text_field,
-                    )
+            ajax = dict(
+                ajax=dict(
+                    url_reverse=reverse(self.url_reverse, kwargs=dict(format="json")),
+                    placeholder=self.placeholder,
+                    additional_parameters=self.additional_parameters,
+                    query_field=self.query_field,
+                    value_field=self.value_field,
+                    text_field=self.text_field,
                 )
             )
+            res.update(ajax)
         else:
             res.update(
                 choices=map(
@@ -105,6 +104,8 @@ class RelatedFieldAJAXMixin(object):
             cr = self.child_relation
             return ", ".join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
+        elif isinstance(self, RelatedField):
+            return self.display_value(value)
 
         return value
 

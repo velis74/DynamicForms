@@ -137,7 +137,11 @@ class FieldRenderMixin(object):
         else:
             default_render = super().to_representation(value)
 
-        return (default_render, table_render) if table_render != value else default_render
+        return (
+            (default_render, table_render)
+            if table_render != value and table_render != default_render
+            else default_render
+        )
 
     def set_display(self, value):
         if isinstance(value, tuple):
