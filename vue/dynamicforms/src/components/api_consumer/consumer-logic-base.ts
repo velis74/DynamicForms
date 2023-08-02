@@ -153,7 +153,15 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   }
 
   async filter(filterData: Object | null = null) {
-    if (filterData) this.filterData = filterData;
+    if (filterData) {
+      const columns = this.filterDefinition?.columns;
+      this.filterData = Object.fromEntries(Object.entries(filterData).map(([key, value]) => {
+        if (columns?.[key]?.renderParams.form_component_name === 'DSelect') {
+          return [key, value?.[0]];
+        }
+        return [key, value];
+      }));
+    }
     await this.reload(true);
   }
 

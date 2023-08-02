@@ -156,12 +156,12 @@ export default /* #__PURE__ */ defineComponent({
   methods: {
     onSelect() {
       if (!this.field.readOnly) {
-        this.value = this.result[0];
+        this.value = this.result;
       }
     },
     onInput(inp: any) {
       if (inp === null) {
-        this.value = this.result[0];
+        this.value = this.result;
       }
     },
     onTag(newTag: string) {
