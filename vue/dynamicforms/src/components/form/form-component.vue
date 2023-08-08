@@ -1,3 +1,27 @@
+<script setup lang="ts">
+import { computed, provide } from 'vue';
+
+import FilteredActions from '../actions/filtered-actions';
+import { APIConsumer } from '../api_consumer/namespace';
+
+import FormPayload from './definitions/form-payload';
+import FormLayoutClass from './definitions/layout';
+import FormLayout from './layout-vuetify.vue';
+
+interface Props {
+  title: string
+  pkName: string
+  pkValue: APIConsumer.PKValueType
+  layout: FormLayoutClass
+  payload: FormPayload
+  actions: FilteredActions
+  errors: any
+}
+
+const props = defineProps<Props>();
+provide('payload', computed(() => props.payload));
+</script>
+
 <template>
   <v-card>
     <v-card-title>
@@ -16,22 +40,6 @@
     </v-card-actions>
   </v-card>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-
-import Form from './form';
-import FormLayout from './layout-vuetify.vue';
-
-export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyForm',
-  components: { FormLayout },
-  mixins: [Form],
-  provide() {
-    return { payload: computed(() => this.payload) };
-  },
-});
-</script>
 
 <style>
   .vuetify-form-actions {

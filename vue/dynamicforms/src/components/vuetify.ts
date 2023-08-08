@@ -1,5 +1,5 @@
 import VuetifyActions from './actions/actions-vuetify.vue';
-import VuetifyForm from './form/form-vuetify.vue';
+import VuetifyForm from './form/form-component.vue';
 import VuetifyFormLayout from './form/layout-vuetify.vue';
 import { ModalView, DfDialog } from './modal';
 import VuetifyModal from './modal/modal-api-vuetify.vue';
