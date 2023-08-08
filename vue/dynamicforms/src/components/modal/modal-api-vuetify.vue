@@ -2,9 +2,9 @@
   <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
   <v-dialog
     v-model="doShow"
-    :width="computedWidth"
-    :max-width="computedWidth"
-    :fullscreen="computedFullScreen"
+    :width="width"
+    :max-width="width"
+    :fullscreen="fullScreen"
     persistent
   >
     <v-card>
@@ -23,61 +23,46 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import { defaultActionHandler } from '../actions/action';
-import { useActionHandler } from '../actions/action-handler-composable';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import DialogSize from './definitions/dialog-size';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyModalDialog',
-  props: {
-    show: { type: Boolean, default: () => false },
-    options: { type: Object, required: true }, // dialogOptions
-  },
-  setup() {
-    const { handler } = useActionHandler();
-    return { handler };
-  },
-  data() {
-    return {
-      doShow: this.show,
-      fullScreen: false,
-    };
-  },
-  computed: {
-    size() { return this.options.size; },
-    computedWidth() {
-      if (this.computedFullScreen) return 'unset';
-      switch (this.size) {
-      case DialogSize.SMALL:
-        return 400;
-      case DialogSize.MEDIUM:
-        return 600;
-      case DialogSize.LARGE:
-        return 800;
-      case DialogSize.X_LARGE:
-        return 1140;
-      default:
-        return 'unset';
-      }
-    },
-    computedFullScreen() {
-      if (this.size === DialogSize.SMALL && !this.$vuetify.display.smAndUp) return true;
-      if (this.size === DialogSize.MEDIUM && !this.$vuetify.display.mdAndUp) return true;
-      if (this.size === DialogSize.LARGE && !this.$vuetify.display.lgAndUp) return true;
-      if (this.size === DialogSize.X_LARGE && !this.$vuetify.display.xl) return true;
-      return false;
-    },
-  },
-  mounted() {
-    this.handler
-      .register('cancel', defaultActionHandler)
-      .register('close', defaultActionHandler)
-      .register('submit', defaultActionHandler)
-      .register('delete_dlg', defaultActionHandler);
-  },
+interface Props {
+  show: boolean,
+  options: any
+}
+
+const props = withDefaults(defineProps<Props>(), { show: false });
+
+const display = useDisplay();
+
+const size = computed<DialogSize>(() => props.options.size);
+
+const doShow = ref<boolean>(props.show);
+
+const fullScreen = computed(() => {
+  if (size.value === DialogSize.SMALL && display.smAndUp.value) return true;
+  if (size.value === DialogSize.MEDIUM && display.mdAndUp.value) return true;
+  if (size.value === DialogSize.LARGE && display.lgAndUp.value) return true;
+  return size.value === DialogSize.X_LARGE && display.xl.value;
 });
+
+const width = computed<'unset' | number>(() => {
+  if (fullScreen.value) return 'unset';
+  switch (size.value) {
+  case DialogSize.SMALL:
+    return 400;
+  case DialogSize.MEDIUM:
+    return 600;
+  case DialogSize.LARGE:
+    return 800;
+  case DialogSize.X_LARGE:
+    return 1140;
+  default:
+    return 'unset';
+  }
+});
+
 </script>
