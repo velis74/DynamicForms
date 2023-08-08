@@ -1,28 +1,3 @@
-<template>
-  <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
-  <v-dialog
-    v-model="doShow"
-    :width="width"
-    :max-width="width"
-    :fullscreen="fullScreen"
-    persistent
-  >
-    <v-card>
-      <v-card-title>
-        <slot name="title"/>
-      </v-card-title>
-      <v-card-text>
-        <slot name="body"/>
-      </v-card-text>
-      <v-card-actions>
-        <div style="flex:1">
-          <slot name="actions"/>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-</template>
-
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useDisplay } from 'vuetify';
@@ -66,3 +41,28 @@ const width = computed<'unset' | number>(() => {
 });
 
 </script>
+
+<template>
+  <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
+  <v-dialog
+    v-model="doShow"
+    :width="width"
+    :max-width="width"
+    :fullscreen="fullScreen"
+    persistent
+  >
+    <v-card>
+      <v-card-title>
+        <slot name="title"/>
+      </v-card-title>
+      <v-card-text>
+        <slot name="body"/>
+      </v-card-text>
+      <v-card-actions>
+        <div style="flex:1">
+          <slot name="actions"/>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
