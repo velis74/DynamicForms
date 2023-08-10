@@ -18,10 +18,10 @@ const size = computed<DialogSize>(() => props.options.size);
 const doShow = ref<boolean>(props.show);
 
 const fullScreen = computed(() => {
-  if (size.value === DialogSize.SMALL && display.smAndUp.value) return true;
-  if (size.value === DialogSize.MEDIUM && display.mdAndUp.value) return true;
-  if (size.value === DialogSize.LARGE && display.lgAndUp.value) return true;
-  return size.value === DialogSize.X_LARGE && display.xl.value;
+  if (size.value === DialogSize.SMALL && !display.smAndUp.value) return true;
+  if (size.value === DialogSize.MEDIUM && !display.mdAndUp.value) return true;
+  if (size.value === DialogSize.LARGE && !display.lgAndUp.value) return true;
+  return size.value === DialogSize.X_LARGE && !display.xl.value;
 });
 
 const width = computed<'unset' | number>(() => {
