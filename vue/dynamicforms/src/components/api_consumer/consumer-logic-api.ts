@@ -129,9 +129,9 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
     const result = await FormConsumerApiOneShot(
       this.baseUrl,
+      this.trailingSlash,
       pk,
       this.formData,
-      this.trailingSlash,
     );
 
     await this.reload();

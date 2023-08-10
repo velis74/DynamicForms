@@ -8,9 +8,9 @@ import FormConsumerApi from './api';
 
 export default async function FormConsumerApiOneShot <T = any>(
   baseUrl: string | Ref<string>,
-  pk: APIConsumer.PKValueType,
-  formData: FormPayload,
   trailingSlash: boolean = false,
+  pk?: APIConsumer.PKValueType,
+  formData?: FormPayload,
   handlers?: IHandlers,
 ): Promise<T | undefined> {
   const formConsumer = new FormConsumerApi(baseUrl, trailingSlash, handlers);
