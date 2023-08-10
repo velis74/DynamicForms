@@ -15,6 +15,8 @@ import { gettext, interpolate } from './components/util/translations-mixin';
 import * as VuetifyComponents from './components/vuetify';
 
 export * from './components/api_consumer/index-temporary';
+export * from './components/api_consumer/form-consumer';
+
 export {
   Action,
   defaultActionHandler,
