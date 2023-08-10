@@ -1,6 +1,7 @@
 // import FilteredActions from '../actions/filtered-actions';
 // import TableColumns from '../table/definitions/columns';
 
+import { IHandlers } from '../actions/action-handler-composable';
 import type FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
@@ -35,6 +36,12 @@ export namespace APIConsumer {
     record: FormPayloadJSON;
   }
 
+  export interface FormUXDefinition extends UXDefinition {
+    record: FormPayloadJSON
+    dialog: DfForm.FormLayoutJSON
+    actions: ActionsNS.ActionsJSON
+  }
+
   export type FormPayloadJSON = { [key: string]: any; } | null;
 
   export type FormDefinition = {
@@ -45,6 +52,7 @@ export namespace APIConsumer {
     payload: FormPayload,
     loading: boolean,
     actions: FilteredActions,
+    actionHandlers?: IHandlers,
     errors: ActionsNS.ErrorsJSON,
   };
 

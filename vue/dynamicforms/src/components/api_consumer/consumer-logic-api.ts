@@ -3,15 +3,17 @@ import { Ref } from 'vue';
 
 import { ViewSetApi } from '../api_view';
 import FormPayload from '../form/definitions/form-payload';
-import dfModal from '../modal/modal-view-api';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
-import { APIConsumer } from './namespace';
+import FormConsumerApiOneShot from './form-consumer/api-one-shot';
+import type { APIConsumer } from './namespace';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
   private readonly trailingSlash: boolean;
+
+  private readonly baseUrl: string | Ref<string>;
 
   private readonly api: ViewSetApi<any>;
 
@@ -22,6 +24,9 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
      * endpoints from this one
      */
     this.api = new ViewSetApi<any>(baseURL, trailingSlash);
+
+    /** Utilities for form consumer  */
+    this.baseUrl = baseURL;
     this.trailingSlash = trailingSlash;
   }
 
@@ -110,76 +115,27 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     return this.formDefinition;
   }
 
-  async delete() {
-    if (this.pkValue && this.pkValue !== 'new') {
-      await this.api.delete(this.pkValue);
-    }
-  }
-
   async deleteRow(tableRow: FormPayload) {
     const pkValue = tableRow[this.pkName];
     await this.api.delete(pkValue);
     this.rows.deleteRow(pkValue);
   }
 
-  async saveForm(refresh: boolean = true) {
-    let res;
-
-    if (this.pkValue !== 'new' && this.pkValue) {
-      res = await this.api.update(this.pkValue, this.formData);
-    } else {
-      // this.pkValue might be new or null for SingleRecordViewSets
-      res = await this.api.create(this.formData);
-    }
-
-    if (refresh) {
-      // reload the whole table
-      await this.reload();
-    }
-
-    return res;
-  }
-
   async dialogForm(
     pk: APIConsumer.PKValueType,
     formData: any = null,
-    refresh: boolean = true,
-    return_raw_data: boolean = false,
   ) {
-    const formDef = await this.getFormDefinition(pk);
-    // if dialog is reopened use the old form's data
-    if (formData !== null) {
-      // TODO: there is currently an issue where if you get a 400 and have to fix the data, second "save" does nothing
-      // eslint-disable-next-line array-callback-return
-      Object.entries(formData).map(([key, value]) => { formDef.payload[key] = value; });
-      this.formData = formDef.payload;
-    }
-    const resultAction = await dfModal.fromFormDefinition(formDef);
-    if (return_raw_data) {
-      // we don't want to process the data, so we just return it as it came in. useful for file downloads and such
-      return { action: resultAction.action, data: this.formData };
-    }
-    let error = {};
-    let result: any;
-    if (resultAction.action.name === 'submit') {
-      try {
-        result = await this.saveForm(refresh);
-      } catch (err: any) {
-        // Include form error and field errors
-        error = { ...err?.response?.data };
-      }
-    } else if (resultAction.action.name === 'delete_dlg') {
-      try {
-        result = await this.delete();
-      } catch (err: any) {
-        // Include form error and field errors
-        error = { ...err.response.data };
-      }
-    }
-    // propagate error to the next dialog
-    this.errors = error;
-    // open new dialog if needed
-    if (error && Object.keys(error).length) result = await this.dialogForm(pk, this.formData, refresh);
+    Object.assign(this.formData, formData);
+
+    const result = await FormConsumerApiOneShot(
+      this.baseUrl,
+      pk,
+      this.formData,
+      this.trailingSlash,
+    );
+
+    await this.reload();
+
     return result;
   }
 }

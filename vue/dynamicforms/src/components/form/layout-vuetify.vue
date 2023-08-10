@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ComputedRef, provide } from 'vue';
 
+import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 
 import FormPayload from './definitions/form-payload';
@@ -11,12 +12,21 @@ interface Props {
   layout: FormLayout
   payload?: FormPayload | null
   actions: FilteredActions
+  actionHandlers?: IHandlers
   errors: { [key: string]: string[] }
 }
-const props = withDefaults(defineProps<Props>(), { payload: null });
+const props = withDefaults(defineProps<Props>(), { payload: null, actionHandlers: undefined });
 
 provide<FilteredActions>('actions', props.actions);
 provide<ComputedRef<FormPayload | null>>('payload', computed(() => props.payload));
+
+if (props.actionHandlers) {
+  const { handler } = useActionHandler();
+  Object.entries(props.actionHandlers).map(([name, fun]) => {
+    handler.register(name, fun);
+    return [name, fun];
+  });
+}
 
 const nonFieldErrors = computed(() => {
   const nonFieldError = 'non_field_errors';
