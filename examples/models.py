@@ -286,3 +286,8 @@ class CalendarReminder(models.Model):
     type = models.IntegerField(verbose_name=_("Type"), choices=REMINDER_TYPE_CHOICES, null=False, blank=False)
     quantity = models.IntegerField(verbose_name=_("Quantity"), null=False, blank=False)
     unit = models.IntegerField(verbose_name=_("Unit"), choices=UNIT_CHOICES, null=False, blank=False)
+
+
+class RelatedItem(models.Model):
+
+    name = models.CharField(blank=False, null=False, max_length=32)

@@ -27,6 +27,8 @@
       :loading="loading"
       :internal-search="!field.ajax"
 
+      tag-placeholder="Add this as new tag"
+
       @select="onSelect"
       @input="onInput"
       @tag="onTag"
@@ -123,6 +125,7 @@ export default /* #__PURE__ */ defineComponent({
         if (value != null) {
           // TODO: this will most likely not work now with values being tuples
           if (this.multiple) {
+            console.log("val vbn", value);
             const val = value.constructor === Array ? value.map(String) : value.split(',');
             this.selected = this.options.filter((o) => val.includes(`${o.id}`));
           } else {
@@ -165,13 +168,14 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     onTag(newTag: string) {
-      const newTagObj: DfForm.ChoicesJSON = { id: newTag, text: newTag };
-      this.field.choices.push(newTagObj);
+      const newTagObj: DfForm.ChoicesJSON = { id: null, text: newTag };
+      this.field.choices ? this.field.choices.push(newTagObj) : this.loadedChoices.push(newTagObj);
       if (this.multiple) {
         (<DfForm.ChoicesJSON[]> this.selected).push(newTagObj);
       } else {
         this.selected = newTagObj;
       }
+      console.log(Math.random(), 'selected onTag', this.selected);
     },
     async queryOptions(query: string, query_field: string): Promise<void> {
       const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
