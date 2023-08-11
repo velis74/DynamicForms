@@ -83,6 +83,7 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
             self.field_name not in ("df_control_data", "df_prev_id", "row_css_style")
             and not isinstance(self, ListSerializer)
             and isinstance(data, list)
+            and len(data)
         ):
             data = data[0]
 
