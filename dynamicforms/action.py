@@ -35,6 +35,9 @@ class ActionBase(object):
     def render(self, serializer: Serializer, **kwds):
         raise NotImplementedError()
 
+    def DeleteThisFunction(self):
+        pass
+
     @staticmethod
     def prepare_string(string, encode=True):
         """
