@@ -1,5 +1,5 @@
 name: Coverage check
-on: [pull_request]
+on: [push, pull_request]
 jobs:
   lint:
     name: Code coverage
@@ -35,7 +35,9 @@ jobs:
         run: |
           coverage report -m
           coverage json
-      - uses: velis74/incremental-coverage-check@main
+
+      - name: Coverage check on pull_request
+        uses: velis74/incremental-coverage-check@main
         with:
           clover_coverage_json: vue/dynamicforms/coverage/coverage-final.json
           py_coverage_json: coverage.json
@@ -43,4 +45,15 @@ jobs:
           base_ref: ${{ github.base_ref }}
           head_ref: HEAD
           rep_ref: main
+        if: github.event_name == 'pull_request'
 
+      - name: Coverage check on push
+        uses: velis74/incremental-coverage-check@main
+        with:
+          clover_coverage_json: vue/dynamicforms/coverage/coverage-final.json
+          py_coverage_json: coverage.json
+          logging_level: INFO
+          base_ref: ${{ github.event.before }}
+          head_ref: HEAD
+          rep_ref: main
+        if: github.event_name == 'push'
