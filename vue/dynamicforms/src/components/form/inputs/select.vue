@@ -173,8 +173,8 @@ export default /* #__PURE__ */ defineComponent({
     },
     async queryOptions(query: string, query_field: string): Promise<void> {
       const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
-      const req = `${this.field.ajax.url_reverse}?${query_field}=${query}` +
-        `${this.field.ajax.additional_parameters ? `&${this.field.ajax.additional_parameters}` : ''}`;
+      let req = `${this.field.ajax.url_reverse}?${this.field.ajax.additional_parameters}`;
+      if (query) req += `${req.endsWith('?') ? '&' : ''}{query_field}=${query}`;
       this.loading = true;
       try {
         let loadedData = (await apiClient.get(req, { headers, params: this.filterData })).data;

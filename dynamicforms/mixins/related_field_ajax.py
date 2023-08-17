@@ -1,5 +1,6 @@
 from typing import Optional
 
+from django.db.models.manager import BaseManager
 from django.urls import reverse
 from rest_framework.relations import ManyRelatedField, RelatedField
 
@@ -38,7 +39,7 @@ class RelatedFieldAJAXMixin(object):
     def additional_parameters_urlencoded(self):
         from django.utils.http import urlencode
 
-        return "?" + urlencode(self.additional_parameters)
+        return urlencode(self.additional_parameters)
 
     # noinspection PyUnresolvedReferences
     def iter_options_bound(self, value):
@@ -101,6 +102,8 @@ class RelatedFieldAJAXMixin(object):
             # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
             # However, in the example I have, the problem is solved by doing prefetch_related on the m2m relation
             cr = self.child_relation
+            if isinstance(value, BaseManager):
+                value = value.all()
             return ", ".join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         elif isinstance(self, RelatedField):
