@@ -37,7 +37,9 @@ export default class TableFilterRow {
       (c) => c.visibility === DisplayMode.FULL,
     );
     filteredCols.forEach((v: TableColumn) => {
-      const fieldPayload = fields[v.name];
+      // if this is a resolved -display field, use the actual field's definition for filter row
+      const fieldNameForFilterRow = v.name.replace(/-display$/, '');
+      const fieldPayload = fields[fieldNameForFilterRow];
       // we don't want labels or help text in the filter row
       // TODO: I don't think this is the way to approach this issue. We have provide/inject and a field could easily
       //  retrieve information about being placed within filter row. When this was true, label and help text are
