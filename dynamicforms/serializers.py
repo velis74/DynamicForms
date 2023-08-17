@@ -230,6 +230,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
             super(self.__class__, self).pop(name + "-display", None)
 
         self.fields.pop = pop.__get__(self.fields)
+        # copy the labels to resolved -display fields
+        for field in self.fields:
+            if field.endswith("-display"):
+                self.fields[field].label = self.fields[field[:-8]].label
 
     def _make_df_special_fields_present_in_fields(self, fields):
         for f in fields:
@@ -340,7 +344,6 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 field_names.insert(field_names.index(field_name) + 1, resolved_field_name)
                 declared_fields[resolved_field_name] = fields.SerializerMethodField(
                     source="*",
-                    label=lazy(lambda: self.fields[field_name].label, str),
                     display_form=DisplayMode.HIDDEN,
                     display_table=DisplayMode.FULL,
                 )
@@ -348,7 +351,6 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 def get_resolve_method(fld_nm, res_fld):
                     def resolve_choice_field(self, value):
                         source = self.fields[fld_nm].source
-                        self.fields[res_fld].label = self.fields[fld_nm].label
                         return self.fields[fld_nm].render_to_table(
                             # getattr has a default == None because the object might be a new init and
                             #   will not have relations
