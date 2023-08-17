@@ -358,10 +358,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                         self.Meta.fields = list(self.Meta.fields)
                     self.Meta.fields.append(resolved_field_name)
 
-                print(
-                    f"We will be creating a resolved field for field {field_name}. "
-                    f"Field is already custom-declared: {bool(s_field)}"
-                )
+                # print(
+                #     f"We will be creating a resolved field for field {field_name}. "
+                #     f"Field is already custom-declared: {bool(s_field)}"
+                # )
                 pass
 
         return super().get_uniqueness_extra_kwargs(field_names, declared_fields, extra_kwargs)
@@ -440,6 +440,9 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
             pass
 
         return ""
+
+    def render_to_table(self, value, row_data):
+        return str(value) if value is not None else None
 
 
 class Serializer(DynamicFormsSerializer, serializers.Serializer):

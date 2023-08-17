@@ -20,6 +20,7 @@ schema = {
             "char_field": {"type": "string"},
             "int_field": {"type": "number"},
             "int_choice_field": {"type": "number"},
+            "int_choice_field-display": {"type": "string"},
             "bool_field": {"type": "boolean"},
         },
         "additionalProperties": False,
