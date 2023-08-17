@@ -15,7 +15,7 @@ jobs:
       BROWSER_SELENIUM: 'FIREFOX;{"headless": true, "binary_location": "/usr/bin/firefox"}'
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Prepare Selenium enviroment
         run: |
           #Download geckodriver
@@ -28,7 +28,7 @@ jobs:
           sudo mv geckodriver /usr/local/bin/
 
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
