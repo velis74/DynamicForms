@@ -14,7 +14,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         if self.context.get("format") == COMPONENT_DEF_RENDERER_FORMAT:
             # todo: THIS RELATIONSHIP IS NOT SUPPORTED IN VIEWMODE
             self.fields.pop("string_related_field", None)
-            self.fields.pop("string_related_field-display", None)
 
     template_context = dict(url_reverse="advanced-fields")
     form_titles = {

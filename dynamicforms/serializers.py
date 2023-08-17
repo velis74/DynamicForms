@@ -231,6 +231,14 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
             self._make_df_special_fields_present_in_fields(["df_prev_id", "row_css_style", "df_control_data"])
         super().__init__(*args, is_filter=is_filter, **kwds)
         self.manage_changed_flds()
+        self._decorate_fields()
+
+    def _decorate_fields(self):
+        def pop(self, name: str, default):
+            super(self.__class__, self).pop(name, default)
+            super(self.__class__, self).pop(name + "-display", None)
+
+        self.fields.pop = pop.__get__(self.fields)
 
     def _make_df_special_fields_present_in_fields(self, fields):
         for f in fields:
@@ -312,7 +320,9 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 isinstance(d_field, RelatedField)  # DB field is a relation
                 or getattr(d_field, "choices", None)  # DB field has choices
             ):
-                if s_field and getattr(s_field, "display_table", DisplayMode.SUPPRESS) == DisplayMode.SUPPRESS:
+                if (s_field and getattr(s_field, "display_table", DisplayMode.SUPPRESS) == DisplayMode.SUPPRESS) or (
+                    hasattr(self, "Meta") and hasattr(self.Meta, "exclude") and field_name in self.Meta.exclude
+                ):
                     # if the field is set to not display in the table, don't create the resolved field
                     continue
 

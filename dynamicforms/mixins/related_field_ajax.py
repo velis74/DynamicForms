@@ -1,6 +1,7 @@
 from typing import Optional
 
 from django.db.models.manager import BaseManager
+from django.utils.http import urlencode
 from django.urls import reverse
 from rest_framework.relations import ManyRelatedField, RelatedField
 
@@ -37,9 +38,7 @@ class RelatedFieldAJAXMixin(object):
 
     @property
     def additional_parameters_urlencoded(self):
-        from django.utils.http import urlencode
-
-        return urlencode(self.additional_parameters)
+        return urlencode(self.additional_parameters) if self.additional_parameters else None
 
     # noinspection PyUnresolvedReferences
     def iter_options_bound(self, value):
