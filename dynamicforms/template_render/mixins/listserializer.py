@@ -19,6 +19,8 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
 
     def __init__(self, *args, **kwargs):
         self.child = None
+        kwargs.setdefault("display_table", kwargs["child"].display_table)
+        kwargs.setdefault("display_form", kwargs["child"].display_form)
         super().__init__(*args, **kwargs)
 
     def set_bound_value(self, value: List[Dict]):

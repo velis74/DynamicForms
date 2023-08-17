@@ -309,7 +309,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
             if d_field and d_field.name == self.Meta.model._meta.pk.name:
                 # hide the primary key field (DRF only marks it as R/O)
                 field_name = self.Meta.model._meta.pk.name
-                if field_name not in declared_fields:
+                if field_name not in declared_fields and "display" not in extra:
                     extra.setdefault("display_form", fields.DisplayMode.HIDDEN)
                     extra.setdefault("display_table", fields.DisplayMode.FULL)
 
