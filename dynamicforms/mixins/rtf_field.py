@@ -10,10 +10,10 @@ class RTFFieldMixin(object):
         self.parser = RTFFieldHTMLParser(max_lines=self.max_lines, max_line_length=self.max_line_length)
 
     def to_representation(self, instance, row_data=None):
+        # TODO: why is this here and not in init?
         self.style.update(input_type="input")
         if not self.parent.is_filter:
             self.render_params["form_component_name"] = "DCKEditor"
-            self.style.update({"base_template": "rtf_field.html"})
 
         return super().to_representation(instance, row_data)
 

@@ -117,15 +117,6 @@ class FieldRenderMixin(object):
         :param row_data: instance with row data
         :return: serialized value
         """
-        table_render = (
-            self.render_to_table(value, row_data)
-            # do not attempt to do separate table rendering for support fields
-            if self.field_name not in ("df_control_data", "df_prev_id", "row_css_style")
-            # and most definitely not if this is already a ListSerializer
-            and not isinstance(self, ListSerializer)
-            else value
-        )
-
         check_for_none = value.pk if isinstance(value, PKOnlyObject) else value
         if check_for_none is None:
             value = None
@@ -133,15 +124,9 @@ class FieldRenderMixin(object):
         if value is None:
             # TODO: DRF excepts if value is None. However, if me have a field that redeclares its
             #  to_representation, it now won't be called :(
-            default_render = None
+            return None
         else:
-            default_render = super().to_representation(value)
-
-        return (
-            (default_render, table_render)
-            if table_render != value and table_render != default_render
-            else default_render
-        )
+            return super().to_representation(value)
 
     def set_display(self, value):
         if isinstance(value, tuple):

@@ -1,14 +1,14 @@
 from dynamicforms import fields
 
+# TODO: #821 - Perhaps standard ChoiceField should support enums out-of-the-box?
+#  e.g. if choices was an enum, it would resolve it into actual choices as well as support to_representation
+
 
 class EnumField(fields.ChoiceField):
     def __init__(self, enum_type, *args, **kwds):
         kwds["choices"] = tuple([(member.value, member.name) for member in enum_type])
         super().__init__(*args, **kwds)
         self.enum_type = enum_type
-
-    def to_internal_value(self, data):
-        return self.enum_type(data[0] if isinstance(data, list) else data)
 
     def to_representation(self, value, row_data=None):
         if isinstance(value, self.enum_type):

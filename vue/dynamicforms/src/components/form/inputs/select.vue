@@ -114,14 +114,13 @@ export default /* #__PURE__ */ defineComponent({
       get() {
         if (this.selected) {
           return this.multiple ?
-            (<DfForm.ChoicesJSON[]> this.selected).map((i) => [i.id, i.text]) :
-            [(<DfForm.ChoicesJSON> this.selected).id, (<DfForm.ChoicesJSON> this.selected).text];
+            (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
+            (<DfForm.ChoicesJSON> this.selected).id;
         }
         return '';
       },
       set(value: any) {
         if (value != null) {
-          // TODO: this will most likely not work now with values being tuples
           if (this.multiple) {
             const val = value.constructor === Array ? value.map(String) : value.split(',');
             this.selected = this.options.filter((o) => val.includes(`${o.id}`));
@@ -143,13 +142,12 @@ export default /* #__PURE__ */ defineComponent({
   async mounted() {
     if (!this.multiple && !this.field.allowNull && !this.value && this.options.length) {
       // Auto select first element
-      this.result = [this.options[0].id, this.options[0].text];
+      this.result = this.options[0].id;
     } else {
-      this.result = this.value?.constructor === Array ? this.value[0] : this.value;
+      this.result = this.value;
     }
     if (this.field.ajax && this.value) {
-      // TODO: how does this work in multiselect?
-      await this.queryOptions(this.value[0], this.field.ajax.value_field);
+      await this.queryOptions(this.value, this.field.ajax.value_field);
       this.result = this.loadedChoices[0]?.id;
     }
   },
