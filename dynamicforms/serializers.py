@@ -4,7 +4,6 @@ from typing import Any, Dict, List
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.fields.related import RelatedField
-from django.utils.functional import lazy
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 
