@@ -70,7 +70,7 @@ class RelatedFieldAJAXMixin(object):
                 ajax=dict(
                     url_reverse=reverse(self.url_reverse, kwargs=dict(format="json")),
                     placeholder=self.placeholder,
-                    additional_parameters=self.additional_parameters,
+                    additional_parameters=self.additional_parameters_urlencoded,
                     query_field=self.query_field,
                     value_field=self.value_field,
                     text_field=self.text_field,
