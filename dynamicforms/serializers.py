@@ -352,7 +352,10 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                         source = self.fields[fld_nm].source
                         self.fields[res_fld].label = self.fields[fld_nm].label
                         return self.fields[fld_nm].render_to_table(
-                            getattr(value, source) if source != "*" else value, value
+                            # getattr has a default == None because the object might be a new init and
+                            #   will not have relations
+                            getattr(value, source, None) if source != "*" else value,
+                            value,
                         )
 
                     return resolve_choice_field
