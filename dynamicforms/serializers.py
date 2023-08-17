@@ -36,15 +36,6 @@ class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
                 instance = StructDefault(_default_=None)
             kwds.setdefault("instance", instance)
         super().__init__(*args, **kwds)
-        try:
-            # hide the primary key field (DRF only marks it as R/O)
-            field_name = self.Meta.model._meta.pk.name
-            if field_name not in self._declared_fields:
-                pk_field = self.fields[field_name]
-                pk_field.display_form = fields.DisplayMode.HIDDEN
-                pk_field.display_table = fields.DisplayMode.FULL
-        except:
-            pass
         if self.is_filter:
             for field_name, field in self.fields.items():
                 field.default = None
@@ -314,6 +305,13 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 d_field = self.Meta.model._meta.get_field(field_name)
             except FieldDoesNotExist:
                 d_field = None
+
+            if d_field and d_field.name == self.Meta.model._meta.pk.name:
+                # hide the primary key field (DRF only marks it as R/O)
+                field_name = self.Meta.model._meta.pk.name
+                if field_name not in declared_fields:
+                    extra.setdefault("display_form", fields.DisplayMode.HIDDEN)
+                    extra.setdefault("display_table", fields.DisplayMode.FULL)
 
             if isinstance(s_field, (fields.ChoiceMixin, fields.RelatedFieldAJAXMixin)) or (
                 # if custom field properties are declared and they are either ChoiceField or RelatedField
