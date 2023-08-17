@@ -17,9 +17,6 @@ class RemindersSerializer(serializers.ModelSerializer):
     type = EnumField(CalendarReminder.RType)
     unit = EnumField(CalendarReminder.Unit)
 
-    def to_representation(self, instance, row_data=None):
-        return super().to_representation(instance, row_data)
-
     class Meta:
         model = CalendarReminder
         fields = ("id", "event", "type", "quantity", "unit")

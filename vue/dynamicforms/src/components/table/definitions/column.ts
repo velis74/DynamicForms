@@ -127,10 +127,7 @@ export default class TableColumn {
 
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   renderDecoratorPlain(rowData: any, thead: boolean) {
-    const value = rowData[this.name];
-    // The following statement takes care of foreign keys / choices that serialize to a tuple of key, value
-    if (Array.isArray(value)) return value[1];
-    return value;
+    return rowData[this.name];
   }
 
   renderDecoratorBool(rowData: any, thead: boolean) {
