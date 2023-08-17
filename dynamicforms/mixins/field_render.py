@@ -5,7 +5,6 @@ from typing import Dict, Optional
 
 from rest_framework.fields import Field as DrfField
 from rest_framework.relations import PKOnlyObject
-from rest_framework.serializers import ListSerializer
 
 if typing.TYPE_CHECKING:
     from dynamicforms.mixins import DFField

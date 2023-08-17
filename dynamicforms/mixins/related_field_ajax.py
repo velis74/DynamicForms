@@ -2,7 +2,6 @@ from typing import Optional
 
 from django.urls import reverse
 from rest_framework.relations import ManyRelatedField, RelatedField
-from rest_framework.serializers import ListSerializer
 
 
 class RelatedFieldAJAXMixin(object):
