@@ -7,3 +7,7 @@ urlpatterns = [
     re_path(r"^progress/$", progress.get_progress_value, name="progress"),
     re_path(r"^preupload-file/$", preupload_files.preupload_file, name="preupload-file"),
 ]
+
+
+# Test
+a = 1
