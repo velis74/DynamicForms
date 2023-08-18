@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Iterable, NamedTuple, Union
+from typing import Callable, Iterable, NamedTuple, Union
 
 
 class ConditionalVisibilityMixin(object):
@@ -134,9 +134,9 @@ class Statement:
 
     def __init__(
         self,
-        statement_a: Union[str, Statement],
+        statement_a: Union[str, Statement, Callable],
         operator: Operators,
-        statement_b: Union[any, Statement],
+        statement_b: Union[any, Statement, Callable],
     ):
         self.statement_a = statement_a
         self.operator = operator
@@ -180,9 +180,12 @@ class Statement:
         return Statement(self, Operators.NOT, None)
 
     def to_value(self) -> StatementType:
-        if isinstance(self.statement_a, Statement) and isinstance(self.statement_b, Statement):
-            return StatementType(self.statement_a.to_value(), self.operator, self.statement_b.to_value())
-        return StatementType(self.statement_a, self.operator, self.statement_b)
+        statement_a = self.statement_a() if callable(self.statement_a) else self.statement_a
+        statement_b = self.statement_b() if callable(self.statement_b) else self.statement_b
+
+        if isinstance(statement_a, Statement) and isinstance(statement_b, Statement):
+            return StatementType(statement_a.to_value(), self.operator, statement_b.to_value())
+        return StatementType(statement_a, self.operator, statement_b)
 
 
 # Aliases for developer friendly experience
