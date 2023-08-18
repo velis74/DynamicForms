@@ -57,9 +57,6 @@ class ActionBase(object):
     def as_component_def(self):
         return {k: getattr(self, k) for k in ("name", "action")}
 
-    def delete_me(self):
-        return 0
-
 
 class TablePosition(IntEnum):
     HEADER = 0  # Table header of list view
