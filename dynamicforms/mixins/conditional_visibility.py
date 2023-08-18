@@ -105,16 +105,16 @@ class Field(object):
     def __ne__(self, other: any) -> Statement:
         return Statement(self.field_name, Operators.NOT_EQUALS, other)
 
-    def is_in(self, other: Iterable) -> Statement:
+    def is_in(self, other: Union[Iterable, Callable]) -> Statement:
         return Statement(self.field_name, Operators.IN, other)
 
-    def not_in(self, other: Iterable) -> Statement:
+    def not_in(self, other: Union[Iterable, Callable]) -> Statement:
         return Statement(self.field_name, Operators.NOT_IN, other)
 
-    def includes(self, other: Iterable) -> Statement:
+    def includes(self, other: Union[Iterable, Callable]) -> Statement:
         return Statement(self.field_name, Operators.INCLUDES, other)
 
-    def not_includes(self, other: Iterable) -> Statement:
+    def not_includes(self, other: Union[Iterable, Callable]) -> Statement:
         return Statement(self.field_name, Operators.NOT_INCLUDES, other)
 
 
@@ -146,7 +146,7 @@ class Statement:
 
     def validation(self) -> None:
         if self.operator in [Operators.IN, Operators.NOT_IN]:
-            if not isinstance(self.statement_b, Iterable):
+            if not isinstance(self.statement_b, Iterable) and not callable(self.statement_b):
                 raise ValueError(f"Operator IN expects an iterable value, got {self.statement_b}")
 
         if self.operator == Operators.NOT:
