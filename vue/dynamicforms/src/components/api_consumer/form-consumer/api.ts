@@ -50,7 +50,12 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
   delete = async (): Promise<T | undefined> => this.api.delete();
 
   save = async () => {
-    if (this.pkValue && this.pkValue !== 'new') return this.api.update(<T> this.data);
+    if (this.pkValue && this.pkValue !== 'new') {
+      if (this.data?.[this.pkName] || !this.pkValue) return this.api.update(<T> this.data);
+      const data = { ...this.data };
+      data[this.pkName] = this.pkValue;
+      return this.api.update(<T> data);
+    }
     return this.api.create(<T> this.data);
   };
 

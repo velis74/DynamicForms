@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 
 from dynamicforms.fields import BooleanField
+from dynamicforms.utils import get_pk_name
 
 
 class NewMixin(object):
@@ -90,7 +91,7 @@ class PutPostMixin(object):
     # When there is no record id in URL when calling PUT, this function will be called
     # noinspection PyUnresolvedReferences
     def put(self: viewsets.ModelViewSet, request, *args, **kwargs):
-        self.kwargs["pk"] = request.data["id"]
+        self.kwargs["pk"] = get_pk_name(self.Meta.model)
         return self.update(request, *args, **kwargs)
 
     # When there is record id in URL when calling POST, this function will be called
