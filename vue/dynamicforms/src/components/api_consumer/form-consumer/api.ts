@@ -38,8 +38,8 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
 
   getUXDefinition = async (): Promise<APIConsumer.FormDefinition> => {
     if (!this.layout) {
-      this.pkName = this.ux_def.primary_key_name;
       this.ux_def = await this.api.componentDefinition(this.pkValue);
+      this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
     } else {
       this.ux_def.record = await this.getRecord();
