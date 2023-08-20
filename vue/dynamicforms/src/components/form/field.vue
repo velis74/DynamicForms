@@ -69,11 +69,6 @@ export default /* #__PURE__ */ defineComponent({
       },
     },
   },
-  methods: {
-    updateModelValueDisplay(newValue: any) {
-      this.payload[`${this.field.name}-display`] = newValue;
-    },
-  },
   watch: {
     fieldValue: {
       handler(newValue: any, oldValue: any) {
@@ -84,6 +79,11 @@ export default /* #__PURE__ */ defineComponent({
       },
       // in case there are nested values in the future
       deep: true,
+    },
+  },
+  methods: {
+    updateModelValueDisplay(newValue: any) {
+      this.payload[`${this.field.name}-display`] = newValue;
     },
   },
 });
