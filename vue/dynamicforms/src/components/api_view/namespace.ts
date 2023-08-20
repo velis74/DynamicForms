@@ -27,7 +27,11 @@ export interface IDetailViewApi<T = any> {
   delete: (config?: AxiosRequestConfig) => Promise<T>
 }
 
-export interface IViewSetApi<T = any> extends Omit<IDetailViewApi<T>, 'componentDefinition'> {
+export interface IViewSetApi<T = any> {
   componentDefinition: (pk?: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<APIConsumer.TableUXDefinition>;
   list: (config?: AxiosRequestConfig) => Promise<T[]>
+  retrieve: (pk: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<T>
+  create: (data: T, config?: AxiosRequestConfig) => Promise<T>
+  update: (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig) => Promise<T>
+  delete: (pk: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<T>
 }
