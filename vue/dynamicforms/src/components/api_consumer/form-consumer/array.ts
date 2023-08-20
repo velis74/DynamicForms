@@ -1,4 +1,5 @@
 import { IHandlers } from '../../actions/action-handler-composable';
+import FormPayload from '../../form/definitions/form-payload';
 import dfModal from '../../modal/modal-view-api';
 import { APIConsumer } from '../namespace';
 
@@ -51,4 +52,8 @@ export default class FormConsumerArray<T = any> extends FormConsumerBase {
       action: resultAction,
     };
   };
+
+  async delete(): Promise<FormPayload | undefined> { return this.data; }
+
+  async save(): Promise<FormPayload | undefined> { return this.data; }
 }
