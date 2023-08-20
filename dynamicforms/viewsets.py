@@ -91,7 +91,7 @@ class PutPostMixin(object):
     # When there is no record id in URL when calling PUT, this function will be called
     # noinspection PyUnresolvedReferences
     def put(self: viewsets.ModelViewSet, request, *args, **kwargs):
-        self.kwargs["pk"] = get_pk_name(self.Meta.model)
+        self.kwargs["pk"] = self.data[get_pk_name(self.get_queryset())]
         return self.update(request, *args, **kwargs)
 
     # When there is record id in URL when calling POST, this function will be called

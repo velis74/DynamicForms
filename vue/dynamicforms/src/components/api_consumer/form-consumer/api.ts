@@ -51,7 +51,6 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
 
   save = async () => {
     if (this.pkValue && this.pkValue !== 'new') {
-      if (this.data?.[this.pkName] || !this.pkValue) return this.api.update(<T> this.data);
       const data = { ...this.data };
       data[this.pkName] = this.pkValue;
       return this.api.update(<T> data);
