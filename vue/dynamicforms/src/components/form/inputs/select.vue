@@ -73,6 +73,7 @@ export default /* #__PURE__ */ defineComponent({
   name: 'DSelect',
   components: { Multiselect, VuetifyInput, IonIcon },
   mixins: [InputBase, TranslationsMixin],
+  emits: ['update:modelValueDisplay'],
   setup() {
     const multiselectRef = ref<typeof VuetifyInput | null>(null);
     const minHeight = ref<number>(0);
@@ -91,7 +92,10 @@ export default /* #__PURE__ */ defineComponent({
       });
     }
 
-    function multiSelectClose() { minHeight.value = 0; dropdownTop.value = 0; }
+    function multiSelectClose() {
+      minHeight.value = 0;
+      dropdownTop.value = 0;
+    }
 
     return { multiselectRef, minHeight, dropdownTop, multiSelectOpen, multiSelectClose };
   },
@@ -113,6 +117,12 @@ export default /* #__PURE__ */ defineComponent({
     result: {
       get() {
         if (this.selected) {
+          this.$emit(
+            'update:modelValueDisplay',
+            this.multiple ?
+              (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.text) :
+              (<DfForm.ChoicesJSON> this.selected).text,
+          );
           return this.multiple ?
             (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
             (<DfForm.ChoicesJSON> this.selected).id;
@@ -188,7 +198,7 @@ export default /* #__PURE__ */ defineComponent({
           loadedData = { results: loadedData, next: null };
         }
         this.loadedChoices = loadedData.results.map(
-          (item: { [ key: string ]: any }): DfForm.ChoicesJSON => ({
+          (item: { [key: string]: any }): DfForm.ChoicesJSON => ({
             id: item[this.field.ajax.value_field],
             text: item[this.field.ajax.text_field],
           }),

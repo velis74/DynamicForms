@@ -7,6 +7,7 @@
       :actions="actions"
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
+      @update:modelValueDisplay="updateModelValueDisplay"
     />
   </v-col>
 </template>
@@ -66,6 +67,11 @@ export default /* #__PURE__ */ defineComponent({
       set(value: any) {
         this.payload[this.field.name] = value;
       },
+    },
+  },
+  methods: {
+    updateModelValueDisplay(newValue: any) {
+      this.payload[`${this.field.name}-display`] = newValue;
     },
   },
   watch: {

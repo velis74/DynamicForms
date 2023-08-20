@@ -96,16 +96,24 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
   }
 
   async saveForm(refresh: boolean = true) {
+    let record: Record<string, any>;
     if (this.pkValue !== 'new' && this.pkValue) {
       // we are updating a record
-      const record = this.getRecord(this.pkValue);
+      record = this.getRecord(this.pkValue);
       for (const [key, value] of Object.entries(this.formData)) {
         record[key] = value;
       }
     } else {
       // create new record
-      this.records.push({ ...this.formData });
+      record = { ...this.formData };
+      this.records.push(record);
     }
+    // this loop will fill any resolved display fields into the table record so that resolved names may be displayed
+    this.tableColumns.forEach((column) => {
+      if (column.name.endsWith('-display') && this.formData['$extra-data'][column.name]) {
+        record[column.name] = this.formData['$extra-data'][column.name];
+      }
+    });
     if (refresh) {
       await this.reload();
     }
