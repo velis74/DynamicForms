@@ -13,7 +13,7 @@ export default async function FormConsumerApiOneShot <T = any>(
   formData?: FormPayload,
   handlers?: IHandlers,
 ): Promise<T | undefined> {
-  const formConsumer = new FormConsumerApi(baseUrl, trailingSlash, handlers);
+  const formConsumer = new FormConsumerApi(baseUrl, trailingSlash, pk, handlers);
 
   let error = {};
   let result: T | undefined;
@@ -22,7 +22,7 @@ export default async function FormConsumerApiOneShot <T = any>(
 
   do {
     // eslint-disable-next-line no-await-in-loop
-    const formResult = await formConsumer.withErrors(error).execute(pk, data);
+    const formResult = await formConsumer.withErrors(error).execute(data);
 
     const resultAction = formResult.action;
     data = formResult.data;

@@ -1,12 +1,11 @@
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
+import { PrimaryKeyType } from '../../api_view/namespace';
 import FormPayload from '../../form/definitions/form-payload';
 import FormLayout from '../../form/definitions/layout';
 import { APIConsumer } from '../namespace';
 
 export default abstract class FormConsumerBase {
-  requestedPKValue?: APIConsumer.PKValueType;
-
   pkName: string = 'id';
 
   ux_def: APIConsumer.FormUXDefinition = {} as APIConsumer.FormUXDefinition;
@@ -36,8 +35,8 @@ export default abstract class FormConsumerBase {
     return this.titles[which] ?? '';
   }
 
-  get pkValue() {
-    return this.data?.[this.pkName] ?? this.requestedPKValue;
+  get pkValue(): PrimaryKeyType {
+    return this.data?.[this.pkName];
   }
 
   get definition(): APIConsumer.FormDefinition {

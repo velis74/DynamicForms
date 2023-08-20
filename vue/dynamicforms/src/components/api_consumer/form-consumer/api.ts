@@ -2,6 +2,7 @@ import { Ref } from 'vue';
 
 import { IHandlers } from '../../actions/action-handler-composable';
 import DetailViewApi from '../../api_view/detail-view-api';
+import { PrimaryKeyType } from '../../api_view/namespace';
 import dfModal from '../../modal/modal-view-api';
 import type { APIConsumer } from '../namespace';
 
@@ -18,27 +19,25 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
   constructor(
     baseUrl: string | Ref<string>,
     trailingSlash: boolean = false,
+    pk?: PrimaryKeyType,
     actionHandlers?: IHandlers,
     hooks?: FormConsumerHooks<FormConsumerApi>,
   ) {
     super();
 
-    this.api = new DetailViewApi<T>(baseUrl, trailingSlash);
+    this.api = new DetailViewApi<T>(baseUrl, trailingSlash, pk);
     this.actionHandlers = actionHandlers;
 
     Object.assign(this, hooks);
   }
 
-  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => {
-    if (this.pkValue || this.pkValue !== 'new') {
-      return await this.api.retrieve(this.pkValue) as APIConsumer.FormPayloadJSON;
-    }
-    return null;
-  };
+  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => (
+    await this.api.retrieve() as APIConsumer.FormPayloadJSON
+  );
 
   getUXDefinition = async (): Promise<APIConsumer.FormDefinition> => {
     if (!this.layout) {
-      this.ux_def = await this.api.componentDefinition(this.pkValue);
+      this.ux_def = await this.api.componentDefinition();
       this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
     } else {
@@ -48,27 +47,14 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
     return this.definition;
   };
 
-  delete = async (): Promise<T | undefined> => {
-    if (this.pkValue && this.pkValue !== 'new') {
-      return this.api.delete(this.pkValue);
-    }
-    return undefined;
-  };
+  delete = async (): Promise<T | undefined> => this.api.delete();
 
   save = async () => {
-    if (this.pkValue && this.pkValue !== 'new') {
-      // @ts-ignore
-      return this.api.update(this.pkValue, this.data);
-    }
-    // @ts-ignore
-    return this.api.create(this.data);
+    if (this.pkValue && this.pkValue !== 'new') return this.api.update(<T> this.data);
+    return this.api.create(<T> this.data);
   };
 
-  execute = async (
-    pkValue?: APIConsumer.PKValueType,
-    defaultData?: Partial<T> | null,
-  ): Promise<FormExecuteResult> => {
-    this.requestedPKValue = pkValue;
+  execute = async (defaultData?: Partial<T> | null): Promise<FormExecuteResult> => {
     const definition = await this.getUXDefinition();
     if (defaultData) {
       Object.assign(definition.payload, defaultData);

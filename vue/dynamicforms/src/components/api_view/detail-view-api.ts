@@ -16,9 +16,12 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
 
   protected trailingSlash: boolean;
 
-  constructor(url: string | Ref<string>, trailingSlash: boolean = false) {
+  protected pk?: PrimaryKeyType;
+
+  constructor(url: string | Ref<string>, trailingSlash: boolean = false, pk?: PrimaryKeyType) {
     this.baseUrl = urlParamToRef(url);
     this.trailingSlash = trailingSlash;
+    this.pk = pk;
   }
 
   compose_url(url: string): string {
@@ -33,26 +36,23 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
 
   detail_url = (pk?: PrimaryKeyType) => (`${this.baseUrl.value}${pk ? `/${pk}` : ''}`);
 
-  componentDefinition = async (
-    pk?: PrimaryKeyType,
-    config?: AxiosRequestConfig,
-  ): Promise<APIConsumer.FormUXDefinition> => (
-    (await apiClient.get(this.compose_url(this.definition_url(this.detail_url(pk))), config)).data
+  componentDefinition = async (config?: AxiosRequestConfig): Promise<APIConsumer.FormUXDefinition> => (
+    (await apiClient.get(this.compose_url(this.definition_url(this.detail_url(this.pk))), config)).data
   );
 
-  retrieve = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.get(this.compose_url(this.data_url(this.detail_url(pk))), config)).data
+  retrieve = async (config?: AxiosRequestConfig): Promise<T> => (
+    (await apiClient.get(this.compose_url(this.data_url(this.detail_url(this.pk))), config)).data
   );
 
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
     (await apiClient.post(this.compose_url(this.baseUrl.value), data, config)).data
   );
 
-  update = async (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.put(this.compose_url(this.detail_url(pk)), data, config)).data
+  update = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
+    (await apiClient.put(this.compose_url(this.detail_url(this.pk)), data, config)).data
   );
 
-  delete = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.delete(this.compose_url(this.detail_url(pk)), config)).data
+  delete = async (config?: AxiosRequestConfig): Promise<T> => (
+    (await apiClient.delete(this.compose_url(this.detail_url(this.pk)), config)).data
   );
 }
