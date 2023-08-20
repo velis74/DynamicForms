@@ -62,6 +62,10 @@ export default abstract class FormConsumerBase {
     return this;
   };
 
+  abstract delete(): Promise<any>;
+
+  abstract save(): Promise<any>;
+
   abstract getRecord: () => APIConsumer.FormPayloadJSON | Promise<APIConsumer.FormPayloadJSON>;
 
   abstract getUXDefinition: () => APIConsumer.FormDefinition | Promise<APIConsumer.FormDefinition>;

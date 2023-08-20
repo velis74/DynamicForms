@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import Action from '../actions/action';
 import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
@@ -14,6 +14,7 @@ import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
 
 import ComponentDisplay from './component-display';
+import FormConsumerBase from './form-consumer/base';
 import { APIConsumer } from './namespace';
 
 /**
@@ -26,7 +27,7 @@ import { APIConsumer } from './namespace';
  */
 
 const props = defineProps<{
-  consumer: APIConsumer.ConsumerLogicBaseInterface,
+  consumer: APIConsumer.ConsumerLogicBaseInterface | FormConsumerBase,
   displayComponent: ComponentDisplay,
   handlers?: IHandlers,
 }>();
@@ -51,10 +52,10 @@ const renderComponent = computed(() => {
 const renderComponentData = computed(() => {
   switch (props.displayComponent) {
   case ComponentDisplay.TABLE:
-    return props.consumer.tableDefinition;
+    return (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).tableDefinition;
   case ComponentDisplay.FORM:
     // console.warn(props.consumer.formDefinition);
-    return props.consumer.formDefinition;
+    return (<FormConsumerBase> props.consumer).definition;
     // TODO: what about dialog? Where is this APIConsumer even used?
     // TODO: And why isn't APIConsumer used on the page which showcases the three input modes. What's there instead?
   default:
@@ -65,17 +66,17 @@ const renderComponentData = computed(() => {
 const { handler } = useActionHandler();
 
 function actionDelete(actionData: Action, payload: FormPayload) {
-  props.consumer.deleteRow(payload);
+  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).deleteRow(payload);
   return true;
 }
 
 function actionValueChanged(actionData: Action, payload: FormPayload) {
-  props.consumer.filter(payload);
+  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).filter(payload);
   return true;
 }
 
 async function actionAdd() {
-  await props.consumer.dialogForm('new');
+  await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).dialogForm('new');
   return true;
 }
 
@@ -85,7 +86,7 @@ async function actionEdit(
   context: { rowType: RowTypes },
 ) {
   if (context.rowType !== RowTypes.Data || payload == undefined) return false; // eslint-disable-line eqeqeq
-  await props.consumer.dialogForm(payload[props.consumer.pkName]);
+  await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).dialogForm(payload[props.consumer.pkName]);
   return true;
 }
 
@@ -98,11 +99,46 @@ function actionSort(
   if (context.rowType === RowTypes.Label && actionData.position === 'ROW_CLICK' && context.column) {
     const oldChangeCounter = context.column.ordering.changeCounter;
     context.column.ordering.handleColumnHeaderClick(context.event);
-    if (oldChangeCounter !== context.column.ordering.changeCounter) props.consumer.reload();
+    if (oldChangeCounter !== context.column.ordering.changeCounter) {
+      (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).reload();
+    }
     return true;
   }
   return false;
 }
+
+const actionCancel = async (): Promise<boolean> => {
+  await (<FormConsumerBase> props.consumer).getUXDefinition();
+  return true;
+};
+
+const actionSubmit = async (): Promise<boolean> => {
+  try {
+    await (<FormConsumerBase> props.consumer).save();
+  } catch (err: any) {
+    (<FormConsumerBase> props.consumer).errors = { ...err?.response?.data };
+    return true;
+  }
+  await (<FormConsumerBase> props.consumer).getUXDefinition();
+  return true;
+};
+
+function checkConsumerCorrectness() {
+  if (props.displayComponent === ComponentDisplay.FORM) {
+    if (!(props.consumer instanceof FormConsumerBase)) {
+      console.error('Showing FORM requires a FormConsumerBase consumer, but the provided one is not', props.consumer);
+    }
+  }
+  if (props.displayComponent === ComponentDisplay.TABLE) {
+    if (props.consumer instanceof FormConsumerBase) {
+      console.error('Showing TABLE requires a ConsumerLogicBase consumer, but the provided one is not', props.consumer);
+    }
+  }
+}
+
+checkConsumerCorrectness();
+
+watch(() => props.displayComponent, checkConsumerCorrectness);
 
 const defaultHandlers: IHandlers = {
   delete: actionDelete,
@@ -110,6 +146,8 @@ const defaultHandlers: IHandlers = {
   sort: actionSort,
   add: actionAdd,
   edit: actionEdit,
+  cancel: actionCancel, // when displayComponent == ComponentDisplay.FORM
+  submit: actionSubmit, // when displayComponent == ComponentDisplay.FORM
 };
 
 for (const key of Object.keys({ ...defaultHandlers, ...props.handlers })) {
