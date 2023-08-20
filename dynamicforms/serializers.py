@@ -12,6 +12,7 @@ from dynamicforms.template_render import ViewModeSerializer
 from . import fields
 from .mixins import ActionMixin, DisplayMode, FieldRenderMixin
 from .struct import StructDefault
+from .utils import get_pk_name
 
 
 class DynamicFormsSerializer(ViewModeSerializer, FieldRenderMixin, ActionMixin):
@@ -309,12 +310,13 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
             except FieldDoesNotExist:
                 d_field = None
 
-            if d_field and d_field.name == self.Meta.model._meta.pk.name:
+            if d_field and d_field.name == get_pk_name(self.Meta.model):
                 # hide the primary key field (DRF only marks it as R/O)
-                field_name = self.Meta.model._meta.pk.name
+                field_name = get_pk_name(self.Meta.model)
                 if field_name not in declared_fields and "display" not in extra:
                     extra.setdefault("display_form", fields.DisplayMode.HIDDEN)
                     extra.setdefault("display_table", fields.DisplayMode.FULL)
+                    extra_kwargs[field_name] = extra
 
             if isinstance(s_field, (fields.ChoiceMixin, fields.RelatedFieldAJAXMixin)) or (
                 # if custom field properties are declared and they are either ChoiceField or RelatedField
