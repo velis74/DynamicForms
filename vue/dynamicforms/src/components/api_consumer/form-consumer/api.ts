@@ -29,6 +29,7 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
 
     this.api = new DetailViewApi<T>(baseUrl, trailingSlash, pk);
     this.actionHandlers = actionHandlers;
+    this.pk = pk;
 
     Object.assign(this, hooks);
   }
