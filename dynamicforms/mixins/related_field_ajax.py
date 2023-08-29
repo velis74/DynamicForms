@@ -115,4 +115,5 @@ class RelatedFieldAJAXMixin(object):
     def many_init(cls, *args, **kwargs):
         list_kwargs = {'child_relation': cls(*args, **kwargs)}
         from dynamicforms.fields import ManyRelatedField
-        return ManyRelatedField(**list_kwargs)
+        return ManyRelatedField(display_form=kwargs.get("display_form"), display_table=kwargs.get("display_table"),
+                                **list_kwargs)

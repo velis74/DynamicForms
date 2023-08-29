@@ -1,5 +1,4 @@
 from django.utils import timezone
-from rest_framework.fields import empty
 
 from dynamicforms import fields, serializers
 from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
@@ -45,14 +44,12 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     readonly_field = fields.BooleanField(read_only=True)
     filepath_field = fields.FilePathField(path="examples")
 
-    # TODO: MultipleChoiceField
-    # Problem: Not saved properly to the database. Saved as 'set()' string. Why?
-    # multiplechoice_field = serializers.MultipleChoiceField(choices=(
-    #     (0, 'Choice 1'),
-    #     (1, 'Choice 2'),
-    #     (2, 'Choice 3'),
-    #     (3, 'Choice 4'),
-    # ))
+    multiplechoice_field = fields.MultipleChoiceField(choices=(
+        (0, 'Choice 1'),
+        (1, 'Choice 2'),
+        (2, 'Choice 3'),
+        (3, 'Choice 4'),
+    ))
 
     # TODO: FileField, ImageField
     # image_field = serializers.ImageField(required=False, use_url=True)
@@ -98,12 +95,11 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
     file_field_two = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
 
-    # hyperlinked_related_field = serializers.HyperlinkedRelatedField(view_name='relation-detail', read_only=True)
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 
     class Meta:
         model = AdvancedFields
-        exclude = ("multiplechoice_field", "image_field", "hyperlinked_identity_field")
+        exclude = ("image_field", "hyperlinked_identity_field")
 
     def create(self, validated_data):
         return AdvancedFields.objects.create(**validated_data)
