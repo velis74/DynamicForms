@@ -103,7 +103,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdvancedFields
-        exclude = ("multiplechoice_field", "image_field", "hyperlinked_related_field", "hyperlinked_identity_field")
+        exclude = ("multiplechoice_field", "image_field", "hyperlinked_identity_field")
 
     def create(self, validated_data):
         return AdvancedFields.objects.create(**validated_data)
