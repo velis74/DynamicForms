@@ -5,7 +5,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.fields.related import RelatedField
 from rest_framework import serializers
-from rest_framework.fields import SkipField, get_attribute
+from rest_framework.fields import get_attribute, SkipField
 
 from dynamicforms.action import Actions
 from dynamicforms.template_render import ViewModeSerializer
