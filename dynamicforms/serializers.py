@@ -5,7 +5,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.fields.related import RelatedField
 from rest_framework import serializers
-from rest_framework.fields import SkipField
+from rest_framework.fields import SkipField, get_attribute
 
 from dynamicforms.action import Actions
 from dynamicforms.template_render import ViewModeSerializer
@@ -351,12 +351,17 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
                 def get_resolve_method(fld_nm, res_fld):
                     def resolve_choice_field(self, value):
-                        source = self.fields[fld_nm].source
+                        source_attr = self.fields[fld_nm].source_attrs
+                        row_data = value
+                        try:
+                            value = get_attribute(value, source_attr)
+                        except:
+                            value = None
                         return self.fields[fld_nm].render_to_table(
                             # getattr has a default == None because the object might be a new init and
                             #   will not have relations
-                            getattr(value, source, None) if source != "*" else value,
                             value,
+                            row_data,
                         )
 
                     return resolve_choice_field
