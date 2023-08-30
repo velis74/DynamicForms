@@ -157,8 +157,12 @@ export default /* #__PURE__ */ defineComponent({
       this.result = this.value;
     }
     if (this.field.ajax && this.value) {
-      await this.queryOptions(this.value, this.field.ajax.value_field);
-      this.result = this.loadedChoices[0]?.id;
+      if (this.options.find((item) => item.id === this.value)) {
+        this.result = this.value;
+      } else {
+        await this.queryOptions(this.value, this.field.ajax.value_field);
+        this.result = this.multiple ? this.loadedChoices : this.loadedChoices[0]?.id;
+      }
     }
   },
   methods: {
@@ -182,6 +186,12 @@ export default /* #__PURE__ */ defineComponent({
       }
     },
     async queryOptions(query: string, query_field: string): Promise<void> {
+      if (this.field.choices) return;
+      /*
+        @adam
+        If field already defines the choices it is wasteful to query options,
+        due to options always resolving into field choices
+      */
       const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
       let req = `${this.field.ajax.url_reverse}`;
       if (this.field.ajax.additional_parameters || query) {

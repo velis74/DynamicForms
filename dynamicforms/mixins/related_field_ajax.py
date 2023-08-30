@@ -49,11 +49,13 @@ class RelatedFieldAJAXMixin(object):
                 if hasattr(self, "child_relation"):
                     itm = self.child_relation
                     qry = itm.get_queryset()
-                    qry = qry.filter(pk__in=value)
+                    if value != "__all__":
+                        qry = qry.filter(pk__in=value)
                 else:
                     itm = self
                     qry = self.get_queryset()
-                    qry = qry.filter(pk=value)
+                    if value != "__all__":
+                        qry = qry.filter(pk=value)
 
                 return [dict(value=rec.id, display_text=itm.display_value(rec)) for rec in qry.all()]
             except:
@@ -77,6 +79,15 @@ class RelatedFieldAJAXMixin(object):
                 )
             )
             res.update(ajax)
+            qs_count = self.get_queryset().count()
+
+            if qs_count and qs_count <= 10:
+                res.update(
+                    choices=map(
+                        lambda option: dict(id=option["value"], text=option["display_text"]),
+                        self.iter_options_bound("__all__"),
+                    )
+                )
         else:
             res.update(
                 choices=map(
