@@ -12,6 +12,8 @@ import type { FormConsumerHook, FormConsumerHooks, FormExecuteResult } from './n
 class FormConsumerApi<T = any> extends FormConsumerBase {
   readonly api: DetailViewApi<T>;
 
+  private pk?: PrimaryKeyType;
+
   declare beforeDialog?: FormConsumerHook;
 
   declare afterDialog?: (instance: FormConsumerApi, action: any) => void;
@@ -27,6 +29,7 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
 
     this.api = new DetailViewApi<T>(baseUrl, trailingSlash, pk);
     this.actionHandlers = actionHandlers;
+    this.pk = pk;
 
     Object.assign(this, hooks);
   }
@@ -50,11 +53,7 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
   delete = async (): Promise<T | undefined> => this.api.delete();
 
   save = async () => {
-    if (this.pkValue && this.pkValue !== 'new') {
-      const data = { ...this.data };
-      data[this.pkName] = this.pkValue;
-      return this.api.update(<T> data);
-    }
+    if (this.pk && this.pk !== 'new') return this.api.update(<T> this.data);
     return this.api.create(<T> this.data);
   };
 

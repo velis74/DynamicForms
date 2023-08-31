@@ -83,7 +83,10 @@ export default /* #__PURE__ */ defineComponent({
   },
   methods: {
     updateModelValueDisplay(newValue: any) {
-      this.payload[`${this.field.name}-display`] = newValue;
+      const fieldName = `${this.field.name}-display`;
+      if (Object.getOwnPropertyDescriptor(this.payload, fieldName)?.writable) {
+        this.payload[fieldName] = newValue;
+      }
     },
   },
 });
