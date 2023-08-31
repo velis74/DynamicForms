@@ -3,20 +3,20 @@ from typing import Optional
 from django.db.models.manager import BaseManager
 from django.urls import reverse
 from django.utils.http import urlencode
-from rest_framework.relations import ManyRelatedField, RelatedField
+from rest_framework.relations import RelatedField
 
 
 class RelatedFieldAJAXMixin(object):
     def __init__(
-        self,
-        *args,
-        url_reverse: Optional[str] = None,
-        placeholder: Optional[str] = None,
-        additional_parameters: Optional[dict] = None,
-        query_field: str = "query",
-        value_field: str = "choice_id",
-        text_field: str = "choice_text",
-        **kwargs
+            self,
+            *args,
+            url_reverse: Optional[str] = None,
+            placeholder: Optional[str] = None,
+            additional_parameters: Optional[dict] = None,
+            query_field: str = "query",
+            value_field: str = "choice_id",
+            text_field: str = "choice_text",
+            **kwargs
     ):
         """
         Allows us to use AJAX to populate select2 options instead of pre-populating at render time
@@ -107,6 +107,7 @@ class RelatedFieldAJAXMixin(object):
         :param row_data: data for entire row (for more complex renderers)
         :return: rendered value for table view
         """
+        from dynamicforms.fields import ManyRelatedField
         if isinstance(self, ManyRelatedField):
             # Hm, not sure if this is the final thing to do: an example of this field is in
             # ALC plane editor (modes of takeoff). However, value is a queryset here. There seem to still be DB queries
@@ -120,3 +121,10 @@ class RelatedFieldAJAXMixin(object):
             return self.display_value(value)
 
         return value
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        list_kwargs = {'child_relation': cls(*args, **kwargs)}
+        from dynamicforms.fields import ManyRelatedField
+        return ManyRelatedField(display_form=kwargs.get("display_form"), display_table=kwargs.get("display_table"),
+                                **list_kwargs)
