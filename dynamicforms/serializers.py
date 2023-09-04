@@ -319,12 +319,12 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                     extra_kwargs[field_name] = extra
 
             if isinstance(s_field, (fields.ChoiceMixin, fields.RelatedFieldAJAXMixin)) or (
-                # if custom field properties are declared and they are either ChoiceField or RelatedField
-                isinstance(d_field, RelatedField)  # DB field is a relation
-                or getattr(d_field, "choices", None)  # DB field has choices
+                    # if custom field properties are declared and they are either ChoiceField or RelatedField
+                    isinstance(d_field, RelatedField)  # DB field is a relation
+                    or getattr(d_field, "choices", None)  # DB field has choices
             ):
                 if (s_field and getattr(s_field, "display_table", DisplayMode.SUPPRESS) == DisplayMode.SUPPRESS) or (
-                    hasattr(self, "Meta") and hasattr(self.Meta, "exclude") and field_name in self.Meta.exclude
+                        hasattr(self, "Meta") and hasattr(self.Meta, "exclude") and field_name in self.Meta.exclude
                 ):
                     # if the field is set to not display in the table, don't create the resolved field
                     continue
@@ -351,12 +351,18 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
                 def get_resolve_method(fld_nm, res_fld):
                     def resolve_choice_field(self, value):
+                        from dynamicforms.fields import ManyRelatedField
+                        if isinstance(
+                                self.fields[fld_nm], ManyRelatedField) and value and not getattr(value, "pk", None):
+                            return None
+
                         source_attr = self.fields[fld_nm].source_attrs
                         row_data = value
                         try:
                             value = get_attribute(value, source_attr)
                         except:
                             value = None
+
                         return self.fields[fld_nm].render_to_table(
                             # getattr has a default == None because the object might be a new init and
                             #   will not have relations
