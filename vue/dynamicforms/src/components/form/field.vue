@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash';
 import { defineComponent, inject } from 'vue';
 
 import { useActionHandler } from '../actions/action-handler-composable';
@@ -72,10 +73,7 @@ export default /* #__PURE__ */ defineComponent({
   watch: {
     fieldValue: {
       handler(newValue: any, oldValue: any) {
-        this.callHandler(
-          this.actions.valueChanged,
-          { field: this.field.name, oldValue, newValue },
-        );
+        this.debounceHandler(this, newValue, oldValue);
       },
       // in case there are nested values in the future
       deep: true,
@@ -88,6 +86,12 @@ export default /* #__PURE__ */ defineComponent({
         this.payload[fieldName] = newValue;
       }
     },
+    debounceHandler: _.debounce((self, newValue, oldValue) => {
+      self.callHandler(
+        self.actions.valueChanged,
+        { field: self.field.name, oldValue, newValue },
+      );
+    }, 600),
   },
 });
 </script>
