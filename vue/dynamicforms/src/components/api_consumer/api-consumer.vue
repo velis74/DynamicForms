@@ -10,8 +10,10 @@ import { computed, watch } from 'vue';
 import Action from '../actions/action';
 import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
 import FormPayload from '../form/definitions/form-payload';
+import dfModal from '../modal/modal-view-api';
 import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
+import { gettext } from '../util/translations-mixin';
 
 import ComponentDisplay from './component-display';
 import FormConsumerBase from './form-consumer/base';
@@ -65,8 +67,11 @@ const renderComponentData = computed(() => {
 
 const { handler } = useActionHandler();
 
-function actionDelete(actionData: Action, payload: FormPayload) {
-  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).deleteRow(payload);
+async function actionDelete(actionData: Action, payload: FormPayload) {
+  const res = await dfModal.yesNo('Delete', gettext('Are you sure you want to delete this record?'));
+  if (res.action.name.toUpperCase() === 'YES') {
+    await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).deleteRow(payload);
+  }
   return true;
 }
 
