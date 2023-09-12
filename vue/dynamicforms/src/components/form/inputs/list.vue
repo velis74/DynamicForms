@@ -1,8 +1,11 @@
 <template>
-  <APIConsumerVue v-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
+  <v-input v-bind="binds">
+    <APIConsumerVue v-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
+  </v-input>
 </template>
 
 <script lang="ts">
+import _ from 'lodash';
 import { defineComponent, ref } from 'vue';
 
 import APIConsumerVue from '../../api_consumer/api-consumer.vue';
@@ -27,6 +30,15 @@ export default defineComponent({
     }
     return { displayComponent, setConsumer, consumer };
   },
+  computed: {
+    binds() {
+      const binds = _.cloneDeep(this.baseBinds);
+      binds['error-messages'] = binds['error-messages']
+        .filter((el: any) => !(el === undefined || el === null || !Object.keys(el).length))
+        .map((el: { [key: string]: string }) => Object.keys(el).map((key) => `${key}: ${el[key]}`));
+      return binds;
+    },
+  },
   watch: {
     modelValue(newValue) {
       this.consumer = new ConsumerLogicArray(this.field.renderParams.formComponentDef!, newValue);
@@ -41,7 +53,7 @@ export default defineComponent({
   },
   async mounted() {
     // `${this.field.renderParams.formComponentDef?.detail_url.split('/').slice(0, -1).join('/')}.componentdef`,
-    this.setConsumer(
+    await this.setConsumer(
       this.field.renderParams.formComponentDef!,
       this.modelValue as any[],
     );

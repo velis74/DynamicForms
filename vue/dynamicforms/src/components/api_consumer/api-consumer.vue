@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="flex: auto">
     <component :is="renderComponent" v-bind="renderComponentData"/>
   </div>
 </template>
