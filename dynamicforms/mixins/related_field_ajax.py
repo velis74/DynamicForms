@@ -115,6 +115,8 @@ class RelatedFieldAJAXMixin(object):
             cr = self.child_relation
             if isinstance(value, BaseManager):
                 value = value.all()
+            if value is None:
+                return ""
             return ", ".join((cr.display_value(item) for item in value))
             # return ', '.join((cr.display_value(item) for item in cr.get_queryset().filter(pk__in=value)))
         elif isinstance(self, RelatedField):
