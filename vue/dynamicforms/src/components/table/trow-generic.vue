@@ -7,7 +7,7 @@
   <div
     v-else
     ref="row"
-    :class="`df-row ${rowData.dfControlStructure.CSSClass}`"
+    :class="{ [`df-row ${rowData.dfControlStructure.CSSClass}`]: true, ['data-row']: rowType === RowTypes.Data }"
     :style="rowData.dfControlStructure.CSSStyle"
     @click.stop="(event) => callHandler(actions.rowClick, { rowType, event })"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { rowType, event })"
@@ -26,7 +26,6 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ObserveVisibility } from 'vue-observe-visibility';
 
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
