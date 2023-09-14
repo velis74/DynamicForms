@@ -33,6 +33,13 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
   #${uniqueId} .df-row {
     display: block;
     white-space: nowrap;
+    background-color: white;
+    transition: filter 0.4s ease
+  }
+
+  #${uniqueId} .data-row:hover {
+    filter: brightness(95%);
+    cursor: pointer;
   }
 
   #${uniqueId} > .df-thead > .df-separator {
