@@ -25,7 +25,6 @@
 
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
