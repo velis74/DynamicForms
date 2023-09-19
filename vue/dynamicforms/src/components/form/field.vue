@@ -1,17 +1,3 @@
-<template>
-  <v-col :class="cssClasses + columnClasses">
-    <component
-      :is="field.componentName"
-      v-model="fieldValue"
-      :field="field"
-      :actions="actions"
-      :errors="errors && errors[field.name]"
-      :show-label-or-help-text="showLabelOrHelpText"
-      @update:modelValueDisplay="updateModelValueDisplay"
-    />
-  </v-col>
-</template>
-
 <script setup lang="ts">
 import _ from 'lodash';
 import { computed, inject, watch } from 'vue';
@@ -35,11 +21,11 @@ interface Props {
   field: FormField
   actions: FilteredActions
   errors: any
-  showLabelOrHelpText: boolean
+  showLabelOrHelpText?: boolean
   cssClasses?: string
 }
 
-const props = withDefaults(defineProps<Props>(), { cssClasses: 'col' });
+const props = withDefaults(defineProps<Props>(), { cssClasses: 'col', showLabelOrHelpText: true });
 
 const { callHandler } = useActionHandler();
 const payload = inject<FormPayload>('payload', {} as FormPayload);
@@ -56,10 +42,25 @@ const fieldValue = computed({
   },
 });
 
+const component = computed(() => {
+  switch (props.field.componentName) {
+  case 'DCheckbox': return DCheckbox;
+  case 'DCKEditor': return DCKEditor;
+  case 'DDateTime': return DDateTime;
+  case 'DFile': return DFile;
+  case 'DInput': return DInput;
+  case 'DList': return DList;
+  case 'DPlaceholder': return DPlaceholder;
+  case 'DSelect': return DSelect;
+  case 'DTextArea': return DTextArea;
+  default: return DInput;
+  }
+});
+
 const debounceHandler = _.debounce((newValue: any, oldValue: any) => {
   callHandler(
     props.actions.valueChanged,
-    { field: props.field.name, oldValue, newValue }
+    { field: props.field.name, oldValue, newValue },
   );
 }, 600);
 
@@ -74,6 +75,20 @@ watch(fieldValue, (newValue: any, oldValue: any) => {
   debounceHandler(newValue, oldValue);
 });
 </script>
+
+<template>
+  <v-col :class="cssClasses + columnClasses">
+    <component
+      :is="component"
+      v-model="fieldValue"
+      :field="field"
+      :actions="actions"
+      :errors="errors && errors[field.name]"
+      :show-label-or-help-text="showLabelOrHelpText"
+      @update:modelValueDisplay="updateModelValueDisplay"
+    />
+  </v-col>
+</template>
 
 <style>
 label {
