@@ -1,3 +1,4 @@
+import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import { ActionsNS } from '../actions/namespace';
 import FormPayload from '../form/definitions/form-payload';
@@ -45,6 +46,8 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   public filterData: Object;
 
   protected titles: APIConsumer.Titles;
+
+  protected dialogHandlers?: IHandlers;
 
   protected constructor() {
     /**
@@ -98,6 +101,10 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     return this.requestedPKValue === 'new' || this.requestedPKValue == null ?
       this.requestedPKValue : this.formData?.[this.pkName];
   }
+
+  setDialogHandlers = (handlers?: IHandlers) => {
+    this.dialogHandlers = handlers;
+  };
 
   /** @virtual */
   processUXDefinition(UXDefinition: APIConsumer.TableUXDefinition): void {

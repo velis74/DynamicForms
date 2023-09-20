@@ -16,6 +16,7 @@ import RowTypes from '../table/definitions/row-types';
 import { gettext } from '../util/translations-mixin';
 
 import ComponentDisplay from './component-display';
+import ConsumerLogicBase from './consumer-logic-base';
 import FormConsumerBase from './form-consumer/base';
 import { APIConsumer } from './namespace';
 
@@ -32,6 +33,7 @@ const props = defineProps<{
   consumer: APIConsumer.ConsumerLogicBaseInterface | FormConsumerBase,
   displayComponent: ComponentDisplay,
   handlers?: IHandlers,
+  dialogHandlers?: IHandlers,
 }>();
 
 if (!ComponentDisplay.isDefined(props.displayComponent)) {
@@ -66,6 +68,10 @@ const renderComponentData = computed(() => {
 });
 
 const { handler } = useActionHandler();
+
+if (props.consumer instanceof ConsumerLogicBase) {
+  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).setDialogHandlers(props.dialogHandlers);
+}
 
 async function actionDelete(actionData: Action, payload: FormPayload) {
   const res = await dfModal.yesNo('Delete', gettext('Are you sure you want to delete this record?'));

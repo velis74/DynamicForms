@@ -132,6 +132,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       this.trailingSlash,
       pk,
       this.formData,
+      this.dialogHandlers,
     );
 
     await this.reload();
