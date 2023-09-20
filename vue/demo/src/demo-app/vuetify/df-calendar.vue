@@ -19,7 +19,7 @@ import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/vue3';
-import { apiClient, ConsumerLogicApi } from 'dynamicforms';
+import { apiClient, ConsumerLogicApi, FormConsumerApiOneShot } from 'dynamicforms';
 import SunCalc from 'suncalc';
 import { defineComponent } from 'vue';
 
@@ -111,16 +111,22 @@ export default defineComponent({
       return { id: input.id, start: input.start_at, end: input.end_at, title: input.title };
     },
     async addReservation(selectionInfo: DateSelectArg) {
-      await this.apiConsumer.dialogForm(
-        'new',
+      await FormConsumerApiOneShot(
+        '/calendar-event',
+        true,
+        null,
+        // @ts-ignore
         { start_at: selectionInfo.startStr, end_at: selectionInfo.endStr },
-        false,
       );
       selectionInfo.view.calendar.refetchEvents();
     },
     async editReservation(clickInfo: EventClickArg) {
       const eventId = clickInfo.event.id;
-      await this.apiConsumer.dialogForm(eventId, null, false);
+      await FormConsumerApiOneShot(
+        '/calendar-event',
+        true,
+        eventId,
+      );
       clickInfo.view.calendar.refetchEvents();
     },
     async resizeReservation(resizeInfo: EventResizeDoneArg | EventDropArg) {
