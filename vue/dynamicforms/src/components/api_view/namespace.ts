@@ -1,8 +1,10 @@
 import { AxiosRequestConfig } from 'axios/index';
+import { Ref } from 'vue';
 
 import { APIConsumer } from '../api_consumer/namespace';
 
-export type PrimaryKeyType = number | string;
+export type PrimaryKeyBaseType = number | string;
+export type PrimaryKeyType = PrimaryKeyBaseType | Ref<PrimaryKeyBaseType>;
 
 export interface IView<T = any> {
   retrieve: (config?: AxiosRequestConfig) => Promise<T>
