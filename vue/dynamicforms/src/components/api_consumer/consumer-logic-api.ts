@@ -17,6 +17,8 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   private readonly api: ViewSetApi<any>;
 
+  private requestId: number = 0;
+
   constructor(baseURL: string | Ref<string>, trailingSlash: boolean = true) {
     super();
     /**
@@ -30,7 +32,22 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
     this.trailingSlash = trailingSlash;
   }
 
-  async fetch() {
+  async fetch(url?: string) {
+    const reqId = ++this.requestId;
+    let result;
+    if (url !== undefined) {
+      result = await this.fetchNewRows(url);
+    } else {
+      result = await this.fetchRecords();
+    }
+    if (this.requestId === reqId) {
+      // we are the latest request to the backend
+      return result;
+    }
+    return undefined;
+  }
+
+  async fetchRecords() {
     try {
       // TODO: this does not take into account current filtering and ordering for the table
       this.loading = true;
@@ -79,10 +96,13 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
   }
 
   async reload() {
-    this.rows = new TableRows(
-      this,
-      await this.fetch(),
-    );
+    const result = await this.fetch();
+    if (result) {
+      this.rows = new TableRows(
+        this,
+        result,
+      );
+    }
   }
 
   async getRecord(pkValue: string) {
@@ -132,6 +152,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       this.trailingSlash,
       pk,
       this.formData,
+      this.dialogHandlers,
     );
 
     await this.reload();
