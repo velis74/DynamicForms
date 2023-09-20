@@ -42,20 +42,19 @@ const fieldValue = computed({
   },
 });
 
-const component = computed(() => {
-  switch (props.field.componentName) {
-  case 'DCheckbox': return DCheckbox;
-  case 'DCKEditor': return DCKEditor;
-  case 'DDateTime': return DDateTime;
-  case 'DFile': return DFile;
-  case 'DInput': return DInput;
-  case 'DList': return DList;
-  case 'DPlaceholder': return DPlaceholder;
-  case 'DSelect': return DSelect;
-  case 'DTextArea': return DTextArea;
-  default: return DInput;
-  }
-});
+const components: { [key: string]: any } = {
+  DCheckbox,
+  DCKEditor,
+  DDateTime,
+  DFile,
+  DInput,
+  DList,
+  DPlaceholder,
+  DSelect,
+  DTextArea,
+};
+
+const component = computed(() => components?.[props.field.componentName] ?? DInput);
 
 const debounceHandler = _.debounce((newValue: any, oldValue: any) => {
   callHandler(
