@@ -76,7 +76,9 @@ async function actionDelete(actionData: Action, payload: FormPayload) {
 }
 
 function actionValueChanged(actionData: Action, payload: FormPayload) {
-  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).filter(payload);
+  if (props.displayComponent === ComponentDisplay.TABLE) {
+    (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).filter(payload);
+  }
   return true;
 }
 
