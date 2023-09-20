@@ -58,6 +58,7 @@ export namespace APIConsumer {
 
   export interface ConsumerLogicBaseInterface {
     pkName: string;
+    setDialogHandlers(handlers?: IHandlers): void;
     setOrdering(parameter: string, style: any | null, counter: number): void;
     reload(filter: boolean): Promise<void>;
     deleteRow(tableRow: FormPayload): Promise<void>;
