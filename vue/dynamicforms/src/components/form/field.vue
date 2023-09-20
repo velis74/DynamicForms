@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import _ from 'lodash';
-import { computed, inject, watch } from 'vue';
+import { computed, inject, ref, Ref, watch } from 'vue';
 
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
@@ -28,7 +28,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), { cssClasses: 'col', showLabelOrHelpText: true });
 
 const { callHandler } = useActionHandler();
-const payload = inject<FormPayload>('payload', {} as FormPayload);
+const payload = inject<Ref<FormPayload>>('payload', ref({}) as Ref<FormPayload>);
 
 const columnClasses = computed<string>(() => {
   const classes = props.field.widthClasses;
@@ -36,9 +36,11 @@ const columnClasses = computed<string>(() => {
 });
 
 const fieldValue = computed({
-  get(): any { return payload[props.field.name]; },
+  get(): any {
+    return payload.value[props.field.name];
+  },
   set(value: any) {
-    payload[props.field.name] = value;
+    payload.value[props.field.name] = value;
   },
 });
 
@@ -66,7 +68,7 @@ const debounceHandler = _.debounce((newValue: any, oldValue: any) => {
 const updateModelValueDisplay = (newValue: any) => {
   const fieldName = `${props.field.name}-display`;
   if (Object.getOwnPropertyDescriptor(payload, fieldName)?.writable) {
-    payload[fieldName] = newValue;
+    payload.value[fieldName] = newValue;
   }
 };
 
