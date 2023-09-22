@@ -58,7 +58,7 @@ import { computed, defineComponent, inject, provide, ref } from 'vue';
 
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
-import FormField from '../form/field.vue';
+import FormField from '../form/form-field.vue';
 
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
