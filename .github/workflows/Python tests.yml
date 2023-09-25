@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.8, 3.9]
+        python: [3.9, 3.10]
       fail-fast: false
 
     env:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run Tox py-django31
         if: (success() || failure())
-        run: tox -e py-django31-drf311,py-django31-drf312,py-django31-drftip
+        run: tox -e py-django31-drf314,py-django31-drftip
 
       - name: Run Tox py-django4
         if: (success() || failure())
