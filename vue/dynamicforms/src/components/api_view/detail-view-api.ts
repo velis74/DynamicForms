@@ -1,20 +1,19 @@
 import { AxiosRequestConfig } from 'axios';
-import { computed, isRef, ref, Ref } from 'vue';
+import { computed, isRef, MaybeRef, ref, Ref, unref } from 'vue';
 
 import { APIConsumer } from '../api_consumer/namespace';
 import apiClient from '../util/api-client';
 
 import { IDetailViewApi, PrimaryKeyType, PrimaryKeyBaseType, QueryType } from './namespace';
 
-function urlParamToRef(url: string | Ref<string>) {
+function urlParamToRef(url: MaybeRef<string>) {
   const urlRef = isRef(url) ? url : ref(url);
   return computed(() => urlRef.value.replace(/\/+$/, ''));
 }
 
-function objectToURLEParam(obj: Partial<any> | Ref<Partial<any>>) {
-  const deRef: Partial<any> = isRef(obj) ? <Partial<any>> obj.value : obj;
+function objectToURLEParam(obj: MaybeRef<Partial<any>>) {
   return computed(() => new URLSearchParams(
-    Object.fromEntries(Object.entries(deRef).map(([k, v]) => [k, v.toString()])),
+    Object.fromEntries(Object.entries(unref(obj)).map(([k, v]) => [k, v.toString()])),
   ));
 }
 
