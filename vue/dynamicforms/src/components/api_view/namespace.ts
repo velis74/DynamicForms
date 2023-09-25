@@ -37,3 +37,6 @@ export interface IViewSetApi<T = any> {
   update: (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig) => Promise<T>
   delete: (pk: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<T>
 }
+
+export type QueryBaseType = URLSearchParams | Partial<any>;
+export type QueryType = QueryBaseType | Ref<QueryBaseType>;
