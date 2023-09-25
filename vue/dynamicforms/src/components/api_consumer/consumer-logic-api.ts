@@ -143,15 +143,13 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   async dialogForm(
     pk: APIConsumer.PKValueType,
-    formData: any = null,
   ) {
-    Object.assign(this.formData, formData);
-
     const result = await FormConsumerApiOneShot(
-      this.baseUrl,
-      this.trailingSlash,
-      pk,
-      this.formData,
+      {
+        url: this.baseUrl,
+        trailingSlash: this.trailingSlash,
+        pk,
+      },
       this.dialogHandlers,
     );
 

@@ -9,40 +9,40 @@ const mock = new MockAdapter(apiClient);
 
 describe('DetailViewApi Construction', () => {
   it('should construct with only a base URL', () => {
-    const api = new DetailViewApi('/api');
+    const api = new DetailViewApi({ url: '/api' });
     expect(api.detail_url.value).toBe('/api');
     expect(api.definition_url.value).toBe('/api.componentdef');
     expect(api.data_url.value).toBe('/api.json');
   });
 
   it('should construct with a base URL and trailing slash', () => {
-    const api = new DetailViewApi('/api', true);
+    const api = new DetailViewApi({ url: '/api', trailingSlash: true });
     expect(api.detail_url.value).toBe('/api');
     expect(api.definition_url.value).toBe('/api.componentdef');
     expect(api.data_url.value).toBe('/api.json');
   });
 
   it('should construct with a base URL and primary key', () => {
-    const api = new DetailViewApi('/api', false, '123');
+    const api = new DetailViewApi({ url: '/api', trailingSlash: false, pk: '123' });
     expect(api.detail_url.value).toBe('/api/123');
     expect(api.definition_url.value).toBe('/api/123.componentdef');
     expect(api.data_url.value).toBe('/api/123.json');
   });
 
   it('should construct with a base URL, primary key, and query', () => {
-    const api = new DetailViewApi('/api', false, '123', { key: 'value' });
+    const api = new DetailViewApi({ url: '/api', trailingSlash: false, pk: '123', query: { key: 'value' } });
     expect(api.detail_url.value).toBe('/api/123');
     expect(api.definition_url.value).toBe('/api/123.componentdef');
     expect(api.data_url.value).toBe('/api/123.json');
   });
 
   it('should construct with all parameters as Refs', () => {
-    const api = new DetailViewApi(
-      computed(() => '/api'),
-      true,
-      computed(() => '123'),
-      computed(() => new URLSearchParams('key=value')),
-    );
+    const api = new DetailViewApi({
+      url: computed(() => '/api'),
+      trailingSlash: true,
+      pk: computed(() => '123'),
+      query: computed(() => new URLSearchParams('key=value')),
+    });
     expect(api.detail_url.value).toBe('/api/123');
     expect(api.definition_url.value).toBe('/api/123.componentdef');
     expect(api.data_url.value).toBe('/api/123.json');
@@ -55,7 +55,7 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle retrieve correctly', async () => {
-    const api = new DetailViewApi('/api');
+    const api = new DetailViewApi({ url: '/api' });
     mock.onGet('/api.json').reply(200, { foo: 'bar' });
 
     const data = await api.retrieve();
@@ -63,7 +63,7 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle create correctly', async () => {
-    const api = new DetailViewApi('/api');
+    const api = new DetailViewApi({ url: '/api' });
     mock.onPost('/api').reply(200, { id: 1, foo: 'bar' });
 
     const data = await api.create({ foo: 'bar' });
@@ -71,7 +71,7 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle update correctly', async () => {
-    const api = new DetailViewApi(ref('/api'), false, ref(1));
+    const api = new DetailViewApi({ url: ref('/api'), trailingSlash: false, pk: ref(1) });
     mock.onPut('/api/1').reply(200, { id: 1, foo: 'updated' });
 
     const data = await api.update({ foo: 'updated' });
@@ -79,7 +79,7 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle delete correctly', async () => {
-    const api = new DetailViewApi(ref('/api'), false, ref(1));
+    const api = new DetailViewApi({ url: ref('/api'), trailingSlash: false, pk: ref(1) });
     mock.onDelete('/api/1').reply(200, { success: true });
 
     const data = await api.delete();
@@ -87,12 +87,11 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle retrieve with query parameters as URLSearchParams', async () => {
-    const api = new DetailViewApi(
-      '/api',
-      false,
-      undefined,
-      new URLSearchParams({ key: 'value with space' }),
-    );
+    const api = new DetailViewApi({
+      url: '/api',
+      trailingSlash: false,
+      query: new URLSearchParams({ key: 'value with space' }),
+    });
     mock.onGet('/api.json?key=value+with+space').reply(200, { foo: 'bar' });
     mock.onGet('/api.componentdef?key=value+with+space').reply(200, { foo: 'definition' });
 
@@ -103,7 +102,11 @@ describe('DetailViewApi', () => {
   });
 
   it('should handle retrieve with query parameters as object', async () => {
-    const api = new DetailViewApi('/api', false, undefined, { key: 'value with space' });
+    const api = new DetailViewApi({
+      url: '/api',
+      trailingSlash: false,
+      query: { key: 'value with space' },
+    });
     mock.onGet('/api.json?key=value+with+space').reply(200, { foo: 'bar' });
 
     const data = await api.retrieve();
@@ -114,7 +117,7 @@ describe('DetailViewApi', () => {
     const pk = ref('123');
     const query = ref(new URLSearchParams('key=value'));
 
-    const api = new DetailViewApi('/api', false, pk, query);
+    const api = new DetailViewApi({ url: '/api', trailingSlash: false, pk, query });
 
     // Initial state
     expect(api.detail_url.value).toBe('/api/123');

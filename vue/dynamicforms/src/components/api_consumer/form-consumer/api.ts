@@ -1,8 +1,6 @@
-import { Ref } from 'vue';
-
 import { IHandlers } from '../../actions/action-handler-composable';
 import DetailViewApi from '../../api_view/detail-view-api';
-import { PrimaryKeyType } from '../../api_view/namespace';
+import { DetailViewOptions, PrimaryKeyType } from '../../api_view/namespace';
 import dfModal from '../../modal/modal-view-api';
 import type { APIConsumer } from '../namespace';
 
@@ -12,24 +10,22 @@ import type { FormConsumerHook, FormConsumerHooks, FormExecuteResult } from './n
 class FormConsumerApi<T = any> extends FormConsumerBase {
   readonly api: DetailViewApi<T>;
 
-  private pk?: PrimaryKeyType;
+  private readonly pk?: PrimaryKeyType;
 
   declare beforeDialog?: FormConsumerHook;
 
   declare afterDialog?: (instance: FormConsumerApi, action: any) => void;
 
   constructor(
-    baseUrl: string | Ref<string>,
-    trailingSlash: boolean = false,
-    pk?: PrimaryKeyType,
+    apiOptions: DetailViewOptions,
     actionHandlers?: IHandlers,
     hooks?: FormConsumerHooks<FormConsumerApi>,
   ) {
     super();
 
-    this.api = new DetailViewApi<T>(baseUrl, trailingSlash, pk);
+    this.api = new DetailViewApi<T>(apiOptions);
     this.actionHandlers = actionHandlers;
-    this.pk = pk;
+    this.pk = apiOptions.pk;
 
     Object.assign(this, hooks);
   }

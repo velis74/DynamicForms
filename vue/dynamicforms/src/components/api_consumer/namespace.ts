@@ -62,12 +62,11 @@ export namespace APIConsumer {
     setOrdering(parameter: string, style: any | null, counter: number): void;
     reload(filter: boolean): Promise<void>;
     deleteRow(tableRow: FormPayload): Promise<void>;
-    dialogForm(pk: APIConsumer.PKValueType, formData: any, refresh: boolean, return_raw_data: boolean): Promise<any>;
+    dialogForm(pk: APIConsumer.PKValueType): Promise<any>;
     title(which: 'table' | 'new' | 'edit'): string;
     tableDefinition: Record<string, unknown>; // TODO: this needs to be changed to what is actually returned
     formDefinition: APIConsumer.FormDefinition;
     filter(filterData: Object | null): Promise<void>;
-    dialogForm(pk: APIConsumer.PKValueType, formData?: any, refresh?: boolean, return_raw_data?: boolean): Promise<any>;
     reload(filter?: boolean): Promise<void>;
   }
   export interface ConsumerLogicAPIInterface extends ConsumerLogicBaseInterface {
