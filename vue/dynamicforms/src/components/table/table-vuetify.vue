@@ -26,46 +26,24 @@
     </v-card-text>
   </v-card>
 </template>
-<!--suppress ES6UnusedImports -->
-<script lang="ts">
-import { defineComponent, defineProps, withDefaults, toRefs } from 'vue';
+
+<script setup lang="ts">
+import { defineComponent, toRefs } from 'vue';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
-import FilteredActions from '../actions/filtered-actions';
 import LoadingIndicator from '../util/loading-indicator.vue';
 import TranslationsMixin from '../util/translations-mixin';
 
-import TableColumn from './definitions/column';
-import TableFilterRow from './definitions/filterrow';
-import TableRows from './definitions/rows';
-import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
-import { useTableBase } from './table';
+import { useTableBase, TableBasePropsInterface } from './table';
 import TableStyle from './table-style.vue';
 import VuetifyTBody from './tbody-generic.vue';
 import VuetifyTHead from './thead-generic.vue';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyTable',
-  components: { LoadingIndicator, VuetifyActions, VuetifyTHead, VuetifyTBody, TableStyle },
-  mixins: [TranslationsMixin],
-});
-</script>
-<script setup lang="ts">
-type ResponsiveTableLayoutsDefinition = DfTable.ResponsiveTableLayoutsDefinition;
+interface Props extends TableBasePropsInterface {}
 
 const props = withDefaults(
-  defineProps<{ // Can't just import the interface - vue complains. https://github.com/vuejs/core/issues/4294
-    pkName: string;
-    title: string;
-    columns: TableColumn[];
-    responsiveTableLayouts: ResponsiveTableLayoutsDefinition | null;
-    columnDefs: object;
-    rows: TableRows;
-    loading: boolean;
-    actions: FilteredActions;
-    filterDefinition: TableFilterRow | null;
-  }>(),
+  defineProps<Props>(),
   {
     responsiveTableLayouts: null,
     loading: false,
@@ -86,6 +64,12 @@ const {
 } = useTableBase(props);
 
 useRenderMeasure(onMeasure, { container });
+</script>
+<script lang="ts">
+export default /* #__PURE__ */ defineComponent({
+  name: 'VuetifyTable',
+  mixins: [TranslationsMixin],
+});
 </script>
 
 <style scoped>
