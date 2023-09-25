@@ -1,10 +1,10 @@
 import { AxiosRequestConfig } from 'axios/index';
-import { Ref } from 'vue';
+import { MaybeRef } from 'vue';
 
 import { APIConsumer } from '../api_consumer/namespace';
 
 export type PrimaryKeyBaseType = number | string;
-export type PrimaryKeyType = PrimaryKeyBaseType | Ref<PrimaryKeyBaseType>;
+export type PrimaryKeyType = MaybeRef<PrimaryKeyBaseType>;
 
 export interface IView<T = any> {
   retrieve: (config?: AxiosRequestConfig) => Promise<T>
@@ -37,3 +37,6 @@ export interface IViewSetApi<T = any> {
   update: (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig) => Promise<T>
   delete: (pk: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<T>
 }
+
+export type QueryBaseType = URLSearchParams | Partial<any>
+export type QueryType = MaybeRef<QueryBaseType>;
