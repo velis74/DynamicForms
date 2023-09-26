@@ -13,5 +13,7 @@ describe('Api One Shot', () => {
 
     const consumer = FormConsumerApiOneShot({ url: '/test' });
     expectTypeOf(consumer).toEqualTypeOf(FormConsumerApiOneShot);
+
+    mock.reset();
   });
 });
