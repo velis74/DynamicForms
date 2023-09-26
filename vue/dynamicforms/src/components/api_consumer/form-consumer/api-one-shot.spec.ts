@@ -7,16 +7,37 @@ import data from './api-one-shot.spec.json';
 
 const mock = new MockAdapter(apiClient);
 
+let emitted = false;
+
+const waitForEmitted = async () => Promise.race([async () => {
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (emitted) { return; }
+    // eslint-disable-next-line no-await-in-loop
+    await null;
+  }
+}, new Promise((resolve) => { setTimeout(resolve, 300); })]);
+
+const replyFn = vi.fn(() => {
+  emitted = true;
+  return [200, data];
+});
+
 describe('Api One Shot', () => {
-  it('Create', async () => {
-    mock.onGet('/test.componentdef').reply(200, data);
-
-    const consumer = FormConsumerApiOneShot({ url: '/test' });
-    expectTypeOf(consumer).toEqualTypeOf(FormConsumerApiOneShot);
-
-    // wait for consumer to establish before resetting mock
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  afterEach(() => {
     mock.reset();
+    emitted = false;
+  });
+
+  it('Create', async () => {
+    mock.onGet('/test.componentdef').reply(replyFn);
+
+    FormConsumerApiOneShot({ url: '/test' });
+
+    // wait for api call
+    await waitForEmitted();
+
+    expect(emitted).toBe(true);
+    expect(replyFn).toBeCalled();
   });
 });
