@@ -2,9 +2,7 @@
   <v-card flat>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text :key="responsiveLayoutWidth">
-      <!-- eslint-disable vue/no-v-text-v-html-on-component -->
       <table-style :columns="responsiveColumns" :unique-id="uniqueId"/>
-      <!-- eslint-enable -->
       <div :id="uniqueId" ref="container">
         <VuetifyActions :actions="actions.header"/>
         <VuetifyTHead
@@ -14,7 +12,6 @@
           :filter-definition="filterDefinition || undefined"
         />
         <VuetifyTBody
-          :data-columns="dataColumns"
           :rendered-columns="responsiveColumns"
           :rows="rows"
           :actions="actions"
@@ -58,7 +55,6 @@ const {
   responsiveLayoutWidth,
   responsiveColumns,
   responsiveLayout, // eslint-disable-line @typescript-eslint/no-unused-vars
-  dataColumns,
   theadRowData,
   onMeasure,
 } = useTableBase(props);

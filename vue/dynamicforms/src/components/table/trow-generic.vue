@@ -40,7 +40,6 @@ import { useRenderMeasure } from './render-measure';
 const props = withDefaults(
   defineProps<{
     renderedColumns: IndexedArray<TableColumn>,
-    // dataColumns: Array,
     rowData: TableRow,
     actions: FilteredActions,
     filterDefinition?: TableFilterRow,

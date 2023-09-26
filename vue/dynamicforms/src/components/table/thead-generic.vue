@@ -2,7 +2,6 @@
   <div ref="dfthead" class="df-thead">
     <GenericTRow
       :rendered-columns="renderedColumns"
-      :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
       :row-type="RowTypes.Label"
@@ -10,7 +9,6 @@
     <GenericTRow
       v-if="filterDefinition"
       :rendered-columns="renderedColumns"
-      :data-columns="[]"
       :row-data="rowData"
       :actions="actions"
       :filter-definition="filterDefinition"

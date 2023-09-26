@@ -5,11 +5,9 @@
      v-observe-visibility="rows.visibilityHandler(row[pkName])"
      -->
     <GenericTRow
-      :is="row.dfControlStructure.componentName"
       v-for="row in rows.data"
       :key="row[pkName]"
       :rendered-columns="renderedColumns"
-      :data-columns="dataColumns"
       :row-data="row"
       :row-type="RowTypes.Data"
       :actions="actions"
@@ -17,8 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
-// import { ObserveVisibility as vObserveVisibility } from 'vue-observe-visibility';
+import { computed, ref } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
@@ -29,18 +26,12 @@ import TableRows from './definitions/rows';
 import useRowVisibilityObserver from './rows-visibility-observer.js';
 import GenericTRow from './trow-generic.vue';
 
-// export default defineComponent({
-//   name: 'GenericTBody',
-//   directives: { 'observe-visibility': ObserveVisibility },
-//   mixins: [RowsVisibilityObserver],
 const props = defineProps<{
   pkName: string
   renderedColumns: IndexedArray<TableColumn>
-  dataColumns: TableColumn[]
   rows: TableRows
   actions: FilteredActions
 }>();
 const tbodyElement = ref();
 useRowVisibilityObserver(tbodyElement, computed(() => props.rows));
-const { pkName, renderedColumns, dataColumns, rows, actions } = toRefs(props);
 </script>

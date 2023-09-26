@@ -74,9 +74,6 @@ export function useTableBase(props: TableBasePropsInterface) {
   const responsiveColumns: ComputedRef<IndexedArray<TableColumn>> = computed(
     () => responsiveLayout.value.columns,
   );
-  const dataColumns: ComputedRef<TableColumn[]> = computed(
-    () => props.columns.filter((column: TableColumn) => column.visibility === DisplayMode.HIDDEN),
-  );
   const theadRowData: ComputedRef<TableRow> = computed(
     // Creates a fake table row with column labels for data
     () => new TableRow(renderedColumns.value.reduce((result, col) => {
@@ -94,7 +91,6 @@ export function useTableBase(props: TableBasePropsInterface) {
     responsiveLayout,
     responsiveLayoutWidth,
     responsiveColumns,
-    dataColumns,
     theadRowData,
     onMeasure: (refName: string, maxWidth: number) => {
       if (maxWidth) containerWidth.value = maxWidth;
