@@ -1,24 +1,19 @@
-import { Ref } from 'vue';
-
 import { IHandlers } from '../../actions/action-handler-composable';
+import { DetailViewOptions } from '../../api_view/namespace';
 import FormPayload from '../../form/definitions/form-payload';
-import type { APIConsumer } from '../namespace';
 
 import FormConsumerApi from './api';
 
 export default async function FormConsumerApiOneShot <T = any>(
-  baseUrl: string | Ref<string>,
-  trailingSlash: boolean = false,
-  pk?: APIConsumer.PKValueType,
-  formData?: FormPayload,
+  apiOptions: DetailViewOptions,
   handlers?: IHandlers,
 ): Promise<T | undefined> {
-  const formConsumer = new FormConsumerApi(baseUrl, trailingSlash, pk, handlers);
+  const formConsumer = new FormConsumerApi(apiOptions, handlers);
 
   let error = {};
   let result: T | undefined;
 
-  let data = formData;
+  let data: FormPayload | undefined;
 
   do {
     // eslint-disable-next-line no-await-in-loop

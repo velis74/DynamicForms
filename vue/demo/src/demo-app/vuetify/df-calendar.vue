@@ -112,20 +112,25 @@ export default defineComponent({
     },
     async addReservation(selectionInfo: DateSelectArg) {
       await FormConsumerApiOneShot(
-        '/calendar-event',
-        true,
-        null,
-        // @ts-ignore
-        { start_at: selectionInfo.startStr, end_at: selectionInfo.endStr },
+        {
+          url: '/calendar-event',
+          trailingSlash: true,
+          query: {
+            start_at: selectionInfo.startStr,
+            end_at: selectionInfo.endStr,
+          },
+        },
       );
       selectionInfo.view.calendar.refetchEvents();
     },
     async editReservation(clickInfo: EventClickArg) {
       const eventId = clickInfo.event.id;
       await FormConsumerApiOneShot(
-        '/calendar-event',
-        true,
-        eventId,
+        {
+          url: '/calendar-event',
+          trailingSlash: true,
+          pk: eventId,
+        },
       );
       clickInfo.view.calendar.refetchEvents();
     },

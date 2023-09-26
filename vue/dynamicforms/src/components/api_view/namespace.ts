@@ -38,5 +38,16 @@ export interface IViewSetApi<T = any> {
   delete: (pk: PrimaryKeyType, config?: AxiosRequestConfig) => Promise<T>
 }
 
-export type QueryBaseType = URLSearchParams | Partial<any>
+export type QueryBaseType = URLSearchParams | Partial<any>;
 export type QueryType = MaybeRef<QueryBaseType>;
+
+export interface DetailViewOptions {
+  url: MaybeRef<string>,
+  trailingSlash?: boolean
+  pk?: PrimaryKeyType,
+  query?: QueryType,
+}
+
+export interface DetailViewDefaults extends Required<Pick<DetailViewOptions, 'trailingSlash'>> {}
+
+export type DetailOptionsWithDefaults = DetailViewOptions & DetailViewDefaults;

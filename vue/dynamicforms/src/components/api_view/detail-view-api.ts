@@ -4,11 +4,18 @@ import { computed, isRef, MaybeRef, ref, Ref, unref } from 'vue';
 import { APIConsumer } from '../api_consumer/namespace';
 import apiClient from '../util/api-client';
 
-import { IDetailViewApi, PrimaryKeyType, PrimaryKeyBaseType, QueryType } from './namespace';
+import {
+  IDetailViewApi,
+  PrimaryKeyBaseType,
+  QueryType,
+  DetailViewDefaults,
+  DetailViewOptions,
+  DetailOptionsWithDefaults,
+} from './namespace';
 
 function urlParamToRef(url: MaybeRef<string>) {
-  const urlRef = isRef(url) ? url : ref(url);
-  return computed(() => urlRef.value.replace(/\/+$/, ''));
+  const urlRef = ref(url);
+  return computed(() => urlRef.value?.replace?.(/\/+$/, ''));
 }
 
 function objectToURLEParam(obj: MaybeRef<Partial<any>>) {
@@ -25,6 +32,12 @@ function makeQuery(query?: QueryType): Ref<URLSearchParams> | undefined {
   return objectToURLEParam(query);
 }
 
+const detailViewOptionsDefaults: DetailViewDefaults = { trailingSlash: false };
+
+const withDefaults = (options: DetailViewOptions): DetailOptionsWithDefaults => (
+  { ...detailViewOptionsDefaults, ...options }
+);
+
 export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
   protected readonly baseUrl: Ref<string>;
 
@@ -40,22 +53,21 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
 
   public readonly data_url: Ref<string>;
 
-  constructor(url: string | Ref<string>, trailingSlash: boolean = false, pk?: PrimaryKeyType, query?: QueryType) {
-    this.baseUrl = urlParamToRef(url);
-    this.trailingSlash = trailingSlash;
-    if (pk === undefined) {
-      this.pk = pk;
-    } else {
-      this.pk = isRef(pk) ? pk : ref(pk);
-    }
-    this.query = makeQuery(query);
+  constructor(options: DetailViewOptions) {
+    const optionsWithDefault = withDefaults(options);
+
+    this.baseUrl = urlParamToRef(optionsWithDefault.url);
+    this.trailingSlash = optionsWithDefault.trailingSlash;
+    this.pk = (optionsWithDefault.pk === undefined) ? undefined : ref(optionsWithDefault.pk);
+    this.query = makeQuery(optionsWithDefault.query);
+
     this.detail_url = computed(() => (`${this.baseUrl.value}${this.pk ? `/${this.pk.value}` : ''}`));
     this.definition_url = computed(() => (`${this.detail_url.value}.componentdef`));
     this.data_url = computed(() => `${this.detail_url.value}.json`);
   }
 
   compose_url(url: string | Ref<string>): string {
-    let res = isRef(url) ? url.value : url;
+    let res = unref(url);
     if (this.trailingSlash) res += '/';
     if (this.query) res += `?${this.query.value.toString()}`;
     return res;
