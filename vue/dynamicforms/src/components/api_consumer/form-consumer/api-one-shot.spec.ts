@@ -8,12 +8,15 @@ import data from './api-one-shot.spec.json';
 const mock = new MockAdapter(apiClient);
 
 describe('Api One Shot', () => {
-  it('Create', () => {
+  it('Create', async () => {
     mock.onGet('/test.componentdef').reply(200, data);
 
     const consumer = FormConsumerApiOneShot({ url: '/test' });
     expectTypeOf(consumer).toEqualTypeOf(FormConsumerApiOneShot);
 
+    // wait for consumer to establish before resetting mock
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 500));
     mock.reset();
   });
 });
