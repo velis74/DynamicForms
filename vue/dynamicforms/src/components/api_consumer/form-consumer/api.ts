@@ -2,6 +2,7 @@ import { IHandlers } from '../../actions/action-handler-composable';
 import DetailViewApi from '../../api_view/detail-view-api';
 import { DetailViewOptions, PrimaryKeyType } from '../../api_view/namespace';
 import dfModal from '../../modal/modal-view-api';
+import { gettext } from '../../util/translations-mixin';
 import type { APIConsumer } from '../namespace';
 
 import FormConsumerBase from './base';
@@ -46,7 +47,11 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
     return this.definition;
   };
 
-  delete = async (): Promise<T | undefined> => this.api.delete();
+  delete = async (): Promise<T | undefined> => {
+    if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
+    throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
+  };
 
   save = async () => {
     if (this.pk && this.pk !== 'new') return this.api.update(<T> this.data);
