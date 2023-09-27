@@ -32,7 +32,7 @@ function makeQuery(query?: QueryType): Ref<URLSearchParams> | undefined {
   return objectToURLEParam(query);
 }
 
-const detailViewOptionsDefaults: DetailViewDefaults = { trailingSlash: false };
+const detailViewOptionsDefaults: DetailViewDefaults = { trailingSlash: false, useQueryInRetrieveOnly: true };
 
 const withDefaults = (options: DetailViewOptions): DetailOptionsWithDefaults => (
   { ...detailViewOptionsDefaults, ...options }
@@ -47,6 +47,8 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
 
   protected readonly query?: Ref<URLSearchParams>;
 
+  protected readonly useQueryInRetrieveOnly: boolean;
+
   public readonly detail_url: Ref<string>;
 
   public readonly definition_url: Ref<string>;
@@ -60,21 +62,22 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
     this.trailingSlash = optionsWithDefault.trailingSlash;
     this.pk = (optionsWithDefault.pk === undefined) ? undefined : ref(optionsWithDefault.pk);
     this.query = makeQuery(optionsWithDefault.query);
+    this.useQueryInRetrieveOnly = optionsWithDefault.useQueryInRetrieveOnly;
 
     this.detail_url = computed(() => (`${this.baseUrl.value}${this.pk ? `/${this.pk.value}` : ''}`));
     this.definition_url = computed(() => (`${this.detail_url.value}.componentdef`));
     this.data_url = computed(() => `${this.detail_url.value}.json`);
   }
 
-  compose_url(url: string | Ref<string>): string {
+  compose_url(url: string | Ref<string>, useQuery: boolean): string {
     let res = unref(url);
     if (this.trailingSlash) res += '/';
-    if (this.query) res += `?${this.query.value.toString()}`;
+    if (this.query && useQuery) res += `?${this.query.value.toString()}`;
     return res;
   }
 
   componentDefinition = async (config?: AxiosRequestConfig): Promise<APIConsumer.FormUXDefinition> => (
-    (await apiClient.get(this.compose_url(this.definition_url), config)).data
+    (await apiClient.get(this.compose_url(this.definition_url, this.useQueryInRetrieveOnly), config)).data
   );
 
   /**
@@ -82,7 +85,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   retrieve = async (config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.get(this.compose_url(this.data_url), config)).data
+    (await apiClient.get(this.compose_url(this.data_url, this.useQueryInRetrieveOnly), config)).data
   );
 
   /**
@@ -90,7 +93,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.post(this.compose_url(this.baseUrl.value), data, config)).data
+    (await apiClient.post(this.compose_url(this.baseUrl.value, false), data, config)).data
   );
 
   /**
@@ -98,7 +101,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   update = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.put(this.compose_url(this.detail_url), data, config)).data
+    (await apiClient.put(this.compose_url(this.detail_url, false), data, config)).data
   );
 
   /**
@@ -106,6 +109,6 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   delete = async (config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.delete(this.compose_url(this.detail_url), config)).data
+    (await apiClient.delete(this.compose_url(this.detail_url, false), config)).data
   );
 }
