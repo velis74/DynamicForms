@@ -1,4 +1,4 @@
-import FormConsumerBase from './base';
+import FormConsumerBase from '../base';
 
 export default async function FormConsumerOneShotBase<T>(
   formConsumer: FormConsumerBase<T>,

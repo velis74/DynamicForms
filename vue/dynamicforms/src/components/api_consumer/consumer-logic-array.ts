@@ -8,7 +8,7 @@ import getObjectFromPath from '../util/get-object-from-path';
 import { toExternalRecordCopy } from '../util/InternalRecord';
 
 import ConsumerLogicBase from './consumer-logic-base';
-import FormConsumerOneShot from './form-consumer/one-shot';
+import FormConsumerOneShotArray from './form-consumer/one-shot/array';
 import { APIConsumer } from './namespace';
 
 class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
@@ -91,7 +91,7 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
   async dialogForm(
     pk: APIConsumer.PKValueType,
   ) {
-    const result = await FormConsumerOneShot(
+    const result = await FormConsumerOneShotArray(
       {
         definition: this.getFormUXDefinition(pk),
         data: this.records,
