@@ -1,10 +1,10 @@
 import { UnwrapNestedRefs } from 'vue';
 
 import { IHandlers } from '../../actions/action-handler-composable';
+import createInternalRecord from '../../util/InternalRecord';
 import { APIConsumer } from '../namespace';
 
 import FormConsumerBase from './base';
-import createInternalRecord from '../../util/InternalRecord';
 import type { FormConsumerHooks } from './namespace';
 
 let counter = 0;

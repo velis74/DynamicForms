@@ -5,9 +5,9 @@ import { TransformationFunctionBase } from '../table/definitions/column-ordering
 import OrderingDirection from '../table/definitions/column-ordering-direction';
 import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
+import { toExternalRecordCopy } from '../util/InternalRecord';
 
 import ConsumerLogicBase from './consumer-logic-base';
-import { toExternalRecordCopy } from '../util/InternalRecord';
 import FormConsumerOneShot from './form-consumer/one-shot';
 import { APIConsumer } from './namespace';
 

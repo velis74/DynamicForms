@@ -24,10 +24,8 @@ export default defineComponent({
   setup() {
     const consumer = ref<APIConsumer.ConsumerLogicBaseInterface | undefined>();
     const displayComponent = ComponentDisplay.TABLE;
-
     async function setConsumer(definition: DfForm.FormComponentDefinition, modelValue: any[]) {
       consumer.value = new ConsumerLogicArray(definition, modelValue);
-      console.log('aba');
       await consumer.value?.reload();
     }
     return { displayComponent, setConsumer, consumer };
