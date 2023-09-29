@@ -1,5 +1,5 @@
 import FormConsumerApi from './api';
-import FormConsumerApiOneShot from './api-one-shot';
+import FormConsumerApiOneShot from './one-shot-api';
 import FormConsumerArray from './array';
 import FormConsumerBase from './base';
 

@@ -49,8 +49,6 @@ export interface DetailViewOptions {
   useQueryInRetrieveOnly?: boolean
 }
 
-export interface DetailViewDefaults extends Required<Pick<
-  DetailViewOptions, 'trailingSlash' | 'useQueryInRetrieveOnly'
->> {}
+export type DetailViewDefaults = Required<Pick<DetailViewOptions, 'trailingSlash' | 'useQueryInRetrieveOnly'>>;
 
 export type DetailOptionsWithDefaults = DetailViewOptions & DetailViewDefaults;

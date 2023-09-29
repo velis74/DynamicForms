@@ -1,19 +1,18 @@
 import { IHandlers } from '../../actions/action-handler-composable';
 import DetailViewApi from '../../api_view/detail-view-api';
 import { DetailViewOptions, PrimaryKeyType } from '../../api_view/namespace';
-import dfModal from '../../modal/modal-view-api';
 import { gettext } from '../../util/translations-mixin';
 import type { APIConsumer } from '../namespace';
 
 import FormConsumerBase from './base';
-import type { FormConsumerHook, FormConsumerHooks, FormExecuteResult } from './namespace';
+import type { FormConsumerHooks } from './namespace';
 
 class FormConsumerApi<T = any> extends FormConsumerBase {
   readonly api: DetailViewApi<T>;
 
   private readonly pk?: PrimaryKeyType;
 
-  declare beforeDialog?: FormConsumerHook;
+  declare beforeDialog?: (consumer: FormConsumerApi, ...params: any[]) => any;
 
   declare afterDialog?: (instance: FormConsumerApi, action: any) => void;
 
@@ -53,28 +52,9 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
     throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
   };
 
-  save = async () => {
+  save = async (): Promise<T> => {
     if (this.pk && this.pk !== 'new') return this.api.update(<T> this.data);
     return this.api.create(<T> this.data);
-  };
-
-  execute = async (defaultData?: Partial<T> | null): Promise<FormExecuteResult> => {
-    const definition = await this.getUXDefinition();
-    if (defaultData) {
-      Object.assign(definition.payload, defaultData);
-      this.data = definition.payload;
-    }
-
-    this.beforeDialog?.(this);
-
-    const resultAction = await dfModal.fromFormDefinition(definition);
-
-    this.afterDialog?.(this, resultAction);
-
-    return {
-      data: this.data!,
-      action: resultAction,
-    };
   };
 }
 

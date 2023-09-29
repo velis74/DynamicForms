@@ -3,9 +3,12 @@ import FilteredActions from '../../actions/filtered-actions';
 import { PrimaryKeyType } from '../../api_view/namespace';
 import FormPayload from '../../form/definitions/form-payload';
 import FormLayout from '../../form/definitions/layout';
+import dfModal from '../../modal/modal-view-api';
 import { APIConsumer } from '../namespace';
 
-export default abstract class FormConsumerBase {
+import { FormExecuteResult } from './namespace';
+
+export default abstract class FormConsumerBase<T = any> {
   pkName: string = 'id';
 
   ux_def: APIConsumer.FormUXDefinition = {} as APIConsumer.FormUXDefinition;
@@ -61,9 +64,28 @@ export default abstract class FormConsumerBase {
     return this;
   };
 
-  abstract delete(): Promise<any>;
+  execute = async (defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> => {
+    const definition = await this.getUXDefinition();
+    if (defaultData) {
+      Object.assign(definition.payload, defaultData);
+      this.data = definition.payload;
+    }
 
-  abstract save(): Promise<any>;
+    this.beforeDialog?.(this);
+
+    const resultAction = await dfModal.fromFormDefinition(definition);
+
+    this.afterDialog?.(this, resultAction);
+
+    return {
+      data: <Partial<T>> <unknown> this.data!,
+      action: resultAction,
+    };
+  };
+
+  abstract delete(): Promise<T | undefined>;
+
+  abstract save(): Promise<T>;
 
   abstract getRecord: () => APIConsumer.FormPayloadJSON | Promise<APIConsumer.FormPayloadJSON>;
 

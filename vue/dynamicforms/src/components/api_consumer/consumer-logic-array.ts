@@ -1,18 +1,18 @@
+import { nextTick } from 'vue';
+
 import FormPayload from '../form/definitions/form-payload';
-import FormLayout from '../form/definitions/layout';
-import dfModal from '../modal/modal-view-api';
 import { TransformationFunctionBase } from '../table/definitions/column-ordering';
 import OrderingDirection from '../table/definitions/column-ordering-direction';
 import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
 
 import ConsumerLogicBase from './consumer-logic-base';
+import { toExternalRecordCopy } from '../util/InternalRecord';
+import FormConsumerOneShot from './form-consumer/one-shot';
 import { APIConsumer } from './namespace';
 
 class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
-  private readonly records: any;
-
-  private internalRecords: any[];
+  private readonly records: any[];
 
   constructor(UXDefinition: APIConsumer.TableUXDefinition, records: any[]) {
     super();
@@ -20,25 +20,10 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     this.ux_def = UXDefinition;
     this.records = records;
 
-    this.internalRecords = [];
-
     this.processUXDefinition(this.ux_def);
-    this.reload().then(() => {}); // kind of await / not really
   }
 
-  createRowRecords(): void {
-    /**
-     * Creates internal representation of records with pointers to external structure
-     */
-    let negativeCounter = 0;
-    this.internalRecords = [...this.records].map((element: any, index: number) => ({
-      ...element,
-      ...{
-        [this.pkName]: element[this.pkName] ?? -(++negativeCounter),
-        index, // get the reference to reactive records
-      },
-    }));
-  }
+  get internalRecords() { return this.records.map(toExternalRecordCopy); }
 
   order(): any[] {
     /**
@@ -72,18 +57,19 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     /**
      * Reload internal records from external records, filter and order them
      */
+    await nextTick(); // due to vue's reactivity
+
     // TODO: do filtering
     if (filter) {
       throw new Error('Not implemented');
     }
-    this.createRowRecords();
-    this.order();
-    this.rows = new TableRows(this, this.internalRecords);
+    const res = this.order();
+    this.rows = new TableRows(this, res);
   }
 
   async getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition> {
     // This is a new value => cannot use pkValue here, use index on internalRecords
-    this.ux_def.record = this.internalRecords.find((record: any) => (record[this.pkName] === pkValue));
+    this.ux_def.record = this.records.find((record: any) => (record[this.pkName] === pkValue));
     return this.formDefinition;
   }
 
@@ -91,55 +77,36 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     /**
      * Get external record from its internal representation
      */
-    const record = this.internalRecords.find((element: any) => (element[this.pkName] === pk));
-    return this.records[record.index];
+    return this.records.find((element: any) => (element[this.pkName] === pk));
   }
 
-  async saveForm(refresh: boolean = true) {
-    let record: Record<string, any>;
-    if (this.pkValue !== 'new' && this.pkValue) {
-      // we are updating a record
-      record = this.getRecord(this.pkValue);
-      for (const [key, value] of Object.entries(this.formData)) {
-        record[key] = value;
-      }
-    } else {
-      // create new record
-      record = { ...this.formData };
-      this.records.push(record);
-    }
-    if (refresh) {
-      await this.reload();
-    }
-  }
+  private getFormUXDefinition = (pk: APIConsumer.PKValueType): APIConsumer.FormUXDefinition => ({
+    primary_key_name: this.ux_def.primary_key_name,
+    titles: this.ux_def.titles,
+    dialog: this.ux_def.dialog,
+    actions: this.ux_def.actions,
+    record: this.getRecord(pk),
+  });
 
   async dialogForm(
     pk: APIConsumer.PKValueType,
-    formData: any = null,
-    refresh: boolean = true,
-    return_raw_data: boolean = false,
   ) {
-    const formDef = await this.getFormDefinition(pk);
-    // if dialog is reopened use the old form's data
-    if (formData !== null) {
-      // TODO: there is currently an issue where if you get a 400 and have to fix the data, second "save" does nothing
-      formDef.payload = new FormPayload(formData, this.formLayout as FormLayout);
-      this.formData = formDef.payload;
-    }
-    const resultAction = await dfModal.fromFormDefinition(formDef);
-    if (return_raw_data) {
-      // we don't want to process the data, so we just return it as it came in. useful for file downloads and such
-      return { action: resultAction.action, data: this.formData };
-    }
-    if (resultAction.action.name === 'submit') {
-      // we want to save the record
-      await this.saveForm(refresh);
-    }
-    return { action: resultAction.name, data: this.formData };
+    const result = await FormConsumerOneShot(
+      {
+        definition: this.getFormUXDefinition(pk),
+        data: this.records,
+      },
+      this.dialogHandlers,
+    );
+
+    await nextTick();
+    await this.reload();
+
+    return result;
   }
 
   async deleteRow(tableRow: FormPayload) {
-    const element = this.internalRecords.find((record: any) => (record[this.pkName] === tableRow[this.pkName]));
+    const element = this.records.find((record: any) => (record[this.pkName] === tableRow[this.pkName]));
     if (element) {
       this.records.splice(element.index, 1);
     }
