@@ -122,7 +122,7 @@ describe('DetailViewApi', () => {
     // Initial state
     expect(api.detail_url.value).toBe('/api/123');
     expect(api.definition_url.value).toBe('/api/123.componentdef');
-    expect(api.compose_url(api.data_url)).toBe('/api/123.json?key=value');
+    expect(api.compose_url(api.data_url, true)).toBe('/api/123.json?key=value');
 
     // Mock for initial state
     mock.onGet('/api/123.json?key=value').reply(200, { foo: 'bar' });
@@ -140,7 +140,7 @@ describe('DetailViewApi', () => {
     // Check updated state
     expect(api.detail_url.value).toBe('/api/456');
     expect(api.definition_url.value).toBe('/api/456.componentdef');
-    expect(api.compose_url(api.data_url.value)).toBe('/api/456.json?newkey=newvalue');
+    expect(api.compose_url(api.data_url.value, true)).toBe('/api/456.json?newkey=newvalue');
 
     // Mock for updated state
     mock.reset();
