@@ -46,7 +46,6 @@ export default class FormConsumerArray<T = any> extends FormConsumerBase<T> {
       this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
     }
-    this.ux_def.record = this.getRecord();
 
     return this.definition;
   };
@@ -58,7 +57,7 @@ export default class FormConsumerArray<T = any> extends FormConsumerBase<T> {
   };
 
   save = async (): Promise<T> => {
-    if (this.pkValue !== 'new' && this.pkValue) {
+    if (this.pkValue !== 'new' && !!this.pkValue) {
       // we are updating a record
       const record = this.getInternalRecord(this.pkValue);
       for (const [key, value] of Object.entries(this.data as any)) {
