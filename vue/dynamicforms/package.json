@@ -50,7 +50,7 @@
   "dependencies": {
     "luxon": "^3.3.0",
     "resize-observer-polyfill": "^1.5.1",
-    "vue-datetime3": "^1.0.9",
+    "vue-datetime3": "^1.0.12",
     "vue-multiselect": "^3.0.0-beta.1",
     "vue-observe-visibility": "^1.0.0",
     "weekstart": "^2.0.0"
