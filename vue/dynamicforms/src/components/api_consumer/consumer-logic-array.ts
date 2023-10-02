@@ -5,7 +5,7 @@ import { TransformationFunctionBase } from '../table/definitions/column-ordering
 import OrderingDirection from '../table/definitions/column-ordering-direction';
 import TableRows from '../table/definitions/rows';
 import getObjectFromPath from '../util/get-object-from-path';
-import { toExternalRecordCopy } from '../util/InternalRecord';
+import { toExternalRecordCopy } from '../util/internal-record';
 
 import ConsumerLogicBase from './consumer-logic-base';
 import FormConsumerOneShotArray from './form-consumer/one-shot/array';

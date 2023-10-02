@@ -26,7 +26,7 @@ export default function createInternalRecord <T extends object>(
 }
 
 export function toExternalRecordCopy<T extends object>(record: Internal<T>): T {
-  const el = _.cloneDeep(record);
+  const el: T = _.cloneDeep(record);
   // eslint-disable-next-line no-underscore-dangle
   const pkName = record.__pk_name;
 

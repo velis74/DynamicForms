@@ -1,7 +1,7 @@
 import { UnwrapNestedRefs } from 'vue';
 
 import { IHandlers } from '../../actions/action-handler-composable';
-import createInternalRecord from '../../util/InternalRecord';
+import createInternalRecord from '../../util/internal-record';
 import { APIConsumer } from '../namespace';
 
 import FormConsumerBase from './base';

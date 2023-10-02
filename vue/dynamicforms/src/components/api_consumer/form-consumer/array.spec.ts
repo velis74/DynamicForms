@@ -118,8 +118,6 @@ describe('Form Consumer Array', () => {
     consumer.data = savingData;
     await consumer.save();
 
-    console.log(internalData.map((element) => element[consumer.pkName]));
-
     internalRecord = internalData.find((element) => element[consumer.pkName] === -1)
     expect(internalRecord).not.toBeUndefined();
     expect(internalRecord).toEqual(savingData);
