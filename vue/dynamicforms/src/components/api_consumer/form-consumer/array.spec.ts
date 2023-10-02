@@ -118,7 +118,7 @@ describe('Form Consumer Array', () => {
     consumer.data = savingData;
     await consumer.save();
 
-    internalRecord = internalData.find((element) => element[consumer.pkName] === -1)
+    internalRecord = internalData.find((element) => element[consumer.pkName] === -1);
     expect(internalRecord).not.toBeUndefined();
     expect(internalRecord).toEqual(savingData);
   });
