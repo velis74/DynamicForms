@@ -1,24 +1,35 @@
+import { UnwrapNestedRefs } from 'vue';
+
 import { IHandlers } from '../../actions/action-handler-composable';
-import FormPayload from '../../form/definitions/form-payload';
-import dfModal from '../../modal/modal-view-api';
+import createInternalRecord from '../../util/internal-record';
 import { APIConsumer } from '../namespace';
 
 import FormConsumerBase from './base';
-import type { FormConsumerHooks, FormExecuteResult } from './namespace';
+import type { FormConsumerHooks } from './namespace';
 
-export default class FormConsumerArray<T = any> extends FormConsumerBase {
+let counter = 0;
+
+export interface InMemoryParams {
+  definition: APIConsumer.FormUXDefinition,
+  data: UnwrapNestedRefs<any[]>,
+}
+
+export default class FormConsumerArray<T = any> extends FormConsumerBase<T> {
   declare beforeDialog?: (instance: FormConsumerArray) => void;
 
   declare afterDialog?: (instance: FormConsumerArray, action: any) => void;
 
+  private readonly internalData: UnwrapNestedRefs<any[]>;
+
   constructor(
-    UXDefinition: APIConsumer.FormUXDefinition,
+    params: InMemoryParams,
     actionHandlers?: IHandlers,
     hooks?: FormConsumerHooks<FormConsumerArray>,
   ) {
     super();
 
-    this.ux_def = UXDefinition;
+    this.ux_def = params.definition;
+    this.internalData = params.data;
     this.actionHandlers = actionHandlers;
 
     Object.assign(this, hooks);
@@ -26,34 +37,37 @@ export default class FormConsumerArray<T = any> extends FormConsumerBase {
 
   getRecord = (): APIConsumer.FormPayloadJSON => this.data ?? null;
 
+  getInternalRecord = (pk: APIConsumer.PKValueType) => (
+    this.internalData.find((element: any) => (element[this.pkName] === pk))
+  );
+
   getUXDefinition = () => {
     if (!this.layout) {
       this.pkName = this.ux_def.primary_key_name;
       this.titles = this.ux_def.titles;
     }
-    this.ux_def.record = this.getRecord();
 
     return this.definition;
   };
 
-  execute = async (data: Partial<T> | null): Promise<FormExecuteResult> => {
-    const definition = this.definition;
-
-    Object.assign(this.data!, data);
-
-    this.beforeDialog?.(this);
-
-    const resultAction = await dfModal.fromFormDefinition(definition);
-
-    this.afterDialog?.(this, resultAction);
-
-    return {
-      data: this.data!,
-      action: resultAction,
-    };
+  delete = async (): Promise<T | undefined> => {
+    const recordIdx = this.internalData.findIndex((element) => element[this.pkName] === this.pkValue);
+    this.internalData.splice(recordIdx, 1);
+    return this.data as T | undefined;
   };
 
-  async delete(): Promise<FormPayload | undefined> { return this.data; }
+  save = async (): Promise<T> => {
+    if (this.pkValue !== 'new' && !!this.pkValue) {
+      // we are updating a record
+      const record = this.getInternalRecord(this.pkValue);
+      for (const [key, value] of Object.entries(this.data as any)) {
+        record[key] = value;
+      }
+    } else {
+      // create new record
+      this.internalData.push(createInternalRecord({ ...this.data }, this.pkName, --counter));
+    }
 
-  async save(): Promise<FormPayload | undefined> { return this.data; }
+    return this.data as T;
+  };
 }

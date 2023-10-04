@@ -1,19 +1,12 @@
-import { IHandlers } from '../../actions/action-handler-composable';
-import { DetailViewOptions } from '../../api_view/namespace';
-import FormPayload from '../../form/definitions/form-payload';
+import FormConsumerBase from '../base';
 
-import FormConsumerApi from './api';
-
-export default async function FormConsumerApiOneShot <T = any>(
-  apiOptions: DetailViewOptions,
-  handlers?: IHandlers,
+export default async function FormConsumerOneShotBase<T>(
+  formConsumer: FormConsumerBase<T>,
 ): Promise<T | undefined> {
-  const formConsumer = new FormConsumerApi(apiOptions, handlers);
-
   let error = {};
   let result: T | undefined;
 
-  let data: FormPayload | undefined;
+  let data: Partial<T> | undefined;
 
   do {
     // eslint-disable-next-line no-await-in-loop

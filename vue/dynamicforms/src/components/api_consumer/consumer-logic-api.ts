@@ -7,7 +7,7 @@ import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
-import FormConsumerApiOneShot from './form-consumer/api-one-shot';
+import FormConsumerOneShotApi from './form-consumer/one-shot/api';
 import type { APIConsumer } from './namespace';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
@@ -144,7 +144,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
   async dialogForm(
     pk: APIConsumer.PKValueType,
   ) {
-    const result = await FormConsumerApiOneShot(
+    const result = await FormConsumerOneShotApi(
       {
         url: this.baseUrl,
         trailingSlash: this.trailingSlash,

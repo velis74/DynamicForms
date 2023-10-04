@@ -20,8 +20,11 @@ export namespace APIConsumer {
   }
 
   export interface UXDefinition {
-    primary_key_name: string;
-    titles: Titles;
+    primary_key_name: string
+    titles: Titles
+    dialog: DfForm.FormLayoutJSON
+    actions: ActionsNS.ActionsJSON
+    record: FormPayloadJSON
   }
 
   export interface TableUXDefinition extends UXDefinition {
@@ -30,16 +33,12 @@ export namespace APIConsumer {
     ordering_parameter: string;
     ordering_style: unknown;
     responsive_table_layouts: DfTable.ResponsiveTableLayoutsDefinition;
-    actions: ActionsNS.ActionsJSON;
     filter: unknown;
-    dialog: DfForm.FormLayoutJSON;
     record: FormPayloadJSON;
   }
 
   export interface FormUXDefinition extends UXDefinition {
     record: FormPayloadJSON
-    dialog: DfForm.FormLayoutJSON
-    actions: ActionsNS.ActionsJSON
   }
 
   export type FormPayloadJSON = { [key: string]: any; } | null;

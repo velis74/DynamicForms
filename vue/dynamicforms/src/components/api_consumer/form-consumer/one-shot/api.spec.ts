@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import apiClient from '../../util/api-client';
+import apiClient from '../../../util/api-client';
 
-import FormConsumerApiOneShot from './api-one-shot';
-import data from './api-one-shot.spec.json';
+import FormConsumerOneShotApi from './api';
+import data from './api.spec.json';
 
 const mock = new MockAdapter(apiClient);
 
@@ -32,7 +32,7 @@ describe('Api One Shot', () => {
   it('Create', async () => {
     mock.onGet('/test.componentdef').reply(replyFn);
 
-    FormConsumerApiOneShot({ url: '/test' });
+    FormConsumerOneShotApi({ url: '/test' });
 
     // wait for api call
     await waitForEmitted();
