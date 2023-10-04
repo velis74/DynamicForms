@@ -46,7 +46,7 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
 
   componentDefinition = () => this.ux_def;
 
-  retrieve = () => this.data.find(this.comparePk)!;
+  retrieve = () => this.data.find((element) => this.comparePk(element))!;
 
   create(data: T): T {
     const lowestIndex = min([min(this.data.map((element) => element[this.pkName] as PrimaryKeyBaseType)), 0]);
@@ -64,12 +64,10 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
   }
 
   delete() {
-    console.log('Bu.');
-    // const recordIdx = this.data.findIndex(this.comparePk);
-    // const record = this.data[recordIdx];
-    // console.log('delete', recordIdx, record);
-    // this.data.splice(recordIdx, 1);
-    return this.record;
+    const recordIdx = this.data.findIndex((element) => this.comparePk(element));
+    const record = this.data[recordIdx];
+    this.data.splice(recordIdx, 1);
+    return record;
   }
 }
 
