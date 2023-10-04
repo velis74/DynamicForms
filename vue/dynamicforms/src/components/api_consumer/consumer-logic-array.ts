@@ -109,9 +109,9 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
   }
 
   async deleteRow(tableRow: FormPayload) {
-    const element = this.records.find((record: any) => (record[this.pkName] === tableRow[this.pkName]));
-    if (element) {
-      this.records.splice(element.index, 1);
+    const index = this.records.findIndex((record: any) => (record[this.pkName] === tableRow[this.pkName]));
+    if (index >= 0) {
+      this.records.splice(index, 1);
     }
     await this.reload();
   }
