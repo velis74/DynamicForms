@@ -1,12 +1,13 @@
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
-import { PrimaryKeyType } from '../../api_view/namespace';
+import { PrimaryKeyType } from '../../adapters/api/namespace';
+import { FormAdapter } from '../../adapters/namespace';
 import FormPayload from '../../form/definitions/form-payload';
 import FormLayout from '../../form/definitions/layout';
 import dfModal from '../../modal/modal-view-api';
 import { APIConsumer } from '../namespace';
 
-import { FormExecuteResult } from './namespace';
+import { FormConsumerHooks, FormExecuteResult } from './namespace';
 
 export default abstract class FormConsumerBase<T = any> {
   pkName: string = 'id';
@@ -27,9 +28,16 @@ export default abstract class FormConsumerBase<T = any> {
 
   actionHandlers?: IHandlers;
 
+  protected api!: FormAdapter<T>;
+
   beforeDialog?: (instance: any) => void;
 
   afterDialog?: (instance: any, action: any) => void;
+
+  protected constructor(handlers?: IHandlers, hooks?: FormConsumerHooks<FormConsumerBase>) {
+    this.actionHandlers = handlers;
+    Object.assign(this, hooks);
+  }
 
   title(which: 'table' | 'new' | 'edit'): string {
     /**
@@ -83,11 +91,24 @@ export default abstract class FormConsumerBase<T = any> {
     };
   };
 
-  abstract delete(): Promise<T | undefined>;
+  delete = async (): Promise<T> => this.api.delete();
 
-  abstract save(): Promise<T>;
+  save = async (): Promise<T> => {
+    if (this.pkValue !== 'new' && !!this.pkValue) return this.api.update(<T> this.data);
+    return this.api.create(<T> this.data);
+  };
 
-  abstract getRecord: () => APIConsumer.FormPayloadJSON | Promise<APIConsumer.FormPayloadJSON>;
+  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => this.api.retrieve() as APIConsumer.FormPayloadJSON;
 
-  abstract getUXDefinition: () => APIConsumer.FormDefinition | Promise<APIConsumer.FormDefinition>;
+  getUXDefinition = async () => {
+    if (!this.layout) {
+      this.ux_def = await this.api.componentDefinition();
+      this.pkName = this.ux_def.primary_key_name;
+      this.titles = this.ux_def.titles;
+    } else {
+      this.ux_def.record = await this.getRecord();
+    }
+
+    return this.definition;
+  };
 }

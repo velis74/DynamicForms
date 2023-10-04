@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 
-import apiClient from '../util/api-client';
+import apiClient from '../../util/api-client';
 
 import { IViewSet } from './namespace';
 import ViewGeneric from './view-generic';

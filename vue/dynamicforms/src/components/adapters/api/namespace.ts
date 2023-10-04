@@ -1,7 +1,8 @@
 import { AxiosRequestConfig } from 'axios/index';
 import { MaybeRef } from 'vue';
 
-import { APIConsumer } from '../api_consumer/namespace';
+import { APIConsumer } from '../../api_consumer/namespace';
+import { FormAdapter } from '../namespace';
 
 export type PrimaryKeyBaseType = number | string;
 export type PrimaryKeyType = MaybeRef<PrimaryKeyBaseType>;

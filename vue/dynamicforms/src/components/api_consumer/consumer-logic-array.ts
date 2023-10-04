@@ -95,6 +95,9 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
       {
         definition: this.getFormUXDefinition(pk),
         data: this.records,
+        pk,
+        pkName: this.pkName,
+        record: this.getRecord(pk),
       },
       this.dialogHandlers,
     );

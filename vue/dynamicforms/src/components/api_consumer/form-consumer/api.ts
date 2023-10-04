@@ -1,17 +1,11 @@
 import { IHandlers } from '../../actions/action-handler-composable';
-import DetailViewApi from '../../api_view/detail-view-api';
-import { DetailViewOptions, PrimaryKeyType } from '../../api_view/namespace';
-import { gettext } from '../../util/translations-mixin';
-import type { APIConsumer } from '../namespace';
+import DetailViewApi from '../../adapters/api/detail-view-api';
+import { DetailViewOptions } from '../../adapters/api/namespace';
 
 import FormConsumerBase from './base';
 import type { FormConsumerHooks } from './namespace';
 
-class FormConsumerApi<T = any> extends FormConsumerBase {
-  readonly api: DetailViewApi<T>;
-
-  private readonly pk?: PrimaryKeyType;
-
+class FormConsumerApi<T = any> extends FormConsumerBase<T> {
   declare beforeDialog?: (consumer: FormConsumerApi, ...params: any[]) => any;
 
   declare afterDialog?: (instance: FormConsumerApi, action: any) => void;
@@ -21,41 +15,10 @@ class FormConsumerApi<T = any> extends FormConsumerBase {
     actionHandlers?: IHandlers,
     hooks?: FormConsumerHooks<FormConsumerApi>,
   ) {
-    super();
+    super(actionHandlers, hooks);
 
     this.api = new DetailViewApi<T>(apiOptions);
-    this.actionHandlers = actionHandlers;
-    this.pk = apiOptions.pk;
-
-    Object.assign(this, hooks);
   }
-
-  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => (
-    await this.api.retrieve() as APIConsumer.FormPayloadJSON
-  );
-
-  getUXDefinition = async (): Promise<APIConsumer.FormDefinition> => {
-    if (!this.layout) {
-      this.ux_def = await this.api.componentDefinition();
-      this.pkName = this.ux_def.primary_key_name;
-      this.titles = this.ux_def.titles;
-    } else {
-      this.ux_def.record = await this.getRecord();
-    }
-
-    return this.definition;
-  };
-
-  delete = async (): Promise<T | undefined> => {
-    if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
-  };
-
-  save = async (): Promise<T> => {
-    if (this.pk && this.pk !== 'new') return this.api.update(<T> this.data);
-    return this.api.create(<T> this.data);
-  };
 }
 
 export default FormConsumerApi;

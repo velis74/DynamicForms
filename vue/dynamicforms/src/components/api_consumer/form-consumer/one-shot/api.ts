@@ -1,5 +1,5 @@
 import { IHandlers } from '../../../actions/action-handler-composable';
-import { DetailViewOptions } from '../../../api_view/namespace';
+import { DetailViewOptions } from '../../../adapters/api/namespace';
 import FormConsumerApi from '../api';
 
 import FormConsumerOneShotBase from './base';
