@@ -35,8 +35,6 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
     this.pkName = params.pkName;
     this.record = params.record;
 
-    console.log(this.data);
-
     this.counter = 0;
   }
 
