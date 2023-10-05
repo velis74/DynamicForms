@@ -4,7 +4,7 @@ import FormConsumerApi from '../api';
 
 import FormConsumerOneShotBase from './base';
 
-export default async function FormConsumerOneShotApi <T = any>(
+export default async function FormConsumerOneShotApi<T extends object = any>(
   apiOptions: DetailViewOptions,
   handlers?: IHandlers,
 ): Promise<T | undefined> {

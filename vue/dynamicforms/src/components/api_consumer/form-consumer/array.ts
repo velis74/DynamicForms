@@ -1,6 +1,5 @@
-import { InMemoryParams } from '../../../../dist/components/api_consumer/form-consumer/array';
 import { IHandlers } from '../../actions/action-handler-composable';
-import InMemoryImplementation from '../../adapters';
+import InMemoryImplementation, { InMemoryParams } from '../../adapters';
 
 import FormConsumerBase from './base';
 import type { FormConsumerHooks } from './namespace';

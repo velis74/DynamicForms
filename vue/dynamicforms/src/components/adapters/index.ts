@@ -8,7 +8,7 @@ import { FormAdapter } from './namespace';
 
 export * from './api';
 
-interface InMemoryParams<T> {
+export interface InMemoryParams<T> {
   definition: APIConsumer.FormUXDefinition,
   data: T[],
   pk: MaybeRef<PrimaryKeyBaseType>
