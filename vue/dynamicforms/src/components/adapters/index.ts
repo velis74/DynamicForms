@@ -1,24 +1,22 @@
-import { min } from 'lodash';
-import { MaybeRef, ref, Ref } from 'vue';
+import { computed, ComputedRef, MaybeRef, ref, Ref } from 'vue';
 
 import { APIConsumer } from '../api_consumer/namespace';
-import createInternalRecord from '../util/internal-record';
+import createInternalRecord, { isInternalRecord } from '../util/internal-record';
 
 import { PrimaryKeyBaseType } from './api/namespace';
 import { FormAdapter } from './namespace';
+
+export * from './api';
 
 interface InMemoryParams<T> {
   definition: APIConsumer.FormUXDefinition,
   data: T[],
   pk: MaybeRef<PrimaryKeyBaseType>
   pkName: keyof T & string,
-  record: T,
 }
 
 class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
   data: T[];
-
-  record: T;
 
   ux_def: APIConsumer.FormUXDefinition;
 
@@ -26,16 +24,15 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
 
   pkName: keyof T & string;
 
-  counter: number;
+  counter: ComputedRef<number>;
 
   constructor(params: InMemoryParams<T>) {
     this.data = params.data;
     this.ux_def = params.definition;
     this.pk = ref(params.pk);
     this.pkName = params.pkName;
-    this.record = params.record;
 
-    this.counter = 0;
+    this.counter = computed(() => -this.data.filter((element) => isInternalRecord(element)).length);
   }
 
   private comparePk(element: any) {
@@ -47,8 +44,7 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
   retrieve = () => this.data.find((element) => this.comparePk(element))!;
 
   create(data: T): T {
-    const lowestIndex = min([min(this.data.map((element) => element[this.pkName] as PrimaryKeyBaseType)), 0]);
-    this.data.push(createInternalRecord({ ...data }, this.pkName, (lowestIndex ?? 0) - 1));
+    this.data.push(createInternalRecord({ ...data }, this.pkName, this.counter.value - 1));
     return data;
   }
 
@@ -57,7 +53,6 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
     for (const [key, value] of Object.entries(data)) {
       record[key as keyof T] = value;
     }
-    this.data.push(record);
     return record;
   }
 

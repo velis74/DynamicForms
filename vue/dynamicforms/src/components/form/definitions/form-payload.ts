@@ -26,7 +26,7 @@ export default class FormPayload {
     } else if (layout?.fields) {
       Object.values(layout.fields).forEach((field: FormField) => {
         if (field.visibility === DisplayMode.SUPPRESS) return;
-        if (field.readOnly) {
+        if (field.readOnly && !field.name.endsWith('-display')) {
           properties[field.name] = { get() { return data[field.name]; }, enumerable: false };
         } else {
           const self = this;

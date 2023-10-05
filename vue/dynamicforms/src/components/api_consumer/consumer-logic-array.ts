@@ -97,7 +97,6 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
         data: this.records,
         pk,
         pkName: this.pkName,
-        record: this.getRecord(pk),
       },
       this.dialogHandlers,
     );

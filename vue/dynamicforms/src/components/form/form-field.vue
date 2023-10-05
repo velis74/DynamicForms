@@ -67,7 +67,10 @@ const debounceHandler = _.debounce((newValue: any, oldValue: any) => {
 
 const updateModelValueDisplay = (newValue: any) => {
   const fieldName = `${props.field.name}-display`;
-  if (payload.value[fieldName] === undefined || Object.getOwnPropertyDescriptor(payload, fieldName)?.writable) {
+  if (
+    payload.value[fieldName] === undefined ||
+    (Object.getOwnPropertyDescriptor(payload.value, fieldName)?.writable)
+  ) {
     payload.value[fieldName] = newValue;
   }
 };
