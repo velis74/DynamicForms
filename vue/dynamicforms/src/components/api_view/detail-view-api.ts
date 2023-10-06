@@ -20,7 +20,12 @@ function urlParamToRef(url: MaybeRef<string>) {
 
 function objectToURLEParam(obj: MaybeRef<Partial<any>>) {
   return computed(() => new URLSearchParams(
-    Object.fromEntries(Object.entries(unref(obj)).map(([k, v]) => [k, v.toString()])),
+    Object.fromEntries(Object.entries(unref(obj)).map(([k, v]) => {
+      const value = typeof v === 'object' ?
+        // eslint-disable-next-line eqeqeq
+        JSON.stringify(Object.fromEntries(Object.entries(v).filter(([, val]) => val != undefined))) : v.toString();
+      return [k, value];
+    })),
   ));
 }
 
