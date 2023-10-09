@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
-type Internal<T extends object> = T & {
+type Internal<T extends object = any> = T & {
   readonly ['__pk_name']: keyof T;
+  readonly ['__isInternalRecord']: true
 };
 
 export default function createInternalRecord <T extends object>(
@@ -14,8 +15,10 @@ export default function createInternalRecord <T extends object>(
       if (property === pkName) {
         return target[property] ?? pkValue;
       }
+      // special case for pk_name
       if (property === '__pk_name') return pkName;
-
+      // special case for internal record flag
+      if (property === '__isInternalRecord') return true;
       return target[property];
     },
     set: (target: T, property: keyof T & (string | symbol), value: any) => {
@@ -32,4 +35,10 @@ export function toExternalRecordCopy<T extends object>(record: Internal<T>): T {
 
   el[pkName] = record[pkName];
   return el;
+}
+
+export function isInternalRecord(obj: Internal | unknown): obj is Internal;
+export function isInternalRecord(obj: any) {
+  // eslint-disable-next-line no-underscore-dangle
+  return !!(obj && obj?.__isInternalRecord);
 }

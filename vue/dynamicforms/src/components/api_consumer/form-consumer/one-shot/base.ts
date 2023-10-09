@@ -1,6 +1,6 @@
 import FormConsumerBase from '../base';
 
-export default async function FormConsumerOneShotBase<T>(
+export default async function FormConsumerOneShotBase<T extends object>(
   formConsumer: FormConsumerBase<T>,
 ): Promise<T | undefined> {
   let error = {};

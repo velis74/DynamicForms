@@ -1,8 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
 import { computed, isRef, MaybeRef, ref, Ref, unref } from 'vue';
 
-import { APIConsumer } from '../api_consumer/namespace';
-import apiClient from '../util/api-client';
+import { APIConsumer } from '../../api_consumer/namespace';
+import apiClient from '../../util/api-client';
 
 import {
   IDetailViewApi,
@@ -89,7 +89,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
   );
 
   /**
-   * POST the resord to the backend.
+   * POST the record to the backend.
    * @throws {AxiosError} Throws an error if the request fails.
    */
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (

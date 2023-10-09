@@ -1,8 +1,8 @@
 import { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { computed, isRef, ref, Ref } from 'vue';
 
-import { APIConsumer } from '../api_consumer/namespace';
-import apiClient from '../util/api-client';
+import { APIConsumer } from '../../api_consumer/namespace';
+import apiClient from '../../util/api-client';
 
 import { IViewSetApi, PrimaryKeyType } from './namespace';
 
