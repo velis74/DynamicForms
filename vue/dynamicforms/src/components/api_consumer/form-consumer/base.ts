@@ -1,15 +1,17 @@
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
-import { PrimaryKeyType } from '../../api_view/namespace';
+import { PrimaryKeyType } from '../../adapters/api/namespace';
+import { FormAdapter } from '../../adapters/namespace';
 import FormPayload from '../../form/definitions/form-payload';
 import FormLayout from '../../form/definitions/layout';
 import dfModal from '../../modal/modal-view-api';
+import { gettext } from '../../util/translations-mixin';
 import { APIConsumer } from '../namespace';
 
-import { FormExecuteResult } from './namespace';
+import { FormConsumerHooks, FormExecuteResult } from './namespace';
 
 export default abstract class FormConsumerBase<T = any> {
-  pkName: string = 'id';
+  pkName: keyof T & string = <keyof T & string> 'id';
 
   ux_def: APIConsumer.FormUXDefinition = {} as APIConsumer.FormUXDefinition;
 
@@ -27,9 +29,16 @@ export default abstract class FormConsumerBase<T = any> {
 
   actionHandlers?: IHandlers;
 
+  protected api!: FormAdapter<T>;
+
   beforeDialog?: (instance: any) => void;
 
   afterDialog?: (instance: any, action: any) => void;
+
+  protected constructor(handlers?: IHandlers, hooks?: FormConsumerHooks<FormConsumerBase>) {
+    this.actionHandlers = handlers;
+    Object.assign(this, hooks);
+  }
 
   title(which: 'table' | 'new' | 'edit'): string {
     /**
@@ -39,7 +48,7 @@ export default abstract class FormConsumerBase<T = any> {
   }
 
   get pkValue(): PrimaryKeyType {
-    return this.data?.[this.pkName];
+    return this.data?.[this.pkName] ?? 'new';
   }
 
   get definition(): APIConsumer.FormDefinition {
@@ -83,11 +92,29 @@ export default abstract class FormConsumerBase<T = any> {
     };
   };
 
-  abstract delete(): Promise<T | undefined>;
+  delete = async (): Promise<T> => {
+    console.log(this.pkValue);
+    if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
+    throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
+  };
 
-  abstract save(): Promise<T>;
+  save = async (): Promise<T> => {
+    if (this.pkValue !== 'new' && !!this.pkValue) return this.api.update(<T> this.data);
+    return this.api.create(<T> this.data);
+  };
 
-  abstract getRecord: () => APIConsumer.FormPayloadJSON | Promise<APIConsumer.FormPayloadJSON>;
+  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => this.api.retrieve() as APIConsumer.FormPayloadJSON;
 
-  abstract getUXDefinition: () => APIConsumer.FormDefinition | Promise<APIConsumer.FormDefinition>;
+  getUXDefinition = async () => {
+    if (!this.layout) {
+      this.ux_def = await this.api.componentDefinition();
+      this.pkName = <keyof T & string> this.ux_def.primary_key_name;
+      this.titles = this.ux_def.titles;
+    } else {
+      this.ux_def.record = await this.getRecord();
+    }
+
+    return this.definition;
+  };
 }

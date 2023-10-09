@@ -1,7 +1,7 @@
 import { RawAxiosRequestHeaders } from 'axios';
 import { Ref } from 'vue';
 
-import { ViewSetApi } from '../api_view';
+import { ViewSetApi } from '../adapters/api';
 import FormPayload from '../form/definitions/form-payload';
 import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
