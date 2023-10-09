@@ -15,5 +15,17 @@ describe('aRrAy', () => {
     // TODO: currently filtering is not enabled on array consumer, remove after it is implemented (if)
     await expect(consumer.filter(filterData)).rejects.toThrowError();
     expect(consumer.filterData).toEqual(filterData);
+
+    const displayFilterData = { 'before-display': 1, before: 2, 'type-display': 1 };
+    await expect(consumer.filter(displayFilterData)).rejects.toThrowError();
+    expect(consumer.filterData).toEqual(
+      Object.fromEntries(Object.entries(displayFilterData).filter(([key]) => !key.endsWith('-display'))),
+    );
+
+    const nullFilterData = { a: null, b: undefined, c: 1, d: { e: 2 } };
+    await expect(consumer.filter(nullFilterData)).rejects.toThrowError();
+    expect(consumer.filterData).toEqual(
+      Object.fromEntries(Object.entries(nullFilterData).filter(([, value]) => !!value)),
+    );
   });
 });
