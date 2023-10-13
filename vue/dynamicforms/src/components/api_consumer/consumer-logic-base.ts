@@ -161,7 +161,9 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
   async filter(filterData: Object | null = null) {
     if (filterData) {
-      this.filterData = Object.fromEntries(Object.entries(filterData).map(([key, value]) => [key, value]));
+      this.filterData = Object.fromEntries(
+        Object.entries(filterData).filter(([key, value]) => !!(value && !key.endsWith('-display'))),
+      );
     }
     await this.reload(true);
   }

@@ -1,0 +1,952 @@
+{
+  "uuid": "e1406b74-80ec-11ec-8148-8d304489807d",
+  "primary_key_name": "id",
+  "titles": {
+    "table": "Hidden fields list",
+    "new": "New hidden fields object",
+    "edit": "Editing hidden fields object"
+  },
+  "columns": [
+    {
+      "help_text": null,
+      "uuid": "e1406b5e-80ec-11ec-8148-8d304489807d",
+      "name": "id",
+      "label": "ID",
+      "read_only": true,
+      "table_classes": "",
+      "ordering": "ordering asc seg-1",
+      "alignment": "right",
+      "visibility": {
+        "table": 10,
+        "form": 5
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "number",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": false
+    },
+    {
+      "help_text": null,
+      "uuid": "e1406b55-80ec-11ec-8148-8d304489807d",
+      "name": "df_control_data",
+      "label": "Df control data",
+      "read_only": true,
+      "table_classes": "",
+      "ordering": "",
+      "alignment": "left",
+      "visibility": {
+        "table": 5,
+        "form": 5
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": false
+    },
+    {
+      "help_text": null,
+      "uuid": "e1406b58-80ec-11ec-8148-8d304489807d",
+      "name": "df_prev_id",
+      "label": "Df prev id",
+      "read_only": true,
+      "table_classes": "",
+      "ordering": "",
+      "alignment": "left",
+      "visibility": {
+        "table": 5,
+        "form": 5
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": false
+    },
+    {
+      "help_text": null,
+      "uuid": "e1406b5b-80ec-11ec-8148-8d304489807d",
+      "name": "row_css_style",
+      "label": "Row css style",
+      "read_only": true,
+      "table_classes": "",
+      "ordering": "",
+      "alignment": "left",
+      "visibility": {
+        "table": 5,
+        "form": 5
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": false
+    },
+    {
+      "help_text": "Enter abc to hide unit field",
+      "uuid": "e1406b61-80ec-11ec-8148-8d304489807d",
+      "name": "note",
+      "label": "Note",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "left",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group",
+        "max_length": 20,
+        "min_length": null
+      },
+      "allow_null": false
+    },
+    {
+      "help_text": null,
+      "uuid": "e1406b64-80ec-11ec-8148-8d304489807d",
+      "name": "unit",
+      "label": "Unit",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "left",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetSelect",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "multiple": false,
+        "allow_tags": false,
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": true,
+      "choices": [
+        {
+          "id": null,
+          "text": "No additional data"
+        },
+        {
+          "id": "pcs",
+          "text": "Pieces"
+        },
+        {
+          "id": "wt",
+          "text": "Weight"
+        },
+        {
+          "id": "cst",
+          "text": "Custom"
+        }
+      ],
+      "allow_tags": false
+    },
+    {
+      "help_text": null,
+      "uuid": "e1406b67-80ec-11ec-8148-8d304489807d",
+      "name": "int_fld",
+      "label": "Quantity",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "right",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "number",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": true
+    },
+    {
+      "help_text": "Feel free to use a decimal point / comma",
+      "uuid": "e1406b6a-80ec-11ec-8148-8d304489807d",
+      "name": "qty_fld",
+      "label": "Weight",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "decimal",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "number",
+        "table": "#TableCellFloat",
+        "table_show_zeroes": true,
+        "step": "0.1",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group"
+      },
+      "allow_null": true
+    },
+    {
+      "help_text": "Enter additional info here",
+      "uuid": "e1406b6d-80ec-11ec-8148-8d304489807d",
+      "name": "cst_fld",
+      "label": "Comment",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "left",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group",
+        "max_length": 80,
+        "min_length": null
+      },
+      "allow_null": true
+    },
+    {
+      "help_text": "Now that you have shown me, please enter something",
+      "uuid": "e1406b70-80ec-11ec-8148-8d304489807d",
+      "name": "additional_text",
+      "label": "Additional text",
+      "read_only": false,
+      "table_classes": "",
+      "ordering": "ordering unsorted",
+      "alignment": "left",
+      "visibility": {
+        "table": 10,
+        "form": 10
+      },
+      "render_params": {
+        "form": "DFWidgetInput",
+        "input_type": "text",
+        "table": "df-tablecell-plaintext",
+        "field_class": "form-control",
+        "label_after_element": false,
+        "container_class": "form-group",
+        "max_length": 80,
+        "min_length": null
+      },
+      "allow_null": true
+    },
+    {
+      "uuid": "e1406b7b-80ec-11ec-8148-8d304489807d",
+      "name": "#actions-row_end",
+      "label": "Actions",
+      "read_only": false,
+      "alignment": "left",
+      "table_classes": "",
+      "ordering": "",
+      "render_params": { },
+      "help_text": "",
+      "visibility": {
+        "table": 10
+      },
+      "allow_null": false
+    }
+  ],
+  "actions": {
+    "add": {
+      "position": "HEADER",
+      "field_name": null,
+      "name": "add",
+      "action": null,
+      "label": "Add",
+      "title": "Add new record",
+      "icon": "add-circle-outline",
+      "classes": null
+    },
+    "edit": {
+      "position": "ROW_CLICK",
+      "field_name": null,
+      "name": "edit",
+      "action": null,
+      "label": "Edit",
+      "title": "Edit record",
+      "icon": "pencil-outline",
+      "classes": null
+    },
+    "delete": {
+      "position": "ROW_END",
+      "field_name": null,
+      "name": "delete",
+      "action": null,
+      "label": "Delete",
+      "title": "Delete record",
+      "icon": "trash-outline",
+      "classes": null
+    }
+  },
+  "record": null,
+  "filter": null,
+  "dialog": {
+    "rows": [
+      {
+        "component": "FormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b5e-80ec-11ec-8148-8d304489807d",
+              "name": "id",
+              "label": "ID",
+              "read_only": true,
+              "table_classes": "",
+              "ordering": "ordering asc seg-1",
+              "alignment": "right",
+              "visibility": {
+                "table": 10,
+                "form": 5
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "number",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": false
+            }
+          },
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b55-80ec-11ec-8148-8d304489807d",
+              "name": "df_control_data",
+              "label": "Df control data",
+              "read_only": true,
+              "table_classes": "",
+              "ordering": "",
+              "alignment": "left",
+              "visibility": {
+                "table": 5,
+                "form": 5
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": false
+            }
+          },
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b58-80ec-11ec-8148-8d304489807d",
+              "name": "df_prev_id",
+              "label": "Df prev id",
+              "read_only": true,
+              "table_classes": "",
+              "ordering": "",
+              "alignment": "left",
+              "visibility": {
+                "table": 5,
+                "form": 5
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": false
+            }
+          },
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b5b-80ec-11ec-8148-8d304489807d",
+              "name": "row_css_style",
+              "label": "Row css style",
+              "read_only": true,
+              "table_classes": "",
+              "ordering": "",
+              "alignment": "left",
+              "visibility": {
+                "table": 5,
+                "form": 5
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": false
+            }
+          },
+          {
+            "type": "column",
+            "field": {
+              "help_text": "Enter abc to hide unit field",
+              "uuid": "e1406b61-80ec-11ec-8148-8d304489807d",
+              "name": "note",
+              "label": "Note",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "left",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group",
+                "max_length": 20,
+                "min_length": null
+              },
+              "allow_null": false
+            }
+          }
+        ]
+      },
+      {
+        "component": "FormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b64-80ec-11ec-8148-8d304489807d",
+              "name": "unit",
+              "label": "Unit",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "left",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetSelect",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "multiple": false,
+                "allow_tags": false,
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": true,
+              "choices": [
+                {
+                  "id": null,
+                  "text": "No additional data"
+                },
+                {
+                  "id": "pcs",
+                  "text": "Pieces"
+                },
+                {
+                  "id": "wt",
+                  "text": "Weight"
+                },
+                {
+                  "id": "cst",
+                  "text": "Custom"
+                }
+              ],
+              "allow_tags": false
+            }
+          }
+        ]
+      },
+      {
+        "component": "FormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": null,
+              "uuid": "e1406b67-80ec-11ec-8148-8d304489807d",
+              "name": "int_fld",
+              "label": "Quantity",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "right",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "number",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": true
+            }
+          }
+        ]
+      },
+      {
+        "component": "DFFormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": "Feel free to use a decimal point / comma",
+              "uuid": "e1406b6a-80ec-11ec-8148-8d304489807d",
+              "name": "qty_fld",
+              "label": "Weight",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "decimal",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "number",
+                "table": "#TableCellFloat",
+                "table_show_zeroes": true,
+                "step": "0.1",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group"
+              },
+              "allow_null": true
+            }
+          }
+        ]
+      },
+      {
+        "component": "DFFormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": "Enter additional info here",
+              "uuid": "e1406b6d-80ec-11ec-8148-8d304489807d",
+              "name": "cst_fld",
+              "label": "Comment",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "left",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group",
+                "max_length": 80,
+                "min_length": null
+              },
+              "allow_null": true
+            }
+          }
+        ]
+      },
+      {
+        "component": "DFFormRow",
+        "columns": [
+          {
+            "type": "column",
+            "field": {
+              "help_text": "Now that you have shown me, please enter something",
+              "uuid": "e1406b70-80ec-11ec-8148-8d304489807d",
+              "name": "additional_text",
+              "label": "Additional text",
+              "read_only": false,
+              "table_classes": "",
+              "ordering": "ordering unsorted",
+              "alignment": "left",
+              "visibility": {
+                "table": 10,
+                "form": 10
+              },
+              "render_params": {
+                "form": "DFWidgetInput",
+                "input_type": "text",
+                "table": "df-tablecell-plaintext",
+                "field_class": "form-control",
+                "label_after_element": false,
+                "container_class": "form-group",
+                "max_length": 80,
+                "min_length": null
+              },
+              "allow_null": true
+            }
+          }
+        ]
+      }
+    ],
+    "actions": {
+      "form_init": {
+        "name": "form_init",
+        "action": null
+      },
+      "cancel": {
+        "uuid": "e1406b71-80ec-11ec-8148-8d304489807d",
+        "element_id": "cancel-e1406b74-80ec-11ec-8148-8d304489807d",
+        "type": "CANCEL",
+        "position": "FORM_FOOTER",
+        "name": "cancel",
+        "action": null,
+        "label": "Cancel",
+        "title": "Cancel",
+        "icon": null,
+        "classes": "btn ml-1 btn-secondary "
+      },
+      "submit": {
+        "uuid": "e1406b72-80ec-11ec-8148-8d304489807d",
+        "element_id": "submit-e1406b74-80ec-11ec-8148-8d304489807d",
+        "type": "SUBMIT",
+        "position": "FORM_FOOTER",
+        "name": "submit",
+        "action": null,
+        "label": "Save changes",
+        "title": "Save changes",
+        "icon": null,
+        "classes": "btn ml-1 btn-primary "
+      }
+    }
+  },
+  "detail_url": "http://localhost:8000/hidden-fields/--record_id--.json",
+  "ordering_parameter": "ordering",
+  "ordering_style": null,
+  "rows": {
+    "prev": null,
+    "next": null,
+    "results": [
+      {
+        "id": "1",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "abc",
+        "unit": "",
+        "int_fld": "None",
+        "qty_fld": "None",
+        "cst_fld": "",
+        "additional_text": "yay"
+      },
+      {
+        "id": "2",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "test",
+        "unit": "Pieces",
+        "int_fld": "5",
+        "qty_fld": "None",
+        "cst_fld": "",
+        "additional_text": "t"
+      },
+      {
+        "id": "3",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "guzgi",
+        "unit": "Weight",
+        "int_fld": "None",
+        "qty_fld": "None",
+        "cst_fld": "",
+        "additional_text": "jhgfhjfg"
+      },
+      {
+        "id": "4",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "hu",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "ds"
+      },
+      {
+        "id": "5",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "hgf hhf",
+        "unit": "Weight",
+        "int_fld": "None",
+        "qty_fld": "234.0",
+        "cst_fld": "None",
+        "additional_text": "hfgjhf hfc dsxf"
+      },
+      {
+        "id": "6",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "fds",
+        "unit": "Weight",
+        "int_fld": "None",
+        "qty_fld": "453.0",
+        "cst_fld": "None",
+        "additional_text": "ha ha"
+      },
+      {
+        "id": "7",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "a",
+        "unit": "Custom",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "a",
+        "additional_text": "a"
+      },
+      {
+        "id": "8",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "aa",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "aa"
+      },
+      {
+        "id": "9",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "b",
+        "unit": "Custom",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "b",
+        "additional_text": "b"
+      },
+      {
+        "id": "10",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "c",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "c"
+      },
+      {
+        "id": "11",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "c",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "c"
+      },
+      {
+        "id": "12",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "d",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "d"
+      },
+      {
+        "id": "13",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "e",
+        "unit": "Pieces",
+        "int_fld": "456",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "e"
+      },
+      {
+        "id": "14",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "f",
+        "unit": "Pieces",
+        "int_fld": "43",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "f"
+      },
+      {
+        "id": "15",
+        "df_control_data": {
+          "row_css_style": "",
+          "actions": {
+            "edit": { },
+            "delete": { }
+          }
+        },
+        "df_prev_id": "",
+        "row_css_style": "",
+        "note": "g",
+        "unit": "Pieces",
+        "int_fld": "1",
+        "qty_fld": "None",
+        "cst_fld": "None",
+        "additional_text": "g"
+      }
+    ]
+  },
+  "list_url": "http://localhost:8000/hidden-fields.json"
+}
