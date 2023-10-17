@@ -127,6 +127,7 @@ export default /* #__PURE__ */ defineComponent({
             (<DfForm.ChoicesJSON[]> this.selected).map((i) => i.id) :
             (<DfForm.ChoicesJSON> this.selected).id;
         }
+        this.$emit('update:modelValueDisplay', '');
         return '';
       },
       set(value: any) {
