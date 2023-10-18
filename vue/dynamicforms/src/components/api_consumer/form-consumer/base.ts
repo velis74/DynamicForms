@@ -93,7 +93,6 @@ export default abstract class FormConsumerBase<T = any> {
   };
 
   delete = async (): Promise<T> => {
-    console.log(this.pkValue);
     if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
     // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });

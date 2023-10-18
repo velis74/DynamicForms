@@ -124,6 +124,8 @@ def date_range_monthly(
             )[d[0][:3].lower()]
             weekday = dict(zip(("mo", "tu", "we", "th", "fr", "sa", "su"), map(str, range(1, 8))))[d[1]]
             return modifier + weekday
+        elif isinstance(d, str):
+            return int(d)
         elif isinstance(d, int):
             return d
 
@@ -153,10 +155,17 @@ def date_range_yearly(start_at, end_at: datetime, cutoff_at: Optional[datetime],
     cutoff_at = cutoff_at or start_at
     current_result = start_at
     current_year = None
+    dates = [(int(d), int(m)) for d, m in dates]
     year = set()
 
     def build_year(yr):
-        return set(map(lambda d: date(yr, d[1], d[0]), dates))
+        def get_date(day, month, y):
+            try:
+                return date(y, month, day)
+            except:
+                return None
+
+        return set([val for val in map(lambda d: get_date(d[0], d[1], yr), dates) if val is not None])
 
     while current_result <= end_at:
         if current_result.year != current_year:
