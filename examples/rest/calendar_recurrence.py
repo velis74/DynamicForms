@@ -1,12 +1,10 @@
-from datetime import date
 from typing import List
 
-from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import ValidationError
 
-from dynamicforms import serializers, fields
+from dynamicforms import fields, serializers
 from dynamicforms.mixins import F
-
 from examples.enum_field import EnumField
 from examples.models import CalendarRecurrence
 
