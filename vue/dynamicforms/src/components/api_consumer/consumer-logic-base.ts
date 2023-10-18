@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import { ActionsNS } from '../actions/namespace';
@@ -162,7 +164,9 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   async filter(filterData: Object | null = null) {
     if (filterData) {
       this.filterData = Object.fromEntries(
-        Object.entries(filterData).filter(([key, value]) => !!(value && !key.endsWith('-display'))),
+        Object.entries(filterData).filter(
+          ([key, value]) => (!_.includes([null, undefined, NaN], value) && !key.endsWith('-display')),
+        ),
       );
     }
     await this.reload(true);
