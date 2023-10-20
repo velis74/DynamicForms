@@ -76,7 +76,7 @@ class CommonTestBase(APITestCase):
                 start_at=start_at,
                 end_at=start_at + datetime.timedelta(days=11),
                 pattern=CalendarRecurrence.Pattern.Weekly.value,
-                recur=dict(every=1, weekdays=["Mo", "We", "Su", "Ho"]),
+                recur=dict(every=1, weekdays=["mo", "we", "su", "ho"]),
             ),
         )
         if num_reminders:
@@ -92,6 +92,28 @@ class CommonTestBase(APITestCase):
         if skip_recurrence:
             res.pop("recurrence")
         return res
+
+    def get_event_request_def(
+        self,
+        dates_iso: bool = True,
+        skip_recurrence: bool = False,
+        num_reminders: int = 0,
+    ):
+        event = self.get_event_def(dates_iso, skip_recurrence, num_reminders)
+        recurrence = event["recurrence"]
+        recur = recurrence["recur"]
+        if (val := recur.get("every", None)) is not None:
+            recurrence["every"] = val
+        if (val := recur.get("weekdays", None)) is not None:
+            recurrence["weekdays"] = val
+        if (val := recur.get("days", None)) is not None:
+            recurrence["days"] = val
+        if (val := recur.get("dates", None)) is not None:
+            recurrence["dates"] = val
+        recurrence.pop("recur")
+        event["recurrence"] = recurrence
+
+        return event
 
 
 class CalendarEventTest(CommonTestBase):
@@ -325,11 +347,13 @@ class CalendarRecurrenceTest(CommonTestBase):
         self.assertEqual(1, len(response))
         response = response[0]  # Get the first record
 
-        expected_response = self.get_event_def(dates_iso=True, skip_recurrence=True)
+        expected_response = self.get_event_request_def(dates_iso=True)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.check_event_as_expected(response, expected_response)
 
         # Get the created event from database, this time in form mode
-        expected_response = self.get_event_def(dates_iso=True)
+        expected_response = self.get_event_request_def(dates_iso=True)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         response = self.retrieve_event_id(cal_evnt.id)
         self.check_event_as_expected(response, expected_response)
 
@@ -339,7 +363,7 @@ class CalendarRecurrenceTest(CommonTestBase):
 
     def test_recurrence_post_get(self):
         # Insert a new event via API
-        event = self.get_event_def(dates_iso=True)
+        event = self.get_event_request_def(dates_iso=True)
         event_url = reverse("calendar-event-list", args=["json"])
         response = self.get_json(
             self.client.post(event_url, data=self.encode_json(event), content_type="application/json"),
@@ -348,6 +372,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         recurrence_id = response["recurrence"]["id"]
         # First check if result of POST is as expected
         expected_response = dict(event)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 
@@ -412,7 +437,7 @@ class CalendarRecurrenceTest(CommonTestBase):
 
     def test_recurrence_shorten(self):
         # Insert a new event via API
-        event = self.get_event_def(dates_iso=True)
+        event = self.get_event_request_def(dates_iso=True)
         event_url = reverse("calendar-event-list", args=["json"])
         response = self.get_json(
             self.client.post(event_url, data=self.encode_json(event), content_type="application/json"),
@@ -421,6 +446,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         recurrence_id = response["recurrence"]["id"]
         # First check if result of POST is as expected
         expected_response = dict(event)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 
@@ -477,7 +503,7 @@ class CalendarRecurrenceTest(CommonTestBase):
 
     def test_recurrence_remove(self):
         # remove recurrence altogether
-        event = self.get_event_def(dates_iso=True)
+        event = self.get_event_request_def(dates_iso=True)
         event_url = reverse("calendar-event-list", args=["json"])
         response = self.get_json(
             self.client.post(event_url, data=self.encode_json(event), content_type="application/json"),
@@ -486,6 +512,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         recurrence_id = response["recurrence"]["id"]
         # First check if result of POST is as expected
         expected_response = dict(event)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 
@@ -509,7 +536,8 @@ class CalendarRecurrenceTest(CommonTestBase):
 
         # Then retrieve the record from the API
         response = self.retrieve_event_id(instance_ids[0])  # 3rd instance is the one on 3.2.2020
-        expected_response = self.get_event_def(dates_iso=True)
+        expected_response = self.get_event_request_def(dates_iso=True)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.assertEqual(instance_ids[0], self.check_event_as_expected(response, expected_response))
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 
@@ -540,7 +568,7 @@ class CalendarRecurrenceTest(CommonTestBase):
 
     def test_recurrence_remove_middle(self):
         # remove recurrence in the middle of the recurrence
-        event = self.get_event_def(dates_iso=True)
+        event = self.get_event_request_def(dates_iso=True)
         event_url = reverse("calendar-event-list", args=["json"])
         response = self.get_json(
             self.client.post(event_url, data=self.encode_json(event), content_type="application/json"),
@@ -549,6 +577,7 @@ class CalendarRecurrenceTest(CommonTestBase):
         recurrence_id = response["recurrence"]["id"]
         # First check if result of POST is as expected
         expected_response = dict(event)
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.check_event_as_expected(response, expected_response)
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 
@@ -573,10 +602,11 @@ class CalendarRecurrenceTest(CommonTestBase):
         # Then retrieve the record from the API
         instance_id = instance_ids[2]
         response = self.retrieve_event_id(instance_id)  # 3rd instance is the one on 3.2.2020
-        expected_response = self.get_event_def(dates_iso=True)
+        expected_response = self.get_event_request_def(dates_iso=True)
         expected_response["id"] = instance_ids[2]
         expected_response["start_at"] = "2020-02-03T10:00:00Z"
         expected_response["end_at"] = "2020-02-03T11:00:00Z"
+        expected_response["recurrence"]["weekdays"] = list(set(expected_response["recurrence"]["weekdays"]))
         self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
         self.assertEqual(recurrence_id, response["recurrence"]["id"])
 

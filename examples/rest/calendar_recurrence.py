@@ -141,10 +141,10 @@ class RecurrenceSerializer(serializers.ModelSerializer):
             every=data.pop("every", None),
             days=data.pop("days", None),
             dates=data.pop("dates", None),
-            weekdays=data.pop("weekdays", None),
+            weekdays=list(data.pop("weekdays", set())),
         )
         return data
 
     class Meta:
         model = CalendarRecurrence
-        exclude = ()
+        exclude = ("recur",)
