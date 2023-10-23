@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, toRefs } from 'vue';
+import { toRefs } from 'vue';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
 import LoadingIndicator from '../util/loading-indicator.vue';
-import TranslationsMixin from '../util/translations-mixin';
+import { useTranslations } from '../util/translations-mixin';
 
 import { useRenderMeasure } from './render-measure';
 import { useTableBase, TableBasePropsInterface } from './table';
@@ -60,12 +60,9 @@ const {
 } = useTableBase(props);
 
 useRenderMeasure(onMeasure, { container });
-</script>
-<script lang="ts">
-export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyTable',
-  mixins: [TranslationsMixin],
-});
+
+const { gettext } = useTranslations();
+
 </script>
 
 <style scoped>
