@@ -14,6 +14,7 @@ db.sqlite3
 /doc/_build/
 /geckodriver.log
 venv/
+.venv/
 media
 /node_modules
 /coverage
