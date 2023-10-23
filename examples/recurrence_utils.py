@@ -1,11 +1,17 @@
+import calendar
 import sys
 from collections import namedtuple
 from datetime import date, datetime, timedelta
 from enum import IntEnum
 from typing import List, Optional, Set, Tuple, Union
 
+from django.utils.translation import gettext_lazy as _
 from versio.version import Version
 from versio.version_scheme import Pep440VersionScheme
+
+
+def locale_weekdays():
+    return [_(day).lower() for day in calendar.day_abbr]
 
 
 class Pattern(IntEnum):
@@ -122,7 +128,7 @@ def date_range_monthly(
                     map(lambda x: str(x // 2 + 1), range(11)),
                 )
             )[d[0][:3].lower()]
-            weekday = dict(zip(("mo", "tu", "we", "th", "fr", "sa", "su"), map(str, range(1, 8))))[d[1]]
+            weekday = dict(zip(locale_weekdays(), map(str, range(1, 8))))[d[1]]
             return modifier + weekday
         elif isinstance(d, str):
             return int(d)

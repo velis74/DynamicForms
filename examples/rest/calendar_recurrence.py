@@ -1,4 +1,5 @@
-from typing import List
+import calendar
+from typing import List, Union
 
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
@@ -7,6 +8,7 @@ from dynamicforms import fields, serializers
 from dynamicforms.mixins import F
 from examples.enum_field import EnumField
 from examples.models import CalendarRecurrence
+from examples.recurrence_utils import locale_weekdays
 
 
 class DaysField(fields.CharField):
@@ -22,8 +24,7 @@ class DaysField(fields.CharField):
         return parse_token(data)
 
     def to_representation(self, value: list, row_data=None):
-
-        return ", ".join(value)
+        return ", ".join([" ".join(token) if not isinstance(token, str) else token for token in value])
 
 
 class DaysValidator:
@@ -33,28 +34,32 @@ class DaysValidator:
         self.message = message or self.message
 
     def __call__(self, value: list):
-        def token_validation(token: str):
+        def token_validation(token: Union[str, list]):
             if token is None:
                 return
-            token = token.strip()
-            if len(token.split(" ")) == 2:
-                d = token.split(" ")
-                if d[0][:3].lower() not in (
-                    "1st",
-                    "fir",
-                    "2nd",
-                    "sec",
-                    "3rd",
-                    "thi",
-                    "4th",
-                    "fou",
-                    "5th",
-                    "fif",
-                    "las",
-                ) or d[1] not in ("mo", "tu", "we", "th", "fr", "sa", "su"):
+            if isinstance(token, str):
+                token = token.strip()
+                if not token.isnumeric() and 1 <= int(token) <= 31:
                     raise ValidationError(self.message, code="value")
-            if not token.isnumeric() and 1 <= int(token) <= 31:
-                raise ValidationError(self.message, code="value")
+            else:
+                if (
+                    token[0][:3].lower()
+                    not in (
+                        "1st",
+                        "fir",
+                        "2nd",
+                        "sec",
+                        "3rd",
+                        "thi",
+                        "4th",
+                        "fou",
+                        "5th",
+                        "fif",
+                        "las",
+                    )
+                    or token[1] not in locale_weekdays()
+                ):
+                    raise ValidationError(self.message, code="value")
 
         for token in value:
             token_validation(token)
@@ -64,10 +69,11 @@ class DatesField(fields.CharField):
     def to_internal_value(self, data):
         def parse_token(token):
             token = token.strip()
-            if len([d for d in token.split(".") if d]) == 2:
-                return [d for d in token.split(".") if d]
+            if len(val := [d for d in token.split(".") if d]) == 2:
+                return val
             return token
 
+        print([_(day) for day in calendar.day_abbr])
         return [parse_token(token) for token in data.split(",")]
 
     def to_representation(self, value, row_data=None):
