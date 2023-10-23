@@ -73,7 +73,6 @@ class DatesField(fields.CharField):
                 return val
             return token
 
-        print([_(day) for day in calendar.day_abbr])
         return [parse_token(token) for token in data.split(",")]
 
     def to_representation(self, value, row_data=None):
