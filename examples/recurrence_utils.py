@@ -11,7 +11,7 @@ from versio.version_scheme import Pep440VersionScheme
 
 
 def locale_weekdays():
-    return [_(day).lower() for day in calendar.day_abbr]
+    return ["ho"] + [_(day).lower()[:2] for day in calendar.day_abbr]
 
 
 class Pattern(IntEnum):
@@ -90,10 +90,7 @@ def date_range_weekly(
     current_result = start_at
     prev_iso_calendar = ISOCalendar(current_result.date().isocalendar())
     week_no = 0
-    weekdays = set(
-        dict(zip(("ho", "mo", "tu", "we", "th", "fr", "sa", "su"), range(8)))[day]
-        for day in map(lambda x: x[:2].lower(), weekdays)
-    )
+    weekdays = set(dict(zip(locale_weekdays(), range(8)))[day] for day in map(lambda x: x[:2].lower(), weekdays))
     do_holidays = 0 in weekdays
     weekdays.discard(0)
 
@@ -128,7 +125,8 @@ def date_range_monthly(
                     map(lambda x: str(x // 2 + 1), range(11)),
                 )
             )[d[0][:3].lower()]
-            weekday = dict(zip(locale_weekdays(), map(str, range(1, 8))))[d[1]]
+            print(d[1])
+            weekday = dict(zip(locale_weekdays()[1:], map(str, range(1, 8))))[d[1]]
             return modifier + weekday
         elif isinstance(d, str):
             return int(d)

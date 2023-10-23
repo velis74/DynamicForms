@@ -10,7 +10,13 @@ from rest_framework.test import APITestCase
 
 from dynamicforms.template_render.mixins.util import convert_to_json_if
 from examples.models import CalendarEvent, CalendarRecurrence, CalendarReminder
-from examples.recurrence_utils import date_range_daily, date_range_monthly, date_range_weekly, date_range_yearly
+from examples.recurrence_utils import (
+    date_range_daily,
+    date_range_monthly,
+    date_range_weekly,
+    date_range_yearly,
+    locale_weekdays,
+)
 
 
 class CommonTestBase(APITestCase):
@@ -124,9 +130,7 @@ class CommonTestBase(APITestCase):
         recurrence = event.get("recurrence", None)
         if recurrence is not None:
             if (weekdays := recurrence.get("weekdays", None)) is not None:
-                event["recurrence"]["weekdays"] = [
-                    day for day in ("mo", "tu", "we", "th", "fr", "sa", "su") if day in weekdays
-                ]
+                event["recurrence"]["weekdays"] = [day for day in locale_weekdays() if day in weekdays]
         return event
 
 
@@ -304,6 +308,7 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
                 [5, 14, 22, "first mo", "last fr", ("2nd", "tu")],
             )
         )
+        print(res)
         expected_res = list(
             filter(
                 lambda x: cutoff_at is None or x >= cutoff_at,
@@ -313,6 +318,7 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
                 ),
             )
         )
+        print(expected_res)
         self.assertEqual(res, expected_res)
 
     @parameterized.expand([(None,), (datetime.datetime(2021, 12, 28, 0, 0),)])
