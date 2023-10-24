@@ -17,6 +17,7 @@ from examples.recurrence_utils import (
     date_range_yearly,
     locale_weekdays,
 )
+from examples.rest.calendar import CalendarEventSerializer
 
 
 class CommonTestBase(APITestCase):
@@ -649,6 +650,66 @@ class CalendarRecurrenceTest(CommonTestBase):
             expected_response.pop("recurrence", None)
             self.assertEqual(instance_id, self.check_event_as_expected(response, expected_response))
             self.assertEqual(recurrence_id, response["recurrence"]["id"])
+
+    def test_days_value_transformations(self):
+        start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
+        days_string = "13, 12, 1st mo, 2nd fr, las th"
+        days_value = ["13", "12", ["1st", "mo"], ["2nd", "fr"], ["las", "th"]]
+        event = dict(
+            title="Party time",
+            colour=0x000008,
+            start_at=start_at,
+            end_at=start_at + datetime.timedelta(hours=1),
+            recurrence=dict(
+                start_at=start_at,
+                end_at=start_at + datetime.timedelta(days=11),
+                pattern=CalendarRecurrence.Pattern.Monthly.value,
+                recur=dict(days=days_string),
+            ),
+        )
+
+        # to internal value
+        ser = CalendarEventSerializer()
+        internal_value = ser.to_internal_value(self.event_to_request_def(event))
+
+        self.assertEqual(internal_value["recurrence"]["recur"]["days"], days_value)
+
+        # to representation
+        event["recurrence"] = CalendarRecurrence.objects.create(**internal_value["recurrence"])
+        cal_event = CalendarEvent.objects.create(**event)
+        representation = ser.to_representation(cal_event)
+
+        self.assertEqual(representation["recurrence"]["days"], days_string)
+
+    def test_dates_value_transformations(self):
+        start_at = datetime.datetime(2020, 1, 30, 10, 0, tzinfo=pytz.utc)
+        dates_string = "12.2, 29.2, 11.11, 20.12"
+        dates_value = [["12", "2"], ["29", "2"], ["11", "11"], ["20", "12"]]
+        event = dict(
+            title="Party time",
+            colour=0x000008,
+            start_at=start_at,
+            end_at=start_at + datetime.timedelta(hours=1),
+            recurrence=dict(
+                start_at=start_at,
+                end_at=start_at + datetime.timedelta(days=11),
+                pattern=CalendarRecurrence.Pattern.Yearly.value,
+                recur=dict(dates=dates_string),
+            ),
+        )
+
+        # to internal value
+        ser = CalendarEventSerializer()
+        internal_value = ser.to_internal_value(self.event_to_request_def(event))
+
+        self.assertEqual(internal_value["recurrence"]["recur"]["dates"], dates_value)
+
+        # to representation
+        event["recurrence"] = CalendarRecurrence.objects.create(**internal_value["recurrence"])
+        cal_event = CalendarEvent.objects.create(**event)
+        representation = ser.to_representation(cal_event)
+
+        self.assertEqual(representation["recurrence"]["dates"], dates_string)
 
 
 class CalendarRemindersTest(CommonTestBase):

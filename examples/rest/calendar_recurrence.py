@@ -90,7 +90,7 @@ class DatesValidator:
                 raise ValidationError(self.message, code="value")
             day, month = [int(d) for d in token]
             days_in_month = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-            if not (0 < month <= 12 and day <= days_in_month[month]):
+            if not (0 < month <= 12 and day <= days_in_month[month - 1]):
                 raise ValidationError(self.message, code="value")
 
         for token in value:
