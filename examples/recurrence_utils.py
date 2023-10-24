@@ -14,6 +14,13 @@ def locale_weekdays():
     return ["ho"] + [_(day).lower()[:2] for day in calendar.day_abbr]
 
 
+date_adjectives = ("1st", "first", "2nd", "second", "3rd", "third", "4th", "fourth", "5th", "fifth", "last")
+
+
+def locale_adjectives():
+    return [_(adj)[:3] for adj in date_adjectives]
+
+
 class Pattern(IntEnum):
     """
     cutoff date if the date of the occurrence AFTER which we're modifying the recurrence. Any occurrences before
@@ -119,12 +126,7 @@ def date_range_monthly(
         if isinstance(d, str) and len(d.split(" ")) == 2:
             d = d.split(" ")
         if isinstance(d, (tuple, list)):
-            modifier = dict(
-                zip(
-                    ("1st", "fir", "2nd", "sec", "3rd", "thi", "4th", "fou", "5th", "fif", "las"),
-                    map(lambda x: str(x // 2 + 1), range(11)),
-                )
-            )[d[0][:3].lower()]
+            modifier = dict(zip(locale_adjectives(), map(lambda x: str(x // 2 + 1), range(11))))[d[0][:3].lower()]
             weekday = dict(zip(locale_weekdays()[1:], map(str, range(1, 8))))[d[1]]
             return modifier + weekday
         elif isinstance(d, str):

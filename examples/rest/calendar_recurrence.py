@@ -7,7 +7,7 @@ from dynamicforms import fields, serializers
 from dynamicforms.mixins import F
 from examples.enum_field import EnumField
 from examples.models import CalendarRecurrence
-from examples.recurrence_utils import locale_weekdays
+from examples.recurrence_utils import locale_adjectives, locale_weekdays
 
 
 class DaysField(fields.CharField):
@@ -41,23 +41,7 @@ class DaysValidator:
                 if not token.isnumeric() and 1 <= int(token) <= 31:
                     raise ValidationError(self.message, code="value")
             else:
-                if (
-                    token[0][:3].lower()
-                    not in (
-                        "1st",
-                        "fir",
-                        "2nd",
-                        "sec",
-                        "3rd",
-                        "thi",
-                        "4th",
-                        "fou",
-                        "5th",
-                        "fif",
-                        "las",
-                    )
-                    or token[1] not in locale_weekdays()
-                ):
+                if token[0][:3].lower() not in locale_adjectives() or token[1] not in locale_weekdays():
                     raise ValidationError(self.message, code="value")
 
         for token in value:
