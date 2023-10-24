@@ -84,19 +84,14 @@ const payload = computed(() => props.rowData);
 
 const { callHandler } = useActionHandler();
 
-
-//Checks if max width is set. if yes, it gets the value; if no, returns the empty string
-  // Create a ref to store the maxWidthStyle
-  const computedStyle = computed(() => {
-    if (props.column.name === "item_type")
-      console.log("testing", props.column)
-    if (props.column.renderParams?.max_width) {
-      console.log(`max-width: ${props.column.renderParams.max_width}`)
-      return `max-width: ${props.column.renderParams.max_width}`;
-    }
-      return ''; // Empty string if max_width is not defined
-  });
-
+// Checks if max width is set. if yes, it gets the value; if no, returns the empty string
+// Create a ref to store the maxWidthStyle
+const computedStyle = computed(() => {
+  if (props.column.renderParams?.max_width) {
+    return `max-width: ${props.column.renderParams.max_width}; overflow: hidden; text-overflow: ellipsis;`;
+  }
+  return ''; // Empty string if max_width is not defined
+});
 
 function onMeasure(refName: string, maxWidth: number) {
   if (refName === 'columnsize' && Number.isFinite(maxWidth)) {

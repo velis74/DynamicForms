@@ -31,7 +31,6 @@ export default class TableFilterRow {
     filterDataNoActions.forEach((column) => {
       fields[column.name] = column;
     });
-    // eslint-disable-next-line max-len
     const filteredCols = _.filter(
       new TableColumns(filterDataNoActions.map((col) => col.name), fields),
       (c) => c.visibility === DisplayMode.FULL,
