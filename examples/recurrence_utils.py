@@ -125,7 +125,6 @@ def date_range_monthly(
                     map(lambda x: str(x // 2 + 1), range(11)),
                 )
             )[d[0][:3].lower()]
-            print(d[1])
             weekday = dict(zip(locale_weekdays()[1:], map(str, range(1, 8))))[d[1]]
             return modifier + weekday
         elif isinstance(d, str):
