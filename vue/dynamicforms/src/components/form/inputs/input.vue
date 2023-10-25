@@ -21,8 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
-import {computed} from "vue";
+import { computed } from 'vue';
+
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
 
 interface Props extends BaseProps {}
 const props = defineProps<Props>();
@@ -30,45 +31,33 @@ const props = defineProps<Props>();
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
-const {value, isValidNumber, isNumber} = useInputBase(props, emits);
+const { value, isValidNumber, isNumber, baseBinds } = useInputBase(props, emits);
 
-//computed
-const inputType = computed(() => {
-  return props.field.renderParams.inputType;
-})
+// computed
+const inputType = computed(() => props.field.renderParams.inputType);
 
 const rules = computed(() => {
   const res = [];
   const rp = props.field.renderParams;
-  res.push((value: string) => ((rp.pattern == null || String(value).match(rp.pattern)) ?
-    true : `${value} does not match ${rp.pattern}`));
+  res.push((val: string) => ((rp.pattern == null || String(val).match(rp.pattern)) ?
+    true : `${val} does not match ${rp.pattern}`));
   res.push(
-    (value: string) => ((String(value).length >= rp.minLength) ? true : `len(${value}) < ${rp.minLength}`),
+    (val: string) => ((String(val).length >= rp.minLength) ? true : `len(${val}) < ${rp.minLength}`),
   );
   res.push(
-    (value: string) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`),
+    (val: string) => ((String(val).length <= rp.maxLength) ? true : `len(${val}) > ${rp.maxLength}`),
   );
   if (isNumber) {
-    res.push((value: number) => ((rp.min == null || value >= rp.min) ? true : `${value} < ${rp.min}`));
-    res.push((value: number) => ((rp.max == null || value <= rp.max) ? true : `${value} > ${rp.max}`));
+    res.push((val: number) => ((rp.min == null || val >= rp.min) ? true : `${val} < ${rp.min}`));
+    res.push((val: number) => ((rp.max == null || val <= rp.max) ? true : `${val} > ${rp.max}`));
     // if null is allowed then null and undefined should not trigger invalid number
     res.push(
-      (value: number) => (isValidNumber(value) || (props.field.allowNull && value == null) ?
+      (val: number) => (isValidNumber(val) || (props.field.allowNull && val == null) ?
         true :
         'Not a valid number'),
     );
   }
   return res;
-})
-
-</script>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import TranslationsMixin from '../../util/translations-mixin';
-
-export default /* #__PURE__ */ defineComponent({
-  mixins: [TranslationsMixin],
 });
+
 </script>

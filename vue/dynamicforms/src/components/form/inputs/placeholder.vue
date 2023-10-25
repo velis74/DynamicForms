@@ -8,23 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+
 interface Props extends BaseProps {}
 const props = defineProps<Props>();
 
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
+const { baseBinds } = useInputBase(props, emits);
 
-</script>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import TranslationsMixin from '../../util/translations-mixin';
-
-export default /* #__PURE__ */ defineComponent({
-
-  mixins: [TranslationsMixin],
-});
 </script>

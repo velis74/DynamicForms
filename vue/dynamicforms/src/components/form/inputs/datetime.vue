@@ -22,16 +22,16 @@
   </vuetify-input>
 </template>
 
-
-
 <script setup lang="ts">
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
-import {computed} from "vue";
-import {DateTime} from "luxon";
+import { DateTime } from 'luxon';
+import { computed } from 'vue';
 import { Datetime } from 'vue-datetime3';
+
+import { useTranslations } from '../../util/translations-mixin';
+
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
-
 
 interface Props extends BaseProps {}
 const props = defineProps<Props>();
@@ -41,21 +41,19 @@ interface Emits extends BaseEmits {
 }
 const emits = defineEmits<Emits>();
 
+const { value, baseBinds } = useInputBase(props, emits);
+const { gettext } = useTranslations();
 
-const {value, baseBinds} = useInputBase(props, emits);
-
-//data
+// data
 let datetimeFieldKey = Math.round(Math.random() * 1000);
 
-//computed
-const inputType = computed(() => {
-  return props.field.renderParams.inputType;
-})
+// computed
+const inputType = computed(() => props.field.renderParams.inputType);
 
 const valueA = computed({
   get: function get(): any {
     return props.modelValue;
-    },
+  },
   set: function set(newVal: any) {
     if (newVal && props.field.renderParams.inputType !== 'datetime') {
       // eslint-disable-next-line no-param-reassign
@@ -64,13 +62,11 @@ const valueA = computed({
     }
     emits('update:modelValue', newVal);
   },
-})
+});
 
-const displayFormat = computed(() => {
-  return props.field.renderParams.formFormat || 'dd.MM.yyyy HH:mm:ss';
-})
+const displayFormat = computed(() => props.field.renderParams.formFormat || 'dd.MM.yyyy HH:mm:ss');
 
-//methods
+// methods
 function onValueConfirmed(doFilter: any) {
   emits('onValueConfirmed', doFilter);
 }
@@ -79,27 +75,11 @@ function dateTimeInput() {
   onValueConfirmed(true);
 }
 
-function clear () {
+function clear() {
   value.value = '';
   datetimeFieldKey = Math.round(Math.random() * 1000);
 }
 
-
-</script>
-
-<script lang="ts">
-import 'vue-datetime3/style.css';
-
-import { defineComponent } from 'vue';
-
-import TranslationsMixin from '../../util/translations-mixin';
-
-
-export default /* #__PURE__ */ defineComponent({
-
-  mixins: [TranslationsMixin],
-
-});
 </script>
 
 <style>

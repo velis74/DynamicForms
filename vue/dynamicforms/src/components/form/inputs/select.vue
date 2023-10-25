@@ -54,32 +54,37 @@
 </template>
 
 <script setup lang="ts">
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
-import {computed, onMounted, watch, nextTick, ref} from "vue";
-import VuetifyInput from "../../form/inputs/input-vuetify.vue";
-import Multiselect from 'vue-multiselect';
+/**
+ * TODO: the field does not look like a Vuetify field: label is on left
+ * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
+ */
+import { computed, onMounted, watch, nextTick, ref } from 'vue';
 import IonIcon from 'vue-ionicon';
+import Multiselect from 'vue-multiselect';
+
+import { DfForm } from '../namespace';
+
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
 const props = defineProps<Props>();
 
-
-//emits
+// emits
 interface Emits extends BaseEmits {
    (e: 'update:modelValueDisplay', value: any): any
 }
 const emits = defineEmits<Emits>();
 
-const {value, baseBinds} = useInputBase(props, emits);
+const { value, baseBinds } = useInputBase(props, emits);
 
-//data
-let selected = ref<DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null>(null);
-let required: any = false;
+// data
+const selected = ref<DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null>(null);
 let loadedChoices: DfForm.ChoicesJSON[] = [];
 let loading: boolean = false;
 let limit: number = 99999;
 
-//set()
+// set()
 const multiselectRef = ref<typeof VuetifyInput | null>(null);
 const minHeight = ref<number>(0);
 const dropdownTop = ref<number>(0);
@@ -102,46 +107,33 @@ function multiSelectClose() {
   dropdownTop.value = 0;
 }
 
-//computed
-const  disabled = computed(() => {
-  return props.field.readOnly;
-})
+// computed
+const disabled = computed(() => props.field.readOnly);
 
-const options = computed(() => {
-  return props.field.choices || loadedChoices;
-})
+const options = computed(() => props.field.choices || loadedChoices);
 
-const options_json = computed(() => {
-  return JSON.stringify(options);
-})
+const multiple = computed(() => props.field.renderParams.multiple);
 
-const multiple = computed(() => {
-  return props.field.renderParams.multiple;
-})
-
-const taggable = computed(() => {
-  return props.field.renderParams.allowTags;
-})
+const taggable = computed(() => props.field.renderParams.allowTags);
 
 const result = computed({
-  get(): any{
-    console.log(selected.value)
+  get(): any {
+    console.log(selected.value);
     if (selected.value) {
-          emits(
-            'update:modelValueDisplay',
-            multiple.value ?
-              (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.text) :
-              (<DfForm.ChoicesJSON> selected.value).text,
-          );
-          return multiple.value ?
-            (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.id) :
-            (<DfForm.ChoicesJSON> selected.value).id;
-        }
-        emits('update:modelValueDisplay', '');
-        return '';
+      emits(
+        'update:modelValueDisplay',
+        multiple.value ?
+          (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.text) :
+          (<DfForm.ChoicesJSON> selected.value).text,
+      );
+      return multiple.value ?
+        (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.id) :
+        (<DfForm.ChoicesJSON> selected.value).id;
+    }
+    emits('update:modelValueDisplay', '');
+    return '';
   },
-  set(value: any)
-  {
+  set(value: any) {
     if (value != null) {
       if (multiple.value) {
         const val = value.constructor === Array ? value.map(String) : value.split(',');
@@ -154,12 +146,12 @@ const result = computed({
       selected.value = null;
     }
   },
-})
+});
 
-//methods
+// methods
 function onSelect() {
   if (!props.field.readOnly) {
-    console.log(result)
+    // console.log(result);
     value.value = result.value;
   }
 }
@@ -170,7 +162,7 @@ function onInput(inp: any) {
   }
 }
 
-function onTag(newTag: string){
+function onTag(newTag: string) {
   const newTagObj: DfForm.ChoicesJSON = { id: newTag, text: newTag };
   props.field.choices.push(newTagObj);
   if (multiple.value) {
@@ -182,36 +174,36 @@ function onTag(newTag: string){
 
 async function queryOptions(query: string, query_field: string): Promise<void> {
   if (props.field.choices) return;
-      /*
-        @adam
-        If field already defines the choices it is wasteful to query options,
-        due to options always resolving into field choices
-      */
-      const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
-      let req = `${props.field.ajax.url_reverse}`;
-      if (props.field.ajax.additional_parameters || query) {
-        const conditions = [];
-        if (props.field.ajax.additional_parameters) conditions.push(props.field.ajax.additional_parameters);
-        if (query) conditions.push(`${query_field}=${query}`);
-        req += `?${conditions.join('&')}`;
-      }
-      loading = true;
-      try {
-        let loadedData = (await apiClient.get(req, { headers, params: filterData })).data;
-        if (Array.isArray(loadedData)) {
-          // Pagination was not delivered. We got a plain array
-          loadedData = { results: loadedData, next: null };
-        }
-        loadedChoices = loadedData.results.map(
-          (item: { [key: string]: any }): DfForm.ChoicesJSON => ({
-            id: item[props.field.ajax.value_field],
-            text: item[props.field.ajax.text_field],
-          }),
-        );
-        limit = loadedData.next ? loadedChoices.length : 99999;
-      } finally {
-        loading = false;
-      }
+  /*
+    @adam
+    If field already defines the choices it is wasteful to query options,
+    due to options always resolving into field choices
+  */
+  const headers = { 'x-viewmode': 'TABLE_ROW', 'x-pagination': 1 };
+  let req = `${props.field.ajax.url_reverse}`;
+  if (props.field.ajax.additional_parameters || query) {
+    const conditions = [];
+    if (props.field.ajax.additional_parameters) conditions.push(props.field.ajax.additional_parameters);
+    if (query) conditions.push(`${query_field}=${query}`);
+    req += `?${conditions.join('&')}`;
+  }
+  loading = true;
+  try {
+    let loadedData = (await apiClient.get(req, { headers, params: filterData })).data;
+    if (Array.isArray(loadedData)) {
+      // Pagination was not delivered. We got a plain array
+      loadedData = { results: loadedData, next: null };
+    }
+    loadedChoices = loadedData.results.map(
+      (item: { [key: string]: any }): DfForm.ChoicesJSON => ({
+        id: item[props.field.ajax.value_field],
+        text: item[props.field.ajax.text_field],
+      }),
+    );
+    limit = loadedData.next ? loadedChoices.length : 99999;
+  } finally {
+    loading = false;
+  }
 }
 
 async function onSearch(query: string) {
@@ -220,50 +212,28 @@ async function onSearch(query: string) {
   }
 }
 
-//watch
+// watch
 watch(selected, () => {
   onSelect();
-})
-
-//not okay
-onMounted(async() => {
-    if (!multiple.value && !props.field.allowNull && !value && options.value.length) {
-      // Auto select first element
-      result.value = options.value[0].id;
-    } else {
-      result.value = value.value;
-    }
-    if (props.field.ajax && value.value) {
-      if (options.value.find((item) => item.id === value.value)) {
-        result.value = value.value;
-      } else {
-        await queryOptions(value.value, props.field.ajax.value_field);
-        result.value = multiple.value ? loadedChoices : loadedChoices[0]?.id;
-      }
-    }
-  })
-
-</script>
-
-<script lang="ts">
-/**
- * TODO: the field does not look like a Vuetify field: label is on left
- * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
- */
-import { defineComponent } from 'vue';
-
-
-
-import apiClient from '../../util/api-client';
-import TranslationsMixin from '../../util/translations-mixin';
-import { DfForm } from '../namespace';
-
-
-export default /* #__PURE__ */ defineComponent({
-
-  mixins: [ TranslationsMixin],
-
 });
+
+onMounted(async () => {
+  if (!multiple.value && !props.field.allowNull && !value && options.value.length) {
+    // Auto select first element
+    result.value = options.value[0].id;
+  } else {
+    result.value = value.value;
+  }
+  if (props.field.ajax && value.value) {
+    if (options.value.find((item) => item.id === value.value)) {
+      result.value = value.value;
+    } else {
+      await queryOptions(value.value, props.field.ajax.value_field);
+      result.value = multiple.value ? loadedChoices : loadedChoices[0]?.id;
+    }
+  }
+});
+
 </script>
 
 <style src="~/vue-multiselect/dist/vue-multiselect.css"></style>

@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
 import IonIcon from 'vue-ionicon';
 
 interface Emits {
@@ -13,11 +12,9 @@ interface Emits {
 }
 const emits = defineEmits<Emits>();
 
-
-//methods
+// methods
 function clear() {
   emits('clearButtonPressed', null);
 }
 
 </script>
-

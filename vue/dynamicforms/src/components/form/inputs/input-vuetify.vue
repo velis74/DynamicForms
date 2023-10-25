@@ -12,9 +12,8 @@
 </template>
 
 <script setup lang="ts">
-
 interface Props {
-  //props
+  // props
   label: string
   errorMessages: string[]
   errorCount: number
@@ -22,10 +21,7 @@ interface Props {
 }
 
 defineProps<Props>();
-
-
 </script>
-
 
 <style scoped>
 

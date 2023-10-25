@@ -33,11 +33,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
+ *   is using IonIcon
+ */
+import { onMounted, ref } from 'vue';
 
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
-import {onMounted, ref} from "vue";
-import _, {isBoolean} from "lodash";
-import apiClient from "../../util/api-client";
+import apiClient from '../../util/api-client';
+
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 
@@ -47,33 +51,29 @@ const props = defineProps<Props>();
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
-const {value, baseBinds} = useInputBase(props, emits);
+const { value, baseBinds } = useInputBase(props, emits);
 
-//data
+// data
 // currentFile: null as (File | null)
 let currentFile: File | null = null;
 // progress: 0,
 let progress = 0;
-//showFileOnServer: false,
+// showFileOnServer: false,
 let showFileOnServer = false;
-//fileInputKey: Math.round(Math.random() * 1000),
+// fileInputKey: Math.round(Math.random() * 1000),
 let fileInputKey = Math.round(Math.random() * 1000);
 
-let file = ref<HTMLInputElement>();
+const file = ref<HTMLInputElement>();
 
-//mounted
+// mounted
 onMounted(() => {
   showFileOnServer = !!_.clone(value.value);
-})
+});
 
-//methods
+// methods
 function getFileName(filePath: string) {
   // returns just the filename without any path
   return !filePath ? filePath : filePath.replace(/^.*[\\/]/, '');
-}
-
-function selectFile() {
-  upload();
 }
 
 function removeFile() {
@@ -119,21 +119,8 @@ async function upload() {
   }
 }
 
-</script>
+function selectFile() {
+  upload();
+}
 
-<script lang="ts">
-/**
- * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
- *   is using IonIcon
- */
-
-import { defineComponent } from 'vue';
-
-import TranslationsMixin from '../../util/translations-mixin';
-
-export default defineComponent({
-
-  mixins: [TranslationsMixin],
-
-});
 </script>

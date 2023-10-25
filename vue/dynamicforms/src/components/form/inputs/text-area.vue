@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 
-import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
-import {computed} from "vue";
+import { BaseEmits, BaseProps, useInputBase } from './base-composable';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
@@ -39,42 +39,22 @@ const props = defineProps<Props>();
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
-const {baseBinds} = useInputBase(props, emits);
+const { baseBinds } = useInputBase(props, emits);
 
-//computed
-const inputType = computed(() => {
-  return props.field.renderParams.inputType;
-})
+// computed
+const inputType = computed(() => props.field.renderParams.inputType);
 
-const minLength = computed(() => {
-  return props.field.renderParams.minLength;
-})
+const minLength = computed(() => props.field.renderParams.minLength);
 
-const  maxLength = computed(() => {
-  return props.field.renderParams.maxLength;
-})
-
+const maxLength = computed(() => props.field.renderParams.maxLength);
 
 const value = computed({
-  get(): any{
-   return props.modelValue;
+  get(): any {
+    return props.modelValue;
   },
-  set(newVal: string)
-  {
+  set(newVal: string) {
     emits('update:modelValue', newVal);
   },
-})
-
-
-</script>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import TranslationsMixin from '../../util/translations-mixin';
-
-export default /* #__PURE__ */ defineComponent({
-  mixins: [TranslationsMixin],
-
 });
+
 </script>
