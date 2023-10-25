@@ -44,12 +44,14 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
     readonly_field = fields.BooleanField(read_only=True)
     filepath_field = fields.FilePathField(path="examples")
 
-    multiplechoice_field = fields.MultipleChoiceField(choices=(
-        (0, 'Choice 1'),
-        (1, 'Choice 2'),
-        (2, 'Choice 3'),
-        (3, 'Choice 4'),
-    ))
+    multiplechoice_field = fields.MultipleChoiceField(
+        choices=(
+            (0, "Choice 1"),
+            (1, "Choice 2"),
+            (2, "Choice 3"),
+            (3, "Choice 4"),
+        )
+    )
 
     # TODO: FileField, ImageField
     # image_field = serializers.ImageField(required=False, use_url=True)
