@@ -1,21 +1,28 @@
 /**
  * translations mixin provides utility functions that gettext will recognise
  */
+
+type InterpolateData = any[] | Record<string, any>;
+
 declare global {
   interface Window {
     gettext?: (str: string) => string;
-    interpolate?: (str: string, data: any[] | { [key: string]: any }, named: boolean) => string;
+    interpolate?: (str: string, data: InterpolateData, named: boolean) => string;
   }
 }
 
-function gettext(str: string): string {
-  return window.gettext ? window.gettext(str) : str;
-}
+const gettext = (str: string) => (
+  window.gettext ? window.gettext(str) : str
+);
 
-function interpolate(str: string, data: { [key: string]: any }): string {
-  return window.interpolate ?
+const interpolate = (str: string, data: Record<string, any>) => (
+  window.interpolate ?
     window.interpolate(str, data, true) :
-    str.replace(/%\(\w+\)s/g, (match) => String(data[match.slice(2, -2)]));
+    str.replace(/%\(\w+\)s/g, (match) => String(data[match.slice(2, -2)]))
+);
+
+export function useTranslations() {
+  return { gettext, interpolate };
 }
 
 export { gettext, interpolate };
