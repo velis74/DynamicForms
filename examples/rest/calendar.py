@@ -1,6 +1,7 @@
 import datetime
 
 from django.utils.translation import gettext_lazy as _
+from rest_framework import viewsets
 
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
 from dynamicforms.template_render.layout import Column, Group, Layout, Row
@@ -68,6 +69,14 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
 
 class CalendarEventViewSet(RecurrenceEventViewSet):
     serializer_class = CalendarEventSerializer
+
+    def new_object(self: viewsets.ModelViewSet):
+        res = super().new_object()
+        if start_at := self.request.query_params.get("start_at", None):
+            res.start_at = start_at
+        if end_at := self.request.query_params.get("end_at", None):
+            res.end_at = end_at
+        return res
 
     def get_queryset(self):
         res = CalendarEvent.objects.all()

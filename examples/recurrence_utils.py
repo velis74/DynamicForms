@@ -1,11 +1,33 @@
+import calendar
 import sys
 from collections import namedtuple
 from datetime import date, datetime, timedelta
 from enum import IntEnum
 from typing import List, Optional, Set, Tuple, Union
 
+from django.utils.translation import gettext_lazy as _
 from versio.version import Version
 from versio.version_scheme import Pep440VersionScheme
+
+
+def locale_weekdays():
+    return ["ho"] + [_(day).lower()[:2] for day in calendar.day_abbr]
+
+
+def locale_adjectives():
+    return (
+        _("1st")[:3],
+        _("first")[:3],
+        _("2nd")[:3],
+        _("second")[:3],
+        _("3rd")[:3],
+        _("third")[:3],
+        _("4th")[:3],
+        _("fourth")[:3],
+        _("5th")[:3],
+        _("fifth")[:3],
+        _("last")[:3],
+    )
 
 
 class Pattern(IntEnum):
@@ -84,10 +106,7 @@ def date_range_weekly(
     current_result = start_at
     prev_iso_calendar = ISOCalendar(current_result.date().isocalendar())
     week_no = 0
-    weekdays = set(
-        dict(zip(("ho", "mo", "tu", "we", "th", "fr", "sa", "su"), range(8)))[day]
-        for day in map(lambda x: x[:2].lower(), weekdays)
-    )
+    weekdays = set(dict(zip(locale_weekdays(), range(8)))[day] for day in map(lambda x: x[:2].lower(), weekdays))
     do_holidays = 0 in weekdays
     weekdays.discard(0)
 
@@ -116,14 +135,11 @@ def date_range_monthly(
         if isinstance(d, str) and len(d.split(" ")) == 2:
             d = d.split(" ")
         if isinstance(d, (tuple, list)):
-            modifier = dict(
-                zip(
-                    ("1st", "fir", "2nd", "sec", "3rd", "thi", "4th", "fou", "5th", "fif", "las"),
-                    map(lambda x: str(x // 2 + 1), range(11)),
-                )
-            )[d[0][:3].lower()]
-            weekday = dict(zip(("mo", "tu", "we", "th", "fr", "sa", "su"), map(str, range(1, 8))))[d[1]]
+            modifier = dict(zip(locale_adjectives(), map(lambda x: str(x // 2 + 1), range(11))))[d[0][:3].lower()]
+            weekday = dict(zip(locale_weekdays()[1:], map(str, range(1, 8))))[d[1]]
             return modifier + weekday
+        elif isinstance(d, str):
+            return int(d)
         elif isinstance(d, int):
             return d
 
@@ -153,10 +169,17 @@ def date_range_yearly(start_at, end_at: datetime, cutoff_at: Optional[datetime],
     cutoff_at = cutoff_at or start_at
     current_result = start_at
     current_year = None
+    dates = [(int(d), int(m)) for d, m in dates]
     year = set()
 
     def build_year(yr):
-        return set(map(lambda d: date(yr, d[1], d[0]), dates))
+        def get_date(day, month, y):
+            try:
+                return date(y, month, day)
+            except:
+                return None
+
+        return set([val for val in map(lambda d: get_date(d[0], d[1], yr), dates) if val is not None])
 
     while current_result <= end_at:
         if current_result.year != current_year:
