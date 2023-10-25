@@ -14,11 +14,20 @@ def locale_weekdays():
     return ["ho"] + [_(day).lower()[:2] for day in calendar.day_abbr]
 
 
-date_adjectives = ("1st", "first", "2nd", "second", "3rd", "third", "4th", "fourth", "5th", "fifth", "last")
-
-
 def locale_adjectives():
-    return [_(adj)[:3] for adj in date_adjectives]
+    return (
+        _("1st")[:3],
+        _("first")[:3],
+        _("2nd")[:3],
+        _("second")[:3],
+        _("3rd")[:3],
+        _("third")[:3],
+        _("4th")[:3],
+        _("fourth")[:3],
+        _("5th")[:3],
+        _("fifth")[:3],
+        _("last")[:3],
+    )
 
 
 class Pattern(IntEnum):
