@@ -4,17 +4,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
 import IonIcon from 'vue-ionicon';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'DInputClearButton',
-  components: { IonIcon },
-  methods: {
-    clear() {
-      this.$emit('clearButtonPressed');
-    },
-  },
-});
+interface Emits {
+  (e: 'clearButtonPressed', value: any): any
+}
+const emits = defineEmits<Emits>();
+
+
+//methods
+function clear() {
+  emits('clearButtonPressed', null);
+}
+
 </script>
+

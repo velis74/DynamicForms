@@ -7,15 +7,24 @@
   </v-input>
 </template>
 
+<script setup lang="ts">
+import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+
+</script>
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
-import InputBase from './base';
-
 export default /* #__PURE__ */ defineComponent({
-  name: 'DPlaceholder',
-  mixins: [InputBase, TranslationsMixin],
+
+  mixins: [TranslationsMixin],
 });
 </script>

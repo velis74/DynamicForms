@@ -32,86 +32,108 @@
   </vuetify-input>
 </template>
 
+<script setup lang="ts">
+
+import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
+import {onMounted, ref} from "vue";
+import _, {isBoolean} from "lodash";
+import apiClient from "../../util/api-client";
+import InputClearButton from './clear-input-button.vue';
+import VuetifyInput from './input-vuetify.vue';
+
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const {value, baseBinds} = useInputBase(props, emits);
+
+//data
+// currentFile: null as (File | null)
+let currentFile: File | null = null;
+// progress: 0,
+let progress = 0;
+//showFileOnServer: false,
+let showFileOnServer = false;
+//fileInputKey: Math.round(Math.random() * 1000),
+let fileInputKey = Math.round(Math.random() * 1000);
+
+let file = ref<HTMLInputElement>();
+
+//mounted
+onMounted(() => {
+  showFileOnServer = !!_.clone(value.value);
+})
+
+//methods
+function getFileName(filePath: string) {
+  // returns just the filename without any path
+  return !filePath ? filePath : filePath.replace(/^.*[\\/]/, '');
+}
+
+function selectFile() {
+  upload();
+}
+
+function removeFile() {
+  value.value = null;  // eslint-disable-line
+  progress = 0;
+  fileInputKey = Math.round(Math.random() * 1000);
+  showFileOnServer = false;
+  currentFile = null;
+}
+
+async function upload() {
+  progress = 0;
+  const fileRef = file.value!;
+  if (!fileRef || !fileRef.files) return;
+  currentFile = fileRef.files.item(0);
+  const formData = new FormData();
+  formData.append('file', currentFile as File, `${(<File> currentFile).name}`);
+  showFileOnServer = true;
+  progress = 0;
+  try {
+    const res = await apiClient.post(
+      '/dynamicforms/preupload-file/',
+      formData,
+      {
+        showProgress: false,
+        onUploadProgress: function onUploadProgress(progressEvent) {
+          if (!progressEvent.event.lengthComputable) {
+            progress = 50;
+          } else {
+            progress = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
+          }
+        },
+      },
+    );
+    value.value = res.data.identifier;
+    progress = 100;
+  } catch (err) {
+    progress = 0;
+    showFileOnServer = false;
+    currentFile = null;
+    fileInputKey = Math.round(Math.random() * 1000);
+    throw err;
+  }
+}
+
+</script>
+
 <script lang="ts">
 /**
  * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
  *   is using IonIcon
  */
-import _ from 'lodash';
+
 import { defineComponent } from 'vue';
 
-import apiClient from '../../util/api-client';
 import TranslationsMixin from '../../util/translations-mixin';
 
-import InputBase from './base';
-import InputClearButton from './clear-input-button.vue';
-import VuetifyInput from './input-vuetify.vue';
-
 export default defineComponent({
-  name: 'DFile',
-  components: { VuetifyInput, InputClearButton },
-  mixins: [InputBase, TranslationsMixin],
-  data() {
-    return {
-      currentFile: null as (File | null),
-      progress: 0,
-      showFileOnServer: false,
-      fileInputKey: Math.round(Math.random() * 1000),
-    };
-  },
-  mounted() {
-    this.showFileOnServer = !!_.clone(this.value);
-  },
-  methods: {
-    getFileName(filePath: string) {
-      // returns just the filename without any path
-      return !filePath ? filePath : filePath.replace(/^.*[\\/]/, '');
-    },
-    selectFile() {
-      this.upload();
-    },
-    removeFile() {
-      this.value = null;  // eslint-disable-line
-      this.progress = 0;
-      this.fileInputKey = Math.round(Math.random() * 1000);
-      this.showFileOnServer = false;
-      this.currentFile = null;
-    },
-    async upload() {
-      this.progress = 0;
-      const fileRef = this.$refs.file as HTMLInputElement;
-      if (!fileRef || !fileRef.files) return;
-      this.currentFile = fileRef.files.item(0);
-      const formData = new FormData();
-      formData.append('file', this.currentFile as File, `${(<File> this.currentFile).name}`);
-      this.showFileOnServer = true;
-      this.progress = 0;
-      try {
-        const self = this;
-        const res = await apiClient.post(
-          '/dynamicforms/preupload-file/',
-          formData,
-          {
-            showProgress: false,
-            onUploadProgress: function onUploadProgress(progressEvent) {
-              if (!progressEvent.event.lengthComputable) {
-                self.progress = 50;
-              } else {
-                self.progress = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
-              }
-            },
-          },
-        );
-        this.value = res.data.identifier;
-        this.progress = 100;
-      } catch (err) {
-        this.progress = 0;
-        this.showFileOnServer = false;
-        this.currentFile = null;
-        this.fileInputKey = Math.round(Math.random() * 1000);
-        throw err;
-      }
-    },
-  },
+
+  mixins: [TranslationsMixin],
+
 });
 </script>

@@ -9,6 +9,23 @@
   </vuetify-input>
 </template>
 
+<script setup lang="ts">
+import {BaseEmits, BaseProps, useInputBase} from "./base-composable";
+import VuetifyInput from './input-vuetify.vue';
+
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const {} = useInputBase(props, emits);
+
+//data
+let editor: ClassicEditor;
+let editorConfig: {}; // The configuration of the editor.
+</script>
+
 <script lang="ts">
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditor from '@ckeditor/ckeditor5-vue';
@@ -16,19 +33,12 @@ import { defineComponent } from 'vue';
 
 import TranslationsMixin from '../../util/translations-mixin';
 
-import InputBase from './base';
-import VuetifyInput from './input-vuetify.vue';
-
 export default defineComponent({
-  name: 'DFWidgetCKEditor',
-  components: { ckeditor: CKEditor.component, VuetifyInput },
-  mixins: [InputBase, TranslationsMixin],
-  data() {
-    return {
-      editor: ClassicEditor,
-      editorConfig: {}, // The configuration of the editor.
-    };
-  },
+
+  //TBD with Adam
+  components: { ckeditor: CKEditor.component },
+  mixins: [TranslationsMixin],
+
 });
 </script>
 
