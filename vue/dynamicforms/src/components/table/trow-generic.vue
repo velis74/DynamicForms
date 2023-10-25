@@ -77,6 +77,4 @@ function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
 
 const row = ref();
 useRenderMeasure(onMeasure, { row });
-
-defineExpose({ payload });
 </script>

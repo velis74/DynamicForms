@@ -19,6 +19,7 @@ export default class TableColumn {
   renderParams!: {
     table_format: any,
     table_show_zeroes?: boolean,
+    max_width?: string,
   };
 
   maxWidth!: number;
