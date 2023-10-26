@@ -17,10 +17,10 @@
 import _ from 'lodash';
 import { computed, onMounted, ref } from 'vue';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
 
 interface Props extends BaseProps {}
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), basePropsDefault);
 
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();

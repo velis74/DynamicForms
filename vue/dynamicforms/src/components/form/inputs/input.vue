@@ -47,7 +47,7 @@ const rules = computed(() => {
   res.push(
     (val: string) => ((String(val).length <= rp.maxLength) ? true : `len(${val}) > ${rp.maxLength}`),
   );
-  if (isNumber) {
+  if (isNumber.value) {
     res.push((val: number) => ((rp.min == null || val >= rp.min) ? true : `${val} < ${rp.min}`));
     res.push((val: number) => ((rp.max == null || val <= rp.max) ? true : `${val} > ${rp.max}`));
     // if null is allowed then null and undefined should not trigger invalid number

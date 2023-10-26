@@ -37,6 +37,7 @@
  * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
  *   is using IonIcon
  */
+import _ from 'lodash';
 import { onMounted, ref } from 'vue';
 
 import apiClient from '../../util/api-client';

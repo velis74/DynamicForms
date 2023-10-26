@@ -10,14 +10,16 @@
 </template>
 
 <script setup lang="ts">
-
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
 import VuetifyInput from './input-vuetify.vue';
 
+const ckeditor = CKEditor.component;
+
 interface Props extends BaseProps {}
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), basePropsDefault);
 
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();

@@ -8,6 +8,7 @@
 import _ from 'lodash';
 import { computed, onBeforeMount, onMounted, ref, watch } from 'vue';
 
+import APIConsumerVue from '../../api_consumer/api-consumer.vue';
 import ComponentDisplay from '../../api_consumer/component-display';
 import ConsumerLogicArray from '../../api_consumer/consumer-logic-array';
 import { APIConsumer } from '../../api_consumer/namespace';
@@ -25,11 +26,11 @@ const { baseBinds } = useInputBase(props, emits);
 
 // computed
 const binds = computed(() => {
-  const bindss = _.cloneDeep(baseBinds);
-  bindss.value['error-messages'] = bindss.value['error-messages']
+  const bindsClone = _.cloneDeep(baseBinds);
+  bindsClone.value['error-messages'] = bindsClone.value['error-messages']
     .filter((el: any) => !(el === undefined || el === null || !Object.keys(el).length))
     .map((el: { [key: string]: string }) => Object.keys(el).map((key) => `${key}: ${el[key]}`));
-  return bindss;
+  return bindsClone;
 });
 
 // setup()

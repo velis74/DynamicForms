@@ -34,19 +34,19 @@
       @open="multiSelectOpen"
       @close="multiSelectClose"
     >
-      <template #singleLabel="props">
-        <span v-if="props.option.icon">
-          <IonIcon class="action-icon" :name="props.option.icon"/>
+      <template #singleLabel="singleLabelProps">
+        <span v-if="singleLabelProps.option.icon">
+          <IonIcon class="action-icon" :name="singleLabelProps.option.icon"/>
         </span>
         <span v-else>
-          {{ props.option.text }}
+          {{ singleLabelProps.option.text }}
         </span>
       </template>
-      <template #option="props">
-        <span v-if="props.option.icon">
-          <IonIcon class="action-icon" :name="props.option.icon"/>
+      <template #option="optionProps">
+        <span v-if="optionProps.option.icon">
+          <IonIcon class="action-icon" :name="optionProps.option.icon"/>
         </span>
-        {{ props.option.text }}
+        {{ optionProps.option.text }}
       </template>
     </Multiselect>
     <div id="spacer-div" :style="`width:0px; height: ${minHeight}px; margin-top: ${dropdownTop}px`">&nbsp;</div>
@@ -62,6 +62,7 @@ import { computed, onMounted, watch, nextTick, ref } from 'vue';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
+import apiClient from '../../util/api-client';
 import { DfForm } from '../namespace';
 
 import { BaseEmits, BaseProps, useInputBase } from './base-composable';
@@ -118,7 +119,6 @@ const taggable = computed(() => props.field.renderParams.allowTags);
 
 const result = computed({
   get(): any {
-    console.log(selected.value);
     if (selected.value) {
       emits(
         'update:modelValueDisplay',
@@ -133,13 +133,13 @@ const result = computed({
     emits('update:modelValueDisplay', '');
     return '';
   },
-  set(value: any) {
-    if (value != null) {
+  set(newValue: any) {
+    if (newValue != null) {
       if (multiple.value) {
-        const val = value.constructor === Array ? value.map(String) : value.split(',');
+        const val = newValue.constructor === Array ? newValue.map(String) : newValue.split(',');
         selected.value = props.field.choices.filter((o) => val.includes(`${o.id}`));
       } else {
-        const fnd = props.field.choices.find((o) => String(o.id) === String(value));
+        const fnd = props.field.choices.find((o) => String(o.id) === String(newValue));
         selected.value = fnd || null;
       }
     } else {
@@ -164,6 +164,7 @@ function onInput(inp: any) {
 
 function onTag(newTag: string) {
   const newTagObj: DfForm.ChoicesJSON = { id: newTag, text: newTag };
+  // eslint-disable-next-line vue/no-mutating-props
   props.field.choices.push(newTagObj);
   if (multiple.value) {
     (<DfForm.ChoicesJSON[]> selected.value).push(newTagObj);
@@ -189,7 +190,7 @@ async function queryOptions(query: string, query_field: string): Promise<void> {
   }
   loading = true;
   try {
-    let loadedData = (await apiClient.get(req, { headers, params: filterData })).data;
+    let loadedData = (await apiClient.get(req, { headers })).data;
     if (Array.isArray(loadedData)) {
       // Pagination was not delivered. We got a plain array
       loadedData = { results: loadedData, next: null };

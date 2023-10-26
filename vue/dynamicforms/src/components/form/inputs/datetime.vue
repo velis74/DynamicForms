@@ -23,18 +23,20 @@
 </template>
 
 <script setup lang="ts">
+import 'vue-datetime3/style.css';
+
 import { DateTime } from 'luxon';
 import { computed } from 'vue';
 import { Datetime } from 'vue-datetime3';
 
 import { useTranslations } from '../../util/translations-mixin';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), basePropsDefault);
 
 interface Emits extends BaseEmits {
   (e: 'onValueConfirmed', value: any): any
@@ -48,7 +50,7 @@ const { gettext } = useTranslations();
 let datetimeFieldKey = Math.round(Math.random() * 1000);
 
 // computed
-const inputType = computed(() => props.field.renderParams.inputType);
+const inputType = computed(() => props.field.renderParams.inputType as 'datetime' | 'date' | 'time' | undefined);
 
 const valueA = computed({
   get: function get(): any {
