@@ -1,57 +1,72 @@
 import _ from 'lodash';
-import { defineComponent } from 'vue';
+import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
 
-export default defineComponent({
-  props: {
-    field: { type: FormField, required: true },
-    actions: { type: FilteredActions, required: true },
-    errors: { type: null, required: true },
-    showLabelOrHelpText: { type: Boolean, default: true },
-    modelValue: { type: undefined, required: true },
-  },
-  emits: ['update:modelValue'],
-  computed: {
-    value: {
-      get(): any { return this.modelValue; },
-      set(newValue: any) {
-        // TODO this is to be moved to input.vue. It has nothing to do here.
-        if (this.isNumber && this.isValidNumber(newValue)) {
-          this.$emit('update:modelValue', newValue ? Number(newValue) : undefined);
-          return;
-        }
-        this.$emit('update:modelValue', newValue);
-      },
-    },
+export interface BaseProps {
+    field: FormField
+    actions: FilteredActions
+    errors: any
+    showLabelOrHelpText?: boolean
+    modelValue: any
+}
 
-    errorsList() { return this.errors || []; },
-    errorsDisplayCount() { return this.errorsList.length; },
-    label() { return this.showLabelOrHelpText ? this.field.label : undefined; },
-    helpText() { return this.showLabelOrHelpText ? this.field.helpText : undefined; },
-    baseBinds() {
-      // this is potentially vuetify-specific
-      return {
-        label: this.label,
-        'error-messages': this.errorsList,
-        'error-count': this.errorsDisplayCount + 10, // +10 so that it can show "rules" error messages
-        messages: this.helpText ? [this.helpText] : undefined,
-      };
+export interface BaseEmits {
+    (e: 'update:modelValue', value: any): any
+}
+
+export const basePropsDefault = { showLabelOrHelpText: true };
+
+export function useInputBase(props: BaseProps, emit: BaseEmits) {
+  const isNumber = computed(() => props.field.renderParams.inputType === 'number');
+  function isValidNumber(num: any) {
+    const notValidValues: any[] = [undefined, Number.NaN];
+    if (!props.field.allowNull) {
+      notValidValues.push(null);
+      notValidValues.push('');
+    }
+    return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
+      !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
+  }
+
+  const value = computed({
+    get(): any {
+      return props.modelValue;
     },
-    isNumber() {
-      return this.field.renderParams.inputType === 'number';
-    },
-  },
-  methods: {
-    isValidNumber(num: any) {
-      const notValidValues: any[] = [undefined, Number.NaN];
-      if (!this.field.allowNull) {
-        notValidValues.push(null);
-        notValidValues.push('');
+    set(newValue: any) {
+      // TODO this is to be moved to input.vue. It has nothing to do here.
+      if (isNumber.value && isValidNumber(newValue)) {
+        emit('update:modelValue', newValue ? Number(newValue) : undefined);
+        return;
       }
-      return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
-        !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
+      emit('update:modelValue', newValue);
     },
-  },
-});
+  });
+
+  const errorsList = computed(() => props.errors || []);
+
+  const errorsDisplayCount = computed(() => errorsList.value.length);
+
+  const label = computed(() => (props.showLabelOrHelpText ? props.field.label : ''));
+
+  const helpText = computed(() => (props.showLabelOrHelpText ? props.field.helpText : ''));
+
+  const baseBinds = computed(() => ({
+    label: label.value,
+    'error-messages': errorsList.value,
+    'error-count': errorsDisplayCount.value + 10, // +10 so that it can show "rules" error messages
+    messages: helpText.value ? [helpText.value] : [],
+  }));
+
+  return {
+    value,
+    errorsList,
+    errorsDisplayCount,
+    label,
+    helpText,
+    baseBinds,
+    isNumber,
+    isValidNumber,
+  };
+}

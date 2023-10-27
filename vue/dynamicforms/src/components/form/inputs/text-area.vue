@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}

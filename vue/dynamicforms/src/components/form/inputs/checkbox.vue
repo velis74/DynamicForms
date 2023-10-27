@@ -17,7 +17,7 @@
 import _ from 'lodash';
 import { computed, onMounted, ref } from 'vue';
 
-import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
 
 interface Props extends BaseProps {}
 const props = withDefaults(defineProps<Props>(), basePropsDefault);

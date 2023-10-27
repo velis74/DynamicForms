@@ -14,7 +14,7 @@ import ConsumerLogicArray from '../../api_consumer/consumer-logic-array';
 import { APIConsumer } from '../../api_consumer/namespace';
 import { DfForm } from '../namespace';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 
 interface Props extends BaseProps {}
 const props = defineProps<Props>();

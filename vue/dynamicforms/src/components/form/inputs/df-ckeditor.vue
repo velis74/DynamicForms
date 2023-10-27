@@ -13,7 +13,7 @@
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
-import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
 const ckeditor = CKEditor.component;

@@ -42,7 +42,7 @@ import { onMounted, ref } from 'vue';
 
 import apiClient from '../../util/api-client';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 

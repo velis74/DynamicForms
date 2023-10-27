@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { BaseEmits, BaseProps, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 
 interface Props extends BaseProps {}
 const props = defineProps<Props>();

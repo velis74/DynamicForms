@@ -31,7 +31,7 @@ import { Datetime } from 'vue-datetime3';
 
 import { useTranslations } from '../../util/translations-mixin';
 
-import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base-composable';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
 import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 
