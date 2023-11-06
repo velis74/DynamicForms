@@ -1,8 +1,8 @@
-import _ from 'lodash';
 import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
+import InputComponent from './input.vue';
 
 export interface BaseProps {
     field: FormField
@@ -19,27 +19,13 @@ export interface BaseEmits {
 export const basePropsDefault = { showLabelOrHelpText: true };
 
 export function useInputBase(props: BaseProps, emit: BaseEmits) {
-  const isNumber = computed(() => props.field.renderParams.inputType === 'number');
-  function isValidNumber(num: any) {
-    const notValidValues: any[] = [undefined, Number.NaN];
-    if (!props.field.allowNull) {
-      notValidValues.push(null);
-      notValidValues.push('');
-    }
-    return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
-      !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
-  }
 
   const value = computed({
     get(): any {
       return props.modelValue;
     },
     set(newValue: any) {
-      // TODO this is to be moved to input.vue. It has nothing to do here.
-      if (isNumber.value && isValidNumber(newValue)) {
-        emit('update:modelValue', newValue ? Number(newValue) : undefined);
-        return;
-      }
+      InputComponent.handleNumberInput(newValue);
       emit('update:modelValue', newValue);
     },
   });
@@ -66,7 +52,5 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     label,
     helpText,
     baseBinds,
-    isNumber,
-    isValidNumber,
   };
 }

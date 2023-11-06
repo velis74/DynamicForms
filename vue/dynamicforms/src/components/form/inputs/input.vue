@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { computed } from 'vue';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
@@ -31,9 +32,28 @@ const props = defineProps<Props>();
 interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
-const { value, isValidNumber, isNumber, baseBinds } = useInputBase(props, emits);
+const { baseBinds } = useInputBase(props, emits);
 
 // computed
+const isNumber = computed(() => props.field.renderParams.inputType === 'number');
+function isValidNumber(num: any) {
+  const notValidValues: any[] = [undefined, Number.NaN];
+  if (!props.field.allowNull) {
+    notValidValues.push(null);
+    notValidValues.push('');
+  }
+  return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
+    !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
+}
+
+function handleNumberInput(newValue: any) {
+  if (isNumber.value && isValidNumber(newValue)) {
+    emits('update:modelValue', newValue ? Number(newValue) : undefined);
+    return;
+  }
+  emits('update:modelValue', newValue);
+}
+
 const inputType = computed(() => props.field.renderParams.inputType);
 
 const rules = computed(() => {

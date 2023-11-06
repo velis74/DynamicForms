@@ -8,7 +8,7 @@
     <div style="width: 100%;">
       <Datetime
         :key="datetimeFieldKey"
-        v-model="valueA"
+        v-model="valueDate"
         :type="inputType"
         :phrases="{ ok: gettext('Ok'), cancel: gettext('Cancel') }"
         :format="displayFormat"
@@ -52,7 +52,7 @@ let datetimeFieldKey = Math.round(Math.random() * 1000);
 // computed
 const inputType = computed(() => props.field.renderParams.inputType as 'datetime' | 'date' | 'time' | undefined);
 
-const valueA = computed({
+const valueDate = computed({
   get: function get(): any {
     return props.modelValue;
   },
