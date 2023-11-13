@@ -1,3 +1,4 @@
+import CKEditor from '@ckeditor/ckeditor5-vue';
 import type { App } from 'vue';
 
 import Action, { defaultActionHandler } from './components/actions/action';
@@ -48,6 +49,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
     app.provide('$df$ApplicationTheme', ui);
     app.config.globalProperties.gettext = (value: string) => gettext(value);
     app.config.globalProperties.interpolate = (str: string, data: { [key: string]: any }) => interpolate(str, data);
+    app.use(CKEditor);
     switch (ui) {
     case 'vuetify':
       // check if Vuetify is installed

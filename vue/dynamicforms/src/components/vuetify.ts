@@ -4,7 +4,7 @@ import VuetifyFormLayout from './form/layout-vuetify.vue';
 import { ModalView, DfDialog } from './modal';
 import VuetifyModal from './modal/modal-api-vuetify.vue';
 import VuetifyTable from './table/table-vuetify.vue';
-import LoadingIndicator from './util/loading-indicator.vue';
+import LoadingIndicator from './util/loading_indicator.vue';
 
 export {
   DfDialog,

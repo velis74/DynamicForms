@@ -20,41 +20,64 @@
   />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import _ from 'lodash';
+import { computed } from 'vue';
 
-import TranslationsMixin from '../../util/translations-mixin';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 
-import InputBase from './base';
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'DInput',
-  mixins: [InputBase, TranslationsMixin],
-  computed: {
-    inputType() { return this.field.renderParams.inputType; },
-    rules() {
-      const res = [];
-      const rp = this.field.renderParams;
-      res.push((value: string) => ((rp.pattern == null || String(value).match(rp.pattern)) ?
-        true : `${value} does not match ${rp.pattern}`));
-      res.push(
-        (value: string) => ((String(value).length >= rp.minLength) ? true : `len(${value}) < ${rp.minLength}`),
-      );
-      res.push(
-        (value: string) => ((String(value).length <= rp.maxLength) ? true : `len(${value}) > ${rp.maxLength}`),
-      );
-      if (this.isNumber) {
-        res.push((value: number) => ((rp.min == null || value >= rp.min) ? true : `${value} < ${rp.min}`));
-        res.push((value: number) => ((rp.max == null || value <= rp.max) ? true : `${value} > ${rp.max}`));
-        // if null is allowed then null and undefined should not trigger invalid number
-        res.push(
-          (value: number) => (this.isValidNumber(value) || (this.field.allowNull && value == null) ?
-            true :
-            'Not a valid number'),
-        );
-      }
-      return res;
-    },
-  },
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const { baseBinds } = useInputBase(props, emits);
+
+// computed
+const isNumber = computed(() => props.field.renderParams.inputType === 'number');
+function isValidNumber(num: any) {
+  const notValidValues: any[] = [undefined, Number.NaN];
+  if (!props.field.allowNull) {
+    notValidValues.push(null);
+    notValidValues.push('');
+  }
+  return !_.includes(notValidValues, num) && !Number.isNaN(num) &&
+    !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
+}
+
+function handleNumberInput(newValue: any) {
+  if (isNumber.value && isValidNumber(newValue)) {
+    emits('update:modelValue', newValue ? Number(newValue) : undefined);
+    return;
+  }
+  emits('update:modelValue', newValue);
+}
+
+const inputType = computed(() => props.field.renderParams.inputType);
+
+const rules = computed(() => {
+  const res = [];
+  const rp = props.field.renderParams;
+  res.push((val: string) => ((rp.pattern == null || String(val).match(rp.pattern)) ?
+    true : `${val} does not match ${rp.pattern}`));
+  res.push(
+    (val: string) => ((String(val).length >= rp.minLength) ? true : `len(${val}) < ${rp.minLength}`),
+  );
+  res.push(
+    (val: string) => ((String(val).length <= rp.maxLength) ? true : `len(${val}) > ${rp.maxLength}`),
+  );
+  if (isNumber.value) {
+    res.push((val: number) => ((rp.min == null || val >= rp.min) ? true : `${val} < ${rp.min}`));
+    res.push((val: number) => ((rp.max == null || val <= rp.max) ? true : `${val} > ${rp.max}`));
+    // if null is allowed then null and undefined should not trigger invalid number
+    res.push(
+      (val: number) => (isValidNumber(val) || (props.field.allowNull && val == null) ?
+        true :
+        'Not a valid number'),
+    );
+  }
+  return res;
 });
+
 </script>

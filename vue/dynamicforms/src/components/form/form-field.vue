@@ -8,7 +8,7 @@ import FilteredActions from '../actions/filtered-actions';
 import FormField from './definitions/field';
 import FormPayload from './definitions/form-payload';
 import DCheckbox from './inputs/checkbox.vue';
-import DCKEditor from './inputs/ckeditor.vue';
+import DCKEditor from './inputs/df-ckeditor.vue';
 import DDateTime from './inputs/datetime.vue';
 import DFile from './inputs/file.vue';
 import DInput from './inputs/input.vue';

@@ -27,26 +27,34 @@
   </vuetify-input>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
-import TranslationsMixin from '../../util/translations-mixin';
-
-import InputBase from './base';
+import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
-export default /* #__PURE__ */ defineComponent({
-  name: 'DTextArea',
-  components: { VuetifyInput },
-  mixins: [InputBase, TranslationsMixin],
-  computed: {
-    inputType() { return this.field.renderParams.inputType; },
-    minLength() { return this.field.renderParams.minLength; },
-    maxLength() { return this.field.renderParams.maxLength; },
-    value: {
-      get: function get() { return this.modelValue; },
-      set: function set(newVal: string) { this.$emit('update:modelValue', newVal); },
-    },
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const { baseBinds } = useInputBase(props, emits);
+
+// computed
+const inputType = computed(() => props.field.renderParams.inputType);
+
+const minLength = computed(() => props.field.renderParams.minLength);
+
+const maxLength = computed(() => props.field.renderParams.maxLength);
+
+const value = computed({
+  get(): any {
+    return props.modelValue;
+  },
+  set(newVal: string) {
+    emits('update:modelValue', newVal);
   },
 });
+
 </script>

@@ -9,27 +9,27 @@
   </vuetify-input>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditor from '@ckeditor/ckeditor5-vue';
-import { defineComponent } from 'vue';
 
-import TranslationsMixin from '../../util/translations-mixin';
-
-import InputBase from './base';
+import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
-export default defineComponent({
-  name: 'DFWidgetCKEditor',
-  components: { ckeditor: CKEditor.component, VuetifyInput },
-  mixins: [InputBase, TranslationsMixin],
-  data() {
-    return {
-      editor: ClassicEditor,
-      editorConfig: {}, // The configuration of the editor.
-    };
-  },
-});
+const ckeditor = CKEditor.component;
+
+interface Props extends BaseProps {}
+const props = withDefaults(defineProps<Props>(), basePropsDefault);
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const { baseBinds, value } = useInputBase(props, emits);
+
+// data
+const editor = ClassicEditor;
+const editorConfig = {}; // The configuration of the editor.
+
 </script>
 
 <style scoped>
