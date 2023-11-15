@@ -5,6 +5,7 @@ import Action, { defaultActionHandler } from './components/actions/action';
 import { useActionHandler } from './components/actions/action-handler-composable';
 import FilteredActions from './components/actions/filtered-actions';
 import DisplayMode from './components/classes/display-mode';
+import DfApp from './components/df-app.vue';
 import FormPayload from './components/form/definitions/form-payload';
 import FormLayout from './components/form/definitions/layout';
 import DialogSize from './components/modal/definitions/dialog-size';
@@ -56,6 +57,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
 
       // import all global instances that we need for vuetify to work
       Object.entries(VuetifyComponents).map(([name, component]) => app.component(name, component));
+      app.component('DfApp', DfApp);
       break;
     default:
       // issue a warning stating what are appropriate options
