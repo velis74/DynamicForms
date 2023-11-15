@@ -54,6 +54,16 @@ function handleNumberInput(newValue: any) {
   emits('update:modelValue', newValue);
 }
 
+const value = computed({
+  get(): any {
+    return props.modelValue;
+  },
+  set(newValue: any) {
+    handleNumberInput(newValue);
+    emits('update:modelValue', newValue);
+  },
+});
+
 const inputType = computed(() => props.field.renderParams.inputType);
 
 const rules = computed(() => {

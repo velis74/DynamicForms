@@ -1,8 +1,8 @@
 import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
+
 import FormField from '../definitions/field';
-import InputComponent from './input.vue';
 
 export interface BaseProps {
     field: FormField
@@ -19,13 +19,11 @@ export interface BaseEmits {
 export const basePropsDefault = { showLabelOrHelpText: true };
 
 export function useInputBase(props: BaseProps, emit: BaseEmits) {
-
   const value = computed({
     get(): any {
       return props.modelValue;
     },
     set(newValue: any) {
-      InputComponent.handleNumberInput(newValue);
       emit('update:modelValue', newValue);
     },
   });
