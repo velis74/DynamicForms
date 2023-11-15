@@ -55,7 +55,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
 
       // import all global instances that we need for vuetify to work
       Object.entries(VuetifyComponents).map(([name, component]) => app.component(name, component));
-      app.component('df-app', DfApp);
+      app.component('DfApp', DfApp);
       break;
     default:
       // issue a warning stating what are appropriate options

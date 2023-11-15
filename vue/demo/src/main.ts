@@ -3,7 +3,7 @@ import { createApp } from 'vue';
 import DemoApp from './demo-app';
 import ViewMode from './demo-app/vuetify/view-mode.vue';
 import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
-import dynamicForms from './plugins/dynamicForms';
+import dynamicForms from './plugins/dynamic-forms';
 import vuetify from './plugins/vuetify';
 import router from './router';
 
