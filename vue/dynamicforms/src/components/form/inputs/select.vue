@@ -151,7 +151,6 @@ const result = computed({
 // methods
 function onSelect() {
   if (!props.field.readOnly) {
-    // console.log(result);
     value.value = result.value;
   }
 }
@@ -219,7 +218,6 @@ watch(selected, () => {
 });
 
 onMounted(async () => {
-  console.log('Mounted');
   if (!multiple.value && !props.field.allowNull && !value && options.value.length) {
     // Auto select first element
     result.value = options.value[0].id;
@@ -234,7 +232,6 @@ onMounted(async () => {
       result.value = multiple.value ? loadedChoices : loadedChoices.value?.[0]?.id;
     }
   }
-  console.log(value.value, selected.value);
 });
 
 </script>
