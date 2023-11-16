@@ -46,20 +46,15 @@ function isValidNumber(num: any) {
     !_.includes(String(num), ',') && !_.endsWith(String(num), ',');
 }
 
-function handleNumberInput(newValue: any) {
-  if (isNumber.value && isValidNumber(newValue)) {
-    emits('update:modelValue', newValue ? Number(newValue) : undefined);
-    return;
-  }
-  emits('update:modelValue', newValue);
-}
-
 const value = computed({
   get(): any {
     return props.modelValue;
   },
   set(newValue: any) {
-    handleNumberInput(newValue);
+    if (isNumber.value && isValidNumber(newValue)) {
+      emits('update:modelValue', newValue ? Number(newValue) : undefined);
+      return;
+    }
     emits('update:modelValue', newValue);
   },
 });

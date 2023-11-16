@@ -1,7 +1,6 @@
 import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
-
 import FormField from '../definitions/field';
 
 export interface BaseProps {
