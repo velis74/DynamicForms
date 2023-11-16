@@ -81,9 +81,9 @@ const { value, baseBinds } = useInputBase(props, emits);
 
 // data
 const selected = ref<DfForm.ChoicesJSON | DfForm.ChoicesJSON[] | null>(null);
-let loadedChoices: DfForm.ChoicesJSON[] = [];
-let loading: boolean = false;
-let limit: number = 99999;
+const loadedChoices = ref<DfForm.ChoicesJSON[]>([]);
+const loading = ref<boolean>(false);
+const limit = ref<number>(99999);
 
 // set()
 const multiselectRef = ref<typeof VuetifyInput | null>(null);
@@ -111,7 +111,7 @@ function multiSelectClose() {
 // computed
 const disabled = computed(() => props.field.readOnly);
 
-const options = computed(() => props.field.choices || loadedChoices);
+const options = computed(() => props.field.choices || loadedChoices.value);
 
 const multiple = computed(() => props.field.renderParams.multiple);
 
@@ -137,9 +137,9 @@ const result = computed({
     if (newValue != null) {
       if (multiple.value) {
         const val = newValue.constructor === Array ? newValue.map(String) : newValue.split(',');
-        selected.value = props.field.choices.filter((o) => val.includes(`${o.id}`));
+        selected.value = options.value.filter((o) => val.includes(`${o.id}`));
       } else {
-        const fnd = props.field.choices.find((o) => String(o.id) === String(newValue));
+        const fnd = options.value.find((o) => String(o.id) === String(newValue));
         selected.value = fnd || null;
       }
     } else {
@@ -188,22 +188,22 @@ async function queryOptions(query: string, query_field: string): Promise<void> {
     if (query) conditions.push(`${query_field}=${query}`);
     req += `?${conditions.join('&')}`;
   }
-  loading = true;
+  loading.value = true;
   try {
     let loadedData = (await apiClient.get(req, { headers })).data;
     if (Array.isArray(loadedData)) {
       // Pagination was not delivered. We got a plain array
       loadedData = { results: loadedData, next: null };
     }
-    loadedChoices = loadedData.results.map(
+    loadedChoices.value = loadedData.results.map(
       (item: { [key: string]: any }): DfForm.ChoicesJSON => ({
         id: item[props.field.ajax.value_field],
         text: item[props.field.ajax.text_field],
       }),
     );
-    limit = loadedData.next ? loadedChoices.length : 99999;
+    limit.value = loadedData.next ? loadedChoices.value.length : 99999;
   } finally {
-    loading = false;
+    loading.value = false;
   }
 }
 
@@ -219,6 +219,7 @@ watch(selected, () => {
 });
 
 onMounted(async () => {
+  console.log('Mounted');
   if (!multiple.value && !props.field.allowNull && !value && options.value.length) {
     // Auto select first element
     result.value = options.value[0].id;
@@ -230,9 +231,10 @@ onMounted(async () => {
       result.value = value.value;
     } else {
       await queryOptions(value.value, props.field.ajax.value_field);
-      result.value = multiple.value ? loadedChoices : loadedChoices[0]?.id;
+      result.value = multiple.value ? loadedChoices : loadedChoices.value?.[0]?.id;
     }
   }
+  console.log(value.value, selected.value);
 });
 
 </script>
