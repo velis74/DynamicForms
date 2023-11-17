@@ -87,11 +87,11 @@ function removeFile() {
 
 async function upload() {
   progress = 0;
-  const fileRef = file.value!;
+  const fileRef = df.value!;
   if (!fileRef || !fileRef.files) return;
   currentFile = fileRef.files.item(0);
   const formData = new FormData();
-  formData.append('file', currentFile as File, `${(<File> currentFile).name}`);
+  formData.append('df-file.vue', currentFile as File, `${(<File> currentFile).name}`);
   showFileOnServer = true;
   progress = 0;
   try {

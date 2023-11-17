@@ -7,14 +7,14 @@ import FilteredActions from '../actions/filtered-actions';
 
 import FormField from './definitions/field';
 import FormPayload from './definitions/form-payload';
-import DCheckbox from './inputs/checkbox.vue';
+import DDateTime from './inputs/date-time.vue';
+import DCheckbox from './inputs/df-checkbox.vue';
 import DCKEditor from './inputs/df-ckeditor.vue';
-import DDateTime from './inputs/datetime.vue';
-import DFile from './inputs/file.vue';
-import DInput from './inputs/input.vue';
-import DList from './inputs/list.vue';
-import DPlaceholder from './inputs/placeholder.vue';
-import DSelect from './inputs/select.vue';
+import DFile from './inputs/df-file.vue';
+import DInput from './inputs/df-input.vue';
+import DList from './inputs/df-list.vue';
+import DPlaceholder from './inputs/df-placeholder.vue';
+import DSelect from './inputs/df-select.vue';
 import DTextArea from './inputs/text-area.vue';
 
 interface Props {

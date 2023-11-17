@@ -28,7 +28,7 @@
 import { toRefs } from 'vue';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
-import LoadingIndicator from '../util/loading_indicator.vue';
+import LoadingIndicator from '../util/loading-indicator.vue';
 import { useTranslations } from '../util/translations-mixin';
 
 import { useRenderMeasure } from './render-measure';
