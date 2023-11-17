@@ -218,7 +218,7 @@ watch(selected, () => {
 });
 
 onMounted(async () => {
-  if (!multiple.value && !props.field.allowNull && !value && options.value.length) {
+  if (!multiple.value && !props.field.allowNull && !value.value && options.value.length) {
     // Auto select first element
     result.value = options.value[0].id;
   } else {

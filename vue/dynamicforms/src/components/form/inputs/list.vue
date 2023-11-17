@@ -59,8 +59,8 @@ onMounted(async () => {
 });
 
 // watch
-watch(props.modelValue, (newValue: any) => {
-  consumer.value = new ConsumerLogicArray(props.field.renderParams.formComponentDef!, newValue);
+watch(props.modelValue, async (newValue: any) => {
+  await setConsumer(props.field.renderParams.formComponentDef!, newValue);
 });
 
 </script>
