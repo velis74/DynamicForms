@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 
-import LoadingIndicator from './loading_indicator.vue';
+import LoadingIndicator from './loading-indicator.vue';
 
 describe('LoadingIndicator.vue', () => {
   it('renders loading state without progress', () => {

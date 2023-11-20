@@ -91,7 +91,7 @@ async function upload() {
   if (!fileRef || !fileRef.files) return;
   currentFile = fileRef.files.item(0);
   const formData = new FormData();
-  formData.append('file', currentFile as File, `${(<File> currentFile).name}`);
+  formData.append('file.vue', currentFile as File, `${(<File> currentFile).name}`);
   showFileOnServer = true;
   progress = 0;
   try {
