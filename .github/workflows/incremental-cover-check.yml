@@ -46,6 +46,7 @@ jobs:
           head_ref: HEAD
           rep_ref: main
           gh_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_number: ${{github.event.pull_request.number}}
         if: github.event_name == 'pull_request'
 
       - name: Coverage check on push

@@ -1,4 +1,5 @@
 import uuid as uuid_module
+
 from enum import IntEnum
 from typing import Hashable
 

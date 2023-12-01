@@ -7,6 +7,7 @@ from rest_framework.fields import SkipField
 
 from dynamicforms_legacy.action import Actions
 from dynamicforms_legacy.settings import DYNAMICFORMS
+
 from . import fields
 from .mixins import ActionMixin, DisplayMode, RenderMixin
 from .struct import StructDefault
