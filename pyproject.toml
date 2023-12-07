@@ -1,0 +1,43 @@
+[tool.ruff]
+exclude = ['dockertest',
+    'tests', 'docs', 'examples', 'scripts', 'setup.py', 'setup.cfg', 'README.md', 'LICENSE', 'MANIFEST.in',
+    'pyproject.toml', 'Pipfile', 'Pipfile.lock', 'ruff.egg-info', 'dist', 'build', '.gitignore', '.git', '.idea',
+    '.vscode', '.pytest_cache', '.coverage', '.ruff', '*/migrations/*']
+line-length = 120
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F", "I"]
+ignore = ["E731", "E722"]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+case-sensitive = false
+lines-between-types = 1
+combine-as-imports = true
+order-by-type = false
+known-local-folder = []
+
+
