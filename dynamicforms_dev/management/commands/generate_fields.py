@@ -318,8 +318,8 @@ class Command(BaseCommand):
                         field_params.append("max_value: int = None")
                         field_params.append("min_value: int = None")
                     elif cls == fields.ChoiceField:
-                        field_params.append(f"html_cutoff: int = fields.ChoiceField.html_cutoff")
-                        field_params.append(f"html_cutoff_text: str = fields.ChoiceField.html_cutoff_text")
+                        field_params.append("html_cutoff: int = fields.ChoiceField.html_cutoff")
+                        field_params.append("html_cutoff_text: str = fields.ChoiceField.html_cutoff_text")
                         field_params.append("allow_blank: bool = False")
                     elif cls == fields.MultipleChoiceField:
                         field_params.append("allow_empty: bool = True")
@@ -400,15 +400,15 @@ class Command(BaseCommand):
 
                 drf_class = field_class
                 if issubclass(field, RTFField):
-                    drf_class = fields.CharField.__name__
-                    field_module = "fields."
+                    drf_class = fields.CharField.__name__ # noqa
+                    field_module = "fields." # noqa
 
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end="")
                 class_def = (
-                    f"{hstore_field_indent}class {field_class}({additional_mixin}"
-                    + f"FieldRenderMixin, ActionMixin, FieldHelpTextMixin, "
-                    + f"ConditionalVisibilityMixin, {field_module}{drf_class}):"
+                    "{hstore_field_indent}class {field_class}({additional_mixin}"
+                    + "FieldRenderMixin, ActionMixin, FieldHelpTextMixin, "
+                    + "ConditionalVisibilityMixin, {field_module}{drf_class}):"
                 )
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)
@@ -424,7 +424,7 @@ class Command(BaseCommand):
 
                 # Print constructor
                 indt = lambda n: " " * (n + len(hstore_field_indent))
-                print(f"", file=output)
+                print("", file=output)
                 print(indt(4) + f"def __init__({field_params}):", file=output)
 
                 if issubclass(field, fields.ReadOnlyField):
@@ -447,7 +447,7 @@ class Command(BaseCommand):
 
                 print(
                     indt(8)
-                    + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",
+                    + "kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}",
                     file=output,
                 )
                 print(indt(8) + "kwargs.update(kw)", file=output)
@@ -465,7 +465,7 @@ class Command(BaseCommand):
                 for key, value in params.items():
                     print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {arepr(value)})", file=output)
 
-                print(indt(8) + f"super().__init__(**kwargs)", file=output)
+                print(indt(8) + "super().__init__(**kwargs)", file=output)
 
     print("fields.py successfully generated")
     # options['file']
