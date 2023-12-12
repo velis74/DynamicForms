@@ -1,2 +1,0 @@
-coverage
-django_coverage_plugin
