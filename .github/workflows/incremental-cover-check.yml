@@ -1,0 +1,73 @@
+name: Coverage check
+on: [push, pull_request]
+env:
+  UNITTEST: 1
+jobs:
+  lint:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Setup PostgreSQL With Init Scripts
+        uses: m4nu56/postgresql-action@1.0
+        with:
+          postgresql db: scantron
+          postgresql user: scantron
+          postgresql password: scantron
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.13.0'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Test build
+        run: npm run build-no-tsc --if-present
+      - name: Run tests
+        run: npm test
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: PIP install
+        run: |
+          pip3 install -r requirements.txt
+          pip3 install -r requirements_test_functional.txt
+      - name: Python unittest
+        continue-on-error: true
+        run: |
+          python -m coverage run manage.py test
+      - name: Generate coverage report
+        continue-on-error: true
+        run: |
+          coverage report -m
+          coverage json
+
+      - name: Coverage check on pull_request
+        uses: velis74/incremental-coverage-check@main
+        with:
+          clover_coverage_json: vue/dynamicforms/coverage/coverage-final.json
+          py_coverage_json: coverage.json
+          logging_level: INFO
+          base_ref: ${{ github.base_ref }}
+          head_ref: HEAD
+          rep_ref: main
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_number: ${{github.event.pull_request.number}}
+        if: github.event_name == 'pull_request'
+
+      - name: Coverage check on push
+        uses: velis74/incremental-coverage-check@main
+        with:
+          clover_coverage_json: vue/dynamicforms/coverage/coverage-final.json
+          py_coverage_json: coverage.json
+          logging_level: INFO
+          base_ref: ${{ github.event.before }}
+          head_ref: HEAD
+          rep_ref: main
+        if: github.event_name == 'push'
+
+      - name: The job has failed
+        run: exit 1
+        if: ${{ failure() }}
