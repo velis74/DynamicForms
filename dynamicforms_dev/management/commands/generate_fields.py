@@ -447,7 +447,7 @@ class Command(BaseCommand):
 
                 print(
                     indt(8)
-                    + "kwargs = {k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}",
+                    + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}", #noqa
                     file=output,
                 )
                 print(indt(8) + "kwargs.update(kw)", file=output)
