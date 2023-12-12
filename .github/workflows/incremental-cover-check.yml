@@ -33,7 +33,6 @@ jobs:
       - name: PIP install
         run: |
           pip3 install -r requirements.txt
-          pip3 install -r requirements_test.txt
           pip3 install -r requirements_test_functional.txt
       - name: Python unittest
         continue-on-error: true
