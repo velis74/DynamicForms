@@ -1,4 +1,5 @@
 import json as jsonlib
+
 from html import unescape
 
 from django import template

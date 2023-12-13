@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List, Union
 
 import pytz
+
 from django.conf import settings
 from django.db import models
 from django.http import Http404
