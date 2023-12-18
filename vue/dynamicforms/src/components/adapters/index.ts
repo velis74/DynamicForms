@@ -32,8 +32,6 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
     this.pk = ref(params.pk);
     this.pkName = params.pkName;
 
-    console.log('Heylo!', this.data);
-
     this.counter = computed(() => -this.data.filter((element) => isInternalRecord(element)).length);
   }
 
@@ -43,13 +41,9 @@ class InMemoryImplementation<T extends object = any> implements FormAdapter<T> {
 
   componentDefinition = () => this.ux_def;
 
-  retrieve = () => {
-    console.log('Pie');
-    return this.data.find((element) => this.comparePk(element))!;
-  };
+  retrieve = () => this.data.find((element) => this.comparePk(element))!;
 
   create(data: T): T {
-    console.log('Cherry!');
     this.data.push(createInternalRecord({ ...data }, this.pkName, this.counter.value - 1));
     return data;
   }
