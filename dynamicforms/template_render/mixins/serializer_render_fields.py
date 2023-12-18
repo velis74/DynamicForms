@@ -3,6 +3,7 @@ Class that contains renderable fields for the templates.
 The class provides transformation functionality
 """
 import uuid
+
 from typing import Iterable
 
 from django.utils.translation import gettext_lazy as _

@@ -1,6 +1,7 @@
 import copy
 
 import six
+
 from django.template import loader
 from django.utils.safestring import mark_safe
 from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
@@ -8,6 +9,7 @@ from rest_framework.serializers import HiddenField, ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from dynamicforms_legacy.fields import BooleanField
+
 from .settings import DYNAMICFORMS
 
 
