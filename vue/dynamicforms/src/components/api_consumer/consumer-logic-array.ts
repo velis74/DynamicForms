@@ -80,7 +80,6 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     /**
      * Get external record from its internal representation
      */
-    console.log('getting record', pk, this.records.find((element: any) => (element[this.pkName] === pk)), this.default_record);
     return this.records.find((element: any) => (element[this.pkName] === pk)) ?? this.default_record;
   }
 
