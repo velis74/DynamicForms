@@ -1,9 +1,9 @@
 import warnings
+
 from typing import Dict, Optional
 from uuid import UUID
 
-from rest_framework import __version__ as drf_version
-from rest_framework import fields, relations
+from rest_framework import __version__ as drf_version, fields, relations
 from versio.version import Version
 from versio.version_scheme import Pep440VersionScheme
 

@@ -1,1 +1,1 @@
-from .template_render import ComponentDefRenderer, ComponentHTMLRenderer  # noqal
+from .template_render import ComponentDefRenderer, ComponentHTMLRenderer  # noqa: F401
