@@ -14,11 +14,14 @@ import { APIConsumer } from './namespace';
 class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
   private readonly records: any[];
 
+  private readonly default_record: APIConsumer.FormPayloadJSON | null;
+
   constructor(UXDefinition: APIConsumer.TableUXDefinition, records: any[]) {
     super();
 
     this.ux_def = UXDefinition;
     this.records = records;
+    this.default_record = this.ux_def.record;
 
     this.processUXDefinition(this.ux_def);
   }
@@ -77,7 +80,7 @@ class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.Consum
     /**
      * Get external record from its internal representation
      */
-    return this.records.find((element: any) => (element[this.pkName] === pk));
+    return this.records.find((element: any) => (element[this.pkName] === pk)) ?? this.default_record;
   }
 
   private getFormUXDefinition = (pk: APIConsumer.PKValueType): APIConsumer.FormUXDefinition => ({
