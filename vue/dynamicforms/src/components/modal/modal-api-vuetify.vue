@@ -2,14 +2,22 @@
 import { computed, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 
+import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
+
 import DialogSize from './definitions/dialog-size';
 
 interface Props {
   show: boolean,
-  options: any
+  options: any,
+  actionHandlers?: IHandlers
 }
 
-const props = withDefaults(defineProps<Props>(), { show: false });
+const props = withDefaults(defineProps<Props>(), { show: false, actionHandlers: undefined });
+
+const { handler } = useActionHandler();
+for (const key of Object.keys(props.actionHandlers || {})) {
+  if (props.actionHandlers?.[key]) handler.register(key, props.actionHandlers[key]);
+}
 
 const display = useDisplay();
 

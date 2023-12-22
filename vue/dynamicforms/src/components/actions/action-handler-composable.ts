@@ -38,9 +38,11 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
       return this;
     };
 
-    call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => (
-      await this.resolveAction(actions, context) || await this.recursiveCall(actions, payload.value, context)
-    );
+    call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
+      const recursiveExecuted = await this.recursiveCall(actions, payload.value, context);
+      const actionResolved = await this.resolveAction(actions, context);
+      return recursiveExecuted || actionResolved;
+    };
 
     recursiveCall = async (actions: Action | FilteredActions, actionPayload?: any, context?: any): Promise<boolean> => {
       if (firstToLast) {

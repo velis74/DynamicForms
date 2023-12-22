@@ -1,4 +1,5 @@
 import Action, { defaultActionHandler, getActionName } from '../actions/action';
+import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import { APIConsumer } from '../api_consumer/namespace';
 
@@ -29,9 +30,11 @@ const dfModal = {
       formDefinition.title,
       {
         componentName: formDefinition.layout.componentName,
-        props: { layout, payload, actions, errors, actionHandlers },
+        props: { layout, payload, actions, errors },
       },
       actions.formFooter,
+      undefined,
+      actionHandlers,
     );
   },
   message(
@@ -39,6 +42,7 @@ const dfModal = {
     message: Dialogs.DialogMessage,
     actions?: FilteredActions,
     options?: Dialogs.DialogOptions,
+    actionHandlers?: IHandlers,
   ) {
     if (actions) {
       // any actions that don't have special handlers, create the default handler that closes the dialog
@@ -52,6 +56,7 @@ const dfModal = {
       message,
       options || defaultOptions,
       actions || new FilteredActions({ close: Action.closeAction({ actionClose: defaultActionHandler }) }),
+      actionHandlers,
     );
     dialogList.push(dialogDef);
     return dialogDef.promise;

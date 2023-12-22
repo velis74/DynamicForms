@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { defineComponent, h, resolveComponent, DefineComponent } from 'vue';
 
+import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 
 import { Dialogs } from './namespace';
@@ -36,12 +37,13 @@ export default /* #__PURE__ */ defineComponent({
       bodySlot: Dialogs.DialogMessage,
       actionsSlot: Dialogs.DialogSectionContent | FilteredActions,
       options: Dialogs.DialogOptions,
+      actionHandlers?: IHandlers,
     ) {
       return h(
         // Jure 16.3.2023 types don't match here, but the code works. Too green to be able to fix
         // @ts-ignore
         resolveComponent('DfModalDialog'),
-        { show: true, options: options || {}, key: curDlgKey },
+        { show: true, options: options || {}, key: curDlgKey, actionHandlers },
         {
           title: processSlot('title', titleSlot),
           body: processSlot('body', bodySlot),
