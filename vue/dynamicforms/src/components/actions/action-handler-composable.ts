@@ -13,7 +13,9 @@ export interface IHandlers {
 export interface IActionHandler {
   register: (actionName: string, handler: Handler) => this
   call: (action: Action | FilteredActions, context?: any) => Promise<boolean>
-  recursiveCall: (action: Action | FilteredActions, actionPayload: any, context?: any) => Promise<boolean>
+  recursiveCall: (
+    action: Action | FilteredActions, actionPayload: any, context?: any, f2L?: boolean
+  ) => Promise<boolean>
 }
 
 export interface ActionHandlerComposable {
@@ -39,20 +41,25 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     };
 
     call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
-      const recursiveExecuted = await this.recursiveCall(actions, payload.value, context);
+      const recursiveExecuted = await this.recursiveCall(actions, payload.value, context, firstToLast);
       const actionResolved = await this.resolveAction(actions, context);
       return recursiveExecuted || actionResolved;
     };
 
-    recursiveCall = async (actions: Action | FilteredActions, actionPayload?: any, context?: any): Promise<boolean> => {
-      if (firstToLast) {
+    recursiveCall = async (
+      actions: Action | FilteredActions,
+      actionPayload?: any,
+      context?: any,
+      f2L: boolean = true,
+    ): Promise<boolean> => {
+      if (f2L) {
         return (
           await this.executeHandler(actions, actionPayload, context) ||
-          (await parentHandler?.recursiveCall(actions, actionPayload, context) ?? false)
+          (await parentHandler?.recursiveCall(actions, actionPayload, context, f2L) ?? false)
         );
       }
       return (
-        (await parentHandler?.recursiveCall(actions, actionPayload, context) ?? false) ||
+        (await parentHandler?.recursiveCall(actions, actionPayload, context, f2L) ?? false) ||
         await this.executeHandler(actions, actionPayload, context)
       );
     };
