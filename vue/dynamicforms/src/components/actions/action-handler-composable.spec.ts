@@ -22,8 +22,8 @@ const filteredAction = new FilteredActions({
 });
 
 const handlers = {
-  levelOne: () => { console.log('Me, me!'); level = 1; return false; },
-  levelTwo: () => { console.log('You, you!'); level = 2; return false; },
+  levelOne: () => { level = 1; return false; },
+  levelTwo: () => { level = 2; return false; },
   levelThree: () => { level = 3; return true; },
 };
 
