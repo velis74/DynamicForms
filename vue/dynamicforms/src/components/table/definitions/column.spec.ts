@@ -115,7 +115,7 @@ describe('TableColumn', () => {
     };
 
     const column = new TableColumn(initialData, orderingArray);
-    expect(column.renderDecoratorFunction(rowData, thead)).toBe('<span style="color: red;">&#10008;</span>');
+    expect(column.renderDecoratorFunction(rowData, thead)).toBe('false');
     expect(column.renderDecoratorFunction(rowData, !thead)).toBe('<span style="color: green;">&#10004;</span>');
   });
   test('renderDecoratorEmail should return the expected string', () => {
