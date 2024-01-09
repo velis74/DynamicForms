@@ -132,8 +132,17 @@ export default class TableColumn {
   }
 
   renderDecoratorBool(rowData: any, thead: boolean) {
-    if (thead) return this.renderDecoratorPlain(rowData, thead);
+    if (thead) {
+      return this.renderDecoratorPlain(rowData, thead);
+    }
+
     const booleanValue = rowData[this.name];
+
+    // Check for null and display "null"
+    if (booleanValue === null) {
+      return 'null';
+    }
+
     // Defines Icon: Checkmark or X
     const icon = booleanValue ? '&#10004;' : '&#10008;';
     // Defines Color: green Checkmark or red X
