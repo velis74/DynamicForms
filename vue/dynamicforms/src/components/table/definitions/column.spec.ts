@@ -115,9 +115,11 @@ describe('TableColumn', () => {
     };
 
     const column = new TableColumn(initialData, orderingArray);
-    expect(column.renderDecoratorFunction(rowData, thead)).toBe('<code>false</code>');
+    expect(column.renderDecoratorFunction(rowData, thead)).toBe('<span style="color: red;">&#10008;</span>');
+    // We test that header draws plain text as passed to it (so that the label renders correctly)
     expect(column.renderDecoratorFunction(rowData, !thead)).toBe(rowData.enabled);
   });
+
   test('renderDecoratorEmail should return the expected string', () => {
     const initialData: ColumnJSON = {
       name: 'email_field',
