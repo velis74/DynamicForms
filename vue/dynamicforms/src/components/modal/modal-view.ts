@@ -34,6 +34,13 @@ export default defineComponent({
     const curDlgKey = curDlg?.dialogId;
     // only render if we're the first instance of ModalView
     if (!curDlg || instances.indexOf(this.uniqueId) !== 0) return h('div', { key: curDlgKey });
-    return this.renderFunction(<number>curDlgKey, curDlg.title, curDlg.body, curDlg.actions, curDlg.options);
+    return this.renderFunction(
+      <number>curDlgKey,
+      curDlg.title,
+      curDlg.body,
+      curDlg.actions,
+      curDlg.options,
+      curDlg.actionHandlers,
+    );
   },
 });

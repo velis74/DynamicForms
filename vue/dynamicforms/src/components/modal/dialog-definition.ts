@@ -1,5 +1,6 @@
 import { Slot, VNode } from 'vue';
 
+import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 
 import { Dialogs } from './namespace';
@@ -15,6 +16,8 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
   public options: Dialogs.DialogOptions;
 
   public actions: FilteredActions | VNode | Slot;
+
+  public actionHandlers?: IHandlers;
 
   public dialogId: number; // Unique dialog ID
 
@@ -35,11 +38,13 @@ export default class DialogDefinition implements Dialogs.RunningDialog {
     body: Dialogs.DialogMessage,
     options: Dialogs.DialogOptions,
     actions: FilteredActions | Slot,
+    actionHandlers?: IHandlers,
   ) {
     this.title = title;
     this.body = body;
     this.options = options;
     this.actions = actions;
+    this.actionHandlers = actionHandlers;
     this.dialogId = ++idGenerator;
     this.close = () => null;
     this.promise = new Promise<any>(() => {});
