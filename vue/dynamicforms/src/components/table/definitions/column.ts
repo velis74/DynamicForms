@@ -131,9 +131,18 @@ export default class TableColumn {
     return rowData[this.name];
   }
 
+  // renderDecoratorBool(rowData: any, thead: boolean) {
+  //   if (thead) return this.renderDecoratorPlain(rowData, thead);
+  //   return `<code>${rowData[this.name]}</code>`;
+  // }
   renderDecoratorBool(rowData: any, thead: boolean) {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
-    return `<code>${rowData[this.name]}</code>`;
+    const booleanValue = rowData[this.name];
+    // Defines Icon: Checkmark or X
+    const icon = booleanValue ? '&#10004;' : '&#10008;';
+    // Defines Color: green Checkmark or red X
+    const color = booleanValue ? 'green' : 'red';
+    return `<span style="color: ${color};">${icon}</span>`;
   }
 
   renderDecoratorLink(rowData: any, thead: boolean) {
