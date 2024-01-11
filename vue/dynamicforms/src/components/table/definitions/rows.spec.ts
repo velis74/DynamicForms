@@ -52,8 +52,6 @@ describe('TableRows', () => {
     // Trigger loading more rows
     await tableRows.loadMoreRows(true);
 
-    // Log expected values or perform your assertions here
-    console.log('Expected data after loading more rows:', tableRows.data);
   });
 
   it('should update rows correctly', () => {
