@@ -400,8 +400,8 @@ class Command(BaseCommand):
 
                 drf_class = field_class
                 if issubclass(field, RTFField):
-                    drf_class = fields.CharField.__name__ # noqa
-                    field_module = "fields." # noqa
+                    drf_class = fields.CharField.__name__  # noqa
+                    field_module = "fields."  # noqa
 
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end="")
@@ -447,7 +447,7 @@ class Command(BaseCommand):
 
                 print(
                     indt(8)
-                    + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}", #noqa
+                    + f"kwargs = {{k: v for k, v in locals().items() if not k.startswith(('__', 'self', 'kw'))}}",  # noqa
                     file=output,
                 )
                 print(indt(8) + "kwargs.update(kw)", file=output)

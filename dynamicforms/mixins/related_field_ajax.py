@@ -16,7 +16,7 @@ class RelatedFieldAJAXMixin(object):
         query_field: str = "query",
         value_field: str = "choice_id",
         text_field: str = "choice_text",
-        **kwargs
+        **kwargs,
     ):
         """
         Allows us to use AJAX to populate select2 options instead of pre-populating at render time

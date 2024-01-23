@@ -64,7 +64,7 @@ class FieldRenderMixin(object):
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """
 

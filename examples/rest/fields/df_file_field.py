@@ -14,13 +14,12 @@ from dynamicforms.preupload_files import (
     UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR,
     UPLOADED_FILE_NAME_UUID_SEPARATOR,
 )
-from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
 
 
 class DfFileField(FileField):
     def to_representation(self, value, row_data=None):
         empty_value: Optional[str] = ""
-        render_to_component_def_format: bool = self.context.get("format", "") == COMPONENT_DEF_RENDERER_FORMAT
+        render_to_component_def_format: bool = self.context.get("format", "") == "componentdef"
         if render_to_component_def_format:
             empty_value = None
         if not value:
@@ -33,7 +32,7 @@ class DfFileField(FileField):
         return super().to_representation(empty_value, row_data)
 
     def render_to_table(self, value, row_data):
-        render_to_component_def_format: bool = self.context.get("format", "") == COMPONENT_DEF_RENDERER_FORMAT
+        render_to_component_def_format: bool = self.context.get("format", "") == "componentdef"
         link = mark_safe(
             '<a href="#" onclick=\'dynamicforms.stopEventPropagation(event); window.open("%s", "_blank")\'>%s</a>'
             % (value.url, os.path.basename(value.url))

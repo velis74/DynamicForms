@@ -6,8 +6,6 @@ from typing import Iterable, List, Union
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import Serializer
 
-from .settings import DYNAMICFORMS
-
 
 class ActionBase(object):
     def __init__(self, name: str, serializer: Serializer = None, action=None):
@@ -31,9 +29,6 @@ class ActionBase(object):
         return id(self)
 
     def copy_and_resolve_reference(self, serializer):
-        raise NotImplementedError()
-
-    def render(self, serializer: Serializer, **kwds):
         raise NotImplementedError()
 
     @staticmethod
@@ -193,85 +188,6 @@ class TableAction(ActionBase, RenderableActionMixin):
         res.update(RenderableActionMixin.as_component_def(self))
         return res
 
-    def render(self, serializer: Serializer, **kwds):
-        ret = rowclick = rowrclick = ""
-        stop_propagation = "dynamicforms.stopEventPropagation(event);"
-
-        action_action = self.prepare_string("")  # TODO maybe: self.action_js. more likely this just needs to be removed
-        if self.position != TablePosition.HEADER:
-            # We need to do this differently because of dynamic page loading for tables: each time the serializer
-            # has a different UUID
-            action_action = action_action.replace(
-                "__TABLEID__", "$(event.target).parents('table').attr('id').substring(5)"
-            )
-        else:
-            action_action = action_action.replace("__TABLEID__", "'" + str(serializer.uuid) + "'")
-
-        if self.position == TablePosition.ROW_CLICK:
-            rowclick = action_action
-        elif self.position == TablePosition.ROW_RIGHTCLICK:
-            rowrclick = action_action
-        else:
-
-            def get_btn_class(default_class, additional_class):
-                classes = default_class.split(" ")
-                if additional_class:
-                    if isinstance(additional_class, dict):
-                        if additional_class.get("replace", False):
-                            classes = []
-                        additional_class = additional_class.get("classes", "").split(" ")
-                    else:
-                        additional_class = additional_class.split(" ")
-                    classes.extend(additional_class)
-                return " ".join(classes)
-
-            button_name = (' name="btn-%s" ' % self.name) if self.name else ""
-            btn_class = get_btn_class("btn btn-info", self.btn_classes)
-
-            btnid = uuid_module.uuid1()
-            ret += (
-                '<button id="df-action-btn-{btnid}" type="button" class="{btn_class}" title="{title}"{button_name}'
-                'onClick="{stop_propagation} {action}">{icon_def}{label}</button>'.format(
-                    btnid=btnid,
-                    stop_propagation=stop_propagation,
-                    action=action_action,
-                    btn_class=btn_class,
-                    label=self.prepare_string(self.label),
-                    title=self.prepare_string(self.title),
-                    icon_def='<img src="{icon}"/>'.format(icon=self.icon) if self.icon else "",
-                    button_name=button_name,
-                )
-            )
-            if DYNAMICFORMS.jquery_ui:
-                ret += '<script type="application/javascript">$("#df-action-btn-{btnid}").button();</script>'.format(
-                    btnid=btnid
-                )
-
-        if self.position in (TablePosition.ROW_CLICK, TablePosition.ROW_RIGHTCLICK):
-            if rowclick != "":
-                ret += (
-                    "$('#list-{uuid}').find('tbody').click("
-                    "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n".format(
-                        stop_propagation=stop_propagation, action=rowclick, uuid=serializer.uuid
-                    )
-                )
-            if rowrclick != "":
-                ret += (
-                    "$('#list-{uuid}').find('tbody').contextmenu("
-                    "function(event) {{ \n{stop_propagation} \n{action} \nreturn false;\n}});\n".format(
-                        stop_propagation=stop_propagation, action=rowrclick, uuid=serializer.uuid
-                    )
-                )
-            if ret != "":
-                ret = '<script type="application/javascript">%s</script>' % ret
-
-        elif ret != "":
-            ret = '<div class="dynamicforms-actioncontrol float-{direction} pull-{direction}">{ret}</div>'.format(
-                ret=ret, direction="left" if self.position == TablePosition.FIELD_START else "right"
-            )
-
-        return self.prepare_string(ret, False)
-
 
 class FieldChangeAction(ActionBase):
     def __init__(
@@ -324,16 +240,6 @@ class FieldChangeAction(ActionBase):
     def copy_and_resolve_reference(self, serializer: Serializer):
         return FieldChangeAction(self.tracked_fields, self.name, serializer)
 
-    def render(self, serializer: Serializer, **kwds):
-        res = "var action_func{0.action_id} = {0.action_js};\n".format(self)
-        for tracked_field in self.tracked_fields:
-            res += (
-                "dynamicforms.registerFieldAction('{ser.uuid}', '{tracked_field}', action_func{s.action_id});\n".format(
-                    ser=serializer, tracked_field=tracked_field, s=self
-                )
-            )
-        return res
-
 
 class FormInitAction(ActionBase):
     def copy_and_resolve_reference(self, serializer: Serializer):
@@ -351,11 +257,6 @@ class FormInitAction(ActionBase):
         # perhaps this function is misnamed: it should be row_render_params, because only the row-level properties are
         #  processed
         return self.name, None
-
-    def render(self, serializer: Serializer, **kwds):
-        # we need window.setTimeout because at the time of form generation, the initial fields value collection
-        # hasn't been done yet
-        return "window.setTimeout(function() {{ {0.action_js} }}, 1);\n".format(self)
 
 
 class FieldInitAction(FieldChangeAction):
@@ -375,11 +276,6 @@ class FieldInitAction(FieldChangeAction):
     def copy_and_resolve_reference(self, serializer: Serializer):
         return FieldInitAction(self.tracked_fields, self.name, serializer)
 
-    def render(self, serializer: Serializer, **kwds):
-        # we need window.setTimeout because at the time of form generation, the initial fields value collection
-        # hasn't been done yet
-        return "window.setTimeout(function() {{ {0.action_js} }}, 1);;\n".format(self)
-
 
 class FormPosition(IntEnum):
     FORM_HEADER = 1
@@ -397,7 +293,6 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         self,
         btn_type: FormButtonTypes,
         label: str = None,
-        btn_classes: str = None,
         button_is_primary: bool = None,
         position: FormPosition = FormPosition.FORM_FOOTER,
         name: Union[str, None] = None,
@@ -410,7 +305,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         RenderableActionMixin.__init__(
-            self, label, title, icon, btn_classes, display_style or self.def_display_style(form_button=btn_type)
+            self, label, title, icon, None, display_style or self.def_display_style(form_button=btn_type)
         )
         self.uuid = uuid_module.uuid1()
         self.btn_type = btn_type
@@ -419,15 +314,6 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         if button_is_primary is None:
             button_is_primary = btn_type == FormButtonTypes.SUBMIT
         self.button_is_primary = button_is_primary
-
-        DF = DYNAMICFORMS
-        self.btn_classes = btn_classes or (
-            DF.form_button_classes
-            + " "
-            + (DF.form_button_classes_primary if button_is_primary else DF.form_button_classes_secondary)
-            + " "
-            + (DF.form_button_classes_cancel if btn_type == FormButtonTypes.CANCEL else "")
-        )
 
     def to_component_params(self, row_data, serializer):
         """
@@ -454,43 +340,7 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         return res
 
     def copy_and_resolve_reference(self, serializer):
-        return FormButtonAction(
-            self.btn_type, self.label, self.btn_classes, self.button_is_primary, self.position, self.name, serializer
-        )
-
-    def render(self, serializer: Serializer, position: FormPosition = None, **kwds):
-        if self.btn_type == FormButtonTypes.CANCEL and position == "form":
-            return ""
-        action_js = None  # TODO self.action_js
-        button_name = ('name="btn-%s"' % self.name) if self.name else ""
-        if isinstance(action_js, str):
-            action_js = self.prepare_string(action_js)
-            action_js = action_js.format(**locals())
-
-        is_submit = self.btn_type != FormButtonTypes.SUBMIT or position == FormPosition.FORM_FOOTER
-        button_type = "submit" if is_submit else "button"
-
-        data_dismiss = 'data-dismiss="modal"' if self.btn_type == FormButtonTypes.CANCEL else ""
-        if self.btn_type == FormButtonTypes.SUBMIT:
-            button_id = "save-" + str(serializer.uuid)
-        else:
-            button_id = "formbutton-" + str(self.uuid)
-        if (self.btn_type != FormButtonTypes.SUBMIT or position == "dialog") and action_js:
-            button_js = (
-                '<script type="text/javascript">'
-                '  $("#{button_id}").on("click", function() {{'
-                "    {action_js}"
-                "  }});"
-                "</script>"
-            ).format(**locals())
-        else:
-            button_js = ""
-
-        return self.prepare_string(
-            '<button type="{button_type}" class="{self.btn_classes}" {data_dismiss} {button_name} id="{button_id}">'
-            "{self.label}</button>{button_js}".format(**locals()),
-            False,
-        )
+        return FormButtonAction(self.btn_type, self.label, self.button_is_primary, self.position, self.name, serializer)
 
 
 class Actions(object):

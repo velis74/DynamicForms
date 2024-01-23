@@ -61,7 +61,7 @@ class BooleanField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, Conditiona
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -106,7 +106,7 @@ class CharField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -148,7 +148,7 @@ class EmailField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -191,7 +191,7 @@ class RegexField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -234,7 +234,7 @@ class SlugField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -276,7 +276,7 @@ class URLField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -313,7 +313,7 @@ class UUIDField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalVi
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -361,7 +361,7 @@ class IPAddressField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -403,7 +403,7 @@ class IntegerField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.RIGHT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -440,7 +440,7 @@ class FloatField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalV
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.DECIMAL,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -484,7 +484,7 @@ class DecimalField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, Conditiona
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.RIGHT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -533,7 +533,7 @@ class DateTimeField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -581,7 +581,7 @@ class DateField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         self.time_step = kw.pop("time_step", None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
@@ -630,7 +630,7 @@ class TimeField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         self.time_step = kw.pop("time_step", None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
@@ -672,7 +672,7 @@ class DurationField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.RIGHT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -720,7 +720,7 @@ class ChoiceField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -770,7 +770,7 @@ class MultipleChoiceField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -824,7 +824,7 @@ class FilePathField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -865,7 +865,7 @@ class FileField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -902,7 +902,7 @@ class ImageField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalV
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -941,7 +941,7 @@ class ListField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalVi
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -978,7 +978,7 @@ class DictField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalVi
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1019,7 +1019,7 @@ if hasattr(fields, "HStoreField"):
             table_classes: str = "",
             alignment: FieldAlignment = FieldAlignment.LEFT,
             render_params: Optional[Dict] = None,
-            **kw
+            **kw,
         ):
             kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
             kwargs.update(kw)
@@ -1057,7 +1057,7 @@ class JSONField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalVi
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1097,7 +1097,7 @@ class ReadOnlyField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         warnings.warn("deprecated - wrong approach! Use read_only attribute instead.", DeprecationWarning, stacklevel=2)
         read_only = True  # NOQA
@@ -1137,7 +1137,7 @@ class HiddenField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         warnings.warn(
             "deprecated - wrong approach! Use display(|_table|_form) attributes instead.",
@@ -1182,7 +1182,7 @@ class SerializerMethodField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1219,7 +1219,7 @@ class ModelField(FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalV
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1265,7 +1265,7 @@ class StringRelatedField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1312,7 +1312,7 @@ class PrimaryKeyRelatedField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1360,7 +1360,7 @@ class HyperlinkedRelatedField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1408,7 +1408,7 @@ class HyperlinkedIdentityField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1456,7 +1456,7 @@ class SlugRelatedField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1500,7 +1500,7 @@ class ManyRelatedField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1526,7 +1526,7 @@ class RTFField(
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)

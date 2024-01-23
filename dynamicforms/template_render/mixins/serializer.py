@@ -64,7 +64,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         *args,
         view_mode: "ViewModeSerializer.ViewMode" = None,
         view_mode_list: "ViewModeListSerializer.ViewMode" = None,
-        **kwds
+        **kwds,
     ):
         super().__init__(*args, **kwds)
         if not view_mode and self.request and "HTTP_X_VIEWMODE" in self.request.META:

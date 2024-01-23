@@ -1,7 +1,6 @@
 from django.utils import timezone
 
 from dynamicforms import fields, serializers
-from dynamicforms.settings import COMPONENT_DEF_RENDERER_FORMAT
 from dynamicforms.viewsets import ModelViewSet
 from ..models import AdvancedFields, Relation
 from .fields.df_file_field import DfFileField, DfPreloadedFileField
@@ -10,7 +9,7 @@ from .fields.df_file_field import DfFileField, DfPreloadedFileField
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
     def __init__(self, *args, is_filter: bool = False, **kwds):
         super().__init__(*args, is_filter=is_filter, **kwds)
-        if self.context.get("format") == COMPONENT_DEF_RENDERER_FORMAT:
+        if self.context.get("format") == "componentdef":
             # todo: THIS RELATIONSHIP IS NOT SUPPORTED IN VIEWMODE
             self.fields.pop("string_related_field", None)
 

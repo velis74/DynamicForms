@@ -18,8 +18,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from dynamicforms.settings import DYNAMICFORMS
-
 MAX_WAIT = 10
 MAX_WAIT_ALERT = 5
 
@@ -212,7 +210,7 @@ class WaitingStaticLiveServerTestCase(StaticLiveServerTestCase):
                 # this is a dialog - let's wait for its animations to stop
                 try:
                     WebDriverWait(driver=self.browser, timeout=10, poll_frequency=0.2).until(
-                        EC.element_to_be_clickable((By.CLASS_NAME, "ui-button" if DYNAMICFORMS.jquery_ui else "btn"))
+                        EC.element_to_be_clickable((By.CLASS_NAME, "btn"))
                     )
                 except TimeoutException as e:
                     # dialog not ready yet or we found a bad dialog with no buttons

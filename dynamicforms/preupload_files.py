@@ -12,8 +12,6 @@ from django.utils.translation import gettext as __
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
-from dynamicforms.settings import DYNAMICFORMS
-
 UPLOADED_FILE_NAME_TIMESTAMP_SEPARATOR = "_timestamp_"
 UPLOADED_FILE_NAME_UUID_SEPARATOR = "_uuid_"
 UPLOADED_FILE_TMP_LOCATION = "df_tmp_files"
@@ -22,8 +20,8 @@ preuploaded_fs = FileSystemStorage(location=f"{settings.MEDIA_ROOT}/{UPLOADED_FI
 
 
 def preupload_file(request):
-    if not DYNAMICFORMS.allow_anonymous_user_to_preupload_files and not request.user.is_authenticated:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    # if not DYNAMICFORMS.allow_anonymous_user_to_preupload_files and not request.user.is_authenticated:
+    #     return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     if request.method == "POST":
         uploaded_file: Optional[InMemoryUploadedFile] = request.FILES.get("file", None)
         if not uploaded_file:

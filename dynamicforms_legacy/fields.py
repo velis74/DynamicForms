@@ -47,7 +47,7 @@ class BooleanField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.BooleanF
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -76,7 +76,7 @@ class CharField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -105,7 +105,7 @@ class EmailField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -135,7 +135,7 @@ class RegexField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixi
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -165,7 +165,7 @@ class SlugField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -194,7 +194,7 @@ class URLField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -222,7 +222,7 @@ class UUIDField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.UUIDField):
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -252,7 +252,7 @@ class IPAddressField(PasswordFieldMixin, RenderMixin, ActionMixin, FieldHelpText
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -280,7 +280,7 @@ class IntegerField(NullValueMixin, RenderMixin, ActionMixin, FieldHelpTextMixin,
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -308,7 +308,7 @@ class FloatField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.FloatField
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -343,7 +343,7 @@ class DecimalField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DecimalF
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -377,7 +377,7 @@ class DateTimeField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -408,7 +408,7 @@ class DateField(DateFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         self.time_step = kw.pop("time_step", None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
@@ -440,7 +440,7 @@ class TimeField(TimeFieldMixin, NullValueMixin, RenderMixin, ActionMixin, FieldH
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         self.time_step = kw.pop("time_step", None)
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
@@ -469,7 +469,7 @@ class DurationField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.Duratio
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -508,7 +508,7 @@ class ChoiceField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -547,7 +547,7 @@ class MultipleChoiceField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -590,7 +590,7 @@ class FilePathField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -618,7 +618,7 @@ class FileField(FileFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fi
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -646,7 +646,7 @@ class ImageField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ImageField
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -674,7 +674,7 @@ class ListField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ListField):
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -702,7 +702,7 @@ class DictField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.DictField):
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -732,7 +732,7 @@ if hasattr(fields, "HStoreField"):
             display_table: DisplayMode = None,
             display_form: DisplayMode = None,
             table_classes: str = "",
-            **kw
+            **kw,
         ):
             kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
             kwargs.update(kw)
@@ -760,7 +760,7 @@ class JSONField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.JSONField):
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -789,7 +789,7 @@ class ReadOnlyField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ReadOnl
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         warnings.warn("deprecated - wrong approach! Use read_only attribute instead.", DeprecationWarning, stacklevel=2)
         read_only = True  # NOQA
@@ -820,7 +820,7 @@ class HiddenField(HiddenFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         warnings.warn(
             "deprecated - wrong approach! Use display(|_table|_form) attributes instead.",
@@ -856,7 +856,7 @@ class SerializerMethodField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -885,7 +885,7 @@ class ModelField(RenderMixin, ActionMixin, FieldHelpTextMixin, fields.ModelField
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -919,7 +919,7 @@ class StringRelatedField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -953,7 +953,7 @@ class PrimaryKeyRelatedField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -988,7 +988,7 @@ class HyperlinkedRelatedField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1023,7 +1023,7 @@ class HyperlinkedIdentityField(
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1056,7 +1056,7 @@ class SlugRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1085,7 +1085,7 @@ class ManyRelatedField(RelatedFieldAJAXMixin, RenderMixin, ActionMixin, FieldHel
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
@@ -1101,7 +1101,7 @@ class RTFField(RTFFieldMixin, RenderMixin, ActionMixin, FieldHelpTextMixin, fiel
         display_table: DisplayMode = None,
         display_form: DisplayMode = None,
         table_classes: str = "",
-        **kw
+        **kw,
     ):
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
