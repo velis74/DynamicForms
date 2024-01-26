@@ -20,7 +20,7 @@ export interface IActionHandler {
 
 export interface ActionHandlerComposable {
   registerHandler: (actionName: string, handler: Handler) => void
-  callHandler: (action: Action | FilteredActions, payload?: any, context?: any) => Promise<boolean>
+  callHandler: (action: Action | FilteredActions, context?: any) => Promise<boolean>
   handler: IActionHandler
 }
 
