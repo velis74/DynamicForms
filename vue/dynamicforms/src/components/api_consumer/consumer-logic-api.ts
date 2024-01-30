@@ -3,7 +3,6 @@ import { Ref } from 'vue';
 
 import { ViewSetApi } from '../adapters/api';
 import FormPayload from '../form/definitions/form-payload';
-import TableRows from '../table/definitions/rows';
 import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
@@ -97,12 +96,7 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   async reload() {
     const result = await this.fetch();
-    if (result) {
-      this.rows = new TableRows(
-        this,
-        result,
-      );
-    }
+    if (result) this.rows.replaceRows(result);
   }
 
   async getRecord(pkValue: string) {
@@ -152,8 +146,8 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       },
       this.dialogHandlers,
     );
-
-    await this.reload();
+    this.rows.updateRows([result]);
+    // await this.reload();
 
     return result;
   }

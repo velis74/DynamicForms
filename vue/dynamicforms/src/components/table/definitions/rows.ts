@@ -10,11 +10,11 @@ export default class TableRows {
 
   visibilityHandler: (rowPk?: number) => boolean | { callback: (isVisible: boolean) => void, once?: boolean };
 
-  next: string | null;
+  next!: string | null;
 
-  data: TableRow[];
+  rows: TableRow[];
 
-  rowIndices: { [key: string]: number };
+  rowIndices!: { [key: string]: number };
 
   constructor(logic: APIConsumer.ConsumerLogicBaseInterface, rowsData: DfTable.RowsData) {
     this.logic = logic;
@@ -23,24 +23,29 @@ export default class TableRows {
       console.log('Empty handler');
       return false;
     };
-
-    this.next = null; // url to fetch rows after currently last row
-    this.data = reactive([]); // actual rows
-    this.rowIndices = {}; // stores primaryKey -> {index} in data for faster lookup when deleting & updating
+    this.rows = reactive([]); // actual rows
     this.replaceRows(rowsData);
   }
 
   public replaceRows(rowsData: DfTable.RowsData) {
-    this.data.splice(0, this.data.length);
+    this.rows.splice(0, this.rows.length);
+
+    this.next = null; // url to fetch rows after currently last row
+    this.rowIndices = {}; // stores primaryKey -> {index} in rows for faster lookup when deleting & updating
+
     if (rowsData && 'results' in rowsData && Array.isArray(rowsData.results)) {
       // REST response was paginated. actual rows in results, next and prev pointer provided as well
       this.updateRows(rowsData.results);
       this.next = rowsData.next;
-      this.decorate(this.data);
+      this.decorate(this.rows);
     } else if (Array.isArray(rowsData)) {
       // REST response was an unpaginated array of rows. We don't decorate it because all rows had already been fetched
       this.updateRows(rowsData);
     }
+  }
+
+  get data() {
+    return this.rows;
   }
 
   /**
@@ -84,11 +89,11 @@ export default class TableRows {
       const pk = rowData[pkName];
       const pkIdx = this.rowIndices[pk];
       if (pkIdx != null) {
-        this.data[pkIdx] = rowData;
+        this.rows[pkIdx] = rowData;
         // wasModified = true;
       } else {
         // TODO: Currently all added records shows on current last table row. It should be dependent on ordering, etc.
-        const newLength = this.data.push(rowData);
+        const newLength = this.rows.push(rowData);
         this.rowIndices[pk] = newLength - 1;
       }
       return null;
@@ -99,11 +104,11 @@ export default class TableRows {
   reIndex() {
     this.rowIndices = {};
     const pkName: string = this.logic.pkName;
-    this.data.forEach((row: TableRow, index: number) => { this.rowIndices[row[pkName]] = index; });
+    this.rows.forEach((row: TableRow, index: number) => { this.rowIndices[row[pkName]] = index; });
   }
 
   deleteRow(tableRowId: string) {
-    this.data.splice(this.rowIndices[tableRowId], 1);
+    this.rows.splice(this.rowIndices[tableRowId], 1);
     this.reIndex();
   }
 }
