@@ -60,7 +60,7 @@ const columnClasses = computed(
 );
 
 use.value = !(payload.value[props.field.name] == null);
-const formPayload = ref(new FormPayload(payload.value[props.field.name] ?? {}, props.field.layout));
+const formPayload = ref(FormPayload.create(payload.value[props.field.name] ?? {}, props.field.layout));
 const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 
 watch(use, (value) => { payload.value[props.field.name] = value ? formPayload.value : undefined; });

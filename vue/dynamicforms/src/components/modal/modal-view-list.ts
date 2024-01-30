@@ -37,7 +37,7 @@ class DialogList {
       // add a new dialog to the top of the stack
       if (this.list.length) this.list[this.list.length - 1].topOfTheStack = false;
       if (dialogDef.actions instanceof FilteredActions) {
-        const newPayload = new FormPayload(dialogDef.actions.payload || new FormPayload());
+        const newPayload = FormPayload.create(dialogDef.actions.payload || FormPayload.create());
         newPayload.addExtraData({ dialog: dialogDef });
         dialogDef.actions = new FilteredActions(dialogDef.actions.actions, newPayload);
       }

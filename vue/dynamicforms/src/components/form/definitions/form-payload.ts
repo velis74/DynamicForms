@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { reactive } from 'vue';
 
 import type { APIConsumer } from '../../api_consumer/namespace';
 import DisplayMode from '../../classes/display-mode';
@@ -11,11 +12,16 @@ export default class FormPayload {
 
   ['$extra-data']: any;
 
-  constructor();
-  constructor(data: FormPayload);
-  constructor(data: APIConsumer.FormPayloadJSON, layout: FormLayout);
-  constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout) {
+  private constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout) {
     this.setData(data, layout);
+  }
+
+  static create(): FormPayload;
+  static create(data: FormPayload): FormPayload;
+  static create(data: APIConsumer.FormPayloadJSON, layout?: FormLayout): FormPayload;
+  static create(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout): FormPayload {
+    // Type assertion necessary to keep PyCharm from complaining about private functions
+    return <FormPayload> reactive(new FormPayload(data, layout));
   }
 
   addExtraData(data: { [key: string]: any }) {

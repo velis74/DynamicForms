@@ -54,7 +54,7 @@ export default abstract class FormConsumerBase<T = any> {
   get definition(): APIConsumer.FormDefinition {
     this.layout = new FormLayout(this.ux_def.dialog);
     this.data = this.data ?
-      this.data.replaceData(this.ux_def.record, this.layout) : new FormPayload(this.ux_def.record, this.layout);
+      this.data.replaceData(this.ux_def.record, this.layout) : FormPayload.create(this.ux_def.record, this.layout);
     this.actions = new FilteredActions(this.ux_def.actions);
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
