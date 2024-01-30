@@ -117,9 +117,12 @@ class RecurrenceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance, row_data=None):
         setattr(instance, "every", instance.recur.get("every", None))
-        setattr(instance, "weekdays", instance.recur.get("weekdays", None))
-        setattr(instance, "days", instance.recur.get("days", None))
-        setattr(instance, "dates", instance.recur.get("dates", None))
+        if instance.pattern == CalendarRecurrence.Pattern.Weekly:
+            setattr(instance, "weekdays", instance.recur.get("weekdays", None))
+        if instance.pattern == CalendarRecurrence.Pattern.Monthly:
+            setattr(instance, "days", instance.recur.get("days", None))
+        if instance.pattern == CalendarRecurrence.Pattern.Yearly:
+            setattr(instance, "dates", instance.recur.get("dates", None))
 
         return super().to_representation(instance, row_data)
 
@@ -131,6 +134,13 @@ class RecurrenceSerializer(serializers.ModelSerializer):
             dates=data.pop("dates", None),
             weekdays=list(data.pop("weekdays", set())),
         )
+        if data["pattern"] != CalendarRecurrence.Pattern.Weekly.value:
+            data.pop("weekdays", None)
+        if data["pattern"] != CalendarRecurrence.Pattern.Monthy.value:
+            data.pop("days", None)
+        if data["pattern"] != CalendarRecurrence.Pattern.Yearly.value:
+            data.pop("dates", None)
+
         return data
 
     class Meta:
