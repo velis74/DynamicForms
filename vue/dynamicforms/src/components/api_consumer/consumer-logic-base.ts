@@ -136,7 +136,10 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   get formDefinition(): APIConsumer.FormDefinition {
     // this.requestedPKValue = this.pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
-    this.formData = FormPayload.create(this.ux_def.record, this.formLayout);
+    this.formData = this.formData ?
+      this.formData.replaceData(this.ux_def.record, this.formLayout) :
+      FormPayload.create(this.ux_def.record, this.formLayout);
+
     this.actions = new FilteredActions(this.ux_def.actions);
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
