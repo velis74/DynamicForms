@@ -27,7 +27,11 @@ export default class TableRows {
     this.next = null; // url to fetch rows after currently last row
     this.data = reactive([]); // actual rows
     this.rowIndices = {}; // stores primaryKey -> {index} in data for faster lookup when deleting & updating
+    this.replaceRows(rowsData);
+  }
 
+  public replaceRows(rowsData: DfTable.RowsData) {
+    this.data.splice(0, this.data.length);
     if (rowsData && 'results' in rowsData && Array.isArray(rowsData.results)) {
       // REST response was paginated. actual rows in results, next and prev pointer provided as well
       this.updateRows(rowsData.results);

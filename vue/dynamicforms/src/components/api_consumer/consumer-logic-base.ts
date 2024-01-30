@@ -119,7 +119,10 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
       this.fields[column.name] = column;
     });
     this.tableColumns = new TableColumns(UXDefinition.columns.map((col: any) => col.name), this.fields);
-    this.rows = new TableRows(this, UXDefinition.rows);
+
+    if (this.rows) this.rows.replaceRows(UXDefinition.rows);
+    else this.rows = new TableRows(this, []);
+
     this.setOrdering(
       UXDefinition.ordering_parameter,
       UXDefinition.ordering_style,
