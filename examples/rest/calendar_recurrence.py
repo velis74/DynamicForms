@@ -136,7 +136,7 @@ class RecurrenceSerializer(serializers.ModelSerializer):
         )
         if data["pattern"] != CalendarRecurrence.Pattern.Weekly.value:
             data.pop("weekdays", None)
-        if data["pattern"] != CalendarRecurrence.Pattern.Monthy.value:
+        if data["pattern"] != CalendarRecurrence.Pattern.Monthly.value:
             data.pop("days", None)
         if data["pattern"] != CalendarRecurrence.Pattern.Yearly.value:
             data.pop("dates", None)
