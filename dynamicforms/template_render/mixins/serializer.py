@@ -137,7 +137,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         class BoundSerializerRenderActions(SerializerRenderActions):
             @property
             def actions(self):
-                return this.actions
+                return this.actions.renderable_actions(this)
 
         return BoundSerializerRenderActions()
 
