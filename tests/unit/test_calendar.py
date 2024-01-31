@@ -309,7 +309,7 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
                 [5, 14, 22, "first mo", "last fr", ("2nd", "tu")],
             )
         )
-        print(res)
+        # print(res)
         expected_res = list(
             filter(
                 lambda x: cutoff_at is None or x >= cutoff_at,
@@ -319,7 +319,7 @@ class CalendarRecurrenceUtilsTest(CommonTestBase):
                 ),
             )
         )
-        print(expected_res)
+        # print(expected_res)
         self.assertEqual(res, expected_res)
 
     @parameterized.expand([(None,), (datetime.datetime(2021, 12, 28, 0, 0),)])
