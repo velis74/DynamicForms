@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import Action from '../actions/action';
 import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
@@ -53,19 +53,25 @@ const renderComponent = computed(() => {
   }
 });
 
-const renderComponentData = computed(() => {
-  switch (props.displayComponent) {
+const displayComponent = computed(() => props.displayComponent);
+const renderComponentData = ref();
+const loadDefinition = () => {
+  switch (displayComponent.value) {
   case ComponentDisplay.TABLE:
-    return (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).tableDefinition;
+    renderComponentData.value = (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).tableDefinition;
+    break;
   case ComponentDisplay.FORM:
     // console.warn(props.consumer.formDefinition);
-    return (<FormConsumerBase> props.consumer).definition;
+    renderComponentData.value = (<FormConsumerBase> props.consumer).definition;
     // TODO: what about dialog? Where is this APIConsumer even used?
     // TODO: And why isn't APIConsumer used on the page which showcases the three input modes. What's there instead?
+    break;
   default:
     throw Error('Unknown component display type');
   }
-});
+};
+loadDefinition();
+watch(displayComponent, loadDefinition);
 
 const { handler } = useActionHandler();
 
