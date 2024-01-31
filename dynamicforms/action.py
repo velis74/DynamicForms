@@ -452,22 +452,8 @@ class Actions(object):
         return (
             a
             for a in self.actions
-            if isinstance(a, TableAction) and not serializer.suppress_action(a, request, viewset)
+            if not serializer.suppress_action(a, request, viewset)
         )
-
-    def render_renderable_actions(
-        self, allowed_positions: Iterable[TablePosition], field_name: str, serializer: Serializer
-    ):
-        """
-        Returns those actions that are not suppressed
-        :return: List[Action]
-        """
-        res = ""
-
-        for action in self.renderable_actions(serializer):
-            if action.position in allowed_positions and (field_name is None or field_name == action.field_name):
-                res += action.render(serializer)
-        return res
 
     def actions_not_suppressed(self, serializer: Serializer):
         request = serializer.context.get("request", None)
