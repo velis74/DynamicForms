@@ -147,7 +147,6 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       this.dialogHandlers,
     );
     this.rows.updateRows([result]);
-    // await this.reload();
 
     return result;
   }

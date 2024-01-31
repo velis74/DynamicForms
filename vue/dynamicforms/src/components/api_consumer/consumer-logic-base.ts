@@ -119,9 +119,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
       this.fields[column.name] = column;
     });
     this.tableColumns = new TableColumns(UXDefinition.columns.map((col: any) => col.name), this.fields);
-
-    if (this.rows) this.rows.replaceRows(UXDefinition.rows);
-    else this.rows = new TableRows(this, []);
+    this.rows.replaceRows(UXDefinition.rows);
 
     this.setOrdering(
       UXDefinition.ordering_parameter,
@@ -139,9 +137,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   get formDefinition(): APIConsumer.FormDefinition {
     // this.requestedPKValue = this.pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
-    this.formData = this.formData ?
-      this.formData.replaceData(this.ux_def.record, this.formLayout) :
-      FormPayload.create(this.ux_def.record, this.formLayout);
+    this.formData.replaceData(this.ux_def.record, this.formLayout);
 
     this.actions = new FilteredActions(this.ux_def.actions);
     return {
