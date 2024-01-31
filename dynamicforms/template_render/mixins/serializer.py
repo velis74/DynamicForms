@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, SerializerMetaclass
 
 from dynamicforms import fields
-from dynamicforms.action import TablePosition
+from dynamicforms.action import TableAction, TablePosition
 from dynamicforms.mixins import ActionMixin, DisplayMode, FieldRenderMixin
 
 from .base import ViewModeBase
@@ -117,15 +117,15 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         class BoundSerializerRenderFields(SerializerRenderFields):
             @property
             def fields(self):
-                actions = list(this.actions.renderable_actions(this))
-                if any(action.position == TablePosition.ROW_START for action in actions):
+                actions = [a for a in this.actions.renderable_actions(this) if isinstance(a, TableAction)]
+                if any(getattr(action, "position", None) == TablePosition.ROW_START for action in actions):
                     yield SerializerRenderFields.ActionField(actions, TablePosition.ROW_START)
 
                 for f in this.fields.values():
                     if f.display_table != DisplayMode.SUPPRESS:
                         yield f
 
-                if any(action.position == TablePosition.ROW_END for action in actions):
+                if any(getattr(action, "position", None) == TablePosition.ROW_END for action in actions):
                     yield SerializerRenderFields.ActionField(actions, TablePosition.ROW_END)
 
         return BoundSerializerRenderFields()
@@ -137,7 +137,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         class BoundSerializerRenderActions(SerializerRenderActions):
             @property
             def actions(self):
-                return this.actions
+                return this.actions.renderable_actions(this)
 
         return BoundSerializerRenderActions()
 

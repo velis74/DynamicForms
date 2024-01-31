@@ -60,16 +60,12 @@ const columnClasses = computed(
 );
 
 use.value = !(payload.value[props.field.name] == null);
-const formPayload = ref(new FormPayload(payload.value[props.field.name] ?? {}, props.field.layout));
+const formPayload = ref(FormPayload.create(payload.value[props.field.name] ?? {}, props.field.layout));
 const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
 
 watch(use, (value) => { payload.value[props.field.name] = value ? formPayload.value : undefined; });
 watch(formPayload, (newValue: Object, oldValue: Object) => {
-  // TODO: remove manual creation of recur field
-  payload.value[props.field.name] = use.value ? {
-    ...newValue,
-    recur: { every: 2, weekdays: 1, holidays: 1, days: 1, dates: 1 },
-  } : undefined;
+  payload.value[props.field.name] = use.value ? { ...newValue } : undefined;
 
   dispatchAction(self, props.actions.valueChanged, { field: props.field.name, oldValue, newValue });
 }, { deep: true });

@@ -6,7 +6,7 @@ import Action, { defaultActionHandler } from './action';
 
 describe('Action', () => {
   describe('defaultActionHandler', () => {
-    const payload = new FormPayload();
+    const payload = FormPayload.create();
     const action = new Action({ name: 'test-action', position: 'HEADER', fieldName: 'test-field' });
 
     it('resolves the dialog promise and closes it when it is present in extraData', () => {
@@ -53,7 +53,7 @@ describe('Action', () => {
           xl: { showLabel: true, showIcon: true, asButton: false },
           sm: { showLabel: false, showIcon: false, asButton: true },
         },
-        payload: new FormPayload(),
+        payload: FormPayload.create(),
       };
       const action = new Action(actionData);
 

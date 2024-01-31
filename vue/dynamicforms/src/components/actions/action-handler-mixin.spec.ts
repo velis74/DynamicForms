@@ -68,7 +68,7 @@ describe('ActionHandlerMixin with default action processor', () => {
   });
 
   it('dispatches action with payload', async () => {
-    const payload = new FormPayload({ description: 'my test description' });
+    const payload = FormPayload.create({ description: 'my test description' });
     const actionsWithPayload = new FilteredActions(actions, payload);
     const actionDefaultProcessorSpy = vi.spyOn(wrapper.vm, 'actionDefaultProcessor');
 

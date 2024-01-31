@@ -399,7 +399,7 @@ const addConditionFieldCondition =
 const testCondition =
   (condition: Statement, expectedVisibility: boolean) => {
     const definition = addConditionFieldCondition(condition, fieldDefinitions);
-    const payload: FormPayload = new FormPayload(fieldValues, new FormLayout(definition as DfForm.FormLayoutJSON));
+    const payload: FormPayload = FormPayload.create(fieldValues, new FormLayout(definition as DfForm.FormLayoutJSON));
 
     const visible = calculateVisibility(payload, definition.fields.conditionedField.conditionalVisibility);
     expect(visible).toBe(expectedVisibility);

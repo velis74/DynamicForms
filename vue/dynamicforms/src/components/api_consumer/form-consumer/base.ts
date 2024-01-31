@@ -38,7 +38,7 @@ export default abstract class FormConsumerBase<T = any> {
   protected constructor(handlers?: IHandlers, hooks?: FormConsumerHooks<FormConsumerBase>) {
     this.actionHandlers = handlers;
     Object.assign(this, hooks);
-    this.data = new FormPayload();
+    this.data = FormPayload.create();
   }
 
   title(which: 'table' | 'new' | 'edit'): string {

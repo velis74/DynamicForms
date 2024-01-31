@@ -20,7 +20,7 @@ export default class TableFilterRow {
   constructor(filterData: any) {
     if (!filterData) {
       this.columns = new IndexedArray([]);
-      this.payload = new FormPayload();
+      this.payload = FormPayload.create();
       return;
     }
     const filterDataNoActions = _.filter(filterData.columns, (cl) => !_.includes(cl.name, '#actions'));
@@ -48,6 +48,6 @@ export default class TableFilterRow {
       v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);
-    this.payload = new FormPayload(record, { fields: this.columns, rows: [], fieldName: '', componentName: '' });
+    this.payload = FormPayload.create(record, { fields: this.columns, rows: [], fieldName: '', componentName: '' });
   }
 }

@@ -33,12 +33,12 @@ const fieldDefinitions = {
 
 describe('FormPayload', () => {
   it('Check if calling constructor without parameters produces an empty FormPayload', () => {
-    const ds = new FormPayload();
+    const ds = FormPayload.create();
     expect(Object.keys(ds).length).toEqual(0);
   });
   it('Check if a basic data sample parses and properly sets up the fields', () => {
     const formLayout = new FormLayout(fieldDefinitions);
-    const ds = new FormPayload(fieldValues, formLayout);
+    const ds = FormPayload.create(fieldValues, formLayout);
 
     expect(ds.fieldWritable).toEqual(12);
     expect(ds.fieldReadOnly).toEqual('abc');
@@ -52,8 +52,8 @@ describe('FormPayload', () => {
     expect(invalidSet).toThrow(TypeError);
   });
   it('Check if cloning actually creates two separate and completely unlinked instances', () => {
-    const ds1 = new FormPayload(fieldValues, new FormLayout(fieldDefinitions));
-    const ds2 = new FormPayload(ds1);
+    const ds1 = FormPayload.create(fieldValues, new FormLayout(fieldDefinitions));
+    const ds2 = FormPayload.create(ds1);
 
     expect(ds2.fieldWritable).toEqual(12);
     expect(ds2.fieldReadOnly).toEqual('abc');

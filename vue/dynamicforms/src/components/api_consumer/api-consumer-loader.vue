@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref, watch } from 'vue';
+import { onMounted, ref, Ref, shallowRef, watch } from 'vue';
 import { RouteLocationNormalized, useRoute } from 'vue-router';
 
 import APIConsumerVue from './api-consumer.vue';
@@ -13,7 +13,7 @@ import ComponentDisplay from './component-display';
 import ConsumerLogicApi from './consumer-logic-api';
 import { APIConsumer } from './namespace';
 
-const consumer = ref<APIConsumer.ConsumerLogicBaseInterface | undefined>();
+const consumer = shallowRef<APIConsumer.ConsumerLogicBaseInterface | undefined>();
 // test: undefined as FormLayout | undefined,
 const errorText: Ref<string | undefined> = ref();
 const displayComponent = ref(ComponentDisplay.TABLE);
