@@ -1,3 +1,4 @@
+import { ref, Ref } from 'vue';
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
 import { PrimaryKeyType } from '../../adapters/api/namespace';
@@ -31,6 +32,8 @@ export default abstract class FormConsumerBase<T = any> {
 
   protected api!: FormAdapter<T>;
 
+  updateCounter: Ref<number>;
+
   beforeDialog?: (instance: any) => void;
 
   afterDialog?: (instance: any, action: any) => void;
@@ -39,6 +42,7 @@ export default abstract class FormConsumerBase<T = any> {
     this.actionHandlers = handlers;
     Object.assign(this, hooks);
     this.data = FormPayload.create();
+    this.updateCounter = ref(0); // TODO ugly hack to achieve reactivity when we're blatantly reassigning properties
   }
 
   title(which: 'table' | 'new' | 'edit'): string {
@@ -56,6 +60,7 @@ export default abstract class FormConsumerBase<T = any> {
     this.layout = new FormLayout(this.ux_def.dialog);
     this.data = this.data.replaceData(this.ux_def.record, this.layout);
     this.actions = new FilteredActions(this.ux_def.actions);
+    this.updateCounter.value++;
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
       pkName: this.pkName,

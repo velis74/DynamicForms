@@ -1,6 +1,6 @@
 <template>
   <div style="flex: auto">
-    <component :is="renderComponent" v-bind="renderComponentData"/>
+    <component :is="renderComponent" :key="consumer.updateCounter" v-bind="renderComponentData"/>
   </div>
 </template>
 
