@@ -73,7 +73,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.actions = new FilteredActions({});
     this.ux_def = {} as APIConsumer.TableUXDefinition;
     this.rows = new TableRows(this, []);
-    this.formData = {} as any;
+    this.formData = FormPayload.create();
     this.requestedPKValue = null;
     this.ordering = {
       parameter: 'ordering',
