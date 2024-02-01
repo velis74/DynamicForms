@@ -1,8 +1,6 @@
 // import FilteredActions from '../actions/filtered-actions';
 // import TableColumns from '../table/definitions/columns';
 
-import { Ref } from 'vue';
-
 import { IHandlers } from '../actions/action-handler-composable';
 import type FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
@@ -58,7 +56,6 @@ export namespace APIConsumer {
   };
 
   export interface ConsumerLogicBaseInterface {
-    updateCounter: Ref<number>;
     pkName: string;
     setDialogHandlers(handlers?: IHandlers): void;
     setOrdering(parameter: string, style: any | null, counter: number): void;

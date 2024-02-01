@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { Ref, ref } from 'vue';
 
 import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
@@ -52,8 +51,6 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
   protected dialogHandlers?: IHandlers;
 
-  public updateCounter: Ref<number>;
-
   protected constructor() {
     /**
      * pkName specifies the primary key for the table. This field is expected to be unique and will be used to uniquely
@@ -86,7 +83,6 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.filterDefinition = null;
     this.filterData = {};
     this.titles = { new: '', edit: '', table: '' };
-    this.updateCounter = ref(0); // TODO ugly hack to achieve reactivity when we're blatantly reassigning properties
   }
 
   get tableDefinition() {
@@ -134,7 +130,6 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.actions = new FilteredActions(<ActionsNS.ActionsJSON> UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
-    this.updateCounter.value++;
   }
 
   abstract getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition>;
@@ -143,7 +138,6 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     // this.requestedPKValue = this.pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
     this.formData.replaceData(this.ux_def.record, this.formLayout);
-    this.updateCounter.value++;
 
     this.actions = new FilteredActions(this.ux_def.actions);
     return {
