@@ -3,12 +3,19 @@ import { APIConsumerLoader } from 'dynamicforms';
 import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
 import DfCalendar from './demo-app/vuetify/df-calendar.vue';
+import FormConsumer from './demo-app/vuetify/form-consumer.vue';
 
 const EmptyComponent = { render() { return null; } };
 
 export default [
   { name: 'home', path: '/', component: EmptyComponent, meta: { title: 'Home' } },
   { name: 'CL Validated', path: '/validated', component: APIConsumerLoader, meta: { title: 'Validated' } },
+  {
+    name: 'Consumer Form',
+    path: '/form-consumer',
+    component: FormConsumer,
+    meta: { title: 'Consumer Form' },
+  },
   { name: 'CL Hidden fields', path: '/hidden-fields', component: APIConsumerLoader, meta: { title: 'Hidden fields' } },
   { name: 'CL Basic fields', path: '/basic-fields', component: APIConsumerLoader, meta: { title: 'Basic fields' } },
   {
