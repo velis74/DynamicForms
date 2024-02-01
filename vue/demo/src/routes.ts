@@ -14,7 +14,6 @@ export default [
     name: 'Consumer Form',
     path: '/form-consumer',
     component: FormConsumer,
-    props: {},
     meta: { title: 'Consumer Form' },
   },
   { name: 'CL Hidden fields', path: '/hidden-fields', component: APIConsumerLoader, meta: { title: 'Hidden fields' } },
