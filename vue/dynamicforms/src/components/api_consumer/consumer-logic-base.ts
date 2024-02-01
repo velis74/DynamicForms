@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Ref, ref } from 'vue';
+import { isRef, Ref, ref } from 'vue';
 
 import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
@@ -134,7 +134,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     this.actions = new FilteredActions(<ActionsNS.ActionsJSON> UXDefinition.actions);
     // TODO: actions = UXDefinition.actions (merge with formdefinition.actions)
     this.filterDefinition = new TableFilterRow(UXDefinition.filter);
-    this.updateCounter.value++;
+    if (isRef(this.updateCounter)) this.updateCounter.value++; else this.updateCounter++;
   }
 
   abstract getFormDefinition(pkValue?: APIConsumer.PKValueType): Promise<APIConsumer.FormDefinition>;
@@ -143,7 +143,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     // this.requestedPKValue = this.pkValue;
     this.formLayout = new FormLayout(this.ux_def.dialog);
     this.formData.replaceData(this.ux_def.record, this.formLayout);
-    this.updateCounter.value++;
+    if (isRef(this.updateCounter)) this.updateCounter.value++; else this.updateCounter++;
 
     this.actions = new FilteredActions(this.ux_def.actions);
     return {
