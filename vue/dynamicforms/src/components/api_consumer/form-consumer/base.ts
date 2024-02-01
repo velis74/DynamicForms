@@ -1,4 +1,4 @@
-import { isRef, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
 import { PrimaryKeyType } from '../../adapters/api/namespace';
@@ -60,7 +60,7 @@ export default abstract class FormConsumerBase<T = any> {
     this.layout = new FormLayout(this.ux_def.dialog);
     this.data = this.data.replaceData(this.ux_def.record, this.layout);
     this.actions = new FilteredActions(this.ux_def.actions);
-    if (isRef(this.updateCounter)) this.updateCounter.value++; else this.updateCounter++;
+    this.updateCounter.value++;
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
       pkName: this.pkName,
