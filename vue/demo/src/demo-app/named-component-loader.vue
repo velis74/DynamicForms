@@ -1,16 +1,16 @@
-<template>
-  <component :is="componentName" :v-bind="componentProps" @title-change="(title) => $emit('title-change', title)"/>
-</template>
+<script setup lang="ts">
+defineProps<{
+  componentName: string,
+  componentProps: object,
+}>();
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default /* #__PURE__ */ defineComponent({
-  name: 'NamedComponentLoader',
-  props: {
-    componentName: { type: String, required: true },
-    componentProps: { type: Object, required: true },
-  },
-  emits: ['title-change'],
-});
+const emits = defineEmits(['title-change']);
 </script>
+
+<template>
+  <component
+    :is="componentName"
+    :v-bind="componentProps"
+    @title-change="(title: string) => emits('title-change', title)"
+  />
+</template>

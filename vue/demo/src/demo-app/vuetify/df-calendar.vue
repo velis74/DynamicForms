@@ -94,6 +94,9 @@ export default defineComponent({
       };
     },
   },
+  mounted() {
+    this.$emit('title-change', 'Calendar');
+  },
   methods: {
     detail_url(record_id: string): string {
       return `${this.url}/${record_id}.json`;

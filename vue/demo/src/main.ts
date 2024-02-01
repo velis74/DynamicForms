@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 
 import DemoApp from './demo-app';
-import ViewMode from './demo-app/vuetify/view-mode.vue';
+import DfViewMode from './demo-app/vuetify/view-mode.vue';
 import VuetifyApp from './demo-app/vuetify/vuetify-app.vue';
 import dynamicForms from './plugins/dynamic-forms';
 import vuetify from './plugins/vuetify';
@@ -18,6 +18,6 @@ app.use(dynamicForms);
 
 // demo specific components
 app.component('DfApp', VuetifyApp);
-app.component(ViewMode.name, ViewMode);
+app.component('DfViewMode', DfViewMode);
 
 app.mount('#app');
