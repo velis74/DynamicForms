@@ -129,8 +129,9 @@ const actionCancel = async (): Promise<boolean> => {
 const actionSubmit = async (): Promise<boolean> => {
   try {
     await (<FormConsumerBase> props.consumer).save();
+    (<FormConsumerBase> props.consumer).withErrors({});
   } catch (err: any) {
-    (<FormConsumerBase> props.consumer).errors = { ...err?.response?.data };
+    (<FormConsumerBase> props.consumer).withErrors({ ...err?.response?.data });
     return true;
   }
   await (<FormConsumerBase> props.consumer).getUXDefinition();
