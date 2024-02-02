@@ -15,7 +15,7 @@ export default abstract class FormConsumerBase<T = any> {
 
   ux_def: APIConsumer.FormUXDefinition = {} as APIConsumer.FormUXDefinition;
 
-  layout: FormLayout | null = null;
+  layout!: FormLayout;
 
   titles: APIConsumer.Titles = { new: '', edit: '', table: '' };
 
@@ -53,9 +53,6 @@ export default abstract class FormConsumerBase<T = any> {
   }
 
   get definition(): APIConsumer.FormDefinition {
-    this.layout = new FormLayout(this.ux_def.dialog);
-    this.data = this.data.replaceData(this.ux_def.record, this.layout);
-    this.actions = new FilteredActions(this.ux_def.actions);
     return {
       title: this.title(this.pkValue === 'new' ? 'new' : 'edit'),
       pkName: this.pkName,
@@ -114,6 +111,9 @@ export default abstract class FormConsumerBase<T = any> {
     } else {
       this.ux_def.record = await this.getRecord();
     }
+    this.layout = new FormLayout(this.ux_def.dialog);
+    this.data = this.data.replaceData(this.ux_def.record, this.layout);
+    this.actions = new FilteredActions(this.ux_def.actions);
 
     return this.definition;
   };
