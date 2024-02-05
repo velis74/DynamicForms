@@ -1,3 +1,5 @@
+import { reactive } from 'vue';
+
 import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
 import { PrimaryKeyType } from '../../adapters/api/namespace';
@@ -25,7 +27,7 @@ export default abstract class FormConsumerBase<T = any> {
 
   loading: boolean = false;
 
-  errors: any = {};
+  errors: any = reactive({});
 
   actionHandlers?: IHandlers;
 
@@ -67,7 +69,8 @@ export default abstract class FormConsumerBase<T = any> {
   }
 
   withErrors = (errors: any) => {
-    this.errors = errors;
+    Object.keys(this.errors).forEach((key) => delete this.errors[key]);
+    Object.assign(this.errors, errors);
     return this;
   };
 
