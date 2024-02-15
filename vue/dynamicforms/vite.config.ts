@@ -2,7 +2,6 @@
 import { resolve } from 'path';
 
 import vue from '@vitejs/plugin-vue';
-import dts from 'vite-plugin-dts';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import vuetify  from 'vite-plugin-vuetify';
@@ -11,7 +10,6 @@ import vuetify  from 'vite-plugin-vuetify';
 export default defineConfig({
   plugins: [
     vue(),
-    // dts(),  // enable when TS errors are no longer present
     {
       ...eslint({
         failOnWarning: false,
