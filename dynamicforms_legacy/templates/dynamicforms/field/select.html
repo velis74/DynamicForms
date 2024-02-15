@@ -46,8 +46,8 @@
           return {
             results: $.map(results, function (item) {
               return {
-                id: item.choice_id,
-                text: item.choice_text,
+                id: item.{{ field.value_field }},
+                text: item.{{ field.text_field }},
               }
             })
           };
