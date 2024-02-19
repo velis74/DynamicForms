@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { resolve } from 'path';
 
+import ckeditor5 from '@ckeditor/vite-plugin-ckeditor5';
 import vue from '@vitejs/plugin-vue';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { ConfigEnv, defineConfig, loadEnv } from 'vite';
@@ -32,6 +33,9 @@ export default ({ mode }: ConfigEnv) => {
   return defineConfig({
     plugins: [
       vue(),
+      vuetify({ autoImport: true }),
+      ckeditor5({ theme: require.resolve('@ckeditor/ckeditor5-theme-lark') }),
+      axiosRedirectConfig(),
       {
         ...eslint({
           failOnWarning: false,
@@ -41,8 +45,6 @@ export default ({ mode }: ConfigEnv) => {
         apply: 'serve',
         enforce: 'post',
       },
-      vuetify({ autoImport: true }),
-      axiosRedirectConfig(),
     ],
     resolve: {
       alias: {
@@ -66,7 +68,7 @@ export default ({ mode }: ConfigEnv) => {
       },
     },
     test: {
-      deps: { inline: ['vuetify'] },
+      server: { deps: { inline: ['vuetify'] } },
       globals: true,
       environment: 'jsdom',
       useAtomics: true, // eliminates tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)
