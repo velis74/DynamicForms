@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { APIConsumer, ComponentDisplay, FormConsumerApi } from '@velis/dynamicforms';
+import { APIConsumer, ComponentDisplay, FormConsumerApi } from 'dynamicforms';
 import { ref, onMounted } from 'vue';
 
 const drawer = ref(false);

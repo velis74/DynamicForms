@@ -10,13 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import CKEditor from '@ckeditor/ckeditor5-vue';
-
 import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
+import Editor from './ck-editor-custom';
 import VuetifyInput from './input-vuetify.vue';
-
-const ckeditor = CKEditor.component;
 
 interface Props extends BaseProps {}
 const props = withDefaults(defineProps<Props>(), basePropsDefault);
@@ -27,7 +23,7 @@ const emits = defineEmits<Emits>();
 const { baseBinds, value } = useInputBase(props, emits);
 
 // data
-const editor = ClassicEditor;
+const editor = Editor;
 const editorConfig = {}; // The configuration of the editor.
 
 </script>
