@@ -10,8 +10,10 @@
 </template>
 
 <script setup lang="ts">
+import '@velis/ckeditor-dist/styles.css';
+import Editor from '@velis/ckeditor-dist';
+
 import { BaseEmits, BaseProps, basePropsDefault, useInputBase } from './base';
-import Editor from './ck-editor-custom';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
@@ -27,7 +29,3 @@ const editor = Editor;
 const editorConfig = {}; // The configuration of the editor.
 
 </script>
-
-<style scoped>
-
-</style>
