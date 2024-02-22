@@ -9,6 +9,8 @@ class RelatedFieldAJAXMixin(object):
         placeholder: Optional[str] = None,
         additional_parameters: Optional[dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         **kwargs
     ):
         """
@@ -26,6 +28,8 @@ class RelatedFieldAJAXMixin(object):
         self.placeholder = placeholder
         self.additional_parameters = additional_parameters
         self.query_field = query_field
+        self.value_field = value_field
+        self.text_field = text_field
 
     @property
     def additional_parameters_urlencoded(self):

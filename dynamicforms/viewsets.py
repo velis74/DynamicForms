@@ -386,6 +386,11 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             self.handle_create_validation_exception(e, request, *args, **kwargs)
 
 
+class ViewSet(NewMixin, viewsets.ViewSet):
+    # When using this class make sure you do a serializer.apply_component_context before returning Response(serializer)
+    pass
+
+
 class SingleRecordViewSet(NewMixin, TemplateRendererMixin, viewsets.GenericViewSet):
     def new_object(self):
         raise NotImplementedError()
