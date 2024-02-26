@@ -82,6 +82,10 @@ const getCompositeCondition =
   (conditionA: Statement, operator: Operator, conditionB?: Statement): Statement => (
     [conditionA, operator, conditionB]
   );
+const getUnknownCondition = (
+  operator: Operator,
+  value: string | string[] | number | number[],
+): Statement => ['unknownField', operator, value];
 
 const conditions: { [key: string]: TypeConditions } = {
   numberConditions: {
@@ -438,6 +442,27 @@ describe('XOR function test', () => {
     expect(XOR(true, false)).toBe(true);
     expect(XOR(false, true)).toBe(true);
     expect(XOR(true, true)).toBe(false);
+  });
+});
+
+describe('Special Cases', () => {
+  it('Test Includes', () => {
+    testCondition(getUnknownCondition(Operator.EQUALS, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.NOT_EQUALS, numberValues.equal), true);
+    testCondition(getUnknownCondition(Operator.GT, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.LT, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.IN, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.NOT_IN, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.INCLUDES, numberValues.equal), false);
+    testCondition(getUnknownCondition(Operator.NOT_INCLUDES, numberValues.equal), false);
+  });
+
+  it('Test Include And In With Non Array Values', () => {
+    testCondition(getNumberCondition(Operator.IN, numberValues.equal), false);
+    testCondition(getStringCondition(Operator.IN, stringValues.equal), true);
+    testCondition(getNumberCondition(Operator.IN, []), false);
+    testCondition(getNumberCondition(Operator.IN, undefined), false);
+    testCondition(getStringCondition(Operator.IN, undefined), false);
   });
 });
 
