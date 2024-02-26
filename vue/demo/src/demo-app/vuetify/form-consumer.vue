@@ -1,19 +1,21 @@
 <template>
-  <v-navigation-drawer v-model="drawer" temporary>
-    <v-list nav>
-      <v-list-item v-for="example in examples" :key="example.title" :to="example.path">
-        <v-list-item-title>{{ example.title }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+  <div>
+    <v-navigation-drawer v-model="drawer" temporary>
+      <v-list nav>
+        <v-list-item v-for="example in examples" :key="example.title" :to="example.path">
+          <v-list-item-title>{{ example.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-  <v-container class="pa-0" fluid>
-    <v-row v-if="editDataLoaded">
-      <v-col>
-        <APIConsumer :consumer="formConsumer" :display-component="ComponentDisplay.FORM"/>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-container class="pa-0" fluid>
+      <v-row v-if="editDataLoaded">
+        <v-col>
+          <APIConsumer :consumer="formConsumer" :display-component="ComponentDisplay.FORM"/>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
