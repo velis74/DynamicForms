@@ -45,6 +45,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@ckeditor/ckeditor5-vue',
         '@velis/ckeditor-dist',
         'axios',
         'bootstrap',
