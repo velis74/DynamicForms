@@ -25,12 +25,28 @@ from dynamicforms.fields import BooleanField
 from dynamicforms.utils import get_pk_name
 
 
-class NewMixin(object):
+class NewMixin:
     """
     Provides support for retrieving default values for a new record.
 
     Caution: Do not use directly. This is only a mixin and is used in final ViewSet derivatives.
     """
+
+    def get_object(self: viewsets.ModelViewSet):
+        """
+        Returns the new_object if "new" is requested, otherwise from database
+        """
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        if (
+            # "new" was requested directly
+            (lookup_url_kwarg in self.kwargs and self.kwargs[lookup_url_kwarg] == "new") or
+            # if this is a SingleRecordViewSet, our router may have created routes where pk won't even be there
+            (lookup_url_kwarg not in self.kwargs and isinstance(self, SingleRecordViewSet))
+        ):
+            return self.new_object()
+
+        return super().get_object()
 
     def new_object(self: viewsets.ModelViewSet):
         """
@@ -39,12 +55,12 @@ class NewMixin(object):
         :return: model instance
         """
         # TODO: This function must return an object that has its field values correctly / realistically filled out
-        # Example: if a certain field's value hides (sets another field to None), then that second field can't be
-        # set to 42, can it?
-        # can we run some kind of validation to enforce this?
-        # Not that easy: the returned record may not validate for its (correctly) empty fields
-        # Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
-        # If we do not, subsequent validation may fail because a hidden field has a value
+        #  Example: if a certain field's value hides (sets another field to None), then that second field can't be
+        #  set to 42, can it?
+        #  can we run some kind of validation to enforce this?
+        #  Not that easy: the returned record may not validate for its (correctly) empty fields
+        #  Maybe we will have to run JavaScript onchange for all fields displayed to ensure at least some consistency?
+        #  If we do not, subsequent validation may fail because a hidden field has a value
         field_names = [
             (f.name + "_id") if isinstance(f, models.ForeignKey) else f.name
             for f in self.get_queryset().model._meta.fields
