@@ -30,3 +30,7 @@ msgstr "Prekliči"
 #: vue/dynamicforms/dist/dynamicforms.umd.js:48
 msgid "No data"
 msgstr "Ni podatkov"
+
+#: vue/dynamicforms/dist/dynamicforms.umd.js:48
+msgid "Performing operation..."
+msgstr "Izvajam obdelavo..."
