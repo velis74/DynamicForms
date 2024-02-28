@@ -68,13 +68,13 @@ export default abstract class FormConsumerBase<T = any> {
     };
   }
 
-  withErrors = (errors: any) => {
+  withErrors(errors: any) {
     Object.keys(this.errors).forEach((key) => delete this.errors[key]);
     Object.assign(this.errors, errors);
     return this;
-  };
+  }
 
-  execute = async (defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> => {
+  async execute(defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> {
     const definition = await this.getUXDefinition();
     if (defaultData) {
       Object.assign(definition.payload, defaultData);
@@ -91,22 +91,22 @@ export default abstract class FormConsumerBase<T = any> {
       data: <Partial<T>> <unknown> this.data!,
       action: resultAction,
     };
-  };
+  }
 
-  delete = async (): Promise<T> => {
+  async delete(): Promise<T> {
     if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
     // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
-  };
+  }
 
-  save = async (): Promise<T> => {
+  async save(): Promise<T> {
     if (this.pkValue !== 'new' && !!this.pkValue) return this.api.update(<T> this.data);
     return this.api.create(<T> this.data);
-  };
+  }
 
-  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => this.api.retrieve() as APIConsumer.FormPayloadJSON;
+  async getRecord(): Promise<APIConsumer.FormPayloadJSON> { return this.api.retrieve() as APIConsumer.FormPayloadJSON };
 
-  getUXDefinition = async () => {
+  async getUXDefinition() {
     if (!this.layout) {
       this.ux_def = await this.api.componentDefinition();
       this.pkName = <keyof T & string> this.ux_def.primary_key_name;
@@ -119,5 +119,5 @@ export default abstract class FormConsumerBase<T = any> {
     this.actions = new FilteredActions(this.ux_def.actions);
 
     return this.definition;
-  };
+  }
 }
