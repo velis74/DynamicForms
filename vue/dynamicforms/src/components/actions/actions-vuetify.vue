@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import './actions.css';
 import IonIcon from 'vue-ionicon';
 
 import { useActionHandler } from './action-handler-composable';
@@ -35,3 +34,10 @@ export default /* #__PURE__ */ defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.action-icon {
+  width:  1.5em;
+  height: 1.5em
+}
+</style>

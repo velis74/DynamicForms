@@ -104,7 +104,7 @@ export default abstract class FormConsumerBase<T = any> {
     return this.api.create(<T> this.data);
   }
 
-  async getRecord(): Promise<APIConsumer.FormPayloadJSON> { return this.api.retrieve() as APIConsumer.FormPayloadJSON };
+  async getRecord(): Promise<APIConsumer.FormPayloadJSON> { return this.api.retrieve() as APIConsumer.FormPayloadJSON; }
 
   async getUXDefinition() {
     if (!this.layout) {
