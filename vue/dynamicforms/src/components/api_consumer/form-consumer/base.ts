@@ -75,7 +75,7 @@ export default abstract class FormConsumerBase<T = any> {
   }
 
   async execute(defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> {
-    const definition = await this.getUXDefinition();
+    const definition = this.definition;
     if (defaultData) {
       Object.assign(definition.payload, defaultData);
       this.data = definition.payload;
