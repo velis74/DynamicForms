@@ -19,6 +19,7 @@
       :row-data="payload"
       :actions="actions"
       :filter-row="filterRow(column)"
+      :filter-definition="filterDefinition"
     />
   </div>
 </template>

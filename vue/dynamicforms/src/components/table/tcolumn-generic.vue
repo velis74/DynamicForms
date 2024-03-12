@@ -6,24 +6,49 @@
     @click.stop="(event) => callHandler(actions.rowClick, { column, event, rowType })"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { column, event, rowType })"
   >
-    <template v-if="filterRow">
-      <FormField
-        v-if="filterRow.formFieldInstance"
-        :field="filterRow.formFieldInstance"
+    <template v-if="rowType === RowTypes.Label">
+      <!-- then the field component itself -->
+      <component
+        :is="column.renderComponentName"
+        v-if="column.renderComponentName"
+        :row-data="rowData"
+        :column="column"
+        :thead="thead"
         :actions="actions"
-        :errors="{}"
-        style="padding: 0; margin: 0;"
       />
+      <!-- or it's just a decorated text and not a component -->
+      <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
+      <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering"/>
     </template>
-    <template v-else>
+    <template v-else-if="rowType === RowTypes.Filter">
+      <component
+        :is="column.renderComponentName"
+        v-if="column.renderComponentName && column.renderComponentName === 'ColumnGroup'"
+        :row-data="rowData"
+        :column="column"
+        :thead="thead"
+        :actions="actions"
+        :filter-definition="filterDefinition"
+      />
+      <template v-else>
+        <FormField
+          v-if="filterData?.formFieldInstance"
+          :field="filterData?.formFieldInstance"
+          :actions="actions"
+          :errors="{}"
+          style="padding: 0; margin: 0;"
+        />
+      </template>
+    </template>
+    <template v-else-if="rowType === RowTypes.Data">
       <df-actions
-        v-if="!thead && column.name === '#actions-row_start' && actions.rowStart.length"
+        v-if="column.name === '#actions-row_start' && actions.rowStart.length"
         :actions="actions.rowStart"
         class="actions"
       />
       <!-- first we render any field start actions -->
       <df-actions
-        v-if="!thead && actions.fieldStart(column.name).length"
+        v-if="actions.fieldStart(column.name).length"
         :actions="actions.fieldStart(column.name)"
         class="actions"
       />
@@ -39,17 +64,19 @@
       <!-- or it's just a decorated text and not a component -->
       <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
       <!-- we finish up with any field end actions -->
-      <OrderingIndicator v-if="thead" ref="ordering" :ordering="column.ordering"/>
       <df-actions
-        v-if="!thead && actions.fieldEnd(column.name).length"
+        v-if="actions.fieldEnd(column.name).length"
         :actions="actions.fieldEnd(column.name)"
         class="actions"
       />
       <df-actions
-        v-if="!thead && column.name === '#actions-row_end' && actions.rowEnd.length"
+        v-if="column.name === '#actions-row_end' && actions.rowEnd.length"
         :actions="actions.rowEnd"
         class="actions"
       />
+    </template>
+    <template v-else>
+      <div class="text-warning">Unknown row type! {{ rowType }}</div>
     </template>
   </div>
 </template>
@@ -64,7 +91,9 @@ import FormField from '../form/form-field.vue';
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
 import TableColumn from './definitions/column';
+import TableFilterRow from './definitions/filterrow';
 import RowTypes from './definitions/row-types';
+import { DfTable } from './namespace';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
 
@@ -73,6 +102,7 @@ const props = defineProps<{
   rowData: Object,
   actions: FilteredActions,
   filterRow?: TableColumn,
+  filterDefinition?: TableFilterRow,
 }>();
 
 const rowType: RowTypes = inject('row-type') as RowTypes;
@@ -98,6 +128,10 @@ function onMeasure(refName: string, maxWidth: number) {
     props.column.setMaxWidth(maxWidth);
   }
 }
+
+const filterData = computed(() => (props.filterDefinition ?
+  props.filterDefinition.columns[props.column.name] || new TableColumn({} as DfTable.ColumnJSON, []) :
+  null));
 
 function customClass(): string {
   let res = props.column.CSSClass;
