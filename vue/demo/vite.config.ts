@@ -54,6 +54,7 @@ export default ({ mode }: ConfigEnv) => {
       },
       extensions: [
         '.js',
+        '.mjs',
         '.ts',
         '.vue',
         '.json',

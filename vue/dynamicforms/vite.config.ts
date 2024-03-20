@@ -29,6 +29,7 @@ export default defineConfig({
     },
     extensions: [
       '.js',
+      '.mjs',
       '.ts',
       '.vue',
       '.json',
