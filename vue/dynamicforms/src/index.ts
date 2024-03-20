@@ -14,7 +14,8 @@ import RowTypes from './components/table/definitions/row-types';
 import TcolumnGeneric from './components/table/tcolumn-generic.vue';
 import apiClient from './components/util/api-client';
 import { gettext, interpolate } from './components/util/translations-mixin';
-import * as VuetifyComponents from './components/vuetify';
+import * as DfVuetifyComponents from './components/vuetify';
+import * as VuetifyComponents from './vuetify-components';
 
 export * from './components/api_consumer/index-temporary';
 export * from './components/api_consumer/form-consumer';
@@ -57,6 +58,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
 
       // import all global instances that we need for vuetify to work
       Object.entries(VuetifyComponents).map(([name, component]) => app.component(name, component));
+      Object.entries(DfVuetifyComponents).map(([name, component]) => app.component(name, component));
       app.component('DfApp', DfApp);
       break;
     default:
