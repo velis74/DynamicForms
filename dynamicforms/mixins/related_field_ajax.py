@@ -1,3 +1,5 @@
+import sys
+
 from typing import Optional
 
 from django.db.models.manager import BaseManager
@@ -89,6 +91,9 @@ class RelatedFieldAJAXMixin(object):
                     )
                 )
         else:
+            options = self.iter_options_bound(None)
+            if len(options) > 100:
+                print("WARNING: This field should be converted to AJAX.", file=sys.stderr)
             res.update(
                 choices=map(
                     lambda option: dict(id=option.value, text=option.display_text), self.iter_options_bound(None)
