@@ -91,14 +91,16 @@ class RelatedFieldAJAXMixin(object):
                     )
                 )
         else:
-            options = self.iter_options_bound(None)
-            if len(options) > 100:
-                print("WARNING: This field should be converted to AJAX.", file=sys.stderr)
             res.update(
-                choices=map(
+                choices=list(map(
                     lambda option: dict(id=option.value, text=option.display_text), self.iter_options_bound(None)
                 )
-            )
+            ))
+            if len(res["choices"]) > 100:
+                print(
+                    f"WARNING: {self.parent.__class__.__name__}.{self.field_name} should be converted to AJAX.",
+                    file=sys.stderr
+                )
         return res
 
     # noinspection PyUnusedLocal, PyUnresolvedReferences
