@@ -7,9 +7,13 @@
   <div
     v-else
     ref="row"
-    :class="{ [`df-row ${rowData.dfControlStructure.CSSClass}`]: true, ['data-row']: rowType === RowTypes.Data }"
+    :class="{
+      [`df-row ${rowData.dfControlStructure.CSSClass}`]: true,
+      ['data-row']: rowType === RowTypes.Data,
+      ['data-selected']: isSelected,
+    }"
     :style="rowData.dfControlStructure.CSSStyle"
-    @click.stop="(event) => callHandler(actions.rowClick, { rowType, event })"
+    @click.stop="handleClick"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { rowType, event })"
   >
     <GenericColumn
@@ -25,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, provide, ref } from 'vue';
+import { computed, ComputedRef, inject, provide, ref } from 'vue';
 
+import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
@@ -67,14 +72,26 @@ function filterRow(column: TableColumn) {
 }
 
 provide('payload', payload);
+const selectedRow = inject<ComputedRef<any>>('selectedRow');
 
-const { callHandler } = useActionHandler();
+const { callHandler } = useActionHandler(payload);
 
 function onMeasure(refName: string, maxWidth: number, maxHeight: number) {
   if (props.rowData.dfControlStructure.isShowing) {
     props.rowData.setMeasuredHeight(maxHeight);
   }
 }
+
+function handleClick(event: any) {
+  callHandler(new Action({
+    name: 'select',
+    label: 'Select',
+    icon: 'thumbs-down-outline',
+    position: 'ROW_CLICK',
+  }));
+  callHandler(props.actions.rowClick, { event, rowType: props.rowType });
+}
+const isSelected = computed<boolean>(() => props.rowType === RowTypes.Data && selectedRow?.value === payload.value.id);
 
 const row = ref();
 useRenderMeasure(onMeasure, { row });

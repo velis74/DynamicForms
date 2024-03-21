@@ -51,6 +51,8 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
 
   protected dialogHandlers?: IHandlers;
 
+  protected rowSelect: boolean = false;
+
   protected constructor() {
     /**
      * pkName specifies the primary key for the table. This field is expected to be unique and will be used to uniquely
@@ -96,6 +98,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
       loading: this.loading,
       actions: this.actions,
       filterDefinition: this.filterDefinition,
+      rowSelect: this.rowSelect,
     };
   }
 
@@ -118,6 +121,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     UXDefinition.columns.forEach((column) => {
       this.fields[column.name] = column;
     });
+    this.rowSelect = UXDefinition.row_select;
     this.tableColumns = new TableColumns(UXDefinition.columns.map((col: any) => col.name), this.fields);
     this.rows.replaceRows(UXDefinition.rows);
 

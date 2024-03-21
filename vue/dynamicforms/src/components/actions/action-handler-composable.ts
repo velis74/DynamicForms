@@ -28,9 +28,9 @@ class Handlers implements IHandlers {
   [key: string]: Handler;
 }
 
-export function useActionHandler(firstToLast: boolean = true): ActionHandlerComposable {
+export function useActionHandler(payload?: any, firstToLast: boolean = true): ActionHandlerComposable {
   const parentHandler = inject<IActionHandler | undefined>('actionHandler', undefined);
-  const payload = inject<any>('payload', {});
+  const internalPayload = payload ?? inject<any>('payload', {});
 
   class ActionHandlers implements IActionHandler {
     private handlers: Handlers = new Handlers();
@@ -41,7 +41,7 @@ export function useActionHandler(firstToLast: boolean = true): ActionHandlerComp
     };
 
     call = async (actions: Action | FilteredActions, context?: any): Promise<boolean> => {
-      const recursiveExecuted = await this.recursiveCall(actions, payload.value, context, firstToLast);
+      const recursiveExecuted = await this.recursiveCall(actions, internalPayload.value, context, firstToLast);
       const actionResolved = await this.resolveAction(actions, context);
       return recursiveExecuted || actionResolved;
     };
