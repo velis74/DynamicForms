@@ -31,6 +31,7 @@
 <script setup lang="ts">
 import { computed, ComputedRef, inject, provide, ref } from 'vue';
 
+import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import IndexedArray from '../classes/indexed-array';
@@ -41,7 +42,6 @@ import TableRow from './definitions/row';
 import RowTypes from './definitions/row-types';
 import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
-import Action from '../actions/action';
 
 const props = withDefaults(
   defineProps<{

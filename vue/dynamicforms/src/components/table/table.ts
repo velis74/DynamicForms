@@ -2,16 +2,16 @@ import ResizeObs from 'resize-observer-polyfill';
 import {
   computed,
   ComputedRef,
-  nextTick,
   onBeforeUpdate,
   onMounted,
   onUnmounted,
   onUpdated,
   provide,
   reactive,
-  ref
+  ref,
 } from 'vue';
 
+import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import DisplayMode from '../classes/display-mode';
@@ -24,7 +24,6 @@ import { ResponsiveLayout, ResponsiveLayouts } from './definitions/responsive-la
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
 import { DfTable } from './namespace';
-import Action from '../actions/action';
 
 /**
  * Base Table (composable): provides logic for table component.

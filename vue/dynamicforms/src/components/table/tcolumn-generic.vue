@@ -84,6 +84,7 @@
 <script setup lang="ts">
 import { computed, defineComponent, inject, provide, ref } from 'vue';
 
+import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/form-field.vue';
@@ -96,7 +97,6 @@ import RowTypes from './definitions/row-types';
 import { DfTable } from './namespace';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
-import Action from '../actions/action';
 
 const props = defineProps<{
   column: TableColumn,
