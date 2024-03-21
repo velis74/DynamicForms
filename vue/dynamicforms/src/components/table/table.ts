@@ -1,9 +1,22 @@
 import ResizeObs from 'resize-observer-polyfill';
-import { computed, ComputedRef, onBeforeUpdate, onMounted, onUnmounted, onUpdated, provide, reactive, ref } from 'vue';
+import {
+  computed,
+  ComputedRef,
+  nextTick,
+  onBeforeUpdate,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  provide,
+  reactive,
+  ref
+} from 'vue';
 
+import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import DisplayMode from '../classes/display-mode';
 import IndexedArray from '../classes/indexed-array';
+import FormPayload from '../form/definitions/form-payload';
 
 import TableColumn from './definitions/column';
 import TableFilterRow from './definitions/filterrow';
@@ -11,6 +24,7 @@ import { ResponsiveLayout, ResponsiveLayouts } from './definitions/responsive-la
 import TableRow from './definitions/row';
 import TableRows from './definitions/rows';
 import { DfTable } from './namespace';
+import Action from '../actions/action';
 
 /**
  * Base Table (composable): provides logic for table component.
@@ -30,6 +44,7 @@ export interface TableBasePropsInterface {
   loading: boolean;
   actions: FilteredActions;
   filterDefinition: TableFilterRow | null;
+  rowSelect: boolean;
 }
 
 export function useTableBase(props: TableBasePropsInterface) {
@@ -81,6 +96,18 @@ export function useTableBase(props: TableBasePropsInterface) {
       return result;
     }, {})),
   );
+
+  const selectedRowValue = ref();
+
+  const selectedRow = computed(() => (props.rowSelect ? selectedRowValue.value : null));
+
+  provide('selectedRow', selectedRow);
+
+  const { registerHandler } = useActionHandler();
+  registerHandler('select', async (actionData: Action, payload: FormPayload): Promise<boolean> => {
+    selectedRowValue.value = payload.id;
+    return true;
+  });
 
   return {
     uniqueId: `table-${uniqueIdGenerator++}`,

@@ -3,7 +3,7 @@
     ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
     :style="computedStyle"
-    @click.stop="(event) => callHandler(actions.rowClick, { column, event, rowType })"
+    @click.stop="handleClick"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { column, event, rowType })"
   >
     <template v-if="rowType === RowTypes.Label">
@@ -96,6 +96,7 @@ import RowTypes from './definitions/row-types';
 import { DfTable } from './namespace';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
+import Action from '../actions/action';
 
 const props = defineProps<{
   column: TableColumn,
@@ -140,6 +141,16 @@ function customClass(): string {
 }
 
 provide('payload', payload);
+
+function handleClick(event: any) {
+  callHandler(new Action({
+    name: 'select',
+    label: 'Select',
+    icon: 'thumbs-down-outline',
+    position: 'ROW_CLICK',
+  }));
+  callHandler(props.actions.rowClick, { column: props.column, event, rowType });
+}
 
 const columnsize = ref();
 const ordering = ref();

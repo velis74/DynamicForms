@@ -35,6 +35,7 @@ export namespace APIConsumer {
     responsive_table_layouts: DfTable.ResponsiveTableLayoutsDefinition;
     filter: unknown;
     record: FormPayloadJSON;
+    row_select: boolean;
   }
 
   export interface FormUXDefinition extends UXDefinition {

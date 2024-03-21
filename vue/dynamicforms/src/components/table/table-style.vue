@@ -42,6 +42,10 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
     cursor: pointer;
   }
 
+  #${uniqueId} .data-selected {
+    filter: brightness(90%);
+  }
+
   #${uniqueId} > .df-thead > .df-separator {
     margin-top: -.25em;
     margin-bottom: .25em; /* these margins ensure that the separator is closer to thead than to rows in tbody */
