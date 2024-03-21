@@ -20,7 +20,6 @@ class ValidatedSerializer(serializers.ModelSerializer):
     actions = Actions(add_default_crud=True, add_default_filter=False, add_form_buttons=True)
 
     item_type = fields.ChoiceField(choices=Validated.ItemTypeChoices.get_df_tuple())
-    row_select = True
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
