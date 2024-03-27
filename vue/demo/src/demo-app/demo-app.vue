@@ -1,6 +1,6 @@
 <template>
   <!-- @theme-changed="changeTheme"-->
-  <df-app
+  <vuetify-app
     :themes="themes"
     :examples="examples"
     :title="title"
@@ -8,7 +8,7 @@
     <template #main-component>
       <router-view @title-change="setTitle"/>
     </template>
-  </df-app>
+  </vuetify-app>
 </template>
 
 <script lang="ts">
@@ -20,8 +20,11 @@ import { defineComponent } from 'vue';
 
 import routes from '../routes';
 
+import VuetifyApp from './vuetify/vuetify-app.vue';
+
 export default /* #__PURE__ */ defineComponent({
   name: 'DemoApp',
+  components: { VuetifyApp },
   data: () => ({
     title: '',
     // eslint-disable-next-line max-len
@@ -44,7 +47,7 @@ export default /* #__PURE__ */ defineComponent({
   },
   */
   methods: {
-    setTitle(newTitle) {
+    setTitle(newTitle: string) {
       this.title = newTitle;
       document.title = `${newTitle} - DynamicForms`;
     },
