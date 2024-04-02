@@ -4,6 +4,7 @@ export { VAlert } from 'vuetify/components/VAlert';
 export { VBtn } from 'vuetify/components/VBtn';
 export { VCard, VCardTitle, VCardText, VCardActions } from 'vuetify/components/VCard';
 export { VCheckbox } from 'vuetify/components/VCheckbox';
+export { VColorPicker } from 'vuetify/components/VColorPicker';
 export { VDialog } from 'vuetify/components/VDialog';
 export { VContainer, VRow, VCol, VSpacer } from 'vuetify/components/VGrid';
 export { VInput } from 'vuetify/components/VInput';
