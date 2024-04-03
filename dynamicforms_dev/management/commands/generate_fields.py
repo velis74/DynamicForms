@@ -93,6 +93,10 @@ class RTFField(object):
     pass
 
 
+class ColorField(object):
+    pass
+
+
 def arepr(value):
     if isinstance(value, str) and value.startswith("%"):
         return value[1:]
@@ -139,7 +143,7 @@ class Command(BaseCommand):
                 ):
                     field_list.append(obj)
 
-            field_list.append(RTFField)
+            field_list += [RTFField, ColorField]
 
             # get all the field-specific mixins
             field_mixins = [f.__name__ + "Mixin" for f in field_list if f.__name__ + "Mixin" in mixins.__dict__]
@@ -399,16 +403,16 @@ class Command(BaseCommand):
                     hstore_field_indent = " " * 4
 
                 drf_class = field_class
-                if issubclass(field, RTFField):
+                if issubclass(field, RTFField) or issubclass(field, ColorField):
                     drf_class = fields.CharField.__name__  # noqa
                     field_module = "fields."  # noqa
 
                 # Print class declaration
                 print(hstore_field_wrapper, file=output, end="")
                 class_def = (
-                    "{hstore_field_indent}class {field_class}({additional_mixin}"
+                    f"{hstore_field_indent}class {field_class}({additional_mixin}"
                     + "FieldRenderMixin, ActionMixin, FieldHelpTextMixin, "
-                    + "ConditionalVisibilityMixin, {field_module}{drf_class}):"
+                    + f"ConditionalVisibilityMixin, {field_module}{drf_class}):"
                 )
                 class_def = textwrap.wrap(class_def, 120)
                 print(class_def[0], file=output)

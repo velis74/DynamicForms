@@ -10,6 +10,7 @@ import FormPayload from './definitions/form-payload';
 import DDateTime from './inputs/date-time.vue';
 import DCheckbox from './inputs/df-checkbox.vue';
 import DCKEditor from './inputs/df-ckeditor.vue';
+import DColor from './inputs/df-color.vue';
 import DFile from './inputs/df-file.vue';
 import DInput from './inputs/df-input.vue';
 import DList from './inputs/df-list.vue';
@@ -47,6 +48,7 @@ const fieldValue = computed({
 const components: { [key: string]: any } = {
   DCheckbox,
   DCKEditor,
+  DColor,
   DDateTime,
   DFile,
   DInput,
