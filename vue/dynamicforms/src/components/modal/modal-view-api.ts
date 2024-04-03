@@ -33,7 +33,7 @@ const dfModal = {
         props: { layout, payload, actions, errors },
       },
       actions.formFooter,
-      undefined,
+      { size: layout.size || DialogSize.DEFAULT },
       actionHandlers,
     );
   },
