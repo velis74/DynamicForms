@@ -193,7 +193,7 @@ async function queryOptions(query: string, query_field: string): Promise<void> {
   }
   loading.value = true;
   try {
-    let loadedData = (await apiClient.get(req, { headers })).data;
+    let loadedData = (await apiClient.get(req, { headers, showProgress: false })).data;
     if (Array.isArray(loadedData)) {
       // Pagination was not delivered. We got a plain array
       loadedData = { results: loadedData, next: null };
