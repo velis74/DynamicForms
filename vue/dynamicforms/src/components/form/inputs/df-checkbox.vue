@@ -1,6 +1,7 @@
 <template>
   <v-checkbox
     v-model="boolValue"
+    hide-details="auto"
     :indeterminate="indeterminate"
     :false-value="false"
     :true-value="true"

@@ -1,13 +1,14 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/xhtml">
   <v-text-field
     :id="field.uuid"
     v-model="value"
     :type="inputType"
     variant="underlined"
+    hide-details="auto"
     :class="field.renderParams.fieldCSSClass"
+    :density="baseBinds.label != null && baseBinds.label.length > 0 ? 'default' : 'compact'"
     :name="field.name"
     :placeholder="field.placeholder"
-
     :rules="rules"
     :step="field.renderParams.step"
     :size="field.renderParams.size"

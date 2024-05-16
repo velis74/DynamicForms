@@ -28,6 +28,7 @@ const rules = computed<((val: string) => boolean | string)[]>(() => ([
     v-model="value"
     type="text"
     variant="underlined"
+    hide-details="auto"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
     :placeholder="field.placeholder"

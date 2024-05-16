@@ -59,6 +59,10 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
     vertical-align: top;
   }
 
+  #${uniqueId} .df-thead .df-col {
+    padding: 0 .25em;
+  }
+
   #${uniqueId} .df-col {
     padding: .5em .25em;
   }

@@ -11,6 +11,7 @@
         v-model="value"
         :type="inputType"
         variant="underlined"
+        hide-details="auto"
         :class="field.renderParams.fieldCSSClass"
         :name="field.name"
         :placeholder="field.placeholder"

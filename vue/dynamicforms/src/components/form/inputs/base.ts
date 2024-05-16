@@ -49,5 +49,6 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     label,
     helpText,
     baseBinds,
+    'hide-details': 'auto',
   };
 }
