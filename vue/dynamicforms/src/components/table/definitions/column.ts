@@ -66,6 +66,9 @@ export default class TableColumn {
       case 'ipaddr':
         returnFunc = this.renderDecoratorIP;
         break;
+      case 'color':
+        returnFunc = this.renderDecoratorColor;
+        break;
         // TODO: DRF also formats simple lists, complex dicts / lists
         // TODO: DRF also parses ordinary strings to check if they contain \n (pre)
       default:
@@ -129,6 +132,15 @@ export default class TableColumn {
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   renderDecoratorPlain(rowData: any, thead: boolean) {
     return rowData[this.name];
+  }
+
+  renderDecoratorColor(rowData: any, thead: boolean) {
+    if (thead) {
+      return this.renderDecoratorPlain(rowData, thead);
+    }
+    return (
+      `<div style="display: inline-block; width: 1.25em; height: 1.25em; background-color: ${rowData[this.name]}"/>`
+    );
   }
 
   renderDecoratorBool(rowData: any, thead: boolean) {

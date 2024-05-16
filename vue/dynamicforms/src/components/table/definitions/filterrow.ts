@@ -4,6 +4,7 @@ import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
 import FormField from '../../form/definitions/field';
 import FormPayload from '../../form/definitions/form-payload';
+import FormLayout from '../../form/definitions/layout';
 import { DfForm } from '../../form/namespace';
 
 import TableColumn from './column';
@@ -48,6 +49,9 @@ export default class TableFilterRow {
       v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);
-    this.payload = FormPayload.create(record, { fields: this.columns, rows: [], fieldName: '', componentName: '' });
+    this.payload = FormPayload.create(
+      record,
+      new FormLayout({ fields: this.columns, rows: [], field_name: '', component_name: '' }),
+    );
   }
 }

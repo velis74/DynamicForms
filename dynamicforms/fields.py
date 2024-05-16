@@ -1564,4 +1564,7 @@ class ColorField(
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
         kwargs["render_params"] = kwargs.get("render_params", None) or {}
+        kwargs["render_params"].setdefault("form_component_name", "DColor")
+        kwargs["render_params"].setdefault("input_type", "text")
+        kwargs["render_params"].setdefault("table", "df-tablecell-color")
         super().__init__(**kwargs)
