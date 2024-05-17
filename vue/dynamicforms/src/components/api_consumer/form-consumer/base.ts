@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 
-import { IHandlers } from '../../actions/action-handler-composable';
 import FilteredActions from '../../actions/filtered-actions';
+import type { ActionsNS } from '../../actions/namespace';
 import { PrimaryKeyType } from '../../adapters/api/namespace';
 import { FormAdapter } from '../../adapters/namespace';
 import FormPayload from '../../form/definitions/form-payload';
@@ -11,6 +11,8 @@ import { gettext } from '../../util/translations-mixin';
 import { APIConsumer } from '../namespace';
 
 import { FormConsumerHooks, FormExecuteResult } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export default abstract class FormConsumerBase<T = any> {
   pkName: keyof T & string = <keyof T & string> 'id';

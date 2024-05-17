@@ -3,31 +3,18 @@ import { inject, provide } from 'vue';
 
 import Action, { getActionName } from './action';
 import FilteredActions from './filtered-actions';
+import type { ActionsNS } from './namespace';
 
-export type Handler = (...params: any[]) => Promise<boolean> | boolean;
-
-export interface IHandlers {
-  [key: string]: Handler;
-}
-
-export interface IActionHandler {
-  register: (actionName: string, handler: Handler) => this
-  call: (action: Action | FilteredActions, context?: any) => Promise<boolean>
-  recursiveCall: (
-    action: Action | FilteredActions, actionPayload: any, context?: any, f2L?: boolean
-  ) => Promise<boolean>
-}
-
-export interface ActionHandlerComposable {
-  registerHandler: (actionName: string, handler: Handler) => void
-  callHandler: (action: Action | FilteredActions, context?: any) => Promise<boolean>
-  handler: IActionHandler
-}
+type IHandlers = ActionsNS.IHandlers;
+type Handler = ActionsNS.Handler;
+type ActionHandlerComposable = ActionsNS.ActionHandlerComposable;
+type IActionHandler = ActionsNS.IActionHandler;
 
 class Handlers implements IHandlers {
   [key: string]: Handler;
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export function useActionHandler(payload?: any, firstToLast: boolean = true): ActionHandlerComposable {
   const parentHandler = inject<IActionHandler | undefined>('actionHandler', undefined);
   const internalPayload = payload ?? inject<any>('payload', {});

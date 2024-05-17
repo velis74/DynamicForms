@@ -1,9 +1,11 @@
-import { IHandlers } from '../../actions/action-handler-composable';
+import type { ActionsNS } from '../../actions/namespace';
 import DetailViewApi from '../../adapters/api/detail-view-api';
 import { DetailViewOptions } from '../../adapters/api/namespace';
 
 import FormConsumerBase from './base';
 import type { FormConsumerHooks } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 class FormConsumerApi<T = any> extends FormConsumerBase<T> {
   declare beforeDialog?: (consumer: FormConsumerApi, ...params: any[]) => any;

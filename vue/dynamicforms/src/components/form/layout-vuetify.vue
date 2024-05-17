@@ -1,12 +1,16 @@
 <script setup lang="ts">
+
 import { computed, ComputedRef, provide } from 'vue';
 
-import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
+import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 
 import FormPayload from './definitions/form-payload';
 import FormLayout from './definitions/layout';
 import FormRow from './row.vue';
+
+type IHandlers = ActionsNS.IHandlers;
 
 interface Props {
   layout: FormLayout

@@ -1,8 +1,10 @@
-import { IHandlers } from '../../../actions/action-handler-composable';
+import type { ActionsNS } from '../../../actions/namespace';
 import { DetailViewOptions } from '../../../adapters/api/namespace';
 import FormConsumerApi from '../api';
 
 import FormConsumerOneShotBase from './base';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export default async function FormConsumerOneShotApi<T extends object = any>(
   apiOptions: DetailViewOptions,

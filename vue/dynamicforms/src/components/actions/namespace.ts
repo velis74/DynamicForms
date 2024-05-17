@@ -5,6 +5,7 @@ import type TableColumn from '../table/definitions/column';
 import type RowTypes from '../table/definitions/row-types';
 
 import type Action from './action';
+import FilteredActions from './filtered-actions';
 
 export namespace ActionsNS {
 
@@ -62,5 +63,25 @@ export namespace ActionsNS {
 
   export interface ErrorsJSON {
     [key: string]: unknown; // TODO: we don't know yet what type this is
+  }
+
+  export type Handler = (...params: any[]) => Promise<boolean> | boolean;
+
+  export interface IHandlers {
+    [key: string]: Handler;
+  }
+
+  export interface IActionHandler {
+    register: (actionName: string, handler: Handler) => this
+    call: (action: Action | FilteredActions, context?: any) => Promise<boolean>
+    recursiveCall: (
+      action: Action | FilteredActions, actionPayload: any, context?: any, f2L?: boolean
+    ) => Promise<boolean>
+  }
+
+  export interface ActionHandlerComposable {
+    registerHandler: (actionName: string, handler: Handler) => void
+    callHandler: (action: Action | FilteredActions, context?: any) => Promise<boolean>
+    handler: IActionHandler
   }
 }

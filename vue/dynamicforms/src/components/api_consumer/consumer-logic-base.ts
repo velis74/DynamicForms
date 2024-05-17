@@ -1,8 +1,7 @@
 import _ from 'lodash';
 
-import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
-import { ActionsNS } from '../actions/namespace';
+import type { ActionsNS } from '../actions/namespace';
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
@@ -11,6 +10,8 @@ import TableRows from '../table/definitions/rows';
 import { DfTable } from '../table/namespace';
 
 import { APIConsumer } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterface {
   pkName: string;

@@ -2,9 +2,12 @@
 import { computed, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 
-import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
+import { useActionHandler } from '../actions/action-handler-composable';
+import type { ActionsNS } from '../actions/namespace';
 
 import DialogSize from './definitions/dialog-size';
+
+type IHandlers = ActionsNS.IHandlers;
 
 interface Props {
   show: boolean,

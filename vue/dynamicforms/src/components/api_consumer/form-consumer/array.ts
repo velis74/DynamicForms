@@ -1,8 +1,10 @@
-import { IHandlers } from '../../actions/action-handler-composable';
+import type { ActionsNS } from '../../actions/namespace';
 import InMemoryImplementation, { InMemoryParams } from '../../adapters';
 
 import FormConsumerBase from './base';
 import type { FormConsumerHooks } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export default class FormConsumerArray<T extends object = any> extends FormConsumerBase<T> {
   declare beforeDialog?: (instance: FormConsumerArray) => void;

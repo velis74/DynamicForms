@@ -3,23 +3,26 @@ import { reactive } from 'vue';
 
 import type { APIConsumer } from '../../api_consumer/namespace';
 import DisplayMode from '../../classes/display-mode';
+import type { DfForm } from '../namespace';
 
 import type FormField from './field';
 import type FormLayout from './layout';
+
+type FormLayoutJSON = DfForm.FormLayoutJSON;
 
 export default class FormPayload {
   [key: string]: any;
 
   ['$extra-data']: any;
 
-  private constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout) {
+  private constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON) {
     this.setData(data, layout);
   }
 
   static create(): FormPayload;
   static create(data: FormPayload): FormPayload;
-  static create(data: APIConsumer.FormPayloadJSON, layout?: FormLayout): FormPayload;
-  static create(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout): FormPayload {
+  static create(data: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload;
+  static create(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload {
     // Type assertion necessary to keep PyCharm from complaining about private functions
     return <FormPayload> reactive(new FormPayload(data, layout));
   }
@@ -35,7 +38,7 @@ export default class FormPayload {
     });
   }
 
-  setData(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout): FormPayload {
+  setData(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload {
     let properties = {} as { [key: string]: any };
     let extraData = {};
 

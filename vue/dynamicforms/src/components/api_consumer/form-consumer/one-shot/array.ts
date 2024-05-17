@@ -1,8 +1,10 @@
-import { IHandlers } from '../../../actions/action-handler-composable';
+import type { ActionsNS } from '../../../actions/namespace';
 import { InMemoryParams } from '../../../adapters';
 import FormConsumerArray from '../array';
 
 import FormConsumerOneShotBase from './base';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export default async function FormConsumerOneShotArray<T extends object = any>(
   params: InMemoryParams<T>,

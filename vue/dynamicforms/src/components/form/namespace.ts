@@ -83,5 +83,3 @@ export namespace DfForm {
     size?: string;
   }
 }
-
-export default DfForm;

@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import { defineComponent, h, resolveComponent, DefineComponent } from 'vue';
 
-import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 
 import { Dialogs } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 function processSlot(
   slot: string,

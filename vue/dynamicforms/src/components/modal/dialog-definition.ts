@@ -1,9 +1,11 @@
 import { Slot, VNode } from 'vue';
 
-import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 
 import { Dialogs } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 let idGenerator = 0;
 

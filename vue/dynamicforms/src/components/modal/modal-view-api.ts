@@ -1,6 +1,6 @@
 import Action, { defaultActionHandler, getActionName } from '../actions/action';
-import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 import { APIConsumer } from '../api_consumer/namespace';
 
 import DialogSize from './definitions/dialog-size';
@@ -8,6 +8,8 @@ import DialogDefinition from './dialog-definition';
 import { instances } from './modal-view';
 import dialogList from './modal-view-list';
 import { Dialogs } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 const defaultOptions = { size: DialogSize.DEFAULT };
 
