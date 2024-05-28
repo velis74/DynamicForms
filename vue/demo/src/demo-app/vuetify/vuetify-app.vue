@@ -4,7 +4,6 @@ import { ref } from 'vue';
 
 defineProps<{
   title: string,
-  themes: string[],
   examples: { title: string, path: string }[]
 }>();
 
@@ -32,7 +31,8 @@ const drawer = ref<boolean>(false);
 
       <v-spacer/>
 
-      <template #append>
+      <!-- leaving this for example on submenu declaration
+       template #append>
         <v-menu bottom right close-on-click offset-y>
           <template #activator="{ props }">
             <v-btn dark color="light" v-bind="props"><span>Theme</span></v-btn>
@@ -43,7 +43,7 @@ const drawer = ref<boolean>(false);
             </v-list-item>
           </v-list>
         </v-menu>
-      </template>
+      </template-->
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary>
