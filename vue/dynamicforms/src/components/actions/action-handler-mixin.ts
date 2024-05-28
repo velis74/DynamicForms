@@ -5,7 +5,7 @@ import FormPayload from '../form/definitions/form-payload';
 import Action, { getActionName } from './action';
 import ActionsMixin from './actions-mixin';
 import FilteredActions from './filtered-actions';
-import { ActionsNS } from './namespace';
+import type { ActionsNS } from './namespace';
 
 type ActionHandler = ActionsNS.ActionHandler;
 type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;

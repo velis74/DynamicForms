@@ -34,12 +34,24 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
     display: block;
     white-space: nowrap;
     background-color: white;
-    transition: filter 0.4s ease
+    transition: filter 0.4s ease;
+  }
+
+  #${uniqueId} .df-tbody .df-row {
+    border-bottom: 1px solid #ccc;
   }
 
   #${uniqueId} .data-row:hover {
     filter: brightness(95%);
     cursor: pointer;
+  }
+
+  #${uniqueId} .df-tbody .df-row:nth-child(even) {
+    background-color: #0000000c;
+  }
+
+  #${uniqueId} .df-tbody .df-row:nth-child(odd) {
+    background-color: #ffffff0c;
   }
 
   #${uniqueId} .data-selected {

@@ -1,7 +1,7 @@
 import type FormPayload from '../form/definitions/form-payload';
 
 import Action from './action';
-import { ActionsNS } from './namespace';
+import type { ActionsNS } from './namespace';
 
 type ActionCollection = { [key: string]: Action };
 

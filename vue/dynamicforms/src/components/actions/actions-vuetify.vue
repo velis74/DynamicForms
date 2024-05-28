@@ -38,6 +38,6 @@ export default /* #__PURE__ */ defineComponent({
 <style scoped>
 .action-icon {
   width:  1.5em;
-  height: 1.5em
+  height: 1.5em;
 }
 </style>

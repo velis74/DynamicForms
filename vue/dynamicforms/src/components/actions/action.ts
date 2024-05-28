@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import FormPayload from '../form/definitions/form-payload';
 
-import { ActionsNS } from './namespace';
+import type { ActionsNS } from './namespace';
 
 type ActionHandler = ActionsNS.ActionHandler;
 type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
