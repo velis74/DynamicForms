@@ -4,7 +4,6 @@ import FormPayload from '../form/definitions/form-payload';
 
 import type { ActionsNS } from './namespace';
 
-type ActionHandler = ActionsNS.ActionHandler;
 type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
 type ActionJSON = ActionsNS.ActionJSON;
 type BreakpointJSON = ActionsNS.BreakpointJSON;

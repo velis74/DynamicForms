@@ -66,7 +66,7 @@
     "@vue/tsconfig": "^0.5.1",
     "axios-mock-adapter": "^1.22.0",
     "cache-loader": "^4.1.0",
-    "eslint-config-velis": "^1.1.16",
+    "eslint-config-velis": "^1.2.0",
     "flush-promises": "^1.0.2",
     "jsdom": "^22.0.0",
     "np": "^7.7.0",
