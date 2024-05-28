@@ -1,7 +1,7 @@
 {
   "name": "@velis/dynamicforms",
   "private": false,
-  "version": "0.75.6",
+  "version": "0.75.25",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
   "files": [
@@ -36,8 +36,9 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@kyvg/vue3-notification": "^2.9.1",
+    "@velis/ckeditor-dist": "^1.0.0",
     "axios": "^1.4.0",
     "bootstrap": "<5.0.0",
     "bootstrap-vue": "^2.21.2",
@@ -72,6 +73,7 @@
     "sass": "^1",
     "typescript": "^5",
     "vite": "^5.1.2",
+    "vite-plugin-dts": "^2.3.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vuetify": "^2.0.1",
     "vitest": "^1.2.2",

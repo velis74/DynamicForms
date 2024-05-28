@@ -8,7 +8,8 @@
 import { computed, watch } from 'vue';
 
 import Action from '../actions/action';
-import { IHandlers, useActionHandler } from '../actions/action-handler-composable';
+import { useActionHandler } from '../actions/action-handler-composable';
+import type { ActionsNS } from '../actions/namespace';
 import FormPayload from '../form/definitions/form-payload';
 import dfModal from '../modal/modal-view-api';
 import TableColumn from '../table/definitions/column';
@@ -19,6 +20,8 @@ import ComponentDisplay from './component-display';
 import ConsumerLogicBase from './consumer-logic-base';
 import FormConsumerBase from './form-consumer/base';
 import { APIConsumer } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 /**
  * Object containing the properties required to render at least one of the display components
@@ -129,8 +132,9 @@ const actionCancel = async (): Promise<boolean> => {
 const actionSubmit = async (): Promise<boolean> => {
   try {
     await (<FormConsumerBase> props.consumer).save();
+    (<FormConsumerBase> props.consumer).withErrors({});
   } catch (err: any) {
-    (<FormConsumerBase> props.consumer).errors = { ...err?.response?.data };
+    (<FormConsumerBase> props.consumer).withErrors({ ...err?.response?.data });
     return true;
   }
   await (<FormConsumerBase> props.consumer).getUXDefinition();

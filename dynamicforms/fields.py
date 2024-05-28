@@ -11,6 +11,7 @@ from .action import Actions
 from .mixins import (
     ActionMixin,
     ChoiceMixin,
+    ColorFieldMixin,
     ConditionalVisibilityMixin,
     DateFieldMixin,
     DateTimeFieldMixin,
@@ -1256,6 +1257,8 @@ class StringRelatedField(
         placeholder: Optional[str] = None,
         additional_parameters: Optional[Dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         actions: Actions = None,
         conditional_visibility: "Statement" = None,
         uuid: UUID = None,
@@ -1303,6 +1306,8 @@ class PrimaryKeyRelatedField(
         placeholder: Optional[str] = None,
         additional_parameters: Optional[Dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         actions: Actions = None,
         conditional_visibility: "Statement" = None,
         uuid: UUID = None,
@@ -1351,6 +1356,8 @@ class HyperlinkedRelatedField(
         placeholder: Optional[str] = None,
         additional_parameters: Optional[Dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         actions: Actions = None,
         conditional_visibility: "Statement" = None,
         uuid: UUID = None,
@@ -1399,6 +1406,8 @@ class HyperlinkedIdentityField(
         placeholder: Optional[str] = None,
         additional_parameters: Optional[Dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         actions: Actions = None,
         conditional_visibility: "Statement" = None,
         uuid: UUID = None,
@@ -1447,6 +1456,8 @@ class SlugRelatedField(
         placeholder: Optional[str] = None,
         additional_parameters: Optional[Dict] = None,
         query_field: str = "query",
+        value_field: str = "choice_id",
+        text_field: str = "choice_text",
         actions: Actions = None,
         conditional_visibility: "Statement" = None,
         uuid: UUID = None,
@@ -1531,4 +1542,29 @@ class RTFField(
         kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
         kwargs.update(kw)
         kwargs["render_params"] = kwargs.get("render_params", None) or {}
+        super().__init__(**kwargs)
+
+
+class ColorField(
+    ColorFieldMixin, FieldRenderMixin, ActionMixin, FieldHelpTextMixin, ConditionalVisibilityMixin, fields.CharField
+):
+    def __init__(
+        self,
+        actions: Actions = None,
+        conditional_visibility: "Statement" = None,
+        uuid: UUID = None,
+        display: DisplayMode = None,
+        display_table: DisplayMode = None,
+        display_form: DisplayMode = None,
+        table_classes: str = "",
+        alignment: FieldAlignment = FieldAlignment.LEFT,
+        render_params: Optional[Dict] = None,
+        **kw,
+    ):
+        kwargs = {k: v for k, v in locals().items() if not k.startswith(("__", "self", "kw"))}
+        kwargs.update(kw)
+        kwargs["render_params"] = kwargs.get("render_params", None) or {}
+        kwargs["render_params"].setdefault("form_component_name", "DColor")
+        kwargs["render_params"].setdefault("input_type", "text")
+        kwargs["render_params"].setdefault("table", "df-tablecell-color")
         super().__init__(**kwargs)

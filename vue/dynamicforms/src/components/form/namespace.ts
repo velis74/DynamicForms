@@ -80,7 +80,6 @@ export namespace DfForm {
     component_name: string;
     fields: FormLayoutFieldsCollection;
     rows: FormLayoutRowJSON[];
+    size?: string;
   }
 }
-
-export default DfForm;

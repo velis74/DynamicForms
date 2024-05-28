@@ -1,7 +1,3 @@
-// import FilteredActions from '../actions/filtered-actions';
-// import TableColumns from '../table/definitions/columns';
-
-import { IHandlers } from '../actions/action-handler-composable';
 import type FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
@@ -35,6 +31,7 @@ export namespace APIConsumer {
     responsive_table_layouts: DfTable.ResponsiveTableLayoutsDefinition;
     filter: unknown;
     record: FormPayloadJSON;
+    row_select: boolean;
   }
 
   export interface FormUXDefinition extends UXDefinition {
@@ -51,13 +48,13 @@ export namespace APIConsumer {
     payload: FormPayload,
     loading: boolean,
     actions: FilteredActions,
-    actionHandlers?: IHandlers,
+    actionHandlers?: ActionsNS.IHandlers,
     errors: ActionsNS.ErrorsJSON,
   };
 
   export interface ConsumerLogicBaseInterface {
     pkName: string;
-    setDialogHandlers(handlers?: IHandlers): void;
+    setDialogHandlers(handlers?: ActionsNS.IHandlers): void;
     setOrdering(parameter: string, style: any | null, counter: number): void;
     reload(filter: boolean): Promise<void>;
     deleteRow(tableRow: FormPayload): Promise<void>;

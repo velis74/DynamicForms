@@ -47,13 +47,13 @@ function calculateVisibility(payload: FormPayload, statement: Statement): boolea
     case Operator.GT:
       return fieldValue > compareValue;
     case Operator.IN:
-      return compareValue.includes(fieldValue);
+      return compareValue?.includes?.(fieldValue) ?? false;
     case Operator.NOT_IN:
-      return !compareValue.includes(fieldValue);
+      return !(compareValue?.includes?.(fieldValue) ?? true);
     case Operator.INCLUDES:
-      return fieldValue.includes(compareValue);
+      return fieldValue?.includes?.(compareValue) ?? false;
     case Operator.NOT_INCLUDES:
-      return !fieldValue.includes(compareValue);
+      return !(fieldValue?.includes?.(compareValue) ?? true);
     default:
       throw new Error(`Not implemented operator ${operator}`);
     }

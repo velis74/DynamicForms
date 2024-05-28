@@ -5,6 +5,7 @@ from rest_framework.fields import Field as DRFField
 
 from .action import ActionMixin
 from .choice import ChoiceMixin
+from .color_field import ColorFieldMixin
 from .conditional_visibility import ConditionalVisibilityMixin, F, FieldType, S, Statement
 from .enable_copy import EnableCopyMixin
 from .field_render import DisplayMode, FieldAlignment, FieldRenderMixin

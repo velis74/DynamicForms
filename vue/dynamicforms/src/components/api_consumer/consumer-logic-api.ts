@@ -1,8 +1,9 @@
-import { RawAxiosRequestHeaders } from 'axios';
+import { AxiosError, RawAxiosRequestHeaders } from 'axios';
 import { Ref } from 'vue';
 
 import { ViewSetApi } from '../adapters/api';
 import FormPayload from '../form/definitions/form-payload';
+import { showNotificationFromAxiosException } from '../notifications';
 import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
@@ -131,8 +132,16 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
 
   async deleteRow(tableRow: FormPayload) {
     const pkValue = tableRow[this.pkName];
-    await this.api.delete(pkValue);
-    this.rows.deleteRow(pkValue);
+    try {
+      await this.api.delete(pkValue);
+      this.rows.deleteRow(pkValue);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        showNotificationFromAxiosException(e);
+      } else {
+        console.error('Unexpected error', e);
+      }
+    }
   }
 
   async dialogForm(

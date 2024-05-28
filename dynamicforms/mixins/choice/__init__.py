@@ -15,6 +15,10 @@ class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
         kwargs["choices"] = [choice[:2] for choice in choices]
         self.choice_icons = {choice[0]: choice[2] for choice in choices if len(choice) > 2}
         super().__init__(*args, **kwargs)
+        if len(choices) > 100:
+            from dynamicforms.utils import print_field_declaration_line
+            print_field_declaration_line()
+
 
     def as_component_def(self) -> dict:
         try:

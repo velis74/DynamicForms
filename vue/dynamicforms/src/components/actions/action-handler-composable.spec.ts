@@ -54,7 +54,7 @@ const actionComponent = defineComponent({
 // eslint-disable-next-line vue/one-component-per-file
 const levelOneAction = defineComponent({
   setup() {
-    const { handler } = useActionHandler(false);
+    const { handler } = useActionHandler(undefined, false);
     return { handler };
   },
   mounted() {

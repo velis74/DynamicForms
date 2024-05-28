@@ -1,4 +1,4 @@
-import { ActionsNS } from '../../actions/namespace';
+import type { ActionsNS } from '../../actions/namespace';
 import DialogDefinition from '../../modal/dialog-definition';
 
 export interface FormResult {

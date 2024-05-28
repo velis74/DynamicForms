@@ -34,7 +34,9 @@ async function setViewPortSize(newWidth: number, newHeight?: number) {
   if (window == null) return;
 
   // Set the viewport width and height
+  // noinspection JSConstantReassignment
   window.innerWidth = newWidth || 1024;
+  // noinspection JSConstantReassignment
   window.innerHeight = newHeight || 1024;
 
   // Create and dispatch a new resize event
@@ -263,26 +265,29 @@ describe('vuetify-actions action rendering', () => {
   it('checks if add action is correctly rendered', async () => {
     await setViewPortSize(1024); // ensure md or up so that the label is drawn
     const htmlCode = mountComponent();
-    expect(htmlCode.match(/<span>Add<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).toBeNull();
   });
 
   it('checks if edit action is correctly rendered', async () => {
     const htmlCode = mountComponent();
-    expect(htmlCode.match(/<span>Edit<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="edit-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Edit<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="edit-outline"><\/div>/g))
+      .not.toBeNull();
   });
 
   it('checks if delete action is correctly rendered', async () => {
     const htmlCode = mountComponent();
-    expect(htmlCode.match(/<span>Delete<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="trash-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Delete<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="trash-outline"><\/div>/g))
+      .not.toBeNull();
   });
 
   it('checks if filter action is correctly rendered', async () => {
     const htmlCode = mountComponent();
-    expect(htmlCode.match(/<span>Filter<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="filter-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Filter<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="filter-outline"><\/div>/g))
+      .not.toBeNull();
   });
 });
 
@@ -316,8 +321,10 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, true, true);
       // preveriš, če se je v add knofu pokazala ikona IN labela
-      const iconIsThere = (htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g));
-      const labelIsThere = (htmlCode.match(/<span>Add<\/span>/g));
+      const iconIsThere = (htmlCode.match(
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+      ));
+      const labelIsThere = (htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g));
       expect(iconIsThere).not.toBeNull();
       expect(labelIsThere).not.toBeNull();
     },
@@ -328,7 +335,9 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, false, true);
       // preveriš, če se je v add knofu pokazala samo ikona
-      const iconIsThere = (htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g));
+      const iconIsThere = (htmlCode.match(
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+      ));
       expect(iconIsThere).not.toBeNull();
     },
   );
@@ -338,7 +347,7 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, true, false);
       // preveriš, če se je v add knofu pokazala samo labela
-      const labelIsThere = (htmlCode.match(/<span>Add<\/span>/g));
+      const labelIsThere = (htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g));
       expect(labelIsThere).not.toBeNull();
     },
   );
@@ -347,9 +356,11 @@ describe('Check if visibility flags work as expected', () => {
     'checks that - on delete label text - only icon is shown (because label is not available)',
     async () => {
       const htmlCode = await constructTest(true, true, true, true);
-      const iconIsThere = htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g);
+      const iconIsThere = htmlCode.match(
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+      );
       expect(iconIsThere).not.toBeNull();
-      expect(htmlCode.match(/<span>add<\/span>/g)).toBeNull();
+      expect(htmlCode.match(/<span(\sdata-v-\w+="")?>add<\/span>/g)).toBeNull();
     },
   );
 
@@ -358,9 +369,11 @@ describe('Check if visibility flags work as expected', () => {
     'and no label, that\'s all that\'s left)',
     async () => {
       const htmlCode = await constructTest(true, true, false, true);
-      const iconIsThere = htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g);
+      const iconIsThere = htmlCode.match(
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+      );
       expect(iconIsThere).toBeNull();
-      expect(htmlCode.match(/<span>add<\/span>/g)).not.toBeNull();
+      expect(htmlCode.match(/<span(\sdata-v-\w+="")?>add<\/span>/g)).not.toBeNull();
     },
   );
 });
@@ -385,8 +398,9 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.display;
     expect(breakpoints.xs).toBe(true);
-    expect(htmlCode.match(/<span>Add<\/span>/g)).toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+      .not.toBeNull();
   });
 
   it('checks if md breakpoint renders correctly', async () => {
@@ -395,8 +409,9 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.display;
     expect(breakpoints.md).toBe(true);
-    expect(htmlCode.match(/<span>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+      .toBeNull();
   });
 
   it('checks if lg breakpoint renders correctly', async () => {
@@ -405,8 +420,9 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.display;
     expect(breakpoints.lg).toBe(true);
-    expect(htmlCode.match(/<span>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+      .not.toBeNull();
   });
 
   it('checks if xl breakpoint renders correctly', async () => {
@@ -415,7 +431,8 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
     const breakpoints = component.vm.$vuetify.display;
     expect(breakpoints.xl).toBe(true);
-    expect(htmlCode.match(/<span>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).not.toBeNull();
+    expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+      .not.toBeNull();
   });
 });

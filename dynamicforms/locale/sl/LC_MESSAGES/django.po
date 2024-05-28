@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-20 13:48+0000\n"
+"POT-Creation-Date: 2024-02-27 08:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,54 +19,53 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
 "n%100==4 ? 2 : 3);\n"
 
-#: dynamicforms/action.py:390
+#: dynamicforms/action.py:287
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: dynamicforms/action.py:391
+#: dynamicforms/action.py:288
 msgid "Save changes"
 msgstr "Shrani"
 
-#: dynamicforms/action.py:508
+#: dynamicforms/action.py:359
 msgid "Add"
 msgstr "Dodaj"
 
-#: dynamicforms/action.py:508
+#: dynamicforms/action.py:359
 msgid "Add new record"
 msgstr "Dodaj nov zapis"
 
-#: dynamicforms/action.py:513
+#: dynamicforms/action.py:364
 msgid "Edit"
 msgstr "Uredi"
 
-#: dynamicforms/action.py:513
+#: dynamicforms/action.py:364
 msgid "Edit record"
 msgstr "Uredi zapis"
 
-#: dynamicforms/action.py:519
+#: dynamicforms/action.py:370
 msgid "Delete"
 msgstr "Briši"
 
-#: dynamicforms/action.py:520
+#: dynamicforms/action.py:371
 msgid "Delete record"
 msgstr "Briši zapis"
 
-#: dynamicforms/action.py:525
+#: dynamicforms/action.py:376
 msgid "Sort"
 msgstr "Sortiraj"
 
-#: dynamicforms/action.py:525
+#: dynamicforms/action.py:376
 msgid "Sort by column"
 msgstr "Uredi po stolpcu"
 
-#: dynamicforms/action.py:529
+#: dynamicforms/action.py:380
 msgid "Filter"
 msgstr "Filtriraj"
 
-#: dynamicforms/settings.py:108
-msgid "Performing operation..."
-msgstr "Izvajam obdelavo..."
-
-#: dynamicforms/template_render/mixins/serializer_render_fields.py:33
+#: dynamicforms/template_render/mixins/serializer_render_fields.py:34
 msgid "Actions"
 msgstr "Akcije"
+
+#~ msgid "Performing operation..."
+#~ msgstr "Izvajam obdelavo..."

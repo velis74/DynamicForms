@@ -48,6 +48,6 @@ export default class TableFilterRow {
       v.formFieldInstance = new FormField(fieldPayload);
     });
     this.columns = new IndexedArray(filteredCols);
-    this.payload = FormPayload.create(record, { fields: this.columns, rows: [], fieldName: '', componentName: '' });
+    this.payload = FormPayload.create(record, { fields: this.columns, rows: [], field_name: '', component_name: '' });
   }
 }

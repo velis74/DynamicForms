@@ -1,5 +1,7 @@
-import { IHandlers } from '../../actions/action-handler-composable';
+import { reactive } from 'vue';
+
 import FilteredActions from '../../actions/filtered-actions';
+import type { ActionsNS } from '../../actions/namespace';
 import { PrimaryKeyType } from '../../adapters/api/namespace';
 import { FormAdapter } from '../../adapters/namespace';
 import FormPayload from '../../form/definitions/form-payload';
@@ -9,6 +11,8 @@ import { gettext } from '../../util/translations-mixin';
 import { APIConsumer } from '../namespace';
 
 import { FormConsumerHooks, FormExecuteResult } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export default abstract class FormConsumerBase<T = any> {
   pkName: keyof T & string = <keyof T & string> 'id';
@@ -25,7 +29,7 @@ export default abstract class FormConsumerBase<T = any> {
 
   loading: boolean = false;
 
-  errors: any = {};
+  errors: any = reactive({});
 
   actionHandlers?: IHandlers;
 
@@ -66,13 +70,14 @@ export default abstract class FormConsumerBase<T = any> {
     };
   }
 
-  withErrors = (errors: any) => {
-    this.errors = errors;
+  withErrors(errors: any) {
+    Object.keys(this.errors).forEach((key) => delete this.errors[key]);
+    Object.assign(this.errors, errors);
     return this;
-  };
+  }
 
-  execute = async (defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> => {
-    const definition = await this.getUXDefinition();
+  async execute(defaultData?: Partial<T> | null): Promise<FormExecuteResult<T>> {
+    const definition = this.definition;
     if (defaultData) {
       Object.assign(definition.payload, defaultData);
       this.data = definition.payload;
@@ -88,22 +93,22 @@ export default abstract class FormConsumerBase<T = any> {
       data: <Partial<T>> <unknown> this.data!,
       action: resultAction,
     };
-  };
+  }
 
-  delete = async (): Promise<T> => {
+  async delete(): Promise<T> {
     if (this.pkValue !== undefined && this.pkValue !== 'new') return this.api.delete();
     // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw ({ response: { data: { detail: gettext('Cannot delete new record.') } } });
-  };
+  }
 
-  save = async (): Promise<T> => {
+  async save(): Promise<T> {
     if (this.pkValue !== 'new' && !!this.pkValue) return this.api.update(<T> this.data);
     return this.api.create(<T> this.data);
-  };
+  }
 
-  getRecord = async (): Promise<APIConsumer.FormPayloadJSON> => this.api.retrieve() as APIConsumer.FormPayloadJSON;
+  async getRecord(): Promise<APIConsumer.FormPayloadJSON> { return this.api.retrieve() as APIConsumer.FormPayloadJSON; }
 
-  getUXDefinition = async () => {
+  async getUXDefinition() {
     if (!this.layout) {
       this.ux_def = await this.api.componentDefinition();
       this.pkName = <keyof T & string> this.ux_def.primary_key_name;
@@ -116,5 +121,5 @@ export default abstract class FormConsumerBase<T = any> {
     this.actions = new FilteredActions(this.ux_def.actions);
 
     return this.definition;
-  };
+  }
 }

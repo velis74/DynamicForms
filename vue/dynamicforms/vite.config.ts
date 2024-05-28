@@ -27,6 +27,7 @@ export default defineConfig({
     },
     extensions: [
       '.js',
+      '.mjs',
       '.ts',
       '.vue',
       '.json',
@@ -43,11 +44,11 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@ckeditor/ckeditor5-vue',
+        '@velis/ckeditor-dist',
         'axios',
         'bootstrap',
         'bootstrap-vue',
-        '@ckeditor/ckeditor5-vue',
-        '@ckeditor/ckeditor5-build-classic',
         'lodash',
         'vue',
         'vue-ionicon',

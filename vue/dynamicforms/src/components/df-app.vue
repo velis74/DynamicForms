@@ -1,10 +1,11 @@
+<script setup lang="ts">
+import AppNotification from './notifications/df-notifications.vue';
+</script>
+
 <template>
   <div>
+    <app-notification/>
     <ModalView/>
-    <slot name="main-component"/>
+    <slot/>
   </div>
 </template>
-
-<script setup lang="ts">
-
-</script>

@@ -14,7 +14,8 @@ namespace DialogSize {
   const smallIdentifiers: string[] = ['small', 'sm', 'modal-sm'];
   const xLargeIdentifiers: string[] = ['x-large', 'xl', 'modal-xl'];
 
-  export function fromString(size: string): DialogSize {
+  export function fromString(size?: string): DialogSize {
+    if (size === undefined) return defaultDialogSize;
     if (largeIdentifiers.includes(size)) return DialogSize.LARGE;
     if (mediumIdentifiers.includes(size)) return DialogSize.MEDIUM;
     if (smallIdentifiers.includes(size)) return DialogSize.SMALL;

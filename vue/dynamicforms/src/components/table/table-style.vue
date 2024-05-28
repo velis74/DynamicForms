@@ -34,12 +34,28 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
     display: block;
     white-space: nowrap;
     background-color: white;
-    transition: filter 0.4s ease
+    transition: filter 0.4s ease;
+  }
+
+  #${uniqueId} .df-tbody .df-row {
+    border-bottom: 1px solid #ccc;
   }
 
   #${uniqueId} .data-row:hover {
     filter: brightness(95%);
     cursor: pointer;
+  }
+
+  #${uniqueId} .df-tbody .df-row:nth-child(even) {
+    background-color: #0000000c;
+  }
+
+  #${uniqueId} .df-tbody .df-row:nth-child(odd) {
+    background-color: #ffffff0c;
+  }
+
+  #${uniqueId} .data-selected {
+    filter: brightness(90%);
   }
 
   #${uniqueId} > .df-thead > .df-separator {
@@ -53,6 +69,10 @@ function generateStyle(uniqueId: string, responsiveColumns: IndexedArray<TableCo
     white-space: nowrap;
     display: inline-block;
     vertical-align: top;
+  }
+
+  #${uniqueId} .df-thead .df-col {
+    padding: 0 .25em;
   }
 
   #${uniqueId} .df-col {

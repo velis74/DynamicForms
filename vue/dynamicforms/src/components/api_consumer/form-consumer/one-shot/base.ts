@@ -5,8 +5,9 @@ export default async function FormConsumerOneShotBase<T extends object>(
 ): Promise<T | undefined> {
   let error = {};
   let result: T | undefined;
-
   let data: Partial<T> | undefined;
+
+  await formConsumer.getUXDefinition();
 
   do {
     // eslint-disable-next-line no-await-in-loop

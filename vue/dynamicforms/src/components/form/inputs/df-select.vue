@@ -35,18 +35,20 @@
       @close="multiSelectClose"
     >
       <template #singleLabel="singleLabelProps">
-        <span v-if="singleLabelProps.option.icon">
-          <IonIcon class="action-icon" :name="singleLabelProps.option.icon"/>
-        </span>
-        <span v-else>
+        <div class="d-flex align-center">
+          <span v-if="singleLabelProps.option.icon" class="me-1">
+            <IonIcon class="action-icon d-inline-block" :name="singleLabelProps.option.icon"/>
+          </span>
           {{ singleLabelProps.option.text }}
-        </span>
+        </div>
       </template>
       <template #option="optionProps">
-        <span v-if="optionProps.option.icon">
-          <IonIcon class="action-icon" :name="optionProps.option.icon"/>
-        </span>
-        {{ optionProps.option.text }}
+        <div class="d-flex align-center">
+          <span v-if="optionProps.option.icon" class="me-1" style="max-height: 2em">
+            <IonIcon class="action-icon d-inline-block" :name="optionProps.option.icon"/>
+          </span>
+          {{ optionProps.option.text }}
+        </div>
       </template>
     </Multiselect>
     <div id="spacer-div" :style="`width:0px; height: ${minHeight}px; margin-top: ${dropdownTop}px`">&nbsp;</div>
@@ -69,12 +71,14 @@ import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
+
 const props = defineProps<Props>();
 
 // emits
 interface Emits extends BaseEmits {
-   (e: 'update:modelValueDisplay', value: any): any
+  (e: 'update:modelValueDisplay', value: any): any;
 }
+
 const emits = defineEmits<Emits>();
 
 const { value, baseBinds } = useInputBase(props, emits);
@@ -189,7 +193,7 @@ async function queryOptions(query: string, query_field: string): Promise<void> {
   }
   loading.value = true;
   try {
-    let loadedData = (await apiClient.get(req, { headers })).data;
+    let loadedData = (await apiClient.get(req, { headers, showProgress: false })).data;
     if (Array.isArray(loadedData)) {
       // Pagination was not delivered. We got a plain array
       loadedData = { results: loadedData, next: null };

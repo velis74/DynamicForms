@@ -30,6 +30,9 @@ class NaturalDateTimeMixin(object):
         if value is None:
             return super().render_to_table(value, row_data)
 
+        if hasattr(self, "enforce_timezone"):
+            value = self.enforce_timezone(value)
+
         if (output_format := getattr(self, "table_format", None)) is not None:
             if re.match(r"%N:\d+", output_format):
                 imported = False

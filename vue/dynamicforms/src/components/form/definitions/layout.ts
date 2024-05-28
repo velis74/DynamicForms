@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import DialogSize from '../../modal/definitions/dialog-size';
 import { DfForm } from '../namespace';
 
 import FormField from './field';
@@ -104,10 +105,13 @@ class FormLayout {
 
   public fieldName!: string;
 
+  public size!: DialogSize;
+
   constructor(layout?: DfForm.FormLayoutJSON) {
     if (layout === undefined) {
       this.fields = {};
       this.rows = [];
+      Object.defineProperty(this, 'size', { get() { return DialogSize.DEFAULT; }, enumerable: true });
     } else {
       this.fields = {};
       this.rows = layout.rows.map((row) => new LayoutRow(row, this.fields, layout.fields));
@@ -118,6 +122,7 @@ class FormLayout {
       Object.defineProperty(this, 'componentName', { get() { return layout.component_name; }, enumerable: true });
       // TODO field_name is not implemented yet on the backend
       Object.defineProperty(this, 'fieldName', { get() { return layout.field_name; }, enumerable: true });
+      Object.defineProperty(this, 'size', { get() { return DialogSize.fromString(layout.size); }, enumerable: true });
     }
   }
 }

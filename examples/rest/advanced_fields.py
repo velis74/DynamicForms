@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from dynamicforms import fields, serializers
+from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 from ..models import AdvancedFields, Relation
 from .fields.df_file_field import DfFileField, DfPreloadedFileField
@@ -100,6 +101,7 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdvancedFields
+        layout = Layout(size="md")
         exclude = ("image_field", "hyperlinked_identity_field")
 
     def create(self, validated_data):

@@ -376,7 +376,7 @@ class ExtendTemplateNode(template.Node):
     def get_all_blocks(self, nodelist):
         blocks = []
         for node in [node for node in nodelist if isinstance(node, BlockNode)]:
-            blocks.extend(node)
+            blocks.append(node)
             blocks.extend(self.get_all_blocks(node.nodelist))
         return blocks
 

@@ -4,6 +4,8 @@ import DialogDefinition from '../modal/dialog-definition';
 import dfModal from '../modal/modal-view-api';
 import { Dialogs } from '../modal/namespace';
 
+import { gettext } from './translations-mixin';
+
 const SHOW_DIALOG_AFTER_MS = 250;
 const emptyPromise = new Promise<any>(() => {});
 
@@ -107,7 +109,7 @@ class RequestTracker {
       `Showing progress: We have ${this.loading()} active requests to server oldest is ` +
       `${this.oldestActiveRequest().age}ms old with timestamp ${this.oldestActiveRequest().timestamp}.`,
     );
-    const title = 'Performing operation';
+    const title = gettext('Performing operation');
     this.dialogPromise = dfModal.message(
       title,
       { componentName: 'LoadingIndicator', props: { loading: true, label: null, progress: null } },

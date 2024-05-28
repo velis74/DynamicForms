@@ -51,7 +51,6 @@ describe('TableRows', () => {
 
     // Trigger loading more rows
     await tableRows.loadMoreRows(true);
-
   });
 
   it('should update rows correctly', () => {

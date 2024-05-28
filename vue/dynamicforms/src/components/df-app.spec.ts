@@ -15,7 +15,7 @@ describe('DfApp.vue', () => {
     const wrapper = mount(DfApp, {
       // You can customize props or provide slots as needed for your test
       // For example, you might use slots to provide content for the named slot
-      slots: { 'main-component': '<div class="mock-main-component">Main Component Content</div>' },
+      slots: { default: '<div class="mock-main-component">Main Component Content</div>' },
       global: { plugins: [df] },
     });
 
@@ -31,7 +31,7 @@ describe('DfApp.vue', () => {
   it('renders additional component in the main component slot', () => {
     // Mount your component with a different slot content
     const wrapper = mount(DfApp, {
-      slots: { 'main-component': '<div class="another-component">Another Component Content</div>' },
+      slots: { default: '<div class="another-component">Another Component Content</div>' },
       global: { plugins: [df] },
     });
 

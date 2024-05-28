@@ -1,3 +1,17 @@
+<script setup lang="ts">
+import { DfApp } from 'dynamicforms';
+import { ref } from 'vue';
+
+defineProps<{
+  title: string,
+  examples: { title: string, path: string }[]
+}>();
+
+defineEmits(['theme-changed']);
+
+const drawer = ref<boolean>(false);
+</script>
+
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
@@ -17,10 +31,11 @@
 
       <v-spacer/>
 
-      <template #append>
+      <!-- leaving this for example on submenu declaration
+       template #append>
         <v-menu bottom right close-on-click offset-y>
           <template #activator="{ props }">
-            <v-btn dark text color="light" v-bind="props"><span>Theme</span></v-btn>
+            <v-btn dark color="light" v-bind="props"><span>Theme</span></v-btn>
           </template>
           <v-list>
             <v-list-item v-for="theme in themes" :key="theme" @click="$emit('theme-changed', theme)">
@@ -28,7 +43,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      </template>
+      </template-->
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary>
@@ -40,23 +55,9 @@
     </v-navigation-drawer>
 
     <v-main>
-      <ModalView/>
-      <slot name="main-component"/>
+      <df-app>
+        <slot name="main-component"/>
+      </df-app>
     </v-main>
   </v-app>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default /* #__PURE__ */ defineComponent({
-  name: 'VuetifyApp',
-  props: {
-    title: { type: String, required: true },
-    themes: { type: Array, required: true },
-    examples: { type: Array, required: true },
-  },
-  emits: ['theme-changed'],
-  data: () => ({ drawer: false }),
-});
-</script>

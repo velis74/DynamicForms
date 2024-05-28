@@ -1,8 +1,7 @@
 import _ from 'lodash';
 
-import { IHandlers } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
-import { ActionsNS } from '../actions/namespace';
+import type { ActionsNS } from '../actions/namespace';
 import FormPayload from '../form/definitions/form-payload';
 import FormLayout from '../form/definitions/layout';
 import TableColumns from '../table/definitions/columns';
@@ -11,6 +10,8 @@ import TableRows from '../table/definitions/rows';
 import { DfTable } from '../table/namespace';
 
 import { APIConsumer } from './namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterface {
   pkName: string;
@@ -50,6 +51,8 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
   protected titles: APIConsumer.Titles;
 
   protected dialogHandlers?: IHandlers;
+
+  protected rowSelect: boolean = false;
 
   protected constructor() {
     /**
@@ -96,6 +99,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
       loading: this.loading,
       actions: this.actions,
       filterDefinition: this.filterDefinition,
+      rowSelect: this.rowSelect,
     };
   }
 
@@ -118,6 +122,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     UXDefinition.columns.forEach((column) => {
       this.fields[column.name] = column;
     });
+    this.rowSelect = UXDefinition.row_select;
     this.tableColumns = new TableColumns(UXDefinition.columns.map((col: any) => col.name), this.fields);
     this.rows.replaceRows(UXDefinition.rows);
 

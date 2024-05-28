@@ -18,9 +18,9 @@ export class ColumnGroupRow {
   constructor(fieldsDef: string | string[], renderedColumns: IndexedArray<TableColumn>) {
     const fields = Array.isArray(fieldsDef) ? fieldsDef : [fieldsDef];
     this.fields = fields.map((field: string) => {
-      const column = renderedColumns[field];
+      const column = renderedColumns[field] ?? renderedColumns[`${field}-display`];
       if (column === undefined) {
-        console.error(`Column ${field} does not exist`, renderedColumns);
+        console.error(`Column ${field} (or its "-display" variant) does not exist`, renderedColumns);
         return null;
       }
       return column;
@@ -72,9 +72,14 @@ export class ResponsiveLayout implements DfTable.ResponsiveLayoutInterface {
     const columnsDef = Array.isArray(definition) ? definition : (definition.columns || []);
     this.columns = new IndexedArray<TableColumn>([]);
     columnsDef.forEach((column: string[]) => {
-      this.columns.push(
-        column.length === 1 ? renderedColumns[column[0]] : new ColumnGroup(this, column, renderedColumns),
-      );
+      if (column.length === 1) {
+        const col = renderedColumns[column[0]] ?? renderedColumns[`${column[0]}-display`];
+        if (col === undefined) {
+          console.error(`Column ${column[0]} (or its "-display" variant) does not exist`, renderedColumns);
+        } else this.columns.push(col);
+      } else {
+        this.columns.push(new ColumnGroup(this, column, renderedColumns));
+      }
     });
     this.rows = Math.max(1, ...this.columns.map(
       (col: TableColumn | ColumnGroup) => (col instanceof ColumnGroup ? col.rows.length : 1),
