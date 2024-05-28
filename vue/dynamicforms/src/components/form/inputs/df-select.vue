@@ -20,7 +20,7 @@
       :disabled="disabled"
       :multiple="multiple"
       :taggable="taggable"
-      :aria-describedby="field.helpText && showLabelOrHelpText ? field.name + '-help' : null"
+      :aria-describedby="field.helpText && showLabelOrHelpText ? `${field.name}-help` : null"
       :placeholder="field.placeholder"
 
       :options-limit="limit"
