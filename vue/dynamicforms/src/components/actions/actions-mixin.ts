@@ -37,10 +37,10 @@ export default /* #__PURE__ */ defineComponent({
       const dp = useDisplay();
       const getStyle = (s: BreakpointJSON | undefined) => (s && s[attribute] !== undefined ? s[attribute] : style);
       // see also action.ts about these breakpoints
-      if (dp.xlAndUp) style = getStyle(displayStyle.xl);
-      if (style == null && dp.lgAndUp) style = getStyle(displayStyle.lg);
-      if (style == null && dp.mdAndUp) style = getStyle(displayStyle.md);
-      if (style == null && dp.smAndUp) style = getStyle(displayStyle.sm);
+      if (dp.xlAndUp.value) style = getStyle(displayStyle.xl);
+      if (style == null && dp.lgAndUp.value) style = getStyle(displayStyle.lg);
+      if (style == null && dp.mdAndUp.value) style = getStyle(displayStyle.md);
+      if (style == null && dp.smAndUp.value) style = getStyle(displayStyle.sm);
       if (style == null) {
         style = getStyle(displayStyle); // first we try to get base style
         style = getStyle(displayStyle.xs); // then xs, if it exists. xs will overwrite the base declaration

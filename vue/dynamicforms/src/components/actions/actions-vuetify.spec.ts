@@ -34,7 +34,9 @@ async function setViewPortSize(newWidth: number, newHeight?: number) {
   if (window == null) return;
 
   // Set the viewport width and height
+  // noinspection JSConstantReassignment
   window.innerWidth = newWidth || 1024;
+  // noinspection JSConstantReassignment
   window.innerHeight = newHeight || 1024;
 
   // Create and dispatch a new resize event
