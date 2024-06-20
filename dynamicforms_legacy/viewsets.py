@@ -125,6 +125,14 @@ class TemplateRendererMixin:
         #  As a consequence, form values don't get parsed until you actually call super().initialize_request
         #  There's no "request.data", etc. Just saying. So you don't debug for two hours next time. By "you" I mean me
 
+        if not callable(getattr(request, "is_ajax", None)):
+            # There isn't is_ajax function for request class in Django 4 anymore.
+            # So we just add it manually
+            def is_ajax(_self) -> bool:
+                return _self.headers.get("x-requested-with") == "XMLHttpRequest"
+
+            request.is_ajax = is_ajax.__get__(request)
+
         # Force render using a given render path (full page, table, table rows, form, dialog with form)
         self.render_type = request.META.get("HTTP_X_DF_RENDER_TYPE", request.GET.get("df_render_type", "page"))
 
