@@ -11,7 +11,8 @@
 .tox
 rest_framework
 db.sqlite3
-/doc/_build/
+/docs/_build/
+/docs/.vitepress/cache/**/*
 /geckodriver.log
 venv/
 .venv/

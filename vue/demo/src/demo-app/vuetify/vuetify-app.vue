@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { DfApp } from 'dynamicforms';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 defineProps<{
   title: string,
   examples: { title: string, path: string }[]
 }>();
+
+const showTitlebar = computed(() => !(route.meta.fullscreen === true || route.meta.hideTitlebar === true));
+const showNavbar = computed(() => !(route.meta.fullscreen === true || route.meta.hideNavbar === true));
 
 defineEmits(['theme-changed']);
 
@@ -14,7 +20,7 @@ const drawer = ref<boolean>(false);
 
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar v-if="showTitlebar" app color="primary" dark>
       <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"/>
 
       <div class="d-flex align-center">
@@ -46,7 +52,7 @@ const drawer = ref<boolean>(false);
       </template-->
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" temporary>
+    <v-navigation-drawer v-if="showNavbar" v-model="drawer" temporary>
       <v-list nav>
         <v-list-item v-for="example in examples" :key="example.title" :to="example.path">
           <v-list-item-title>{{ example.title }}</v-list-item-title>

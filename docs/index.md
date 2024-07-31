@@ -1,15 +1,26 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+title: DynamicForms
+titleTemplate: Django DRF REST to HTML forms, tables and dialogs
 
 hero:
   name: "DynamicForms"
   text: "Developers handbook"
-  tagline: The greatest library
+  tagline: Django DRF REST to HTML forms, tables and dialogs
   actions:
     - theme: alt
       text: Getting started
       link: /getting-started
+    - theme: alt
+      text: Settings
+      link: /settings
+#    - theme: brand
+#      text: Markdown Examples
+#      link: /markdown-examples
+#    - theme: alt
+#      text: API Examples
+#      link: /api-examples
 
 features:
   - title: HTML forms
