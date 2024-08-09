@@ -21,11 +21,13 @@ declare module 'axios' {
 
 export function dataWithResponse(response: AxiosResponse<any, any>) {
   const res = response.data;
-  Object.defineProperty(
-    res,
-    '$response-object',
-    { get() { return response; }, enumerable: false, configurable: false },
-  );
+  if (res) {
+    Object.defineProperty(
+      res,
+      '$response-object',
+      { get() { return response; }, enumerable: false, configurable: false },
+    );
+  }
   return res;
 }
 
