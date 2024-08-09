@@ -36,17 +36,9 @@ jobs:
           pip install versio
           pip install tox
 
-#      - name: Run Tox py-django22
-#        if: success() || failure()
-#        run: tox -e py-django22-drf310,py-django22-drf311,py-django22-drf312,py-django22-drftip
-
-#      - name: Run Tox py-django30
-#        if: success() || failure()
-#        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
-
       - name: Run Tox py-django3
         if: (success() || failure())
-        run: tox -e py-django32-drf314,py-django32-drftip
+        run: tox -e py-django32-drf314
 
       - name: Run Tox py-django4
         if: (success() || failure())
