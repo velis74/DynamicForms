@@ -38,6 +38,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2015',
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['umd', 'es'],
@@ -58,7 +59,6 @@ export default defineConfig({
         'vuetify'
       ],
       output: {
-        sourcemap: true,
         globals: (id: string) => id, // all external modules are currently not aliased to anything but their own names
       }
     }

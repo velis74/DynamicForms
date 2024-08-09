@@ -44,13 +44,13 @@ jobs:
 #        if: success() || failure()
 #        run: tox -e py-django30-drf310,py-django30-drf311,py-django30-drf312,py-django30-drftip
 
-      - name: Run Tox py-django31
+      - name: Run Tox py-django3
         if: (success() || failure())
-        run: tox -e py-django31-drf314,py-django31-drftip
+        run: tox -e py-django32-drf314,py-django32-drftip
 
       - name: Run Tox py-django4
         if: (success() || failure())
-        run: tox -e py-django40-drf314,py-django40-drftip
+        run: tox -e py-django42-drf314,py-django42-drftip
 
       - name: Run Tox py-djangotip-drftip
         if: (success() || failure())

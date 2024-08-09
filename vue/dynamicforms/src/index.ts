@@ -13,7 +13,7 @@ import DialogSize from './components/modal/definitions/dialog-size';
 import dfModal from './components/modal/modal-view-api';
 import AppNotification from './components/notifications/df-notifications.vue';
 import RowTypes from './components/table/definitions/row-types';
-import TcolumnGeneric from './components/table/tcolumn-generic.vue';
+import TColumnGeneric from './components/table/tcolumn-generic.vue';
 import apiClient from './components/util/api-client';
 import { gettext, interpolate } from './components/util/translations-mixin';
 import * as DfVuetifyComponents from './components/vuetify';
@@ -71,7 +71,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
       throw new TypeError(`UI "${ui}" is not a valid option. Valid options are [${uiOptions.join(' ')}].`);
     }
     // common global components
-    app.component(TcolumnGeneric.name, TcolumnGeneric);
+    app.component(TColumnGeneric.name!, TColumnGeneric);
   };
 
   return {
