@@ -9,12 +9,12 @@
     "dist/*",
     "src/vue.d.ts"
   ],
-  "main": "dist/dynamicforms.umd.js",
+  "main": "dist/dynamicforms.umd.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/dynamicforms.umd.js",
-      "import": "./dist/dynamicforms.mjs"
+      "require": "./dist/dynamicforms.umd.cjs",
+      "import": "./dist/dynamicforms.js"
     },
     "./styles.css": "./dist/style.css"
   },
