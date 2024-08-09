@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import DisplayMode from '../../classes/display-mode';
 import DialogSize from '../../modal/definitions/dialog-size';
 import { DfForm } from '../namespace';
 
@@ -34,7 +35,28 @@ export class Group extends Column {
   public layout!: FormLayout;
 
   constructor(layoutRow: LayoutRow, def: DfForm.FormLayoutRowsColumnJSON, fieldDef: DfForm.FormFieldJSON) {
-    super(layoutRow, fieldDef);
+    if (fieldDef == null) {
+      const fd: DfForm.FormFieldJSON = {
+        uuid: crypto.randomUUID(),
+        name: null,
+        label: '',
+        placeholder: '',
+        alignment: 'left',
+        visibility: { form: DisplayMode.FULL, table: DisplayMode.SUPPRESS },
+        render_params: {
+          input_type: '',
+          form_component_name: 'df-form-layout',
+        },
+        read_only: true,
+        choices: [],
+        width_classes: '',
+        help_text: '',
+        allow_null: false,
+      };
+      super(layoutRow, fd);
+    } else {
+      super(layoutRow, fieldDef);
+    }
     Object.defineProperty(this, 'layoutFieldComponentName', {
       get() { return 'FormFieldGroup'; },
       enumerable: true,

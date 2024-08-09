@@ -32,7 +32,9 @@ export default defineConfig({
           text: 'Reference',
           items: appendBasePath('reference', [
             { text: 'Index', link: 'index' },
-            { text: 'Hiding titlebar & Navbar', link: 'hiding_titlebar_and_navbar' }
+            { text: 'Hiding titlebar & Navbar', link: 'hiding_titlebar_and_navbar' },
+            { text: 'Dialog size', link: 'dialog-size' },
+            { text: 'Form layout', link: 'layout' }
           ])
         }]
     },

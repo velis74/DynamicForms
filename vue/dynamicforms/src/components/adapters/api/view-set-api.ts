@@ -2,7 +2,7 @@ import { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { computed, isRef, ref, Ref } from 'vue';
 
 import { APIConsumer } from '../../api_consumer/namespace';
-import apiClient from '../../util/api-client';
+import apiClient, { dataWithResponse } from '../../util/api-client';
 
 import { IViewSetApi, PrimaryKeyType } from './namespace';
 
@@ -45,23 +45,24 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
     )).data
   );
 
-  list = async (config?: AxiosRequestConfig): Promise<T[]> => (
-    (await apiClient.get(this.compose_url(this.baseUrl.value), { headers: this.headers, ...config })).data
-  );
+  list = async (config?: AxiosRequestConfig): Promise<T[]> => {
+    const res = await apiClient.get(this.compose_url(this.baseUrl.value), { headers: this.headers, ...config });
+    return { ...res.data, '$response-object': res };
+  };
 
   retrieve = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.get(this.compose_url(this.data_url(this.detail_url(pk))), config)).data
+    dataWithResponse(await apiClient.get(this.compose_url(this.data_url(this.detail_url(pk))), config))
   );
 
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.post(this.compose_url(this.baseUrl.value), data, config)).data
+    dataWithResponse(await apiClient.post(this.compose_url(this.baseUrl.value), data, config))
   );
 
   update = async (pk: PrimaryKeyType, data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.put(this.compose_url(this.detail_url(pk)), data, config)).data
+    dataWithResponse(await apiClient.put(this.compose_url(this.detail_url(pk)), data, config))
   );
 
   delete = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.delete(this.compose_url(this.detail_url(pk)), config)).data
+    dataWithResponse(await apiClient.delete(this.compose_url(this.detail_url(pk)), config))
   );
 }

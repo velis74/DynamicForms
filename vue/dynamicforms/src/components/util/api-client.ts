@@ -1,4 +1,4 @@
-import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
+import axios, { AxiosProgressEvent, AxiosRequestConfig, AxiosResponse } from 'axios';
 import _ from 'lodash';
 
 import requestTracker from './request-tracker';
@@ -17,6 +17,16 @@ declare module 'axios' {
     showProgress?: boolean;
     sequence?: number;
   }
+}
+
+export function dataWithResponse(response: AxiosResponse<any, any>) {
+  const res = response.data;
+  Object.defineProperty(
+    res,
+    '$response-object',
+    { get() { return response; }, enumerable: false, configurable: false },
+  );
+  return res;
 }
 
 apiClient.interceptors.request.use((config) => {

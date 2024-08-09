@@ -6,6 +6,7 @@
           {{ field.title }}
         </span>
         <v-switch
+          v-if="props.field.name"
           v-model="use"
           class="float-right"
           color="primary"
@@ -54,21 +55,26 @@ const props = withDefaults(
 
 const payload = inject<Ref<FormPayload>>('payload', ref({}) as Ref<FormPayload>);
 const use = ref(false);
+let formPayload = ref<FormPayload>();
 
 const columnClasses = computed(
   () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
 );
 
-use.value = !(payload.value[props.field.name] == null);
-const formPayload = ref(FormPayload.create(payload.value[props.field.name] ?? {}, props.field.layout));
-const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
+if (props.field.name == null) {
+  use.value = true;
+  formPayload = payload; // eslint-disable-line
+} else {
+  use.value = !(payload.value[props.field.name] == null);
+  formPayload.value = FormPayload.create(payload.value[props.field.name] ?? {}, props.field.layout);
+  const self = getCurrentInstance()?.proxy as ComponentPublicInstance;
+  watch(use, (value) => { payload.value[props.field.name] = value ? formPayload.value : undefined; });
+  watch(formPayload, (newValue: Object, oldValue: Object) => {
+    payload.value[props.field.name] = use.value ? { ...newValue } : undefined;
 
-watch(use, (value) => { payload.value[props.field.name] = value ? formPayload.value : undefined; });
-watch(formPayload, (newValue: Object, oldValue: Object) => {
-  payload.value[props.field.name] = use.value ? { ...newValue } : undefined;
-
-  dispatchAction(self, props.actions.valueChanged, { field: props.field.name, oldValue, newValue });
-}, { deep: true });
+    dispatchAction(self, props.actions.valueChanged, { field: props.field.name, oldValue, newValue });
+  }, { deep: true });
+}
 </script>
 
 <style>

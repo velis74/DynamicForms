@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 import { computed, isRef, MaybeRef, ref, Ref, unref } from 'vue';
 
 import { APIConsumer } from '../../api_consumer/namespace';
-import apiClient from '../../util/api-client';
+import apiClient, { dataWithResponse } from '../../util/api-client';
 
 import {
   IDetailViewApi,
@@ -90,7 +90,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   retrieve = async (config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.get(this.compose_url(this.data_url, this.useQueryInRetrieveOnly), config)).data
+    dataWithResponse(await apiClient.get(this.compose_url(this.data_url, this.useQueryInRetrieveOnly), config))
   );
 
   /**
@@ -98,7 +98,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   create = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.post(this.compose_url(this.baseUrl.value, false), data, config)).data
+    dataWithResponse(await apiClient.post(this.compose_url(this.baseUrl.value, false), data, config))
   );
 
   /**
@@ -106,7 +106,7 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   update = async (data: T, config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.put(this.compose_url(this.detail_url, false), data, config)).data
+    dataWithResponse(await apiClient.put(this.compose_url(this.detail_url, false), data, config))
   );
 
   /**
@@ -114,6 +114,6 @@ export default class DetailViewApi<T = any> implements IDetailViewApi<T> {
    * @throws {AxiosError} Throws an error if the request fails.
    */
   delete = async (config?: AxiosRequestConfig): Promise<T> => (
-    (await apiClient.delete(this.compose_url(this.detail_url, false), config)).data
+    dataWithResponse(await apiClient.delete(this.compose_url(this.detail_url, false), config))
   );
 }

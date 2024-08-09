@@ -4,6 +4,7 @@ import ModalDemo from './demo-app/modal-demo.vue';
 import NamedComponentLoader from './demo-app/named-component-loader.vue';
 import DfCalendar from './demo-app/vuetify/df-calendar.vue';
 import FormConsumer from './demo-app/vuetify/form-consumer.vue';
+import SingleDialog from './demo-app/vuetify/single-dialog.vue';
 
 const EmptyComponent = { render() { return null; } };
 
@@ -49,6 +50,13 @@ export default [
     component: NamedComponentLoader,
     props: { componentName: 'DfViewMode', componentProps: {} },
     meta: { title: 'The three view-modes' },
+  },
+  {
+    name: 'Form layout',
+    path: '/single-dialog',
+    component: SingleDialog,
+    props: { },
+    meta: { title: 'Form layout' },
   },
   {
     name: 'Calendar Example',

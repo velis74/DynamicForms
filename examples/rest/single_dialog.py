@@ -5,22 +5,25 @@ from rest_framework.renderers import JSONRenderer
 
 from dynamicforms import fields, serializers, viewsets
 from dynamicforms.action import Actions, FormButtonAction, FormButtonTypes
+from dynamicforms.mixins import DisplayMode
 from dynamicforms.progress import get_progress_key, set_progress_comment, set_progress_value
+from dynamicforms.template_render.layout import Layout, Row, Column, Group
+
+
+class AddressSerializer(serializers.Serializer):
+    street = fields.CharField(max_length=100)
+    city = fields.CharField(max_length=50)
+    country = fields.CharField(max_length=50)
 
 
 class SingleDialogSerializer(serializers.Serializer):
-    template_context = dict(url_reverse="single-dialog", dialog_classes="modal-lg", dialog_header_classes="bg-info")
+    template_context = dict(url_reverse="single-dialog", size="large")
     form_titles = {
         "table": "",
-        "new": "Choose a value",
+        "new": "Create a travel plan",
         "edit": "",
     }
-    form_template = "examples/single_dialog.html"
-
-    test = fields.ChoiceField(
-        label="What should we say?",
-        choices=(("Today is sunny", "Today is sunny"), ("Never-ending rain", "Never-ending rain")),
-    )
+    show_filter = False
 
     actions = Actions(
         FormButtonAction(FormButtonTypes.CANCEL, name="cancel"),
@@ -29,20 +32,59 @@ class SingleDialogSerializer(serializers.Serializer):
         add_form_buttons=False,
     )
 
+    download = fields.IntegerField(max_value=1, default=0, display_form=DisplayMode.HIDDEN)
+    name = fields.CharField(max_length=100, label="Your Name")
+    email = fields.EmailField(label="Email Address")
+    travel_type = fields.ChoiceField(
+        label="Type of Travel",
+        choices=(("Business", "Business"), ("Leisure", "Leisure"), ("Adventure", "Adventure")),
+    )
+    destination = fields.CharField(max_length=100, label="Destination")
+    start_date = fields.DateField(label="Start Date")
+    end_date = fields.DateField(label="End Date")
+    address = AddressSerializer(label="Contact Address")
+
+    class Meta:
+        layout = Layout(
+            Row('name', 'email'),
+            Row('travel_type'),
+            Row(Group(
+                None, title="Trip Details", sub_layout=Layout(
+                    Row('destination'),
+                    Row('start_date', 'end_date'),
+                    auto_add_fields=False,
+                )
+            )),
+            Row(Group('address', title="Contact Address")),
+        )
+
 
 class SingleDialogViewSet(viewsets.SingleRecordViewSet):
     serializer_class = SingleDialogSerializer
 
     def new_object(self):
-        return dict(test=None)
+        return dict(
+            name=None,
+            email=None,
+            travel_type=None,
+            destination=None,
+            start_date=None,
+            end_date=None,
+            address=dict(street=None, city=None, country=None)
+        )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if request.data.get("download", "") == "1":
-            res = HttpResponse(serializer.data["test"].encode("utf-8"), content_type="text/plain; charset=UTF-8")
-            res["Content-Disposition"] = "attachment; filename={}".format("justsaying.txt")
+        data = serializer.data
+        if str(request.data.get("download", "")) == "1":
+            itinerary = f"Travel Itinerary for {data['name']}\n\n"
+            itinerary += f"Destination: {data['destination']}\n"
+            itinerary += f"Travel Type: {data['travel_type']}\n"
+            itinerary += f"Date: {data['start_date']} to {data['end_date']}\n"
+            res = HttpResponse(itinerary.encode("utf-8"), content_type="text/plain; charset=UTF-8")
+            res["Content-Disposition"] = "attachment; filename={}".format("travel_itinerary.txt")
             return res
 
         progress_key = get_progress_key(request)
@@ -51,4 +93,4 @@ class SingleDialogViewSet(viewsets.SingleRecordViewSet):
             set_progress_value(progress_key, (i + 1) * 10)
             time.sleep(0.5)
 
-        return HttpResponse(JSONRenderer().render(serializer.data), content_type="application/json")
+        return HttpResponse(JSONRenderer().render(data), content_type="application/json")

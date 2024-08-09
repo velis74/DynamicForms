@@ -19,7 +19,7 @@ export namespace DfForm {
 
   export interface FormFieldJSON {
     uuid: string;
-    name: string;
+    name: string | null;
     label: string;
     placeholder: string;
     alignment: 'left' | 'right' | 'center' | 'decimal';
@@ -27,11 +27,11 @@ export namespace DfForm {
     render_params: DfForm.RenderParamsJSON;
     read_only: true | any; // boolean
     choices: ChoicesJSON[];
-    ajax: AJAXJSON;
+    ajax?: AJAXJSON;
     width_classes: string; // bootstrap column width classes TODO: should be changed to something platform agnostic
     help_text: string;
     allow_null: boolean;
-    conditional_visibility: DfForm.StatementJSON;
+    conditional_visibility?: DfForm.StatementJSON;
   }
 
   export interface FormFieldsJSON {

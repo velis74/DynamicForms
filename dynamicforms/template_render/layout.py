@@ -1,3 +1,5 @@
+import uuid
+
 from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
 from rest_framework.serializers import Serializer as DRFSerializer
@@ -32,22 +34,29 @@ class Column(object):
             self.field = Field(field)
         elif isinstance(field, Field):
             self.field = field
+        elif field is None and isinstance(self, Group):
+            # a Group might not have a field attached to it
+            self.field = field
         else:
             raise NotImplementedError(f"Unknown field type {field.__class__.__name__}")
         self.width_classes = width_classes or ""
+        # TODO: It was a lot more useful when bootstrap was the front-end framework and this basically allowed to
+        #  specify how big a column was to be used. Needs to change to support the Vue / Vuetify components and
+        #  their props now. task: https://app.clickup.com/t/86bzw1k8f
 
     def _get_laid_fields(self):
-        return {self.field.field_name}
+        return {self.field.field_name} if self.field is not None else set()
 
     def as_component_def(self, serializer: "Serializer", fields: Dict) -> Dict:
-        res = dict(type="column", field=self.field.as_component_def(serializer, fields))
+        fld_def = self.field.as_component_def(serializer, fields) if self.field is not None else dict()
+        res = dict(type="column", field=fld_def)
         if self.width_classes:
             res["width_classes"] = self.width_classes
         return res
 
 
 class Row(object):
-    def __init__(self, *columns, component: str = None):
+    def __init__(self, *columns: Union[Column, Field, str], component: str = None):
         self.component = component or "FormRow"
         self.columns: List[Column] = []
         for column in columns:
@@ -77,6 +86,7 @@ class Layout(object):
         columns: int = 1,
         size: str = "",
         header_classes: str = "",
+        auto_add_fields: bool = True,
     ):
         """
         Creates layout definition
@@ -90,6 +100,7 @@ class Layout(object):
         self.size = size
         self.header_classes = header_classes
         self.component_name = component_name
+        self.auto_add_fields = auto_add_fields
 
     def _get_laid_fields(self):
         return set().union(*(row._get_laid_fields() for row in self.rows))
@@ -105,28 +116,30 @@ class Layout(object):
         if self.header_classes:
             res["header_classes"] = self.header_classes
 
-        # add any non-declared fields and append them to the end of the layout
-        # if no layout is specified in serializer Meta, this will generate default single-column layout
-        default_layout = Layout()
-        row = []
-        row_num = 0
-        for field_name, field in serializer.fields.items():
-            if field_name not in used_fields and field.display_form != DisplayMode.SUPPRESS:
-                used_fields.add(field_name)
-                row.append(
-                    Group(field_name)  # nested Serializer or ListSerializer
-                    if isinstance(field, DRFSerializer)
-                    else field_name  # "just" a standard field
-                )
-                if field.display_form == DisplayMode.FULL:
-                    row_num += 1
-                if row_num >= self.columns:
-                    default_layout.rows.append(Row(*row))
-                    row, row_num = [], 0
-        if row:
-            default_layout.rows.append(Row(*row))
-        if default_layout.rows:
-            res["rows"] += default_layout.as_component_def(serializer, fields, used_fields)["rows"]
+        if self.auto_add_fields:
+            # add any non-declared fields and append them to the end of the layout
+            # if no layout is specified in serializer Meta, this will generate default single-column layout
+            default_layout = Layout()
+            row = []
+            row_num = 0
+            for field_name, field in serializer.fields.items():
+                if field_name not in used_fields and field.display_form != DisplayMode.SUPPRESS:
+                    used_fields.add(field_name)
+                    row.append(
+                        Group(field_name)  # nested Serializer or ListSerializer
+                        if isinstance(field, DRFSerializer)
+                        else field_name  # "just" a standard field
+                    )
+                    if field.display_form == DisplayMode.FULL:
+                        row_num += 1
+                    if row_num >= self.columns:
+                        default_layout.rows.append(Row(*row))
+                        row, row_num = [], 0
+            if row:
+                default_layout.rows.append(Row(*row))
+            if default_layout.rows:
+                res["rows"] += default_layout.as_component_def(serializer, fields, used_fields)["rows"]
+
         res["component_name"] = self.component_name
         return res
 
@@ -145,15 +158,21 @@ class Group(Column):
         self.layout = sub_layout
         self.footer = footer
 
+    def _get_laid_fields(self):
+        if self.field is None:
+            return self.layout._get_laid_fields()
+        return super()._get_laid_fields()
+
     def as_component_def(self, serializer: "Serializer", fields: Dict) -> Dict:
         res = super().as_component_def(serializer, fields)
-        sub_serializer = self.field.field_def(serializer)  # type: Serializer
+        assert self.field or self.layout
+        sub_serializer = self.field.field_def(serializer) if self.field else None  # type: Serializer
         layout = self.layout or sub_serializer.layout
         res.update(
             type="group",
             footer=self.footer,
             title=self.title or sub_serializer.label,
-            uuid=sub_serializer.uuid,
-            layout=layout.as_component_def(sub_serializer),
+            uuid=sub_serializer.uuid if sub_serializer else uuid.uuid4(),
+            layout=layout.as_component_def(sub_serializer if sub_serializer else serializer),
         )
         return res
