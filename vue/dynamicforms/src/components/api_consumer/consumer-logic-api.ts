@@ -11,13 +11,13 @@ import FormConsumerOneShotApi from './form-consumer/one-shot/api';
 import type { APIConsumer } from './namespace';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
-  private readonly trailingSlash: boolean;
+  protected readonly trailingSlash: boolean;
 
-  private readonly baseUrl: string | Ref<string>;
+  protected readonly baseUrl: string | Ref<string>;
 
-  private readonly api: ViewSetApi<any>;
+  protected readonly api: ViewSetApi<any>;
 
-  private requestId: number = 0;
+  protected requestId: number = 0;
 
   constructor(baseURL: string | Ref<string>, trailingSlash: boolean = true) {
     super();

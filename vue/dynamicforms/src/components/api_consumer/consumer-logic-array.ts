@@ -12,9 +12,9 @@ import FormConsumerOneShotArray from './form-consumer/one-shot/array';
 import { APIConsumer } from './namespace';
 
 class ConsumerLogicArray extends ConsumerLogicBase implements APIConsumer.ConsumerLogicArrayInterface {
-  private readonly records: any[];
+  protected readonly records: any[];
 
-  private readonly default_record: APIConsumer.FormPayloadJSON | null;
+  protected readonly default_record: APIConsumer.FormPayloadJSON | null;
 
   constructor(UXDefinition: APIConsumer.TableUXDefinition, records: any[]) {
     super();
