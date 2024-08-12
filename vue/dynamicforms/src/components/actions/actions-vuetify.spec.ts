@@ -1,14 +1,104 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import _ from 'lodash';
+import _, { merge } from 'lodash';
 import { vi } from 'vitest';
-import { nextTick } from 'vue';
-import { createVuetify } from 'vuetify';
+import { createVuetify, useDisplay, Ref } from 'vuetify';
 
 import * as VuetifyComponents from '../vuetify';
 
 import Action, { defaultActionHandler } from './action';
 import VuetifyActions from './actions-vuetify.vue';
 import FilteredActions from './filtered-actions';
+
+type DisplayMock = {
+  [K in keyof ReturnType<typeof useDisplay>]: Ref<ReturnType<typeof useDisplay>[K]>;
+};
+
+const defaultUseDisplayMock: DisplayMock = {
+  xs: { value: false },
+  sm: { value: false },
+  md: { value: false },
+  lg: { value: false },
+  xl: { value: false },
+  xxl: { value: false },
+  smAndDown: { value: false },
+  smAndUp: { value: false },
+  mdAndDown: { value: false },
+  mdAndUp: { value: false },
+  lgAndDown: { value: false },
+  lgAndUp: { value: false },
+  xlAndDown: { value: false },
+  xlAndUp: { value: false },
+  mobile: { value: false },
+  mobileBreakpoint: { value: 'lg' },
+  // Current breakpoint name
+  name: { value: '' },
+  height: { value: 0 },
+  width: { value: 0 },
+  // Platform
+  platform: {
+    value: {
+      android: false,
+      ios: false,
+      cordova: false,
+      electron: false,
+      chrome: false,
+      edge: false,
+      firefox: false,
+      opera: false,
+      win: false,
+      mac: false,
+      linux: false,
+      touch: false,
+      ssr: false,
+    },
+  },
+  // Thresholds
+  thresholds: { value: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 } },
+  displayClasses: { value: '' },
+  ssr: { value: false },
+  update: undefined,
+};
+
+vi.mock('vuetify', async () => {
+  const actual = await vi.importActual('vuetify');
+  return {
+    ...actual,
+    useDisplay: vi.fn(() => (defaultUseDisplayMock)),
+  };
+});
+
+function generateDisplayMock(breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') {
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
+  const currentIndex = breakpoints.indexOf(breakpoint);
+
+  if (currentIndex === -1) {
+    throw new Error(`Invalid breakpoint: ${breakpoint}`);
+  }
+
+  const mockOverrides: Partial<typeof defaultUseDisplayMock> = {
+    [breakpoint]: { value: true },
+    name: { value: breakpoint },
+    mobile: { value: currentIndex <= breakpoints.indexOf('sm') },
+  };
+
+  // Set *AndUp properties
+  for (let i = 0; i <= currentIndex; i++) {
+    if (i > 0) { // 'xs' doesn't have an 'AndUp' property
+      mockOverrides[`${breakpoints[i]}AndUp` as keyof typeof defaultUseDisplayMock] = { value: true };
+    }
+  }
+
+  // Set *AndDown properties
+  for (let i = currentIndex; i < breakpoints.length - 1; i++) {
+    mockOverrides[`${breakpoints[i]}AndDown` as keyof typeof defaultUseDisplayMock] = { value: true };
+  }
+
+  return merge({}, defaultUseDisplayMock, mockOverrides);
+}
+
+function mockDisplayBreakpoint(breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') {
+  vi.mocked(useDisplay).mockReturnValue(generateDisplayMock(breakpoint));
+}
 
 const fieldName = 'field-name';
 const actionDefinitions = {
@@ -26,29 +116,6 @@ const actionDefinitions = {
 
 const filteredActions = new FilteredActions(actionDefinitions);
 const vuetify = createVuetify();
-
-async function setViewPortSize(newWidth: number, newHeight?: number) {
-  const window = document.defaultView;
-
-  expect(window).not.toBeNull();
-  if (window == null) return;
-
-  // Set the viewport width and height
-  // noinspection JSConstantReassignment
-  window.innerWidth = newWidth || 1024;
-  // noinspection JSConstantReassignment
-  window.innerHeight = newHeight || 1024;
-
-  // Create and dispatch a new resize event
-  const event = new UIEvent('resize');
-  window.dispatchEvent(event);
-
-  // Assert that the viewport width and height have changed
-  expect(window.innerWidth).toBe(newWidth || 1024);
-  expect(window.innerHeight).toBe(newHeight || 1024);
-
-  await nextTick();
-}
 
 describe('vuetify-actions', () => {
   function getActions() {
@@ -263,7 +330,8 @@ describe('vuetify-actions action rendering', () => {
   });
 
   it('checks if add action is correctly rendered', async () => {
-    await setViewPortSize(1024); // ensure md or up so that the label is drawn
+    mockDisplayBreakpoint('md');
+
     const htmlCode = mountComponent();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
     expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).toBeNull();
@@ -392,45 +460,42 @@ describe('Check if actions components are responsive', () => {
   }
 
   it('checks if xs breakpoint renders correctly', async () => {
-    await setViewPortSize(500);
+    mockDisplayBreakpoint('xs');
 
     const component = mountComponent();
     const htmlCode = component.html();
-    const breakpoints = component.vm.$vuetify.display;
-    expect(breakpoints.xs).toBe(true);
+
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).toBeNull();
     expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
       .not.toBeNull();
   });
 
   it('checks if md breakpoint renders correctly', async () => {
-    await setViewPortSize(1024);
+    mockDisplayBreakpoint('md');
+
     const component = mountComponent();
     const htmlCode = component.html();
-    const breakpoints = component.vm.$vuetify.display;
-    expect(breakpoints.md).toBe(true);
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
     expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
       .toBeNull();
   });
 
   it('checks if lg breakpoint renders correctly', async () => {
-    await setViewPortSize(1300);
+    mockDisplayBreakpoint('lg');
     const component = mountComponent();
     const htmlCode = component.html();
-    const breakpoints = component.vm.$vuetify.display;
-    expect(breakpoints.lg).toBe(true);
+
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
     expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
       .not.toBeNull();
   });
 
   it('checks if xl breakpoint renders correctly', async () => {
-    await setViewPortSize(2000);
+    mockDisplayBreakpoint('xl');
+
     const component = mountComponent();
     const htmlCode = component.html();
-    const breakpoints = component.vm.$vuetify.display;
-    expect(breakpoints.xl).toBe(true);
+
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
     expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
       .not.toBeNull();
