@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
 import vue from '@vitejs/plugin-vue';
+import * as path from 'node:path';
 import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, searchForWorkspaceRoot } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import vuetify from 'vite-plugin-vuetify';
 
@@ -69,6 +70,5 @@ export default defineConfig({
     },
     globals: true,
     environment: 'jsdom',
-    useAtomics: true, // eliminate tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)
   },
 });

@@ -65,7 +65,7 @@ export default ({ mode }: ConfigEnv) => {
       port: 8080,
       fs: {
         // Allow serving files from one level up to the project root
-        allow: ['..'],
+        allow: ['../..'], // this is because node_modules subdir is two levels up
       },
     },
     test: {

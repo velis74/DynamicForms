@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useDisplay } from 'vuetify';
 
 import { useActionHandler } from '../actions/action-handler-composable';
@@ -16,6 +16,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { show: false, actionHandlers: undefined });
+const emit = defineEmits(['update:show']);
 
 const { handler } = useActionHandler();
 for (const key of Object.keys(props.actionHandlers || {})) {
@@ -26,7 +27,10 @@ const display = useDisplay();
 
 const size = computed<DialogSize>(() => props.options.size);
 
-const doShow = ref<boolean>(props.show);
+const dialogVisible = computed({
+  get: () => props.show,
+  set: (value) => emit('update:show', value),
+});
 
 const fullScreen = computed(() => {
   if (size.value === DialogSize.SMALL && !display.smAndUp.value) return true;
@@ -56,7 +60,7 @@ const width = computed<'unset' | number>(() => {
 <template>
   <!--https://stackoverflow.com/questions/55085735/vuetify-v-dialog-dynamic-width-->
   <v-dialog
-    v-model="doShow"
+    v-model="dialogVisible"
     :width="width"
     :max-width="width"
     :fullscreen="fullScreen"
