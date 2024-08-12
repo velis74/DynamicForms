@@ -1,11 +1,9 @@
 /// <reference types="vitest" />
-import { resolve } from 'path';
-
 import vue from '@vitejs/plugin-vue';
-import dts from 'vite-plugin-dts';
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
-import vuetify  from 'vite-plugin-vuetify';
+import vuetify from 'vite-plugin-vuetify';
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({

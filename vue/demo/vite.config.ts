@@ -34,7 +34,7 @@ export default ({ mode }: ConfigEnv) => {
     plugins: [
       vue(),
       vuetify({ autoImport: true }),
-      ckeditor5({ theme: require.resolve('@ckeditor/ckeditor5-theme-lark') }),
+      ckeditor5({ theme: resolve('@ckeditor/ckeditor5-theme-lark') }),
       axiosRedirectConfig(),
       {
         ...eslint({
@@ -69,7 +69,7 @@ export default ({ mode }: ConfigEnv) => {
       },
     },
     test: {
-      server: { deps: { inline: ['vuetify'] } },
+      deps: { inline: ['vuetify'] },
       globals: true,
       environment: 'jsdom',
       useAtomics: true, // eliminates tests hang at the end (https://github.com/vitest-dev/vitest/issues/2008)
