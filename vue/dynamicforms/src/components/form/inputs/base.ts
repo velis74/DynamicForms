@@ -4,15 +4,15 @@ import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
 
 export interface BaseProps {
-    field: FormField
-    actions: FilteredActions
-    errors: any
-    showLabelOrHelpText?: boolean
-    modelValue: any
+  field: FormField;
+  actions: FilteredActions;
+  errors: any;
+  showLabelOrHelpText?: boolean;
+  modelValue: any;
 }
 
 export interface BaseEmits {
-    (e: 'update:modelValue', value: any): any
+  (e: 'update:modelValue', value: any): void;
 }
 
 export const basePropsDefault = { showLabelOrHelpText: true };

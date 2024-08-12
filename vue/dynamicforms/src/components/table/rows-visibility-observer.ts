@@ -123,7 +123,7 @@ function useRowVisibilityObserver(element: Ref<HTMLElement>, rows: ComputedRef<T
     }
   }
 
-  let intervalId: NodeJS.Timer | null = setInterval(() => { findVisibleRows(); }, 100);
+  let intervalId: ReturnType<typeof setInterval> | null = setInterval(() => { findVisibleRows(); }, 100);
 
   function clearIntervalId() {
     if (!intervalId) return;

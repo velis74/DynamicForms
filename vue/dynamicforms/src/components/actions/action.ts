@@ -4,7 +4,6 @@ import FormPayload from '../form/definitions/form-payload';
 
 import type { ActionsNS } from './namespace';
 
-type ActionHandler = ActionsNS.ActionHandler;
 type ActionHandlerExtraData = ActionsNS.ActionHandlerExtraData;
 type ActionJSON = ActionsNS.ActionJSON;
 type BreakpointJSON = ActionsNS.BreakpointJSON;
@@ -55,7 +54,7 @@ class Action implements ActionJSON {
 
   public payload!: FormPayload | undefined;
 
-  [key: `action${string}`]: ActionHandler;
+  [key: `action${string}`]: ActionsNS.ActionHandler;
 
   constructor(data: Action | ActionJSON, payload?: FormPayload) {
     const uniqueId = ++uniqueIdCounter;

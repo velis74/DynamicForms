@@ -37,19 +37,17 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@ckeditor/ckeditor5-vue": "^5.1.0",
-    "@kyvg/vue3-notification": "^2.9.1",
-    "@velis/ckeditor-dist": "^1.0.0",
+    "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
-    "bootstrap": "<5.0.0",
-    "bootstrap-vue": "^2.21.2",
     "lodash": "^4.17.15",
-    "vue": "^3.2.45",
+    "vue": "^3.4",
     "vue-ionicon": "^2.1.0",
     "vue-router": "^4.1.6",
     "vuetify": "^3.6"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-vue": "^7.0.0",
+    "ckeditor5": "^43.0.0",
     "luxon": "^3.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "vue-datetime3": "^1.0.15",
@@ -66,19 +64,17 @@
     "@vue/test-utils": "^2.2.4",
     "@vue/tsconfig": "^0.3.2",
     "axios-mock-adapter": "^1.22.0",
-    "cache-loader": "^4.1.0",
     "eslint-config-velis": "^1.1.16",
     "flush-promises": "^1.0.2",
     "jsdom": "^22.0.0",
     "np": "^7.7.0",
-    "sass": "^1",
     "typescript": "^5",
     "vite": "^5",
     "vite-plugin-dts": "^4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vuetify": "^2",
     "vitest": "^2",
-    "vue-tsc": "^1.0.9"
+    "vue-tsc": "^2"
   },
   "eslintConfig": {
     "extends": [
