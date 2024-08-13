@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-container editor-container_classic-editor editor-container_include-style">
+  <div class="editor-container">
     <div class="editor-container__editor">
       <div ref="editorElement">
         <ckeditor
@@ -30,9 +30,10 @@ import { gettext } from '../../util/translations-mixin';
 
 interface Props {
   modelValue: string;
+  minHeight: string;
 }
 
-const props = withDefaults(defineProps<Props>(), { modelValue: '' });
+const props = withDefaults(defineProps<Props>(), { modelValue: '', minHeight: '7em' });
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -154,7 +155,6 @@ defineExpose({ editorData, onEditorReady });
 
 .editor-container {
   font-family:  'Lato';
-  width:        fit-content;
   margin-left:  auto;
   margin-right: auto;
 }
@@ -165,9 +165,12 @@ defineExpose({ editorData, onEditorReady });
   word-break:  break-word;
 }
 
-.editor-container_classic-editor .editor-container__editor {
-  min-width: 795px;
-  max-width: 795px;
+.editor-container .editor-container__editor {
+  width: 100%;
+}
+
+:root .ck-editor__editable_inline {
+  min-height: v-bind(minHeight);
 }
 
 .ck-content h3.category {
