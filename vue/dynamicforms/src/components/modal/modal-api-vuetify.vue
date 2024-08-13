@@ -64,6 +64,7 @@ const width = computed<'unset' | number>(() => {
     :width="width"
     :max-width="width"
     :fullscreen="fullScreen"
+    :retain-focus="false"
     persistent
   >
     <v-card>

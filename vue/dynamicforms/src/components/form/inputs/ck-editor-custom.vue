@@ -20,9 +20,9 @@ import {
   ClassicEditor, AccessibilityHelp, Alignment, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote,
   Bold, CloudServices, Essentials, GeneralHtmlSupport, Heading, HorizontalLine, ImageBlock, ImageCaption,
   ImageInline, ImageInsertViaUrl, ImageResize, ImageStyle, ImageToolbar, ImageUpload, Indent, IndentBlock,
-  Italic, Link, List, MediaEmbed, Paragraph, PasteFromMarkdownExperimental, PasteFromOffice,
+  Italic, Link, List, MediaEmbed, Paragraph, PasteFromMarkdownExperimental, PasteFromOffice, Autoformat,
   SelectAll, Style, Table, TableCellProperties, TableColumnResize, TableProperties, TableToolbar, Undo,
-  HeadingConfig,
+  HeadingConfig, TextTransformation, Base64UploadAdapter,
 } from 'ckeditor5';
 import { ref, onMounted, watch } from 'vue';
 
@@ -58,9 +58,9 @@ const editorToolbarConfig = {
 const editorPlugins = [
   AccessibilityHelp, Alignment, AutoImage, AutoLink, Autosave, BalloonToolbar, BlockQuote, Bold, CloudServices,
   Essentials, GeneralHtmlSupport, Heading, HorizontalLine, ImageBlock, ImageCaption, ImageInline, ImageInsertViaUrl,
-  ImageResize, ImageStyle, ImageToolbar, ImageUpload, Indent, IndentBlock, Italic, Link, List,
+  ImageResize, ImageStyle, ImageToolbar, ImageUpload, Indent, IndentBlock, Italic, Link, List, Autoformat,
   MediaEmbed, Paragraph, PasteFromMarkdownExperimental, PasteFromOffice, SelectAll, Style, Table, TableCellProperties,
-  TableColumnResize, TableProperties, TableToolbar, Undo,
+  TableColumnResize, TableProperties, TableToolbar, Undo, TextTransformation, Base64UploadAdapter,
 ];
 const editorHeadings: HeadingConfig = {
   options: [
@@ -139,6 +139,12 @@ defineExpose({ editorData, onEditorReady });
 @import 'ckeditor5/ckeditor5.css';
 @import url('https://fonts.googleapis.com/css2?family=Oswald&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  /* In addition to this, any v-dialog must also have :retain-focus="false" */
+  --ck-z-default: 20000!important;
+  --ck-z-modal: calc( var(--ck-z-default) + 20999 );
+}
 
 @media print {
   body {
