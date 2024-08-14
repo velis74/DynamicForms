@@ -1,3 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "DynamicForms"
+version = "0.76.12"
+description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    { name = "Jure Erznožnik", email = "jure@velis.si" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Framework :: Django",
+]
+
+dependencies = [
+    "pytz",
+    "coreapi>=1.32",
+    "django>=2",
+    "djangorestframework>=3.14",
+    "django-filter",
+    "django-enumfields >= 2.1.1",
+    "jsonschema",
+    "pillow",
+    "django-cors-headers",
+    "versio",
+    "ruff",
+    "ruff-lsp",
+]
+
+[project.urls]
+Homepage = "https://github.com/velis74/DynamicForms"
+Repository = "https://github.com/velis74/DynamicForms"
+"Bug Tracker" = "https://github.com/velis74/DynamicForms/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["dynamicforms", "dynamicforms_legacy"]
+
+[tool.hatch.version]
+path = "dynamicforms/__init__.py"
+
+
 [tool.ruff]
 exclude = ['dockertest',
     'tests', 'docs', 'examples', 'scripts', 'setup.py', 'setup.cfg', 'README.md', 'LICENSE', 'MANIFEST.in',
