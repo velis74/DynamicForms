@@ -66,12 +66,7 @@ def main():
         print(str(e))
         sys.exit(1)
 
-    for tool in ['wheel', 'twine']:
-        try:
-            __import__(tool)
-        except ImportError:
-            print(f"{tool} not installed. Use 'pip install {tool}'. Exiting.")
-            sys.exit(1)
+    run_command("pip install -U setuptools wheel twine build pkginfo".split(" "))
 
     sync_requirements()
 

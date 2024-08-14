@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "DynamicForms"
-version = "0.76.12"
+name = "dynamicforms"
+version = "0.76.14"
 description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
 readme = "README.md"
 requires-python = ">=3.8"
