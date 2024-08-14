@@ -155,8 +155,6 @@ defineExpose({ editorData, onEditorReady });
 
 .editor-container {
   font-family:  'Lato';
-  margin-left:  auto;
-  margin-right: auto;
 }
 
 .ck-content {
