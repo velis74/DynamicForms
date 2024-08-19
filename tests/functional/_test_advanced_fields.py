@@ -4,6 +4,7 @@ from parameterized import parameterized
 from selenium.webdriver.common.by import By
 
 from setup.settings import BASE_DIR, MEDIA_ROOT
+
 from .select import Select
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 

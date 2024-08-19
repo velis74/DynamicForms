@@ -1,4 +1,5 @@
 import datetime
+
 from datetime import time
 from enum import IntEnum
 
@@ -224,8 +225,7 @@ class Document(models.Model):
 
 
 class CalendarRecurrence(models.Model):
-    from .recurrence_utils import date_range as dr_func
-    from .recurrence_utils import Pattern
+    from .recurrence_utils import date_range as dr_func, Pattern
 
     start_at = models.DateTimeField(verbose_name=_("Recurrence start"), null=False, blank=False)
     end_at = models.DateTimeField(verbose_name=_("Recurrence end"), null=False, blank=False)

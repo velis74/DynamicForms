@@ -163,7 +163,7 @@ defineExpose({ editorData, onEditorReady });
   word-break:  break-word;
 }
 
-.editor-container .editor-container__editor {
+.editor-container, .editor-container__editor {
   width: 100%;
 }
 

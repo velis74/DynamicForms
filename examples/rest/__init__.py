@@ -1,6 +1,7 @@
 from rest_framework import routers
 
 from examples.rest.filter import FilterViewSet
+
 from .actions_overview import ActionsOverviewViewSet
 from .advanced_fields import AdvancedFieldsViewset
 from .basic_fields import BasicFieldsViewset

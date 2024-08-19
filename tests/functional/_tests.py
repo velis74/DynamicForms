@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from examples.models import AdvancedFields
+
 from .select import Select
 from .selenium_test_case import WaitingStaticLiveServerTestCase
 

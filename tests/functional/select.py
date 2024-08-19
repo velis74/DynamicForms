@@ -1,4 +1,5 @@
 import json
+
 from collections import namedtuple
 from enum import IntEnum
 from typing import List, Union

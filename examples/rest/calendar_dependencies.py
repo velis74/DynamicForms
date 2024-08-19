@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 
 from dynamicforms import fields, serializers, viewsets
 from examples.models import CalendarEvent, CalendarRecurrence, CalendarReminder
+
 from .calendar_recurrence import RecurrenceSerializer
 
 

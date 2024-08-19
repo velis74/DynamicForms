@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from examples.models import Validated
+
 from .select import Select
 from .selenium_test_case import MAX_WAIT, WaitingStaticLiveServerTestCase
 

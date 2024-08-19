@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dynamicforms"
-version = "0.76.14"
+version = "0.76.15"
 description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -48,10 +48,10 @@ path = "dynamicforms/__init__.py"
 
 
 [tool.ruff]
-exclude = ['dockertest',
-    'tests', 'docs', 'examples', 'scripts', 'setup.py', 'setup.cfg', 'README.md', 'LICENSE', 'MANIFEST.in',
+exclude = [
+    'dockertest', 'docs', 'scripts', 'README.md', 'LICENSE', 'MANIFEST.in',
     'pyproject.toml', 'Pipfile', 'Pipfile.lock', 'ruff.egg-info', 'dist', 'build', '.gitignore', '.git', '.idea',
-    '.vscode', '.pytest_cache', '.coverage', '.ruff', '*/migrations/*']
+    '.pytest_cache', '.coverage', '.ruff', '*/migrations/*']
 line-length = 120
 
 [tool.ruff.lint]
