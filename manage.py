@@ -23,7 +23,7 @@ if __name__ == "__main__":  # pragma: no cover
         raise
 
     params = list(sys.argv)
-    if params[1] == "makemessages":
+    if len(params) >= 2 and params[1] == "makemessages":
         params.extend(("-i", "node_modules", "-i", "static", "-i", "coverage", "-i", "dynamicforms_legacy"))
         params.extend(("-i", "tests", "-i", "setup", "-i", "examples", "-i", "dynamicforms_dev"))
         print("Modified makemessages: will process both django and djangojs domains")
