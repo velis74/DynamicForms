@@ -18,7 +18,7 @@ class CursorPagination(drf_p.CursorPagination):
 
         self.base_url = request.build_absolute_uri()
         self.ordering = self.get_ordering(request, queryset, view)
-        if "id" not in self.ordering and "-id" not in self.ordering:
+        if not any(field in self.ordering for field in ('id', '-id', 'pk', '-pk')):
             ordering = list(self.ordering)
             ordering.append("id")
             self.ordering = tuple(ordering)
