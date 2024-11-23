@@ -29,9 +29,10 @@ class FilterBackend(filters.DjangoFilterBackend):
                 return ListWithFields(list(self.param_map.keys()), [self.get_ordering_value(param) for param in value])
 
         class FilterSetApplied(filters.FilterSet):
-            locals()[view.ordering_parameter] = MyOrderingFilter(
-                fields=[f.name for f in queryset.model._meta.fields if f.name not in ordering_excluded_fields]
-            )
+            if getattr(view, "ordering_parameter", None):  # SingleRecordViewSet tega nima
+                locals()[view.ordering_parameter] = MyOrderingFilter(
+                    fields=[f.name for f in queryset.model._meta.fields if f.name not in ordering_excluded_fields]
+                )
 
         return FilterSetApplied
 
