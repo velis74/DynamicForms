@@ -140,39 +140,39 @@ class CursorPagination(drf_p.CursorPagination):
         return self.page
 
 
-def _get_position_from_instance(self, instance, ordering):
-    def process_field(idx):
-        field_name = ordering[idx].lstrip("-")
-        attr = None
-        if isinstance(instance, dict):
-            attr = instance[field_name]
+    def _get_position_from_instance(self, instance, ordering):
+        def process_field(idx):
+            field_name = ordering[idx].lstrip("-")
+            attr = None
+            if isinstance(instance, dict):
+                attr = instance[field_name]
+            else:
+                field_name_list = field_name.split("__")
+                for fn in field_name_list:
+                    attr = getattr(instance if attr is None else attr, fn)
+            return field_name, self.field_to_representation(attr)
+
+        return json.dumps({k: v for k, v in map(lambda idx: process_field(idx), range(len(ordering)))})
+
+
+    def field_to_representation(self, value):
+        """
+        Converts field value to something that will be later understood by QuerySet.filter()
+        Question: why does DRF not do this? is str(value) always enough?
+        """
+        if isinstance(value, datetime.timedelta):
+            return str(value.total_seconds())
+        elif value is None:
+            return self.NONE_VALUE
+        return str(value)
+
+
+    def field_to_python(self, queryset, order_attr, value):
+        if order_attr in queryset.query.annotations:
+            field = queryset.query.annotations.get(order_attr).field
         else:
-            field_name_list = field_name.split("__")
-            for fn in field_name_list:
-                attr = getattr(instance if attr is None else attr, fn)
-        return field_name, self.field_to_representation(attr)
-
-    return json.dumps({k: v for k, v in map(lambda idx: process_field(idx), range(len(ordering)))})
-
-
-def field_to_representation(self, value):
-    """
-    Converts field value to something that will be later understood by QuerySet.filter()
-    Question: why does DRF not do this? is str(value) always enough?
-    """
-    if isinstance(value, datetime.timedelta):
-        return str(value.total_seconds())
-    elif value is None:
-        return self.NONE_VALUE
-    return str(value)
-
-
-def field_to_python(self, queryset, order_attr, value):
-    if order_attr in queryset.query.annotations:
-        field = queryset.query.annotations.get(order_attr).field
-    else:
-        # noinspection PyProtectedMember
-        field = queryset.model._meta.get_field(order_attr)
-    if isinstance(field, DurationField):
-        return datetime.timedelta(seconds=float(value))
-    return value
+            # noinspection PyProtectedMember
+            field = queryset.model._meta.get_field(order_attr)
+        if isinstance(field, DurationField):
+            return datetime.timedelta(seconds=float(value))
+        return value
