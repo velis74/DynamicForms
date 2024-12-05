@@ -188,7 +188,9 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
     @property
     def layout(self):
         template_context = getattr(self, "template_context", {})
-        if hasattr(self, "Meta") and hasattr(self.Meta, "layout"):
+        if hasattr(self, 'determine_layout_at_runtime') and (layout := self.determine_layout_at_runtime()):
+            return layout
+        elif hasattr(self, "Meta") and hasattr(self.Meta, "layout"):
             return self.Meta.layout
         else:
             from dynamicforms.template_render.layout import Layout

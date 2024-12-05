@@ -15,6 +15,9 @@ class Field(object):
         self.field_name = field_name
         self.render_format = render_format
 
+    def clone(self):
+        return Field(self.field_name, self.render_format)
+
     def field_def(self, serializer: "Serializer") -> Union[DFField, DRFSerializer]:
         return serializer.fields[self.field_name]
 
@@ -44,6 +47,9 @@ class Column(object):
         #  specify how big a column was to be used. Needs to change to support the Vue / Vuetify components and
         #  their props now. task: https://app.clickup.com/t/86bzw1k8f
 
+    def clone(self):
+        return Column(field=self.field.clone() if self.field else None, width_classes=self.width_classes)
+
     def _get_laid_fields(self):
         return {self.field.field_name} if self.field is not None else set()
 
@@ -68,6 +74,9 @@ class Row(object):
                 self.columns.append(column)
             else:
                 raise NotImplementedError(f"Unknown column type {column.__class__.__name__}")
+
+    def clone(self):
+        return Row(*[col.clone() for col in self.columns], component=self.component)
 
     def _get_laid_fields(self):
         return set().union(*(col._get_laid_fields() for col in self.columns))
@@ -101,6 +110,28 @@ class Layout(object):
         self.header_classes = header_classes
         self.component_name = component_name
         self.auto_add_fields = auto_add_fields
+
+    def clone(self):
+        return Layout(
+            *[row.clone() for row in self.rows],
+            component_name=self.component_name,
+            columns=self.columns,
+            size=self.size,
+            header_classes=self.header_classes,
+            auto_add_fields=self.auto_add_fields
+        )
+
+    def append_after_row(self, field_name: Optional[str], *rows: Row):
+        """Adds new rows after the row with specified field. if field_name is None, inserts new rows at beginning"""
+        if field_name is None:
+            self.rows[0:0] = rows
+            return
+        for i, row in enumerate(self.rows):
+            for column in row.columns:
+                if column.field and column.field.field_name == field_name:
+                    self.rows[i + 1:i + 1] = rows
+                    return
+        raise ValueError(f"Field {field_name} not found in the layout")
 
     def _get_laid_fields(self):
         return set().union(*(row._get_laid_fields() for row in self.rows))
@@ -157,6 +188,15 @@ class Group(Column):
         self.title = title
         self.layout = sub_layout
         self.footer = footer
+
+    def clone(self):
+        return Group(
+            field=self.field.clone() if self.field else None,
+            title=self.title,
+            sub_layout=self.layout.clone() if self.layout else None,
+            width_classes=self.width_classes,
+            footer=self.footer
+        )
 
     def _get_laid_fields(self):
         if self.field is None:

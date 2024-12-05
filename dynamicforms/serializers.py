@@ -1,9 +1,11 @@
 from collections import OrderedDict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
+from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.fields.related import RelatedField
+from django.utils.module_loading import import_string
 from rest_framework import serializers
 from rest_framework.fields import get_attribute, SkipField
 
@@ -484,3 +486,46 @@ class Serializer(DynamicFormsSerializer, serializers.Serializer):
     def create(self, validated_data):
         # Implemented just so IDE doesn't complain. Normally this will be handled in SingleRecordViewSet
         pass
+
+
+class DynamicModelMixin:
+    MODEL_FUNC_SETTING_NAME = None
+
+    def determine_model_at_runtime(self) -> Optional[models.Model]:
+        """
+        Determines what model should be the basis for the serializer at runtime. Allows for dynamic model adjustments
+        based on active code at the time of serialization
+        :return:
+        """
+        try:
+            model_func = import_string(getattr(settings, self.MODEL_FUNC_SETTING_NAME, None))
+            return model_func(self)
+        except ImportError:
+            pass
+        return None
+
+
+class DynamicModelSerializerMixin(DynamicModelMixin):
+    LAYOUT_FUNC_SETTING_NAME = None
+
+    def __init__(self, *args, **kwargs):
+        if model := self.determine_model_at_runtime():
+            self.meta.model = model
+        super().__init__(*args, **kwargs)
+
+    def determine_layout_at_runtime(self):
+        """
+        Determines what layout should be used for displaying the model at runtime. Allows for dynamic model adjustments
+        based on active code at the time of serialization
+        Usually you would override this like this:
+          layout = self.Meta.layout.clone()
+          layout.append_after_row('name_of_field', Row(...))
+          return layout
+        """
+        try:
+            layout_func = import_string(getattr(settings, self.LAYOUT_FUNC_SETTING_NAME, None))
+            return layout_func(self)
+        except ImportError:
+            pass
+        return self.Meta.layout
+
