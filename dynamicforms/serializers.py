@@ -491,7 +491,7 @@ class Serializer(DynamicFormsSerializer, serializers.Serializer):
 class DynamicModelMixin:
     MODEL_FUNC_SETTING_NAME = None
 
-    def determine_model_at_runtime(self) -> Optional[models.Model]:
+    def determine_model_at_runtime(self, request) -> Optional[models.Model]:
         """
         Determines what model should be the basis for the serializer at runtime. Allows for dynamic model adjustments
         based on active code at the time of serialization
@@ -499,7 +499,7 @@ class DynamicModelMixin:
         """
         try:
             model_func = import_string(getattr(settings, self.MODEL_FUNC_SETTING_NAME, None))
-            return model_func(self)
+            return model_func(self, request)
         except ImportError:
             pass
         return None
@@ -509,11 +509,11 @@ class DynamicModelSerializerMixin(DynamicModelMixin):
     LAYOUT_FUNC_SETTING_NAME = None
 
     def __init__(self, *args, **kwargs):
-        if model := self.determine_model_at_runtime():
+        if model := self.determine_model_at_runtime(self.request):
             self.meta.model = model
         super().__init__(*args, **kwargs)
 
-    def determine_layout_at_runtime(self):
+    def determine_layout_at_runtime(self, request):
         """
         Determines what layout should be used for displaying the model at runtime. Allows for dynamic model adjustments
         based on active code at the time of serialization
@@ -524,7 +524,7 @@ class DynamicModelSerializerMixin(DynamicModelMixin):
         """
         try:
             layout_func = import_string(getattr(settings, self.LAYOUT_FUNC_SETTING_NAME, None))
-            return layout_func(self)
+            return layout_func(self, request)
         except ImportError:
             pass
         return self.Meta.layout
