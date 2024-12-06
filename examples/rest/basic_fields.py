@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 
 from dynamicforms import fields, serializers
 from dynamicforms.action import Actions, TableAction, TablePosition
-from dynamicforms.template_render.layout import Layout
+from dynamicforms.template_render.layout import Group, Layout, Row
 from dynamicforms.template_render.responsive_table_layout import ResponsiveTableLayout, ResponsiveTableLayouts
 from dynamicforms.viewsets import ModelViewSet
 
@@ -55,7 +55,23 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasicFields
         exclude = ()
-        layout = Layout(columns=3, size="large")
+        layout = Layout(
+            Row(
+                Group(
+                    None,
+                    "Booleans",
+                    Layout(Row("boolean_field"), Row("nullboolean_field"), auto_add_fields=False),
+                ),
+                Group(
+                    None,
+                    "Text fields",
+                    Layout(Row("char_field"), Row("slug_field"), Row("password_field"), auto_add_fields=False),
+                    colspan=2,
+                ),
+            ),
+            columns=3,
+            size="large",
+        )
         responsive_columns = ResponsiveTableLayouts(
             auto_generate_single_row_layout=True,
             layouts=[
@@ -81,7 +97,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
                     auto_add_non_listed_columns=True,
                 ),
             ],
-            auto_generate_single_column_layout=True,
+            auto_generate_single_column_layout=False,
         )
 
 

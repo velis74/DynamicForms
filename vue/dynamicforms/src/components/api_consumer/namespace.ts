@@ -2,7 +2,7 @@ import type FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
 import type FormPayload from '../form/definitions/form-payload';
 import type FormLayout from '../form/definitions/layout';
-import type { DfForm } from '../form/namespace';
+import type { FormLayoutNS } from '../form/namespace';
 import type { DfTable } from '../table/namespace';
 
 export namespace APIConsumer {
@@ -18,7 +18,7 @@ export namespace APIConsumer {
   export interface UXDefinition {
     primary_key_name: string
     titles: Titles
-    dialog: DfForm.FormLayoutJSON
+    dialog: FormLayoutNS.LayoutInterface
     actions: ActionsNS.ActionsJSON
     record: FormPayloadJSON
   }

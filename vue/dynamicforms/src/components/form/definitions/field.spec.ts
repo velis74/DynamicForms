@@ -40,7 +40,7 @@ const fieldDef: DfForm.FormFieldJSON = {
     additional_parameters: 'param1=value1&param2=value2',
     query_field: 'search',
   },
-  width_classes: 'test-width-classes',
+  colspan: 'test-width-classes',
   help_text: 'Test Help Text',
   allow_null: true,
   conditional_visibility: ['id', Operator.GT, 12],
@@ -76,7 +76,7 @@ describe('FormField', () => {
     // expect(formField.renderParams.table).toBe(fieldDef.render_params.table); // table member is not mapped
     expect(formField.choices).toBe(fieldDef.choices);
     expect(formField.ajax).toBe(fieldDef.ajax);
-    expect(formField.widthClasses).toBe(fieldDef.width_classes);
+    expect(formField.colspan).toBe(fieldDef.colspan);
     expect(formField.helpText).toBe(fieldDef.help_text);
     expect(formField.allowNull).toBe(fieldDef.allow_null);
     expect(formField.conditionalVisibility).toBe(fieldDef.conditional_visibility);

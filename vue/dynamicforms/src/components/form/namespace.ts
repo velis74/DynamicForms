@@ -15,7 +15,7 @@ export namespace DfForm {
     text_field: string;
   }
 
-  export type StatementJSON = [ string | StatementJSON, number, any | StatementJSON ] | null;
+  export type StatementJSON = [string | StatementJSON, number, any | StatementJSON] | null;
 
   export interface FormFieldJSON {
     uuid: string;
@@ -28,7 +28,7 @@ export namespace DfForm {
     read_only: true | any; // boolean
     choices: ChoicesJSON[];
     ajax?: AJAXJSON;
-    width_classes: string; // bootstrap column width classes TODO: should be changed to something platform agnostic
+    colspan: number;
     help_text: string;
     allow_null: boolean;
     conditional_visibility?: DfForm.StatementJSON;
@@ -62,24 +62,48 @@ export namespace DfForm {
   }
 
   export type FormLayoutFieldsCollection = { [key: string]: DfForm.FormFieldJSON };
+}
 
-  export interface FormLayoutRowsColumnJSON {
+export namespace FormLayoutNS {
+  /*
+  interfaces for dynamicforms.layout definitions
+   */
+  export interface LayoutInterface {
+    rows: RowInterface[];
+    fields: DfForm.FormLayoutFieldsCollection;
+    size?: string;
+    header_classes?: string;
+    component_name: string;
+  }
+
+  export interface RowInterface {
+    component_name: string;
+    columns: (ColumnInterface | GroupInterface)[];
+  }
+
+  export interface ColumnInterface {
     type: 'column' | 'group';
     field: string;
-    title?: string;
-    layout?: DfForm.FormLayoutJSON;
-  }
-
-  export interface FormLayoutRowJSON {
-    component: string;
-    columns: FormLayoutRowsColumnJSON[];
-  }
-
-  export interface FormLayoutJSON {
-    field_name: string;
     component_name: string;
-    fields: FormLayoutFieldsCollection;
-    rows: FormLayoutRowJSON[];
-    size?: string;
+    colspan?: number;
+  }
+
+  export interface GroupInterface extends ColumnInterface {
+    footer?: string;
+    title?: string;
+    uuid: string;
+    layout: LayoutInterface;
+  }
+
+  export type ColumnOrGroupInterface = GroupInterface | ColumnInterface;
+}
+
+export namespace FormLayoutTypeGuards {
+  export function isGroupTemplate(col: FormLayoutNS.ColumnOrGroupInterface): col is FormLayoutNS.GroupInterface {
+    return col.type === 'group';
+  }
+
+  export function isLayoutTemplate(layout: any): layout is FormLayoutNS.LayoutInterface {
+    return 'rows' in layout;
   }
 }

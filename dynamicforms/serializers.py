@@ -509,8 +509,8 @@ class DynamicModelSerializerMixin(DynamicModelMixin):
     LAYOUT_FUNC_SETTING_NAME = None
 
     def __init__(self, *args, **kwargs):
-        if model := self.determine_model_at_runtime(self.request):
-            self.meta.model = model
+        if model := self.determine_model_at_runtime(kwargs.get("context", {}).get("request")):
+            self.Meta.model = model
         super().__init__(*args, **kwargs)
 
     def determine_layout_at_runtime(self, request):

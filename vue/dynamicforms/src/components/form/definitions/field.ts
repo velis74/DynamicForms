@@ -77,7 +77,7 @@ export default class FormField {
       },
       choices: { get() { return fieldDef.choices; }, enumerable: true },
       ajax: { get() { return fieldDef.ajax; }, enumerable: true },
-      widthClasses: { get() { return fieldDef.width_classes; }, enumerable: true },
+      colspan: { get() { return fieldDef.colspan; }, enumerable: true, configurable: true },
       helpText: { get() { return fieldDef.help_text; }, enumerable: true },
       allowNull: { get() { return fieldDef.allow_null; }, enumerable: true },
       conditionalVisibility: { get() { return fieldDef.conditional_visibility; }, enumerable: true },

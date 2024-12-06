@@ -18,7 +18,7 @@ class MySerializer(serializers.ModelSerializer):
         fields = ['field1', 'field2', 'field3', 'field4']
         layout = Layout(
             Row('field1', 'field2'),
-            Row(Column('field3'), Column(Field('field4'))),
+            Row(Column('field3'), Column(Field('field4', 'my_component_name'))),
         )
 ```
 
@@ -43,7 +43,7 @@ Layout(
 * rows: A list of Row objects defining the layout structure.
 * component_name: The name of the Vue component to use for rendering (default: "df-form-layout"). Used for overriding 
   default rendering.
-* columns: Number of columns for automatically added fields (default: 1).
+* columns: Number of columns for automatically added fields (default: 1). Also important for layout and colspan.
 * size: Size of the layout ("small", "large", "", etc.). Mostly effective when this layout is going to be rendered in a 
   dialog. See [DialogSize](dialog-size) for reference on size classes. 
 * header_classes: CSS classes for the header.
@@ -58,12 +58,12 @@ The Row class represents a horizontal group of columns.
 from typing import Union
 from dynamicforms.template_render.layout import Layout, Row, Column, Field
 
-Row(*columns: Union[Column, Field, str], component="FormRow")
+Row(*columns: Union[Column, Field, str], component_name="FormRow")
 ```
 
 * columns: A list of Column objects or field names.
-* component: The name of the Vue component to use for rendering (default: "FormRow"). Change when overriding default 
-  rendering components.
+* component_name: The name of the Vue component to use for rendering (default: "FormRow"). Change when overriding
+  default rendering components.
 
 ## Column
 
@@ -74,10 +74,10 @@ from typing import Union, Optional, Tuple
 from dynamicforms.template_render.layout import Layout, Row, Column, Field
 from dynamicforms.fields import DFField
 
-Column(field: Union[Tuple[str, DFField], Field, str, None], width_classes: Optional[str] = None)
+Column(field: Union[Tuple[str, DFField], Field, str, None], colspan: int = 1)
 ```
 * field: A Field object or field name.
-* width_classes: CSS classes for controlling column width. Note: subject to change soon. 
+* colspan: how many columns does this field span. See Layout.columns property 
 
 
 ## Group
@@ -92,7 +92,7 @@ Group(
     field: Union[str, Field, None],
     title: str = None, 
     sub_layout: Layout = None, 
-    width_classes: Optional[str] = None,
+    colspan: int = 1,
     footer: Optional[str] = None,
 )
 ```
@@ -100,7 +100,7 @@ Group(
 * field: A Field object, field name, or None for flat field grouping.
 * title: The title of the group.
 * sub_layout: A Layout object for custom layout within the group.
-* width_classes: CSS classes for controlling group width.
+* colspan: how many columns does this group span in the layout.
 * footer: Optional footer text for the group.
 
 Groups can be used in two main ways:

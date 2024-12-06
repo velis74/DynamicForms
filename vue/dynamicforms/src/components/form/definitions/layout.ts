@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import DisplayMode from '../../classes/display-mode';
 import DialogSize from '../../modal/definitions/dialog-size';
-import { DfForm } from '../namespace';
+import { FormLayoutNS, DfForm } from '../namespace';
 
 import FormField from './field';
 
@@ -10,11 +10,18 @@ let FormLayoutClass: typeof FormLayout; // hoisting required: so we can use the 
 export class Column extends FormField {
   layoutFieldComponentName!: string;
 
-  constructor(layoutRow: LayoutRow, def: DfForm.FormFieldJSON) {
-    super(def);
+  colspan!: number;
+
+  constructor(layoutRow: LayoutRow, def: FormLayoutNS.ColumnInterface, fieldDef: DfForm.FormFieldJSON) {
+    super(fieldDef);
     let renderKey = 0;
     Object.defineProperty(this, 'layoutFieldComponentName', {
-      get() { return 'FormField'; },
+      get() { return def.component_name || 'FormField'; },
+      enumerable: true,
+      configurable: true,
+    });
+    Object.defineProperty(this, 'colspan', {
+      get() { return def.colspan || 1; },
       enumerable: true,
       configurable: true,
     });
@@ -34,7 +41,7 @@ export class Group extends Column {
 
   public layout!: FormLayout;
 
-  constructor(layoutRow: LayoutRow, def: DfForm.FormLayoutRowsColumnJSON, fieldDef: DfForm.FormFieldJSON) {
+  constructor(layoutRow: LayoutRow, def: FormLayoutNS.GroupInterface, fieldDef: DfForm.FormFieldJSON) {
     if (fieldDef == null) {
       const fd: DfForm.FormFieldJSON = {
         uuid: crypto.randomUUID(),
@@ -49,16 +56,16 @@ export class Group extends Column {
         },
         read_only: true,
         choices: [],
-        width_classes: '',
+        colspan: 1,
         help_text: '',
         allow_null: false,
       };
-      super(layoutRow, fd);
+      super(layoutRow, def, fd);
     } else {
-      super(layoutRow, fieldDef);
+      super(layoutRow, def, fieldDef);
     }
     Object.defineProperty(this, 'layoutFieldComponentName', {
-      get() { return 'FormFieldGroup'; },
+      get() { return def.component_name || 'FormFieldGroup'; },
       enumerable: true,
       configurable: true,
     });
@@ -66,7 +73,7 @@ export class Group extends Column {
     Object.defineProperty(
       this,
       'layout',
-      { get() { return new FormLayoutClass(def.layout as DfForm.FormLayoutJSON); }, enumerable: true },
+      { get() { return new FormLayoutClass(def.layout as FormLayoutNS.LayoutInterface); }, enumerable: true },
     );
     Object.defineProperty(
       this,
@@ -79,12 +86,16 @@ export class Group extends Column {
   }
 }
 
-function FormColumn(layoutRow: LayoutRow, columnDef: DfForm.FormLayoutRowsColumnJSON, fieldDef: DfForm.FormFieldJSON) {
+function FormColumn(
+  layoutRow: LayoutRow,
+  columnDef: FormLayoutNS.ColumnOrGroupInterface,
+  fieldDef: DfForm.FormFieldJSON,
+) {
   switch (columnDef.type) {
   case 'column':
-    return new Column(layoutRow, fieldDef);
+    return new Column(layoutRow, columnDef, fieldDef);
   case 'group':
-    return new Group(layoutRow, columnDef, fieldDef);
+    return new Group(layoutRow, columnDef as FormLayoutNS.GroupInterface, fieldDef);
   default:
     throw Error(`Unknown layout column type "${columnDef.type}"`);
   }
@@ -100,7 +111,7 @@ class LayoutRow {
   public componentName!: string;
 
   constructor(
-    rowDef: DfForm.FormLayoutRowJSON,
+    rowDef: FormLayoutNS.RowInterface,
     fields: FormLayoutFields,
     fieldDefs: DfForm.FormLayoutFieldsCollection,
   ) {
@@ -110,7 +121,7 @@ class LayoutRow {
       return res;
     });
     this.renderKey = 0;
-    Object.defineProperty(this, 'componentName', { get() { return rowDef.component; }, enumerable: true });
+    Object.defineProperty(this, 'componentName', { get() { return rowDef.component_name; }, enumerable: true });
   }
 
   get anyVisible() {
@@ -129,7 +140,7 @@ class FormLayout {
 
   public size!: DialogSize;
 
-  constructor(layout?: DfForm.FormLayoutJSON) {
+  constructor(layout?: FormLayoutNS.LayoutInterface) {
     if (layout === undefined) {
       this.fields = {};
       this.rows = [];
@@ -142,8 +153,6 @@ class FormLayout {
         if (!(fieldName in this.fields)) this.fields[fieldName] = new FormField(layout.fields[fieldName]);
       });
       Object.defineProperty(this, 'componentName', { get() { return layout.component_name; }, enumerable: true });
-      // TODO field_name is not implemented yet on the backend
-      Object.defineProperty(this, 'fieldName', { get() { return layout.field_name; }, enumerable: true });
       Object.defineProperty(this, 'size', { get() { return DialogSize.fromString(layout.size); }, enumerable: true });
     }
   }

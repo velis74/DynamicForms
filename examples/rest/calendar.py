@@ -61,7 +61,7 @@ class CalendarEventSerializer(RecurrenceEventSerializer):
             Row("description"),
             Row("start_at", "end_at"),
             Row("reminders"),
-            Row(Group("recurrence", width_classes="col-8"), Column("change_this_record_only", "col-4")),
+            Row(Group("recurrence", colspan=8), Column("change_this_record_only", colspan=4)),
             columns=2,
             size="large",
         )

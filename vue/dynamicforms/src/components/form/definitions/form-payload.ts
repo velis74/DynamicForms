@@ -3,26 +3,55 @@ import { reactive } from 'vue';
 
 import type { APIConsumer } from '../../api_consumer/namespace';
 import DisplayMode from '../../classes/display-mode';
-import type { DfForm } from '../namespace';
+import { FormLayoutTypeGuards } from '../namespace';
+import type { FormLayoutNS } from '../namespace';
 
 import type FormField from './field';
+import type { Group } from './layout';
 import type FormLayout from './layout';
 
-type FormLayoutJSON = DfForm.FormLayoutJSON;
+type FormLayoutInterface = FormLayoutNS.LayoutInterface;
+type FormLayoutOrInterface = FormLayout | FormLayoutInterface;
+
+function colIsGroup(col: any): col is Group {
+  return col.constructor.name === 'Group';
+}
+
+function collectAllFields(layout: FormLayoutOrInterface): FormField[] {
+  const fields: FormField[] = [];
+  if (layout.fields) {
+    fields.push(...Object.values(layout.fields));
+  }
+
+  if (FormLayoutTypeGuards.isLayoutTemplate(layout)) {
+    // Recursively check all nested groups that don't have their own nested objects
+    layout.rows.forEach((row) => {
+      row.columns?.forEach((col) => {
+        if (FormLayoutTypeGuards.isGroupTemplate(col) && col.layout && col.field == null) {
+          fields.push(...collectAllFields(col.layout));
+        } else if (colIsGroup(col) && col.layout && col.field == null) {
+          // TODO: this should not be. code too unpredictable. How the hell does col become group here?
+          fields.push(...collectAllFields(col.layout));
+        }
+      });
+    });
+  }
+  return fields;
+}
 
 export default class FormPayload {
   [key: string]: any;
 
   ['$extra-data']: any;
 
-  private constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON) {
+  private constructor(data?: APIConsumer.FormPayloadJSON, layout?: FormLayoutOrInterface) {
     this.setData(data, layout);
   }
 
   static create(): FormPayload;
   static create(data: FormPayload): FormPayload;
-  static create(data: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload;
-  static create(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload {
+  static create(data: APIConsumer.FormPayloadJSON, layout?: FormLayoutOrInterface): FormPayload;
+  static create(data?: APIConsumer.FormPayloadJSON, layout?: FormLayoutOrInterface): FormPayload {
     // Type assertion necessary to keep PyCharm from complaining about private functions
     return <FormPayload> reactive(new FormPayload(data, layout));
   }
@@ -38,7 +67,7 @@ export default class FormPayload {
     });
   }
 
-  setData(data?: APIConsumer.FormPayloadJSON, layout?: FormLayout | FormLayoutJSON): FormPayload {
+  setData(data?: APIConsumer.FormPayloadJSON, layout?: FormLayoutOrInterface): FormPayload {
     let properties = {} as { [key: string]: any };
     let extraData = {};
 
@@ -48,7 +77,7 @@ export default class FormPayload {
     } else if (data instanceof FormPayload) {
       [properties, extraData] = this.copyWithProperties(data);
     } else if (layout?.fields) {
-      Object.values(layout.fields).forEach((field: FormField) => {
+      collectAllFields(layout).forEach((field: FormField) => {
         if (field.visibility === DisplayMode.SUPPRESS) return;
         if (field.readOnly && field.name != null && !field.name.endsWith('-display')) {
           properties[field.name] = { get() { return data[field.name]; }, enumerable: false, configurable: true };

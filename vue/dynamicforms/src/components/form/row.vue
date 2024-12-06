@@ -6,6 +6,7 @@
       v-for="(column, idx) in renderableColumns"
       :key="`${idx}${column.renderKey}`"
       v-bind="columnData(column)"
+      :style="column.colspan !== 1 ? { flex: column.colspan } : null"
     />
     <slot name="after-columns"/>
   </v-row>

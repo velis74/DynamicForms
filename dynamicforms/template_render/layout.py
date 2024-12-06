@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 
 class Field(object):
-    def __init__(self, field_name: str, render_format: Optional[str] = None):
+    def __init__(self, field_name: str, component_name: Optional[str] = None):
         self.field_name = field_name
-        self.render_format = render_format
+        self.component_name = component_name
 
     def clone(self):
-        return Field(self.field_name, self.render_format)
+        return Field(self.field_name, self.component_name)
 
     def field_def(self, serializer: "Serializer") -> Union[DFField, DRFSerializer]:
         return serializer.fields[self.field_name]
@@ -25,14 +25,18 @@ class Field(object):
         field = self.field_def(serializer).as_component_def()
 
         field["name"] = self.field_name
-        if self.render_format:
-            field["render_format"] = self.render_format
+        field["component_name"] = self.component_name
         fields[self.field_name] = field
         return field["name"]
 
 
 class Column(object):
-    def __init__(self, field: Union[Tuple[str, DFField], Field, str, None], width_classes: Optional[str] = None):
+    def __init__(
+        self,
+        field: Union[Tuple[str, DFField], Field, str, None],
+        colspan: int = 1,
+        component_name: Optional[str] = "form-field",
+    ):
         if isinstance(field, str):
             self.field = Field(field)
         elif isinstance(field, Field):
@@ -42,13 +46,13 @@ class Column(object):
             self.field = field
         else:
             raise NotImplementedError(f"Unknown field type {field.__class__.__name__}")
-        self.width_classes = width_classes or ""
-        # TODO: It was a lot more useful when bootstrap was the front-end framework and this basically allowed to
-        #  specify how big a column was to be used. Needs to change to support the Vue / Vuetify components and
-        #  their props now. task: https://app.clickup.com/t/86bzw1k8f
+        self.component_name = component_name
+        self.colspan = colspan or 1
 
     def clone(self):
-        return Column(field=self.field.clone() if self.field else None, width_classes=self.width_classes)
+        return Column(
+            field=self.field.clone() if self.field else None, colspan=self.colspan, component_name=self.component_name
+        )
 
     def _get_laid_fields(self):
         return {self.field.field_name} if self.field is not None else set()
@@ -56,14 +60,15 @@ class Column(object):
     def as_component_def(self, serializer: "Serializer", fields: Dict) -> Dict:
         fld_def = self.field.as_component_def(serializer, fields) if self.field is not None else dict()
         res = dict(type="column", field=fld_def)
-        if self.width_classes:
-            res["width_classes"] = self.width_classes
+        if self.colspan != 1:
+            res["colspan"] = self.colspan
+        res["component_name"] = self.component_name
         return res
 
 
 class Row(object):
-    def __init__(self, *columns: Union[Column, Field, str], component: str = None):
-        self.component = component or "FormRow"
+    def __init__(self, *columns: Union[Column, Field, str], component_name: str = "form-row"):
+        self.component_name = component_name
         self.columns: List[Column] = []
         for column in columns:
             if isinstance(column, str):
@@ -76,14 +81,15 @@ class Row(object):
                 raise NotImplementedError(f"Unknown column type {column.__class__.__name__}")
 
     def clone(self):
-        return Row(*[col.clone() for col in self.columns], component=self.component)
+        return Row(*[col.clone() for col in self.columns], component_name=self.component_name)
 
     def _get_laid_fields(self):
         return set().union(*(col._get_laid_fields() for col in self.columns))
 
     def as_component_def(self, serializer: "Serializer", fields: Dict) -> dict:
         return dict(
-            component=self.component, columns=[col.as_component_def(serializer, fields) for col in self.columns]
+            component_name=self.component_name,
+            columns=[col.as_component_def(serializer, fields) for col in self.columns],
         )
 
 
@@ -103,6 +109,8 @@ class Layout(object):
         :param columns: for all fields not added in layout manually, add them in n-column layout
         :param size: 'small', 'large' or ''
         :param header_classes: 'bg-info', ..., or ''
+        :param auto_add_fields: whether we should automatically add all unlisted fields
+          from the serializer (in as_component_def)
         """
         self.rows: List[Row] = list(rows) or []
         self.columns = columns
@@ -118,19 +126,24 @@ class Layout(object):
             columns=self.columns,
             size=self.size,
             header_classes=self.header_classes,
-            auto_add_fields=self.auto_add_fields
+            auto_add_fields=self.auto_add_fields,
         )
 
     def append_after_row(self, field_name: Optional[str], *rows: Row):
-        """Adds new rows after the row with specified field. if field_name is None, inserts new rows at beginning"""
+        """
+        Adds new rows after the row with specified field. if field_name is None, inserts new rows at beginning.
+        Note that if specified field is in a subgroup, the new rows will not be inserted in the subgroup,
+        but below it instead.
+        """
         if field_name is None:
             self.rows[0:0] = rows
             return
+
         for i, row in enumerate(self.rows):
-            for column in row.columns:
-                if column.field and column.field.field_name == field_name:
-                    self.rows[i + 1:i + 1] = rows
-                    return
+            if field_name in row._get_laid_fields():
+                self.rows[i + 1 : i + 1] = rows
+                return
+
         raise ValueError(f"Field {field_name} not found in the layout")
 
     def _get_laid_fields(self):
@@ -181,21 +194,25 @@ class Group(Column):
         field: Union[str, Field, None],
         title: str = None,
         sub_layout: Layout = None,
-        width_classes: Optional[str] = None,
+        colspan: int = 1,
         footer: Optional[str] = None,
+        component_name: Optional[str] = "form-field-group",
     ):
-        super().__init__(field, width_classes)
+        super().__init__(field=field, colspan=colspan, component_name=component_name)
         self.title = title
         self.layout = sub_layout
         self.footer = footer
+        self.component_name = component_name
+        assert self.field or self.layout
 
     def clone(self):
         return Group(
             field=self.field.clone() if self.field else None,
             title=self.title,
             sub_layout=self.layout.clone() if self.layout else None,
-            width_classes=self.width_classes,
-            footer=self.footer
+            colspan=self.colspan,
+            footer=self.footer,
+            component_name=self.component_name,
         )
 
     def _get_laid_fields(self):
@@ -205,7 +222,6 @@ class Group(Column):
 
     def as_component_def(self, serializer: "Serializer", fields: Dict) -> Dict:
         res = super().as_component_def(serializer, fields)
-        assert self.field or self.layout
         sub_serializer = self.field.field_def(serializer) if self.field else None  # type: Serializer
         layout = self.layout or sub_serializer.layout
         res.update(
@@ -214,5 +230,6 @@ class Group(Column):
             title=self.title or sub_serializer.label,
             uuid=sub_serializer.uuid if sub_serializer else uuid.uuid4(),
             layout=layout.as_component_def(sub_serializer if sub_serializer else serializer),
+            component_name=self.component_name,
         )
         return res
