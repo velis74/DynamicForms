@@ -5,7 +5,7 @@ import type { App } from 'vue';
 import Action, { defaultActionHandler } from './components/actions/action';
 import { useActionHandler } from './components/actions/action-handler-composable';
 import FilteredActions from './components/actions/filtered-actions';
-import { DetailViewOptions } from './components/adapters/api/namespace';
+import type { DetailViewOptions } from './components/adapters/api/namespace';
 import DisplayMode from './components/classes/display-mode';
 import DfApp from './components/df-app.vue';
 import FormPayload from './components/form/definitions/form-payload';
