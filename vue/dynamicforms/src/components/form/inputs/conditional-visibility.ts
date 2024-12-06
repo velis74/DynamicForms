@@ -1,5 +1,5 @@
 import Operator from '../definitions/field-operator';
-import FormPayload from '../definitions/form-payload';
+import type FormPayload from '../definitions/form-payload';
 
 export type Statement = [ string | Statement, Operator, any | Statement ] | null;
 

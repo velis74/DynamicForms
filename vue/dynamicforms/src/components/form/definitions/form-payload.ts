@@ -3,18 +3,18 @@ import { reactive } from 'vue';
 
 import type { APIConsumer } from '../../api_consumer/namespace';
 import DisplayMode from '../../classes/display-mode';
-import { FormLayoutTypeGuards } from '../namespace';
 import type { FormLayoutNS } from '../namespace';
+import { FormLayoutTypeGuards } from '../namespace';
 
 import type FormField from './field';
-import type { Group } from './layout';
 import type FormLayout from './layout';
+import { Group } from './layout';
 
 type FormLayoutInterface = FormLayoutNS.LayoutInterface;
 type FormLayoutOrInterface = FormLayout | FormLayoutInterface;
 
 function colIsGroup(col: any): col is Group {
-  return col.constructor.name === 'Group';
+  return col instanceof Group;
 }
 
 function collectAllFields(layout: FormLayoutOrInterface): FormField[] {
