@@ -1,5 +1,7 @@
 <template>
-  <div :key="config.maxDecimals" v-html="displayValue"/>
+  <div :key="config.maxDecimals" class="number-cell" :class="{ 'show-zeroes': showZeroes }">
+    {{ displayValue.main }}<span class="decimals">{{ displayValue.filler }}</span>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -7,6 +9,11 @@ import { computed, inject, reactive } from 'vue';
 
 import TableColumn from '../definitions/column';
 import TableRow from '../definitions/row';
+
+interface DisplayValue {
+  main: string;
+  filler: string;
+}
 
 //  name: 'TableCellFloat',
 const props = withDefaults(
@@ -34,27 +41,42 @@ const config = computed(() => {
   }
   return cfg;
 });
-const displayValue = computed(() => {
-  if (value.value == null) return '';
-  if (props.thead) return value.value;
+const showZeroes = computed(() => props.column.renderParams.table_show_zeroes ?? false);
+
+const displayValue = computed(() : DisplayValue => {
+  if (value.value == null) return { main: '', filler: '' };
+  if (props.thead) return { main: value.value, filler: '' };
 
   //  read any existing config and create it if it's not there already
   const cfg = config.value;
   // Make a presentable value
   let res = value.value.toLocaleString();
-  if (res === 'None') return res;
+  if (res === 'None') return { main: res, filler: '' };
+
   // fill the value with decimals
   const dpPos = res.indexOf(cfg.decimalChar);
   const numDecimals = dpPos === -1 ? 0 : res.substring(dpPos + 1).length;
+
   if (numDecimals > cfg.maxDecimals) cfg.maxDecimals = numDecimals;
+
+  // When only whole numbers are in dataset, don't add decimal and decimal digits
+  if (dpPos === -1 && cfg.maxDecimals === 0) return { main: res, filler: '' };
+
   if (dpPos === -1) res += cfg.decimalChar;
   const filler = Array(cfg.maxDecimals + 1 - numDecimals).join('0');
 
-  if (props.column.renderParams.table_show_zeroes) {
-    res += filler;
-  } else {
-    res += filler ? `<span style="visibility: hidden">${filler}</span>` : '';
-  }
-  return res;
+  return { main: res, filler };
 });
 </script>
+<style scoped>
+.number-cell {
+  text-align: right;
+}
+.decimals {
+  visibility: hidden;
+}
+.show-zeroes .decimals {
+  visibility: visible;
+  opacity: .6;
+}
+</style>
