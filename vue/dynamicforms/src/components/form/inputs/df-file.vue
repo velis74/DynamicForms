@@ -1,99 +1,83 @@
 <template>
   <vuetify-input
     :label="baseBinds.label"
-    :messages="baseBinds.messages"
+    :messages="[...baseBinds.messages, modelValue]"
     :error-messages="baseBinds['error-messages']"
     :error-count="baseBinds['error-count']"
   >
-    <div>
-      <div>
-        <input
-          ref="file"
-          :key="fileInputKey"
-          type="file"
-          :readonly="field.readOnly"
-          :disabled="field.readOnly"
-          :name="field.name"
-          @change="selectFile"
-        >
-      </div>
-      <div>
-        <v-progress-linear v-if="currentFile" :value="progress" height="10" style="margin-top: 5px;"/>
-        <div>
-          <div v-if="showFileOnServer" style="display: inline-block;">
-            <p>
-              {{ getFileName(currentFile ? currentFile.name : value) }}
-              <InputClearButton style="float: right; width: 1rem; margin-top: .1rem;" @clearButtonPressed="removeFile"/>
-            </p>
-          </div>
-        </div>
-      </div>
+    <div style="position: relative; width: 100%">
+      <v-progress-linear
+        v-if="currentFile && progress < 100"
+        :model-value="progress"
+        :indeterminate="progress === -1"
+        height="10"
+        style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;"
+      />
+      <v-file-input
+        v-model="selectedFile"
+        :readonly="field.readOnly"
+        :disabled="field.readOnly"
+        :name="field.name"
+        :label="baseBinds.label"
+        :show-size="true"
+        :multiple="false"
+        clearable
+        :style="currentFile && progress < 100 ? 'visibility: hidden' : ''"
+        @update:model-value="handleFileChange"
+        @click:clear="removeFile"
+      />
     </div>
   </vuetify-input>
 </template>
 
 <script setup lang="ts">
-/**
- * TODO: the field has a different mechanism for clearing than e.g. datetime: this one's using x while the other
- *   is using IonIcon
- */
-import _ from 'lodash';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import apiClient from '../../util/api-client';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
-import InputClearButton from './clear-input-button.vue';
 import VuetifyInput from './input-vuetify.vue';
 
 interface Props extends BaseProps {}
+
 const props = defineProps<Props>();
 
 interface Emits extends BaseEmits {}
+
 const emits = defineEmits<Emits>();
 
 const { value, baseBinds } = useInputBase(props, emits);
 
-// data
-// currentFile: null as (File | null)
-let currentFile: File | null = null;
-// progress: 0,
-let progress = 0;
-// showFileOnServer: false,
-let showFileOnServer = false;
-// fileInputKey: Math.round(Math.random() * 1000),
-let fileInputKey = Math.round(Math.random() * 1000);
+// State
+const currentFile = ref<File | null>(null);
+const progress = ref(0);
+const fileInputKey = ref(Math.round(Math.random() * 1000));
+const selectedFile = ref<File | null>();
 
-const file = ref<HTMLInputElement>();
+async function removeFile() {
+  if (value.value) {
+    try {
+      await apiClient.delete(`/dynamicforms/preupload-file/${value.value}/`);
+    } catch (err) {
+      console.error('Napaka pri brisanju datoteke:', err);
+      // Ne vrže napake, ker datoteka tako ali tako ni več prikazana
+    }
+  }
 
-// mounted
-onMounted(() => {
-  showFileOnServer = !!_.clone(value.value);
-});
-
-// methods
-function getFileName(filePath: string) {
-  // returns just the filename without any path
-  return !filePath ? filePath : filePath.replace(/^.*[\\/]/, '');
+  value.value = null;
+  progress.value = 0;
+  fileInputKey.value = Math.round(Math.random() * 1000);
+  currentFile.value = null;
+  selectedFile.value = null;
 }
 
-function removeFile() {
-  value.value = null;  // eslint-disable-line
-  progress = 0;
-  fileInputKey = Math.round(Math.random() * 1000);
-  showFileOnServer = false;
-  currentFile = null;
-}
+async function upload(file: File) {
+  progress.value = -1;
+  currentFile.value = file;
 
-async function upload() {
-  progress = 0;
-  const fileRef = file.value!;
-  if (!fileRef || !fileRef.files) return;
-  currentFile = fileRef.files.item(0);
   const formData = new FormData();
-  formData.append('file.vue', currentFile as File, `${(<File> currentFile).name}`);
-  showFileOnServer = true;
-  progress = 0;
+  formData.append('file', file, file.name);
+
   try {
     const res = await apiClient.post(
       '/dynamicforms/preupload-file/',
@@ -101,27 +85,30 @@ async function upload() {
       {
         showProgress: false,
         onUploadProgress: function onUploadProgress(progressEvent) {
-          if (!progressEvent.event.lengthComputable) {
-            progress = 50;
-          } else {
-            progress = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
+          if (progressEvent.event.lengthComputable) {
+            progress.value = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
           }
         },
       },
     );
     value.value = res.data.identifier;
-    progress = 100;
+    progress.value = 100;
   } catch (err) {
-    progress = 0;
-    showFileOnServer = false;
-    currentFile = null;
-    fileInputKey = Math.round(Math.random() * 1000);
+    progress.value = 0;
+    currentFile.value = null;
+    fileInputKey.value = Math.round(Math.random() * 1000);
+    selectedFile.value = null;
     throw err;
   }
 }
 
-function selectFile() {
-  upload();
+function handleFileChange(file: File | File[]): any {
+  if (file) {
+    if (Array.isArray(file)) {
+      console.error('Uploading multiple files not supported right now');
+    } else {
+      upload(file);
+    }
+  }
 }
-
 </script>

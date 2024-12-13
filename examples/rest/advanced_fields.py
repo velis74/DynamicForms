@@ -5,7 +5,6 @@ from dynamicforms.template_render.layout import Layout
 from dynamicforms.viewsets import ModelViewSet
 
 from ..models import AdvancedFields, Relation
-from .fields.df_file_field import DfFileField, DfPreloadedFileField
 
 
 class AdvancedFieldsSerializer(serializers.ModelSerializer):
@@ -95,8 +94,8 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         queryset=Relation.objects.all(), url_reverse="relation-list", value_field="id", text_field="name"
     )
     slug_related_field = fields.SlugRelatedField(slug_field="name", queryset=Relation.objects.all())
-    file_field = DfFileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
-    file_field_two = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
+    file_field = fields.FileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
+    file_field_two = fields.FileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
 
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)
 

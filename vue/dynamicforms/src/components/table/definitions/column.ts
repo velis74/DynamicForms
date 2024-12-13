@@ -179,9 +179,13 @@ export default class TableColumn {
     if (thead) return this.renderDecoratorPlain(rowData, thead);
     const value = rowData[this.name];
     if (value) {
-      const downloadContent = `event.stopPropagation(); window.open("${value}", "_blank")`;
+      const func = `(function(e) { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+        window.open("${value.replace(/\/$/, '')}", "_blank");
+      })`;
       const fileName = value.replace(/^.*[\\/]/, '');
-      return `<a href="#" onclick='${downloadContent}'>${fileName}</a>`;
+      return `<a href="javascript:void(0)" onclick='${func}(event)'>${fileName}</a>`;
     }
     return null;
   }

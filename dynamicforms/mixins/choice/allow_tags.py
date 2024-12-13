@@ -13,7 +13,7 @@ class DenormalisedArray(list):
             for itm in ast.literal_eval(lst):
                 self.append(itm)
 
-        elif lst is not None and isinstance(lst, list):
+        elif lst is not None and isinstance(lst, (list, set)):
             for itm in lst:
                 self.append(itm)
 

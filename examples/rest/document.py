@@ -1,8 +1,7 @@
-from dynamicforms import serializers
+from dynamicforms import fields, serializers
 from dynamicforms.viewsets import ModelViewSet
 
 from ..models import Document
-from .fields.df_file_field import DfPreloadedFileField
 
 
 class DocumentsSerializer(serializers.ModelSerializer):
@@ -13,7 +12,7 @@ class DocumentsSerializer(serializers.ModelSerializer):
         "edit": "Editing document object",
     }
 
-    file = DfPreloadedFileField(allow_empty_file=False, use_url=False, allow_null=True)
+    file = fields.FileField(allow_empty_file=False, use_url=False, allow_null=True)
 
     class Meta:
         model = Document
