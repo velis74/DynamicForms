@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+
 from django.utils.translation import gettext_lazy as _
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ class FileFieldMixin(object):
         from dynamicforms.preupload_files import get_cached_file
 
         if isinstance(data, str):  # dobimo guid
-            cached_file = get_cached_file(data, self.context['request'].user.id or -1, True)
+            cached_file = get_cached_file(data, self.context["request"].user.id or -1, True)
             if cached_file:
                 # Naredimo django file iz cache podatkov
                 return ContentFile(cached_file.content, name=cached_file.name)
