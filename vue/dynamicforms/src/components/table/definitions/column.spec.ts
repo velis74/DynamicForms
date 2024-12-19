@@ -223,7 +223,8 @@ describe('TableColumn', () => {
     const result = column.renderDecoratorFunction(rowData, thead);
 
     expect(result).toBe(
-      '<a href="#" onclick=\'event.stopPropagation(); window.open("example.txt", "_blank")\'>example.txt</a>',
+      `<a href="javascript:void(0)" onclick="(function(e) { e.preventDefault(); e.stopPropagation(); 
+      window.open('example.txt', '_blank'); })(event)">example.txt</a>`.replace(/\s+/g, ' '),
     );
 
     const result2 = column.renderDecoratorFunction({ ...rowData, file_field: null }, thead);

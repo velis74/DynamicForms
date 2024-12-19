@@ -182,10 +182,10 @@ export default class TableColumn {
       const func = `(function(e) { 
         e.preventDefault(); 
         e.stopPropagation(); 
-        window.open("${value.replace(/\/$/, '')}", "_blank");
-      })`;
+        window.open('${value.replace(/\/$/, '')}', '_blank');
+      })`.replace(/\s+/g, ' '); // replace to remove excessive whitespace and newlines
       const fileName = value.replace(/^.*[\\/]/, '');
-      return `<a href="javascript:void(0)" onclick='${func}(event)'>${fileName}</a>`;
+      return `<a href="javascript:void(0)" onclick="${func}(event)">${fileName}</a>`;
     }
     return null;
   }
