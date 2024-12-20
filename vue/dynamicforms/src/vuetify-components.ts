@@ -7,6 +7,7 @@ export { VCheckbox } from 'vuetify/components/VCheckbox';
 export { VColorPicker } from 'vuetify/components/VColorPicker';
 export { VDialog } from 'vuetify/components/VDialog';
 export { VContainer, VRow, VCol, VSpacer } from 'vuetify/components/VGrid';
+export { VFileInput } from 'vuetify/components/VFileInput';
 export { VInput } from 'vuetify/components/VInput';
 export { VLayout } from 'vuetify/components/VLayout';
 export { VList, VListItem, VListItemTitle } from 'vuetify/components/VList';
