@@ -72,13 +72,11 @@ async function removeFile() {
 }
 
 async function upload(file: File) {
-  console.log('upload received file:', file);
   progress.value = -1;
   currentFile.value = file;
 
   const formData = new FormData();
   formData.append('file', file, file.name);
-  console.log('formData:', formData);
 
   try {
     const res = await apiClient.post(
@@ -105,12 +103,10 @@ async function upload(file: File) {
 }
 
 function handleFileChange(file: File | File[]): any {
-  console.log('handleFileChange file:', file);
   if (file) {
     if (Array.isArray(file)) {
       console.error('Uploading multiple files not supported right now');
     } else {
-      console.log('calling upload with file:', file);
       upload(file);
     }
   }
