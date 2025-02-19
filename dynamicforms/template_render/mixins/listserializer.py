@@ -55,8 +55,11 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
     uuid = property(lambda self: self.child.uuid, lambda self, value: setattr(self.child, "uuid", value))
 
     @classmethod
-    def get_reverse_url(cls, view_name, request):
-        return reverse(view_name + "-list", format="json", request=request)
+    def get_reverse_url(cls, view_name, request, kwargs=None):
+        if kwargs:
+            kwargs = kwargs.copy()
+            kwargs.pop("pk", None)
+        return reverse(view_name + "-list", format="json", request=request, kwargs=kwargs)
 
     def apply_component_context(self, request=None, paginator=None):
         # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
@@ -67,7 +70,11 @@ class ViewModeListSerializer(ViewModeBase, FieldRenderMixin, ListSerializer):
 
         self.child.apply_component_context(request, paginator)
         self.view_mode = ViewModeListSerializer.ViewMode.TABLE
-        self.reverse_url = self.get_reverse_url(self.child.template_context["url_reverse"], request)
+        self.reverse_url = self.get_reverse_url(
+            self.child.template_context["url_reverse"],
+            request,
+            self.child.template_context.get("url_reverse_kwargs", self.child.default_url_reverse_kwargs),
+        )
         self.paginator = paginator
         if paginator:
             base_url = paginator.base_url.split("?", 1)

@@ -188,7 +188,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
     @property
     def layout(self):
         template_context = getattr(self, "template_context", {})
-        if hasattr(self, 'determine_layout_at_runtime') and (layout := self.determine_layout_at_runtime(self.request)):
+        if hasattr(self, "determine_layout_at_runtime") and (layout := self.determine_layout_at_runtime(self.request)):
             return layout
         elif hasattr(self, "Meta") and hasattr(self.Meta, "layout"):
             return self.Meta.layout
@@ -265,6 +265,13 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         ser.paginator = paginator
         return ser
 
+    @property
+    def default_url_reverse_kwargs(self):
+        if not self.parent and "id" not in self.data:
+            return dict(pk=None)
+        else:
+            return dict(pk=self.data["id"] if not getattr(self, "parent", None) else "--record_id--")
+
     def apply_component_context(self, request=None, paginator=None):
         # Different to ViewModeSerializer.get_component_context - which is a class method creating the instances
         # this one will decorate existing instance with the appropriate values needed for rendering
@@ -280,13 +287,10 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
                 else ViewModeSerializer.ViewMode.FORM
             )
 
-        if not self.parent and "id" not in self.data:
-            def_kwargs = dict(pk=None)
-        else:
-            def_kwargs = dict(pk=self.data["id"] if not getattr(self, "parent", None) else "--record_id--")
-
         self.reverse_url = self.get_reverse_url(
-            self.template_context["url_reverse"], request, self.template_context.get("url_reverse_kwargs", def_kwargs)
+            self.template_context["url_reverse"],
+            request,
+            self.template_context.get("url_reverse_kwargs", self.default_url_reverse_kwargs),
         )
 
 
