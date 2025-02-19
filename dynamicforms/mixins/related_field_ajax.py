@@ -98,7 +98,8 @@ class RelatedFieldAJAXMixin(object):
             ))
             if len(res["choices"]) > 100:
                 print(
-                    f"WARNING: {self.parent.__class__.__name__}.{self.field_name} should be converted to AJAX.",
+                    f"WARNING: {self.parent.__class__.__name__}.{self.field_name} has more than 100 choices and "
+                    f"should be converted to AJAX.",
                     file=sys.stderr
                 )
         return res
