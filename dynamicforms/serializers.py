@@ -353,7 +353,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 declared_fields[resolved_field_name] = fields.SerializerMethodField(
                     source="*",
                     display_form=DisplayMode.HIDDEN,
-                    display_table=DisplayMode.FULL,
+                    display_table=getattr(s_field, "display_table", DisplayMode.FULL),
                     render_params=getattr(s_field, "render_params", None) if s_field else None,
                 )
 
