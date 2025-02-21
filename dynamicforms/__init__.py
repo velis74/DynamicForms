@@ -1,5 +1,5 @@
 __title__ = "DynamicForms"
-__version__ = '0.77.11'
+__version__ = '0.77.12'
 __author__ = "Jure Erznožnik"
 __email__ = "jure.erznoznik@gmail.com"
 __license__ = "BSD 3-Clause"
