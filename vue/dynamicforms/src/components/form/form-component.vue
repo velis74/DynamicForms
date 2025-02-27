@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, provide } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import FilteredActions from '../actions/filtered-actions';
 import { APIConsumer } from '../api_consumer/namespace';
@@ -19,6 +20,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const useDisplayInstance = useDisplay();
+
 provide('payload', computed(() => props.payload));
 </script>
 
@@ -27,7 +30,7 @@ provide('payload', computed(() => props.payload));
     <v-card-title>
       {{ title }}
       <v-layout v-if="actions.formHeader.length" justify-end>
-        <df-actions :actions="actions.formHeader"/>
+        <df-actions :actions="actions.formHeader" :use-display="useDisplayInstance"/>
       </v-layout>
     </v-card-title>
     <v-card-text>
@@ -35,7 +38,7 @@ provide('payload', computed(() => props.payload));
     </v-card-text>
     <v-card-actions class="vuetify-form-actions">
       <v-layout justify-end>
-        <df-actions :actions="actions.formFooter"/>
+        <df-actions :actions="actions.formFooter" :use-display="useDisplayInstance"/>
       </v-layout>
     </v-card-actions>
   </v-card>

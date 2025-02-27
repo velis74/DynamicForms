@@ -21,7 +21,7 @@
       </template>
       <template #actions>
         <div>
-          <df-actions :actions="templateDialogActions"/>
+          <df-actions :actions="templateDialogActions" :use-display="useDisplayInstance"/>
         </div>
       </template>
     </df-dialog>
@@ -31,6 +31,7 @@
 <script lang="ts">
 import { Action, defaultActionHandler, FilteredActions, DialogSize, dfModal } from 'dynamicforms';
 import { defineComponent } from 'vue';
+import { useDisplay } from 'vuetify';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'ModalDemo',
@@ -41,6 +42,7 @@ export default /* #__PURE__ */ defineComponent({
         [Action.closeAction({ actionClose: this.actionClose as Actions.ActionHandler })],
       ),
       counter: 1,
+      useDisplayInstance: useDisplay(),
     };
   },
   methods: {

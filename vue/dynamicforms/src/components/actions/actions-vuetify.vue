@@ -7,6 +7,7 @@
       :elevation="0"
       :class="idx === 0 ? '' : 'ms-3'"
       :size="isSmallSize(action) ? 'small' : 'default'"
+      :title="action.title"
       @click.stop="(event: MouseEvent) => callHandler(action, { event })"
     >
       <IonIcon v-if="displayIcon(action)" class="action-icon" :name="<string> action.icon"/>

@@ -122,7 +122,7 @@ describe('vuetify-actions', () => {
     return mount(
       VuetifyActions,
       {
-        propsData: { actions: new FilteredActions([]) },
+        propsData: { actions: new FilteredActions([]), useDisplay: useDisplay() },
         global: { plugins: [vuetify], components: VuetifyComponents, provide: { $df$ApplicationTheme: 'vuetify' } },
       },
     );
@@ -313,7 +313,7 @@ const actionsCopy = {
 describe('vuetify-actions action rendering', () => {
   function mountComponent() {
     return mount(VuetifyActions, {
-      propsData: { actions: new FilteredActions(actionsCopy) },
+      propsData: { actions: new FilteredActions(actionsCopy), useDisplay: useDisplay() },
       global: {
         plugins: [vuetify],
         components: VuetifyComponents,
@@ -372,7 +372,7 @@ describe('Check if visibility flags work as expected', () => {
     };
 
     const test = mount(VuetifyActions, {
-      propsData: { actions: new FilteredActions(actions) },
+      propsData: { actions: new FilteredActions(actions), useDisplay: useDisplay() },
       global: {
         plugins: [vuetify],
         components: VuetifyComponents,
@@ -449,7 +449,7 @@ describe('Check if visibility flags work as expected', () => {
 describe('Check if actions components are responsive', () => {
   function mountComponent() {
     return mount(VuetifyActions, {
-      propsData: { actions: new FilteredActions([actionsCopy.add]) },
+      propsData: { actions: new FilteredActions([actionsCopy.add]), useDisplay: useDisplay() },
       global: {
         plugins: [vuetify],
         components: VuetifyComponents,

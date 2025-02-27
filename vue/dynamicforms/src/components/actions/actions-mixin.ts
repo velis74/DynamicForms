@@ -1,5 +1,4 @@
 import { defineComponent } from 'vue';
-import { useDisplay } from 'vuetify';
 
 import Action from './action';
 import FilteredActions from './filtered-actions';
@@ -10,7 +9,7 @@ type BreakpointsJSON = ActionsNS.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({
-  props: { actions: { type: FilteredActions, required: true } },
+  props: { actions: { type: FilteredActions, required: true }, useDisplay: { type: Object, required: true } },
   computed: {
     displayStyle() {
       const res: BreakpointJSON = {};
@@ -34,7 +33,7 @@ export default /* #__PURE__ */ defineComponent({
   methods: {
     checkStyle(attribute: string, actionRes: BreakpointJSON, displayStyle: BreakpointsJSON) {
       let style: any = null;
-      const dp = useDisplay();
+      const dp = this.useDisplay;
       const getStyle = (s: BreakpointJSON | undefined) => (s && s[attribute] !== undefined ? s[attribute] : style);
       // see also action.ts about these breakpoints
       if (dp.xlAndUp.value) style = getStyle(displayStyle.xl);

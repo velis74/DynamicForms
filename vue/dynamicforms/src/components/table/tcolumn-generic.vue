@@ -2,7 +2,7 @@
   <div
     ref="columnsize"
     :class="`${columnClass} ${column.name} text-${column.align} ${customClass()}`"
-    :style="computedStyle"
+    :style="computedStyleContainer"
     @click.stop="handleClick"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { column, event, rowType })"
   >
@@ -44,12 +44,14 @@
       <df-actions
         v-if="column.name === '#actions-row_start' && actions.rowStart.length"
         :actions="actions.rowStart"
+        :use-display="useDisplayInstance"
         class="actions"
       />
       <!-- first we render any field start actions -->
       <df-actions
         v-if="actions.fieldStart(column.name).length"
         :actions="actions.fieldStart(column.name)"
+        :use-display="useDisplayInstance"
         class="actions"
       />
       <!-- then the field component itself -->
@@ -60,18 +62,21 @@
         :column="column"
         :thead="thead"
         :actions="actions"
+        :style="computedStyleValue"
       />
       <!-- or it's just a decorated text and not a component -->
-      <div v-else v-html="column.renderDecoratorFunction(rowData, thead)"/>
+      <div v-else :style="computedStyleValue" v-html="column.renderDecoratorFunction(rowData, thead)"/>
       <!-- we finish up with any field end actions -->
       <df-actions
         v-if="actions.fieldEnd(column.name).length"
         :actions="actions.fieldEnd(column.name)"
+        :use-display="useDisplayInstance"
         class="actions"
       />
       <df-actions
         v-if="column.name === '#actions-row_end' && actions.rowEnd.length"
         :actions="actions.rowEnd"
+        :use-display="useDisplayInstance"
         class="actions"
       />
     </template>
@@ -83,11 +88,13 @@
 
 <script setup lang="ts">
 import { computed, defineComponent, inject, provide, ref } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
 import FormField from '../form/form-field.vue';
+import { interpolate } from '../util/translations-mixin';
 
 import * as TableCells from './cell-renderers';
 import ColumnGroup from './column-group.vue';
@@ -113,13 +120,25 @@ const columnClass = computed(
 );
 const payload = computed(() => props.rowData);
 
+const useDisplayInstance = useDisplay();
+
 const { callHandler } = useActionHandler();
 
 // Checks if max width is set. if yes, it gets the value; if no, returns the empty string
 // Create a ref to store the maxWidthStyle
-const computedStyle = computed(() => {
+const computedStyleContainer = computed(() => {
   if (props.column.renderParams?.max_width) {
-    return `max-width: ${props.column.renderParams.max_width}; overflow: hidden; text-overflow: ellipsis;`;
+    return interpolate('max-width: %(width)s; display: inline-flex;', { width: props.column.renderParams.max_width });
+  }
+  return ''; // Empty string if max_width is not defined
+});
+const computedStyleValue = computed(() => {
+  if (props.column.renderParams?.max_width) {
+    let retStyle = interpolate('max-width: %(width)s;', { width: props.column.renderParams.max_width });
+    if (!props.filterDefinition) {
+      retStyle += ' overflow: hidden; text-overflow: ellipsis;';
+    }
+    return retStyle;
   }
   return ''; // Empty string if max_width is not defined
 });

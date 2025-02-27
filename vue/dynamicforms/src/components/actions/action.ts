@@ -54,6 +54,8 @@ class Action implements ActionJSON {
 
   public payload!: FormPayload | undefined;
 
+  public title?: string;
+
   [key: `action${string}`]: ActionsNS.ActionHandler;
 
   constructor(data: Action | ActionJSON, payload?: FormPayload) {
@@ -111,6 +113,8 @@ class Action implements ActionJSON {
     // any non-string or empty string must resolve as null for fieldName
     const fieldName = !_.isString(fieldNameTemp) || fieldNameTemp.length === 0 ? null : fieldNameTemp;
 
+    const title = !_.isString(data.title) || data.title.length === 0 ? null : data.title;
+
     const actionName = getActionName(data.name);
     this[actionName] = data[actionName];
 
@@ -125,6 +129,7 @@ class Action implements ActionJSON {
       icon: { get() { return icon; }, enumerable: true },
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
+      title: { get() { return title; }, enumerable: true },
 
       payload: { get(): FormPayload | undefined { return payload; }, enumerable: true },
       // elementType & bindAttrs, entire action.action concept:

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { defineComponent, h, resolveComponent, DefineComponent } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
@@ -19,7 +20,7 @@ function processSlot(
   }
   if (content instanceof FilteredActions) {
     // the slot is FilteredActions. Need to construct a DfActions component
-    return () => h(resolveComponent('DfActions'), { slot, actions: content });
+    return () => h(resolveComponent('DfActions'), { slot, actions: content, useDisplay: useDisplay() });
   }
   if (content && 'componentName' in content && 'props' in content) {
     const component = _.isString(content.componentName) ?
