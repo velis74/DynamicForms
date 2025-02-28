@@ -20,6 +20,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import IonIcon from 'vue-ionicon';
+import { useDisplay } from 'vuetify';
 
 import { useActionHandler } from './action-handler-composable';
 import ActionHandlerMixin from './action-handler-mixin';
@@ -31,7 +32,15 @@ export default /* #__PURE__ */ defineComponent({
   mixins: [ActionsMixin, ActionHandlerMixin],
   setup() {
     const { callHandler } = useActionHandler();
-    return { callHandler };
+    const useDisplayInstance = useDisplay();
+    // useDisplay is a prop that is needed in actions-mixin
+    return {
+      callHandler,
+      useDisplay: useDisplayInstance as any,
+      //   there must be "as any" because otherwise build returns error
+      //   "Default export of the module has or is using private name 'DisplayPlatform'" due to
+      //   private type "DisplayPlatform" that is used by component useDisplay from Vuetify, isn't correctly exported.
+    };
   },
 });
 </script>

@@ -44,14 +44,12 @@
       <df-actions
         v-if="column.name === '#actions-row_start' && actions.rowStart.length"
         :actions="actions.rowStart"
-        :use-display="useDisplayInstance"
         class="actions"
       />
       <!-- first we render any field start actions -->
       <df-actions
         v-if="actions.fieldStart(column.name).length"
         :actions="actions.fieldStart(column.name)"
-        :use-display="useDisplayInstance"
         class="actions"
       />
       <!-- then the field component itself -->
@@ -70,13 +68,11 @@
       <df-actions
         v-if="actions.fieldEnd(column.name).length"
         :actions="actions.fieldEnd(column.name)"
-        :use-display="useDisplayInstance"
         class="actions"
       />
       <df-actions
         v-if="column.name === '#actions-row_end' && actions.rowEnd.length"
         :actions="actions.rowEnd"
-        :use-display="useDisplayInstance"
         class="actions"
       />
     </template>
@@ -88,7 +84,6 @@
 
 <script setup lang="ts">
 import { computed, defineComponent, inject, provide, ref } from 'vue';
-import { useDisplay } from 'vuetify';
 
 import Action from '../actions/action';
 import { useActionHandler } from '../actions/action-handler-composable';
@@ -119,8 +114,6 @@ const columnClass = computed(
   () => (props.column.renderComponentName === 'ColumnGroup' ? 'column-group' : 'df-col'),
 );
 const payload = computed(() => props.rowData);
-
-const useDisplayInstance = useDisplay();
 
 const { callHandler } = useActionHandler();
 

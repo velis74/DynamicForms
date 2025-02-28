@@ -4,7 +4,7 @@
     <v-card-text :key="responsiveLayoutWidth">
       <table-style :columns="responsiveColumns" :unique-id="uniqueId"/>
       <div :id="uniqueId" ref="container">
-        <VuetifyActions :actions="actions.header" :use-display="useDisplayInstance"/>
+        <VuetifyActions :actions="actions.header"/>
         <VuetifyTHead
           :rendered-columns="responsiveColumns"
           :row-data="theadRowData"
@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 import { toRefs } from 'vue';
-import { useDisplay } from 'vuetify';
 
 import VuetifyActions from '../actions/actions-vuetify.vue';
 import LoadingIndicator from '../util/loading-indicator.vue';
@@ -40,7 +39,6 @@ import VuetifyTHead from './thead-generic.vue';
 
 interface Props extends TableBasePropsInterface {}
 
-const useDisplayInstance = useDisplay();
 const props = withDefaults(
   defineProps<Props>(),
   {

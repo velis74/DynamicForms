@@ -9,7 +9,10 @@ type BreakpointsJSON = ActionsNS.BreakpointsJSON;
 
 // noinspection PointlessBooleanExpressionJS
 export default /* #__PURE__ */ defineComponent({
-  props: { actions: { type: FilteredActions, required: true }, useDisplay: { type: Object, required: true } },
+  props: {
+    actions: { type: FilteredActions, required: true },
+    useDisplay: { type: Object, default: () => {} },
+  },
   computed: {
     displayStyle() {
       const res: BreakpointJSON = {};
