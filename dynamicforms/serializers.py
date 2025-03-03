@@ -335,7 +335,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 ):
                     # if the field is set to not display in the table, don't create the resolved field
                     continue
-
+                s_field_display_table = (s_field.display_table if s_field else None) or DisplayMode.FULL
                 # original field does not display in the table
                 if field_name in declared_fields:
                     # declared fields cannot also have extra_kwargs (there is a continue in the loop)
@@ -353,7 +353,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
                 declared_fields[resolved_field_name] = fields.SerializerMethodField(
                     source="*",
                     display_form=DisplayMode.HIDDEN,
-                    display_table=getattr(s_field, "display_table", DisplayMode.FULL),
+                    display_table=s_field_display_table,
                     render_params=getattr(s_field, "render_params", None) if s_field else None,
                 )
 

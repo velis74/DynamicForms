@@ -52,6 +52,7 @@ export namespace ActionsNS {
     displayStyle?: BreakpointsJSON;
     position?: string;
     field_name?: string;
+    title?: string;
   }
 
   export interface ActionsJSON {
