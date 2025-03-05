@@ -5,6 +5,7 @@ import pytz
 
 from django.conf import settings
 from django.db import models
+from django.db.models import ProtectedError, RestrictedError
 from django.http import Http404
 from django.utils.dateparse import (
     datetime_re,
@@ -15,6 +16,7 @@ from django.utils.dateparse import (
     standard_duration_re,
     time_re,
 )
+from django.utils.translation import gettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.renderers import JSONRenderer
@@ -40,7 +42,8 @@ class NewMixin:
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         if (
             # "new" was requested directly
-            (lookup_url_kwarg in self.kwargs and self.kwargs[lookup_url_kwarg] == "new") or
+            (lookup_url_kwarg in self.kwargs and self.kwargs[lookup_url_kwarg] == "new")
+            or
             # if this is a SingleRecordViewSet, our router may have created routes where pk won't even be there
             (lookup_url_kwarg not in self.kwargs and isinstance(self, SingleRecordViewSet))
         ):
@@ -400,6 +403,12 @@ class ModelViewSet(NewMixin, PutPostMixin, TemplateRendererMixin, viewsets.Model
             return super().create(request, *args, **kwargs)
         except ValidationError as e:
             self.handle_create_validation_exception(e, request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except (ProtectedError, RestrictedError):
+            return Response(_("Deletion not allowed: This record is linked to other records."), status=400)
 
 
 class ViewSet(NewMixin, viewsets.ViewSet):
