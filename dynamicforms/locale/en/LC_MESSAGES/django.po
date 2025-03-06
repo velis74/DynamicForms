@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-27 08:03+0000\n"
+"POT-Creation-Date: 2025-03-05 13:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,6 +62,14 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+#: dynamicforms/mixins/file_field.py:35
+msgid "File not found in cache"
+msgstr ""
+
 #: dynamicforms/template_render/mixins/serializer_render_fields.py:34
 msgid "Actions"
+msgstr ""
+
+#: dynamicforms/viewsets.py:410
+msgid "Deletion not allowed: This record is linked to other records."
 msgstr ""
