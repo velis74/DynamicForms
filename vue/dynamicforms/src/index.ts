@@ -46,6 +46,7 @@ export interface DynamicFormsOptions {
   ui: 'vuetify',
 }
 
+export * as DfNotifications from './components/notifications/index';
 const defaultOptions: DynamicFormsOptions = { ui: 'vuetify' };
 
 const uiOptions: Array<string> = ['vuetify'];
