@@ -12,10 +12,10 @@ const showNotification = (
   duration: number | undefined = undefined,
   id: number | undefined = undefined,
   data: object | undefined = {
-      onNotificationClose: (item: any, closeFunction: any) => {
-        closeFunction();
-      },
+    onNotificationClose: (item: any, closeFunction: any) => {
+      closeFunction();
     },
+  },
 ) => {
   notify({
     title,
