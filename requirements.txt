@@ -10,3 +10,5 @@ django-cors-headers
 versio
 ruff
 ruff-lsp
+six
+drf_spectacular
