@@ -495,18 +495,25 @@ class Serializer(DynamicFormsSerializer, serializers.Serializer):
 class DynamicModelMixin:
     MODEL_FUNC_SETTING_NAME = None
 
-    def determine_model_at_runtime(self, request) -> Optional[models.Model]:
+    @staticmethod
+    def determine_model_at_runtime_static(request, viewset=None, func_name=None):
         """
         Determines what model should be the basis for the serializer at runtime. Allows for dynamic model adjustments
         based on active code at the time of serialization
         :return:
         """
-        try:
-            model_func = import_string(getattr(settings, self.MODEL_FUNC_SETTING_NAME, None))
-            return model_func(self, request)
-        except ImportError:
-            pass
+        if not func_name and viewset:
+            func_name = getattr(settings, viewset.MODEL_FUNC_SETTING_NAME, None)
+        if request and func_name:
+            try:
+                model_func = import_string(func_name)
+                return model_func(viewset, request)
+            except ImportError:
+                pass
         return None
+
+    def determine_model_at_runtime(self, request) -> Optional[models.Model]:
+        return self.determine_model_at_runtime_static(request, self)
 
 
 class DynamicModelSerializerMixin(DynamicModelMixin):
