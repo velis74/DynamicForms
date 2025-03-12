@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "dynamicforms_dev",
     "examples",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 if not getattr(env, "DEPLOY", True):
@@ -164,6 +165,7 @@ REST_FRAMEWORK = {
         "dynamicforms.renderers.ComponentDefRenderer",
     ),
     "DEFAULT_FILTER_BACKENDS": ("dynamicforms.filters.FilterBackend",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 DYNAMICFORMS = {
