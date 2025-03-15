@@ -64,11 +64,12 @@ import { computed, onMounted, watch, nextTick, ref } from 'vue';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
-import apiClient from '../../util/api-client';
 import { DfForm } from '../namespace';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
+
+import { apiClient } from '@/util';
 
 interface Props extends BaseProps {}
 

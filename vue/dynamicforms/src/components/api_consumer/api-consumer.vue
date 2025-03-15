@@ -110,7 +110,7 @@ async function actionEdit(
 function actionSort(
   actionData: Action,
   payload: FormPayload,
-  context: { rowType: RowTypes, column?: TableColumn, event: KeyboardEvent },
+  context: { rowType: RowTypes, column?: TableColumn, event: MouseEvent },
 ) {
   // This is the default handler for ordering
   if (context.rowType === RowTypes.Label && actionData.position === 'ROW_CLICK' && context.column) {

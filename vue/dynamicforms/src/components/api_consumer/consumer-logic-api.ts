@@ -4,11 +4,12 @@ import { Ref } from 'vue';
 import { ViewSetApi } from '../adapters/api';
 import FormPayload from '../form/definitions/form-payload';
 import { showNotificationFromAxiosException } from '../notifications';
-import apiClient from '../util/api-client';
 
 import ConsumerLogicBase from './consumer-logic-base';
 import FormConsumerOneShotApi from './form-consumer/one-shot/api';
 import type { APIConsumer } from './namespace';
+
+import { apiClient } from '@/util';
 
 class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.ConsumerLogicAPIInterface {
   protected readonly trailingSlash: boolean;

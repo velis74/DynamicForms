@@ -15,10 +15,10 @@ import dfModal from './components/modal/modal-view-api';
 import AppNotification from './components/notifications/df-notifications.vue';
 import RowTypes from './components/table/definitions/row-types';
 import TColumnGeneric from './components/table/tcolumn-generic.vue';
-import apiClient from './components/util/api-client';
-import { gettext, interpolate } from './components/util/translations-mixin';
 import * as DfVuetifyComponents from './components/vuetify';
 import * as VuetifyComponents from './vuetify-components';
+
+import { apiClient, gettext, interpolate } from '@/util';
 
 export * from './components/api_consumer/index-temporary';
 export * from './components/api_consumer/form-consumer';
