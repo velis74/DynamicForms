@@ -2,7 +2,6 @@ import { AxiosRequestConfig } from 'axios';
 import { computed, isRef, MaybeRef, ref, Ref, unref } from 'vue';
 
 import { APIConsumer } from '../../api_consumer/namespace';
-import apiClient, { dataWithResponse } from '../../util/api-client';
 
 import {
   IDetailViewApi,
@@ -12,6 +11,8 @@ import {
   DetailViewOptions,
   DetailOptionsWithDefaults,
 } from './namespace';
+
+import { apiClient, dataWithResponse } from '@/util';
 
 function urlParamToRef(url: MaybeRef<string>) {
   const urlRef = ref(url);

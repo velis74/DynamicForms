@@ -33,10 +33,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import apiClient from '../../util/api-client';
-
 import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
+
+import { apiClient } from '@/util';
 
 interface Props extends BaseProps {}
 

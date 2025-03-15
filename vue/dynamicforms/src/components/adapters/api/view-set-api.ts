@@ -2,9 +2,10 @@ import { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { computed, isRef, ref, Ref } from 'vue';
 
 import { APIConsumer } from '../../api_consumer/namespace';
-import apiClient, { dataWithResponse } from '../../util/api-client';
 
 import { IViewSetApi, PrimaryKeyType } from './namespace';
+
+import { apiClient, dataWithResponse } from '@/util';
 
 function urlParamToRef(url: string | Ref<string>) {
   const urlRef = isRef(url) ? url : ref(url);

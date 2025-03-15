@@ -6,7 +6,7 @@
     variant="underlined"
     hide-details="auto"
     :class="field.renderParams.fieldCSSClass"
-    :density="baseBinds.label != null && baseBinds.label.length > 0 ? 'default' : 'compact'"
+    :density="baseBinds.label != null && baseBinds.label.length > 0 ? 'default' : 'comfortable'"
     :name="field.name"
     :placeholder="field.placeholder"
     :rules="rules"

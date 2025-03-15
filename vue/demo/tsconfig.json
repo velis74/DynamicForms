@@ -3,6 +3,8 @@
   "compilerOptions": {
     "paths": {
       "dynamicforms": ["../dynamicforms/src/index.ts"],
+      "@/*": ["../dynamicforms/src/components/*"],
+      "~/*": ["../../node_modules/*"]
     }
   },
   "include": ["src/**/*"],

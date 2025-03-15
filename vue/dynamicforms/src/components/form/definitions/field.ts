@@ -16,7 +16,7 @@ import { DfForm } from '../namespace';
 import RenderParams from './field-render-params';
 
 export default class FormField {
-  private fieldDef!: DfForm.FormFieldJSON;
+  private declare fieldDef: DfForm.FormFieldJSON;
 
   public uuid!: string;
 

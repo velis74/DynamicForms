@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
 
-import apiClient from '../../util/api-client';
-
 import { IViewSet } from './namespace';
 import ViewGeneric from './view-generic';
+
+import { apiClient } from '@/util';
 
 export default class ViewSetGeneric<T> extends ViewGeneric<T> implements IViewSet<T> {
   protected list_url: string;

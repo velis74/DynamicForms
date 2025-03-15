@@ -1,8 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
 
-import apiClient from '../../util/api-client';
-
 import { IView } from './namespace';
+
+import { apiClient } from '@/util';
 
 export default class ViewGeneric<T> implements IView<T> {
   protected get_url: string;

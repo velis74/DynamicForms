@@ -47,7 +47,7 @@ export default ({ mode }: ConfigEnv) => {
     resolve: {
       alias: {
         dynamicforms: dynamicFormsAlias,
-        '@': resolve(__dirname, './src'),
+        '@': resolve(__dirname, '../dynamicforms/src/components'),
         '~': resolve(__dirname, '../../node_modules'),
       },
       extensions: [

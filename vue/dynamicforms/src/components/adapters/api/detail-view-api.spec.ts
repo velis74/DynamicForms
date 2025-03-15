@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
 import { computed, ref, nextTick } from 'vue';
 
-import apiClient from '../../util/api-client';
-
 import DetailViewApi from './detail-view-api';
+
+import { apiClient } from '@/util';
 
 const mock = new MockAdapter(apiClient);
 

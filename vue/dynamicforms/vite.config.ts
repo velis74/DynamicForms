@@ -23,7 +23,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src/components'),
       '~': resolve(__dirname, '../../node_modules'),
     },
     extensions: [
@@ -54,6 +54,7 @@ export default defineConfig({
         'lodash',
         'vue',
         'vue-ionicon',
+        'vue-markdown-render',
         'vue-router',
         'vuetify'
       ],

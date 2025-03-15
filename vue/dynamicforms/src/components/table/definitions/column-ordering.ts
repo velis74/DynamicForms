@@ -81,7 +81,7 @@ export default class ColumnOrdering {
     }
   }
 
-  handleColumnHeaderClick(event: KeyboardEvent) {
+  handleColumnHeaderClick(event: MouseEvent) {
     if (!this.isOrderable) return; // don't do anything if this column is not sortable
     // const prevOrdering = [...this.orderingArray];
 

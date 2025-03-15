@@ -1,10 +1,10 @@
 import MockAdapter from 'axios-mock-adapter';
 import { ref } from 'vue';
 
-import apiClient from '../../util/api-client';
-
 import FormConsumerApi from './api';
 import data from './api.spec.json';
+
+import { apiClient } from '@/util';
 
 const mock = new MockAdapter(apiClient);
 

@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import apiClient from '../../../util/api-client';
-
 import FormConsumerOneShotApi from './api';
 import data from './api.spec.json';
+
+import { apiClient } from '@/util';
 
 const mock = new MockAdapter(apiClient);
 

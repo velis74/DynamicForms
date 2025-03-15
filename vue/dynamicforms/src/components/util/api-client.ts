@@ -5,7 +5,7 @@ import requestTracker from './request-tracker';
 
 const MAX_GET_REQUEST_LENGHT = 2083;
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
 });
@@ -68,5 +68,3 @@ apiClient.interceptors.response.use(
 export interface DfAxiosProgressEvent extends AxiosProgressEvent {
   computable?: boolean
 }
-
-export default apiClient;
