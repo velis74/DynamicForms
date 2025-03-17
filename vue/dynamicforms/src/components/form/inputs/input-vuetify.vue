@@ -2,10 +2,11 @@
   <div>
     <label v-if="label">{{ label }}</label>
     <v-input
-      :messages="messages"
       :error-messages="errorMessages"
       :error-count="errorCount"
-      hide-details="auto"
+      :hint="hint"
+      :persistent-hint="persistentHint"
+      :hide-details="hideDetails"
     >
       <slot/>
     </v-input>
@@ -18,7 +19,9 @@ interface Props {
   label: string
   errorMessages: string[]
   errorCount: number
-  messages: string[]
+  hint?: string,
+  persistentHint?: boolean,
+  hideDetails?: boolean | 'auto',
 }
 
 defineProps<Props>();

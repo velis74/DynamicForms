@@ -27,6 +27,8 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         error_messages={
             "invalid": "This value does not match the required pattern {regex_pattern}.".format(**locals())
         },
+        help_text="Regex pattern is (?<=abc)def",
+        placeholder="Enter value that complies to regex pattern",
     )
 
     choice_field = fields.ChoiceField(
@@ -94,7 +96,9 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         queryset=Relation.objects.all(), url_reverse="relation-list", value_field="id", text_field="name"
     )
     slug_related_field = fields.SlugRelatedField(slug_field="name", queryset=Relation.objects.all())
-    file_field = fields.FileField(max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False)
+    file_field = fields.FileField(
+        max_length=None, allow_empty_file=False, use_url=False, allow_null=True, required=False
+    )
     file_field_two = fields.FileField(allow_empty_file=False, use_url=False, allow_null=True, required=False)
 
     # hyperlinked_identity_field = serializers.HyperlinkedIdentityField(view_name='relation-detail', read_only=True)

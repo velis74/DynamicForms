@@ -35,11 +35,23 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
 
   const helpText = computed(() => (props.showLabelOrHelpText ? props.field.helpText : ''));
 
-  const baseBinds = computed(() => ({
+  // we need BaseBinds type to specify type for hide-details.
+  // Otherwise, we get error on build saying that hide-details is not string field.
+  type BaseBinds = {
+    label: any;
+    'error-messages': any;
+    'error-count': any;
+    hint?: any;
+    'persistent-hint': any;
+    'hide-details'?: boolean | 'auto';
+  };
+  const baseBinds = computed((): BaseBinds => ({
     label: label.value,
     'error-messages': errorsList.value,
     'error-count': errorsDisplayCount.value + 10, // +10 so that it can show "rules" error messages
-    messages: helpText.value ? [helpText.value] : [],
+    hint: helpText.value,
+    'persistent-hint': true,
+    'hide-details': 'auto',
   }));
 
   return {
@@ -49,6 +61,5 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     label,
     helpText,
     baseBinds,
-    'hide-details': 'auto',
   };
 }

@@ -8,6 +8,7 @@ from django.db.models.fields.related import RelatedField
 from django.utils.module_loading import import_string
 from rest_framework import serializers
 from rest_framework.fields import get_attribute, SkipField
+from rest_framework.relations import ManyRelatedField
 
 from dynamicforms.action import Actions
 from dynamicforms.template_render import ViewModeSerializer
@@ -480,6 +481,22 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
 
     def render_to_table(self, value, row_data):
         return str(value) if value is not None else None
+
+    def save(self, **kwargs):
+        many_related_fields = {}
+        for field in [_field for _field in self.fields.values() if isinstance(_field, ManyRelatedField)]:
+            many_related_fields[field.field_name] = self.validated_data.pop(field.field_name, None)
+        instance = super().save(**kwargs)
+        for field_name, data in many_related_fields.items():
+            if data:
+                getattr(instance, field_name).set(data)
+        if many_related_fields:
+            instance.refresh_from_db()
+            self.instance = instance
+            self.validated_data.update(many_related_fields)
+
+        return instance
+
 
 
 class Serializer(DynamicFormsSerializer, serializers.Serializer):

@@ -1,9 +1,11 @@
 <template>
   <vuetify-input
     :label="baseBinds.label"
-    :messages="baseBinds.messages"
     :error-messages="baseBinds['error-messages']"
     :error-count="baseBinds['error-count']"
+    :hint="baseBinds.hint"
+    :persistent-hint="baseBinds['persistent-hint']"
+    :hide-details="baseBinds['hide-details']"
   >
     <div style="width: 100%;">
       <Datetime

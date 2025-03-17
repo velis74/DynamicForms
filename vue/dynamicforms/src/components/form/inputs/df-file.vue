@@ -1,9 +1,11 @@
 <template>
   <vuetify-input
     :label="baseBinds.label"
-    :messages="[...baseBinds.messages, modelValue]"
     :error-messages="baseBinds['error-messages']"
     :error-count="baseBinds['error-count']"
+    :hint="baseBinds.hint"
+    :persistent-hint="baseBinds['persistent-hint']"
+    :hide-details="baseBinds['hide-details']"
   >
     <div style="position: relative; width: 100%">
       <v-progress-linear
@@ -15,10 +17,10 @@
       />
       <v-file-input
         v-model="selectedFile"
+        :label="fileLabel"
         :readonly="field.readOnly"
         :disabled="field.readOnly"
         :name="field.name"
-        :label="baseBinds.label"
         :show-size="true"
         :multiple="false"
         clearable
@@ -31,18 +33,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
 import VuetifyInput from './input-vuetify.vue';
 
 import { apiClient } from '@/util';
 
-interface Props extends BaseProps {}
+interface Props extends BaseProps {
+}
 
 const props = defineProps<Props>();
 
-interface Emits extends BaseEmits {}
+interface Emits extends BaseEmits {
+}
 
 const emits = defineEmits<Emits>();
 
@@ -53,6 +57,13 @@ const currentFile = ref<File | null>(null);
 const progress = ref(0);
 const fileInputKey = ref(Math.round(Math.random() * 1000));
 const selectedFile = ref<File | null>();
+
+const fileLabel = computed(() => {
+  if (!selectedFile.value && value.value) {
+    return props.modelValue;
+  }
+  return '';
+});
 
 async function removeFile() {
   if (value.value) {
@@ -86,7 +97,7 @@ async function upload(file: File) {
         showProgress: false,
         onUploadProgress: function onUploadProgress(progressEvent) {
           if (progressEvent.event.lengthComputable) {
-            progress.value = Math.round((progressEvent.loaded * 100) / <number> progressEvent.total);
+            progress.value = Math.round((progressEvent.loaded * 100) / <number>progressEvent.total);
           }
         },
       },
