@@ -108,9 +108,6 @@ class AdvancedFieldsSerializer(serializers.ModelSerializer):
         layout = Layout(size="md")
         exclude = ("image_field", "hyperlinked_identity_field")
 
-    def create(self, validated_data):
-        return AdvancedFields.objects.create(**validated_data)
-
 
 class AdvancedFieldsViewset(ModelViewSet):
     pagination_class = ModelViewSet.generate_paged_loader(30)
