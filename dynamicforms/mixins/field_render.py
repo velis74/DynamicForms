@@ -64,6 +64,7 @@ class FieldRenderMixin(object):
         table_classes: str = "",
         alignment: FieldAlignment = FieldAlignment.LEFT,
         render_params: Optional[Dict] = None,
+        placeholder: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -88,6 +89,7 @@ class FieldRenderMixin(object):
         self.display_form = display_form or display or DisplayMode.FULL
         self.table_classes = table_classes
         self.alignment = alignment
+        self.placeholder = placeholder
 
         # render_params need not only include form renderer and table formatting function. add anything you need!
         render_params = render_params or {}
@@ -198,6 +200,7 @@ class FieldRenderMixin(object):
                 render_params=self.render_params,
                 help_text=res.get("help_text", ""),
                 allow_null=self.allow_null,
+                placeholder=self.placeholder or None,
             )
         )
         if "base_template" in self.style and self.style["base_template"] == "textarea.html":

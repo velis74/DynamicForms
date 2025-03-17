@@ -28,10 +28,10 @@ const rules = computed<((val: string) => boolean | string)[]>(() => ([
     v-model="value"
     type="text"
     variant="underlined"
-    hide-details="auto"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
     :placeholder="field.placeholder"
+    :persistent-placeholder="Boolean(field.placeholder && field.placeholder.length > 0)"
 
     :rules="rules"
     :step="field.renderParams.step"
@@ -40,7 +40,6 @@ const rules = computed<((val: string) => boolean | string)[]>(() => ([
     :readonly="field.readOnly"
 
     v-bind="baseBinds"
-    :messages="[]"
   >
     <v-menu
       activator="parent"

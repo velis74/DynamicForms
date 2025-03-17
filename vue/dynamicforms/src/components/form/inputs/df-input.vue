@@ -4,11 +4,11 @@
     v-model="value"
     :type="inputType"
     variant="underlined"
-    hide-details="auto"
     :class="field.renderParams.fieldCSSClass"
     :density="baseBinds.label != null && baseBinds.label.length > 0 ? 'default' : 'comfortable'"
     :name="field.name"
     :placeholder="field.placeholder"
+    :persistent-placeholder="Boolean(field.placeholder && field.placeholder.length > 0)"
     :rules="rules"
     :step="field.renderParams.step"
     :size="field.renderParams.size"
@@ -17,7 +17,6 @@
     :disabled="field.readOnly"
 
     v-bind="baseBinds"
-    :messages="[]"
   />
 </template>
 
@@ -27,16 +26,21 @@ import { computed } from 'vue';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
 
-interface Props extends BaseProps {}
+interface Props extends BaseProps {
+}
+
 const props = defineProps<Props>();
 
-interface Emits extends BaseEmits {}
+interface Emits extends BaseEmits {
+}
+
 const emits = defineEmits<Emits>();
 
 const { baseBinds } = useInputBase(props, emits);
 
 // computed
 const isNumber = computed(() => props.field.renderParams.inputType === 'number');
+
 function isValidNumber(num: any) {
   const notValidValues: any[] = [undefined, Number.NaN];
   if (!props.field.allowNull) {

@@ -2,9 +2,11 @@
   <vuetify-input
     ref="multiselectRef"
     :label="baseBinds.label"
-    :messages="baseBinds.messages"
     :error-messages="baseBinds['error-messages']"
     :error-count="baseBinds['error-count']"
+    :hint="baseBinds.hint"
+    :persistent-hint="baseBinds['persistent-hint']"
+    :hide-details="baseBinds['hide-details']"
   >
     <Multiselect
       v-model="selected"

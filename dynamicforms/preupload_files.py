@@ -34,13 +34,14 @@ def count_user_cached_files(user_id: int) -> int:
     """Vrne število vseh cached datotek za uporabnika"""
     count = 0
 
-    if hasattr(cache, 'keys'):  # we expect redis in production
+    if hasattr(cache, "keys"):  # we expect redis in production
         for key in cache.keys(f"{CACHE_KEY_PREFIX}*"):
             file_data = cache.get(key)
             if file_data and file_data.get("user_id") == user_id:
                 count += 1
 
     return count
+
 
 class FileUploadView(APIView):
     def post(self, request):
@@ -90,7 +91,7 @@ class FileUploadView(APIView):
             raise ValidationError({"file_identifier": ["required"]})
 
         file_identifier = file_identifier.rstrip("/")  # remove the trailing slash
-        cached_file = get_cached_file(file_identifier, request.user.id)
+        cached_file = get_cached_file(file_identifier, request.user.id or -1)
         if not cached_file:
             raise NotFound(__("File not found"))
 

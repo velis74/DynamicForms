@@ -1,43 +1,45 @@
 <template>
-  <vuetify-input
-    :label="baseBinds.label"
-    :messages="baseBinds.messages"
-    :error-messages="baseBinds['error-messages']"
-    :error-count="baseBinds['error-count']"
-  >
-    <div style="width: 100%;">
-      <v-textarea
-        :id="field.uuid"
-        v-model="value"
-        :type="inputType"
-        variant="underlined"
-        hide-details="auto"
-        :class="field.renderParams.fieldCSSClass"
-        :name="field.name"
-        :placeholder="field.placeholder"
+  <div style="width: 100%;">
+    <v-textarea
+      :id="field.uuid"
+      v-model="value"
+      :type="inputType"
+      variant="underlined"
+      :class="field.renderParams.fieldCSSClass"
+      :name="field.name"
+      :placeholder="field.placeholder"
+      :persistent-placeholder="Boolean(field.placeholder && field.placeholder.length > 0)"
 
-        :minlength="minLength"
-        :maxlength="maxLength"
-        :step="field.renderParams.step"
-        :size="field.renderParams.size"
+      :minlength="minLength"
+      :maxlength="maxLength"
+      :step="field.renderParams.step"
+      :size="field.renderParams.size"
 
-        :readonly="field.readOnly"
-        :disabled="field.readOnly"
-      />
-    </div>
-  </vuetify-input>
+      :readonly="field.readOnly"
+      :disabled="field.readOnly"
+      :label="baseBinds.label"
+      :error-messages="baseBinds['error-messages']"
+      :error-count="baseBinds['error-count']"
+      :hint="baseBinds.hint"
+      :persistent-hint="baseBinds['persistent-hint']"
+      :hide-details="baseBinds['hide-details']"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
-import VuetifyInput from './input-vuetify.vue';
 
-interface Props extends BaseProps {}
+interface Props extends BaseProps {
+}
+
 const props = defineProps<Props>();
 
-interface Emits extends BaseEmits {}
+interface Emits extends BaseEmits {
+}
+
 const emits = defineEmits<Emits>();
 
 const { baseBinds } = useInputBase(props, emits);
