@@ -224,6 +224,16 @@ watch(selected, () => {
   onSelect();
 });
 
+watch(value, (newValue: any, oldValue: any) => {
+  if (newValue != oldValue && newValue != result.value) {
+    nextTick(()=>{
+      if (newValue != result.value) {
+        result.value = newValue;
+      }
+    });
+  }
+});
+
 onMounted(async () => {
   if (!multiple.value && !props.field.allowNull && !value.value && options.value.length) {
     // Auto select first element
