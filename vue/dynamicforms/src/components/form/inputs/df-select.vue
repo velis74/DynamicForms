@@ -63,6 +63,7 @@
  * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
 import { computed, onMounted, watch, nextTick, ref } from 'vue';
+import _ from 'lodash';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
@@ -225,30 +226,15 @@ watch(selected, () => {
   onSelect();
 });
 
-function areArraysEqual(arr1: Array<any>, arr2: Array<any>) {
-  // Check if both are arrays and have same length
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  // Compare each element
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function areValuesEqual(val1: any, val2: any) {
-  const isArray1 = Array.isArray(val1)
-  const isArray2 = Array.isArray(val2)
+  const isArray1 = _.isArray(val1);
+  const isArray2 = _.isArray(val2);
 
   if (isArray1 !== isArray2) {
     return false;
   }
   if (isArray1) {
-    return areArraysEqual(val1, val2)
+    return _.isEqual(val1, val2);
   } else {
     return val1 === val2;
   }
