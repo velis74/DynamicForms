@@ -63,6 +63,7 @@
  * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
 import { computed, onMounted, watch, nextTick, ref } from 'vue';
+import _ from 'lodash';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
@@ -73,7 +74,8 @@ import VuetifyInput from './input-vuetify.vue';
 
 import { apiClient } from '@/util';
 
-interface Props extends BaseProps {}
+interface Props extends BaseProps {
+}
 
 const props = defineProps<Props>();
 
@@ -130,12 +132,12 @@ const result = computed({
       emits(
         'update:modelValueDisplay',
         multiple.value ?
-          (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.text) :
-          (<DfForm.ChoicesJSON> selected.value).text,
+          (<DfForm.ChoicesJSON[]>selected.value).map((i) => i.text) :
+          (<DfForm.ChoicesJSON>selected.value).text,
       );
       return multiple.value ?
-        (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.id) :
-        (<DfForm.ChoicesJSON> selected.value).id;
+        (<DfForm.ChoicesJSON[]>selected.value).map((i) => i.id) :
+        (<DfForm.ChoicesJSON>selected.value).id;
     }
     emits('update:modelValueDisplay', '');
     return '';
@@ -173,7 +175,7 @@ function onTag(newTag: string) {
   // eslint-disable-next-line vue/no-mutating-props
   props.field.choices.push(newTagObj);
   if (multiple.value) {
-    (<DfForm.ChoicesJSON[]> selected.value).push(newTagObj);
+    (<DfForm.ChoicesJSON[]>selected.value).push(newTagObj);
   } else {
     selected.value = newTagObj;
   }
@@ -225,9 +227,9 @@ watch(selected, () => {
 });
 
 watch(value, (newValue: any, oldValue: any) => {
-  if (newValue != oldValue && newValue != result.value) {
-    nextTick(()=>{
-      if (newValue != result.value) {
+  if (!_.isEqual(newValue, oldValue) && !_.isEqual(newValue, result.value)) {
+    nextTick(() => {
+      if (!_.isEqual(newValue, result.value)) {
         result.value = newValue;
       }
     });
