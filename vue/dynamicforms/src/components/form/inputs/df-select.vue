@@ -62,8 +62,8 @@
  * TODO: the field does not look like a Vuetify field: label is on left
  * TODO: There's no demo for AJAX loading. there is one, though in project-base (Impersonate user)
  */
-import { computed, onMounted, watch, nextTick, ref } from 'vue';
 import _ from 'lodash';
+import { computed, onMounted, watch, nextTick, ref } from 'vue';
 import IonIcon from 'vue-ionicon';
 import Multiselect from 'vue-multiselect';
 
