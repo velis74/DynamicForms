@@ -73,7 +73,8 @@ import VuetifyInput from './input-vuetify.vue';
 
 import { apiClient } from '@/util';
 
-interface Props extends BaseProps {}
+interface Props extends BaseProps {
+}
 
 const props = defineProps<Props>();
 
@@ -130,12 +131,12 @@ const result = computed({
       emits(
         'update:modelValueDisplay',
         multiple.value ?
-          (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.text) :
-          (<DfForm.ChoicesJSON> selected.value).text,
+          (<DfForm.ChoicesJSON[]>selected.value).map((i) => i.text) :
+          (<DfForm.ChoicesJSON>selected.value).text,
       );
       return multiple.value ?
-        (<DfForm.ChoicesJSON[]> selected.value).map((i) => i.id) :
-        (<DfForm.ChoicesJSON> selected.value).id;
+        (<DfForm.ChoicesJSON[]>selected.value).map((i) => i.id) :
+        (<DfForm.ChoicesJSON>selected.value).id;
     }
     emits('update:modelValueDisplay', '');
     return '';
@@ -173,7 +174,7 @@ function onTag(newTag: string) {
   // eslint-disable-next-line vue/no-mutating-props
   props.field.choices.push(newTagObj);
   if (multiple.value) {
-    (<DfForm.ChoicesJSON[]> selected.value).push(newTagObj);
+    (<DfForm.ChoicesJSON[]>selected.value).push(newTagObj);
   } else {
     selected.value = newTagObj;
   }
@@ -224,10 +225,41 @@ watch(selected, () => {
   onSelect();
 });
 
+function areArraysEqual(arr1: Array<any>, arr2: Array<any>) {
+  // Check if both are arrays and have same length
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  // Compare each element
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function areValuesEqual(val1: any, val2: any) {
+  const isArray1 = Array.isArray(val1)
+  const isArray2 = Array.isArray(val2)
+
+  if (isArray1 !== isArray2) {
+    return false;
+  }
+  if (isArray1) {
+    return areArraysEqual(val1, val2)
+  } else {
+    return val1 === val2;
+  }
+
+}
+
+
 watch(value, (newValue: any, oldValue: any) => {
-  if (newValue != oldValue && newValue != result.value) {
-    nextTick(()=>{
-      if (newValue != result.value) {
+  if (!areValuesEqual(newValue, oldValue) && !areValuesEqual(newValue, result.value)) {
+    nextTick(() => {
+      if (!areValuesEqual(newValue, result.value)) {
         result.value = newValue;
       }
     });
