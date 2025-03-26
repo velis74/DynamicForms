@@ -226,26 +226,10 @@ watch(selected, () => {
   onSelect();
 });
 
-function areValuesEqual(val1: any, val2: any) {
-  const isArray1 = _.isArray(val1);
-  const isArray2 = _.isArray(val2);
-
-  if (isArray1 !== isArray2) {
-    return false;
-  }
-  if (isArray1) {
-    return _.isEqual(val1, val2);
-  } else {
-    return val1 === val2;
-  }
-
-}
-
-
 watch(value, (newValue: any, oldValue: any) => {
-  if (!areValuesEqual(newValue, oldValue) && !areValuesEqual(newValue, result.value)) {
+  if (!_.isEqual(newValue, oldValue) && !_.isEqual(newValue, result.value)) {
     nextTick(() => {
-      if (!areValuesEqual(newValue, result.value)) {
+      if (!_.isEqual(newValue, result.value)) {
         result.value = newValue;
       }
     });
