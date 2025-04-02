@@ -2,6 +2,7 @@ import random
 
 import django.utils.timezone
 
+from dynamicforms.utils import get_pk_name
 from setup.settings import TESTING
 
 
@@ -25,7 +26,7 @@ def add_filter(Filter):
                 bool_field=((i - 1) % 10) > 4,
             )
             if TESTING:
-                filter_data[Filter._meta.pk.name] = i
+                filter_data[get_pk_name(Filter)] = i
             Filter.objects.create(**filter_data)
 
 

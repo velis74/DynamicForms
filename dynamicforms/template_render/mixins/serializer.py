@@ -142,15 +142,16 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
         return BoundSerializerRenderActions()
 
     def component_params(self: "_ViewModeBoundSerializer", output_json: bool = True):
+        from dynamicforms.utils import get_pk_name
+
+        if getattr(self, "Meta", None) and getattr(self.Meta, "model", None):
+            primary_key_name = get_pk_name(self.Meta.model)
+        else:
+            primary_key_name = "id"
+
         params = {
             "uuid": self.uuid,
-            "primary_key_name": (
-                self.Meta.model._meta.pk.name
-                if not self.Meta.model._meta.get_parent_list()
-                else self.Meta.model._meta.get_parent_list()[0]._meta.pk.name
-            )
-            if getattr(self, "Meta", None) and getattr(self.Meta, "model", None)
-            else "id",
+            "primary_key_name": primary_key_name,
             "titles": self.form_titles,
             "columns": [c.as_component_def() for c in self.render_fields.fields],
             "responsive_table_layouts": self.get_responsive_table_layouts_def(),
