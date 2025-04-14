@@ -1,4 +1,8 @@
+from typing import List
+
 import django_filters.rest_framework as filters
+
+from drf_spectacular.extensions import OpenApiFilterExtension
 
 
 class ListWithFields(list):
@@ -43,3 +47,29 @@ class FilterBackend(filters.DjangoFilterBackend):
         for name, value in filterset.form.cleaned_data.items():
             if name in ordering_filters:
                 return ordering_filters[name].get_ordering(value)
+
+
+# Extension that implements OpenApiFilterExtension
+class FilterExtension(OpenApiFilterExtension):
+    def get_schema_operation_parameters(self, auto_schema: "AutoSchema", *args, **kwargs) -> List[dict]:
+        from drf_spectacular.contrib.django_filters import DjangoFilterExtension
+
+        # First get the standard parameters from DjangoFilterExtension
+        parameters = DjangoFilterExtension(self.target).get_schema_operation_parameters(auto_schema, *args, **kwargs)
+
+        # Then add any custom parameters specific to your extension
+        custom_params = []
+        # custom_params = [
+        #     {
+        #         'name': 'my_custom_param',
+        #         'required': False,
+        #         'in': 'query',
+        #         'description': 'Custom parameter description',
+        #         'schema': build_parameter_type(str),
+        #     }
+        #     # Add more custom parameters as needed
+        # ]
+
+        return parameters + custom_params
+
+    target_class = FilterBackend
