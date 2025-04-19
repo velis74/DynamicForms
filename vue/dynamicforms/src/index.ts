@@ -1,4 +1,4 @@
-import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
+import { DynamicFormsInputs } from '@dynamicforms/vuetify-inputs';
 import Notifications from '@kyvg/vue3-notification';
 import type { App } from 'vue';
 
@@ -58,7 +58,7 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
     app.provide('$df$ApplicationTheme', ui);
     app.config.globalProperties.gettext = (value: string) => gettext(value);
     app.config.globalProperties.interpolate = (str: string, data: { [key: string]: any }) => interpolate(str, data);
-    app.use(CkeditorPlugin);
+    app.use(DynamicFormsInputs, { registerComponents: false, registerVuetifyComponents: true });
     app.use(Notifications);
     switch (ui) {
     case 'vuetify':

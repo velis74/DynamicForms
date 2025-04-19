@@ -14,6 +14,7 @@ from dynamicforms.template_render import ViewModeSerializer
 
 from . import fields
 from .mixins import ActionMixin, DisplayMode, FieldRenderMixin
+from .models_fields import ColorField, EnumChoiceField
 from .struct import StructDefault
 from .utils import get_pk_name
 
@@ -269,6 +270,8 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         models.GenericIPAddressField: fields.IPAddressField,
         models.FilePathField: fields.FilePathField,
         models.JSONField: fields.JSONField,
+        EnumChoiceField: fields.ChoiceField,
+        ColorField: fields.ColorField,
     }
     if models.DurationField is not None:
         serializer_field_mapping[models.DurationField] = fields.DurationField

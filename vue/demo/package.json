@@ -16,6 +16,7 @@
     "@fullcalendar/resource-timegrid": "^6.1.4",
     "@fullcalendar/timegrid": "^6.1.4",
     "@fullcalendar/vue3": "^6.1.4",
+    "@mdi/font": "^7.4.47",
     "@velis/dynamicforms": "*",
     "axios": "^1.2.0",
     "lodash": "^4.17.15",

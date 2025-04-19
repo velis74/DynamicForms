@@ -9,8 +9,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
+from dynamicforms import models_fields
 from dynamicforms.models_utils import IntChoiceEnum
-
 
 class Validated(models.Model):
     """
@@ -41,7 +41,7 @@ class Validated(models.Model):
             MaxValueValidator(10),
         ],
     )  # Bit mask. 1=apartment_number, ..., 32=delay
-    item_type = models.IntegerField(choices=ItemTypeChoices.get_choices_tuple())
+    item_type = models_fields.IntegerChoiceMigrationIgnoreField(choices=ItemTypeChoices.get_choices_tuple())
     item_flags = models.CharField(
         max_length=4,
         blank=True,
@@ -49,7 +49,7 @@ class Validated(models.Model):
             # this one will be a multi-choice field so you will need to override it in form
             ("A", "Alpha"),
             ("B", "Beta"),
-            ("C", "Cama"),
+            ("C", "Gamma"),
             ("D", "Delta"),
         ),
         validators=[RegexValidator(r"^[ABC]*$", "Only options A-C may be chosen", "regex")],
@@ -163,11 +163,16 @@ class Relation(models.Model):
         return self.name
 
 
+class EnumFieldChoices(IntChoiceEnum):
+    Choice_1 = 0, _("Airplane"), "airplane"
+    Choice_2 = 1, _("Paper plane"), "paper-plane"
+    Choice_3 = 2, _("Planet"), "planet"
+    Choice_4 = 3, _("Iconless")
+
 class AdvancedFields(models.Model):
     """
     Shows advanced available fields in DynamicForms
     """
-
     regex_field = models.CharField(max_length=256)
     choice_field = models.CharField(null=True, max_length=8)
     single_choice_field = models.CharField(null=True, max_length=8)
@@ -176,6 +181,8 @@ class AdvancedFields(models.Model):
     file_field = models.FileField(upload_to="examples/", null=True, blank=True)
     file_field_two = models.FileField(upload_to="examples2/", null=True, blank=True)
     image_field = models.ImageField(upload_to="examples/", null=True, blank=True)
+    color_field = models_fields.ColorField(null=True)
+    enum_choice_field = models_fields.EnumChoiceField(EnumFieldChoices, null=True)
 
     # Model attribute for ReadOnlyField
     hidden_field = models.DateTimeField(default=timezone.now)

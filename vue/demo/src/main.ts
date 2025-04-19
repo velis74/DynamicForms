@@ -7,6 +7,7 @@ import vuetify from './plugins/vuetify';
 import router from './router';
 
 import 'vuetify/styles/main.css';
+import '@mdi/font/css/materialdesignicons.css';
 // eslint-disable-next-line import/no-relative-packages
 import '../../dynamicforms/dist/style.css';
 

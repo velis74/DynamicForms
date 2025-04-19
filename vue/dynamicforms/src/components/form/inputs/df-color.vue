@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue';
-
-import { useTranslations } from '../../util/translations-mixin';
-
-import { BaseEmits, BaseProps, useInputBase } from './base';
-
-interface Props extends BaseProps {}
-const props = defineProps<Props>();
-
-interface Emits extends BaseEmits {}
-const emits = defineEmits<Emits>();
-
-const { value, baseBinds } = useInputBase(props, emits);
-
-const { gettext } = useTranslations();
-const rules = computed<((val: string) => boolean | string)[]>(() => ([
-  (val: string) => {
-    const regex = /^#?([a-fA-F0-9]{6}[a-fA-F0-9]{0,2})$/;
-    return regex.test(val) ? true : gettext('Not a valid hex string.');
-  },
-]));
-</script>
-
 <template>
   <v-text-field
     :id="field.uuid"
@@ -49,3 +25,28 @@ const rules = computed<((val: string) => boolean | string)[]>(() => ([
     </v-menu>
   </v-text-field>
 </template>
+<script setup lang="ts">
+import { computed } from 'vue';
+import { DfColor } from '@dynamicforms/vuetify-inputs';
+
+import { useTranslations } from '../../util/translations-mixin';
+
+import { BaseEmits, BaseProps, useInputBase } from './base';
+
+interface Props extends BaseProps {}
+const props = defineProps<Props>();
+
+interface Emits extends BaseEmits {}
+const emits = defineEmits<Emits>();
+
+const { value, baseBinds } = useInputBase(props, emits);
+
+const { gettext } = useTranslations();
+const rules = computed<((val: string) => boolean | string)[]>(() => ([
+  (val: string) => {
+    const regex = /^#?([a-fA-F0-9]{6}[a-fA-F0-9]{0,2})$/;
+    return regex.test(val) ? true : gettext('Not a valid hex string.');
+  },
+]));
+</script>
+
