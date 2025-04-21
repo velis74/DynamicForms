@@ -5,7 +5,7 @@ from django.core import validators
 from django.db.models.fields import IntegerField, PositiveIntegerField
 from django.utils.functional import cached_property
 
-from dynamicforms.models_utils import IntChoiceEnum
+from dynamicforms.int_choice_enum import IntChoiceEnum
 
 
 def check_remove_choices():

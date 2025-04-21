@@ -1,5 +1,6 @@
 import inspect
 import os
+import subprocess
 import textwrap
 import typing
 import uuid
@@ -35,60 +36,6 @@ class ClassAssemblyDict:
         self.mapping[key] = value
 
 
-render_params = ClassAssemblyDict(
-    {
-        fields.Field: dict(form_component_name="DInput", input_type="text", table="df-tablecell-plaintext"),
-        fields.EmailField: dict(input_type="email", table="df-tablecell-email"),
-        fields.URLField: dict(input_type="url", table="df-tablecell-link", pattern="https?://.*"),
-        fields.IntegerField: dict(input_type="number"),
-        fields.FloatField: dict(input_type="number", table="#TableCellFloat", table_show_zeroes=True, step="0.1"),
-        fields.DecimalField: dict(input_type="number", table="#TableCellFloat", table_show_zeroes=True, step="0.1"),
-        fields.DateTimeField: dict(
-            input_type="datetime",
-            form_component_name="DDateTime",
-            table_format="dd.MM.yyyy HH:mm",
-            form_format="dd.MM.yyyy HH:mm",
-            table="#TableCellDateTime",
-        ),
-        fields.DateField: dict(
-            input_type="date",
-            form_component_name="DDateTime",
-            table_format="dd.MM.yyyy",
-            form_format="dd.MM.yyyy",
-            table="#TableCellDateTime",
-        ),
-        fields.TimeField: dict(
-            input_type="time",
-            form_component_name="DDateTime",
-            table_format="HH:mm",
-            form_format="HH:mm",
-            table="#TableCellDateTime",
-        ),
-        serializers.FileField: dict(input_type="file", form_component_name="DFile", table="df-tablecell-file"),
-        fields.BooleanField: dict(
-            table="df-tablecell-bool",
-            input_type="checkbox",
-            form_component_name="DCheckbox",
-            field_class="form-check-input position-checkbox-static",
-            label_class="form-check-label",
-            container_class="form-check form-group",
-        ),
-        fields.IPAddressField: dict(table="df-tablecell-ipaddr", minlength=7, maxlength=15, size=15),
-        fields.ChoiceField: dict(form_component_name="DSelect", multiple=False, allow_tags="%allow_tags"),
-        fields.MultipleChoiceField: dict(multiple=True),
-        relations.RelatedField: dict(form_component_name="DSelect", multiple=False),
-        relations.ManyRelatedField: dict(form_component_name="DSelect", multiple=True),
-        # TODO: The following two aren't taken care of yet for rendering in components
-        serializers.Serializer: dict(form_component_name="DFWidgetFieldset"),
-        serializers.ListSerializer: dict(form_component_name="DFWidgetListFieldset"),
-        fields.ListField: dict(form_component_name="DFWidgetListField"),
-        fields.DictField: dict(form_component_name="DFWidgetDictField"),
-        fields.FilePathField: dict(form_component_name="DSelect", multiple=False),
-        fields.JSONField: dict(form_component_name="DTextArea"),
-    }
-)
-
-
 class RTFField(object):
     pass
 
@@ -97,10 +44,63 @@ class ColorField(object):
     pass
 
 
+render_params = ClassAssemblyDict({
+    fields.Field: dict(form_component_name="DInput", input_type="text", table="df-tablecell-plaintext"),
+    fields.EmailField: dict(input_type="email", table="df-tablecell-email"),
+    fields.URLField: dict(input_type="url", table="df-tablecell-link", pattern="https?://.*"),
+    fields.IntegerField: dict(input_type="number"),
+    fields.FloatField: dict(input_type="number", table="#TableCellFloat", table_show_zeroes=True, step=0.1),
+    fields.DecimalField: dict(input_type="number", table="#TableCellFloat", table_show_zeroes=True, step=0.1),
+    fields.DateTimeField: dict(
+        input_type="datetime",
+        form_component_name="DDateTime",
+        table_format="dd.MM.yyyy HH:mm",
+        form_format="dd.MM.yyyy HH:mm",
+        table="#TableCellDateTime",
+    ),
+    fields.DateField: dict(
+        input_type="date",
+        form_component_name="DDateTime",
+        table_format="dd.MM.yyyy",
+        form_format="dd.MM.yyyy",
+        table="#TableCellDateTime",
+    ),
+    fields.TimeField: dict(
+        input_type="time",
+        form_component_name="DDateTime",
+        table_format="HH:mm",
+        form_format="HH:mm",
+        table="#TableCellDateTime",
+    ),
+    serializers.FileField: dict(input_type="file", form_component_name="DFile", table="df-tablecell-file"),
+    fields.BooleanField: dict(
+        table="df-tablecell-bool",
+        input_type="checkbox",
+        form_component_name="DCheckbox",
+        field_class="form-check-input position-checkbox-static",
+        label_class="form-check-label",
+        container_class="form-check form-group",
+    ),
+    fields.IPAddressField: dict(table="df-tablecell-ipaddr", minlength=7, maxlength=15, size=15),
+    fields.ChoiceField: dict(form_component_name="DSelect", multiple=False, allow_tags="%allow_tags"),
+    fields.MultipleChoiceField: dict(multiple=True),
+    relations.RelatedField: dict(form_component_name="DSelect", multiple=False),
+    relations.ManyRelatedField: dict(form_component_name="DSelect", multiple=True),
+    # TODO: The following two aren't taken care of yet for rendering in components
+    serializers.Serializer: dict(form_component_name="DFWidgetFieldset"),
+    serializers.ListSerializer: dict(form_component_name="DFWidgetListFieldset"),
+    fields.ListField: dict(form_component_name="DFWidgetListField"),
+    fields.DictField: dict(form_component_name="DFWidgetDictField"),
+    fields.FilePathField: dict(form_component_name="DSelect", multiple=False),
+    fields.JSONField: dict(form_component_name="DTextArea"),
+    ColorField: dict(form_component_name="DColor", table="df-tablecell-color"),
+})
+
+
 def arepr(value):
     if isinstance(value, str) and value.startswith("%"):
         return value[1:]
-    return repr(value)
+    return repr(value).replace("'", '"')
 
 
 class Command(BaseCommand):
@@ -122,8 +122,10 @@ class Command(BaseCommand):
             PasswordFieldMixin,
             RelatedFieldAJAXMixin,
         )
+        from dynamicforms.mixins.choice import (AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin)
 
         with open(os.path.abspath(os.path.join("dynamicforms/", "fields.py")), "w") as output:
+            output = typing.cast("SupportsWrite[str]", output)  # just so linter stops complaining
             field_list = []
             for obj in fields.__dict__.values():
                 if (
@@ -183,7 +185,24 @@ class Command(BaseCommand):
             print("\nassert DFField  # So that the linter does not complain", file=output)
 
             print("\n\nclass AutoGeneratedField(dict):", file=output)
-            print("    pass", file=output)
+            print("    def get_serializer_field(self, name, serializer, extra_params=None):", file=output)
+            print("        from rest_framework.utils import model_meta", file=output)
+            print("", file=output)
+            print("        if not hasattr(serializer, \"_df_model\"):", file=output)
+            print("            serializer._df_model = getattr(serializer.Meta, \"model\")", file=output)
+            print("        if not hasattr(serializer, \"_df_info\"):", file=output)
+            print("            serializer._df_info = model_meta.get_field_info(serializer._df_model)", file=output)
+            print("        if not hasattr(serializer, \"_df_depth\"):", file=output)
+            print("            serializer._df_depth = getattr(serializer.Meta, \"depth\", 0)", file=output)
+            print("", file=output)
+            print("        if extra_params is None:", file=output)
+            print("            extra_params = self", file=output)
+            print("        field_class, field_kwargs = serializer.build_field(", file=output)
+            print("            name, serializer._df_info, serializer._df_model, serializer._df_depth", file=output)
+            print("        )", file=output)
+            print("        field_kwargs.update(extra_params)", file=output)
+            print("", file=output)
+            print("        return field_class(**field_kwargs)", file=output)
 
             for field in field_list:
                 field_class = field.__name__
@@ -195,6 +214,9 @@ class Command(BaseCommand):
                         break
                 if issubclass(field, fields.ChoiceField):
                     param_classes.append((0, ChoiceMixin))
+                    param_classes.append((0, AllowTagsMixin))
+                    param_classes.append((0, NullChoiceMixin))
+                    param_classes.append((0, SingleChoiceMixin))
                 if issubclass(field, relations.RelatedField):
                     param_classes.append((0, RelatedFieldAJAXMixin))
                 if issubclass(field, fields.CharField):
@@ -278,12 +300,13 @@ class Command(BaseCommand):
                             if p_def != inspect._empty:
                                 equals = " = " if ":" in parm_str else "="
                                 if isinstance(p_def, FieldAlignment):
+                                    p_def = "FieldAlignment.LEFT"
                                     if issubclass(
                                         field, (fields.IntegerField, fields.DecimalField, fields.DurationField)
                                     ):
-                                        p_def = FieldAlignment.RIGHT
+                                        p_def = "FieldAlignment.RIGHT"
                                     if issubclass(field, fields.FloatField):
-                                        p_def = FieldAlignment.DECIMAL
+                                        p_def = "FieldAlignment.DECIMAL"
                                     parm_str += equals + str(p_def)
                                 elif (
                                     isinstance(
@@ -465,11 +488,14 @@ class Command(BaseCommand):
                     print(indt(12) + "kwargs.pop('decoder', None)", file=output)
 
                 params = render_params[field]
-                print(indt(8) + "kwargs['render_params'] = kwargs.get('render_params', None) or {}", file=output)
+                print(indt(8) + 'kwargs["render_params"] = kwargs.get("render_params", None) or {}', file=output)
                 for key, value in params.items():
-                    print(indt(8) + f"kwargs['render_params'].setdefault('{key}', {arepr(value)})", file=output)
+                    print(indt(8) + f'kwargs["render_params"].setdefault("{key}", {arepr(value)})', file=output)
 
                 print(indt(8) + "super().__init__(**kwargs)", file=output)
+
+    generated_file_path = os.path.abspath(os.path.join("dynamicforms/", "fields.py"))
+    subprocess.run(["ruff", "check", "--fix", generated_file_path])
 
     print("fields.py successfully generated")
     # options['file']

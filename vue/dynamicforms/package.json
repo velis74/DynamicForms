@@ -37,7 +37,7 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@dynamicforms/vuetify-inputs": "^0.1.10",
+    "@dynamicforms/vuetify-inputs": "^0.1.15",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "lodash": "^4.17.15",

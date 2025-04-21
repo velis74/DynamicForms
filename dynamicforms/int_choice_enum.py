@@ -1,6 +1,13 @@
 from enum import IntEnum
 
 
+class IconisedString(str):
+    def __new__(cls, value: str, icon: str = None, data: dict = None):
+        obj = str.__new__(cls, value)
+        obj.icon = icon
+        obj.data = data
+        return obj
+
 class IntChoiceEnum(IntEnum):
     def __new__(cls, *args, **kwargs):
         obj = int.__new__(cls, args[0])
@@ -19,7 +26,7 @@ class IntChoiceEnum(IntEnum):
 
     @classmethod
     def get_choices_tuple(cls):
-        return tuple((item.value, item.description) for item in cls)
+        return tuple((item.value, IconisedString(str(item.description), item.icon, item.data)) for item in cls)
 
     @classmethod
     def get_df_tuple(cls):

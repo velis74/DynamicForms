@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from enumfields import EnumIntegerField
 
 from dynamicforms import models_fields
-from dynamicforms.models_utils import IntChoiceEnum
+from dynamicforms.int_choice_enum import IntChoiceEnum
 
 class Validated(models.Model):
     """

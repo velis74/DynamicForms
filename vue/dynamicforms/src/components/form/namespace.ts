@@ -4,6 +4,7 @@ export namespace DfForm {
   export interface ChoicesJSON {
     id: any;
     text: any;
+    icon: any;
   }
 
   export interface AJAXJSON {
@@ -13,6 +14,7 @@ export namespace DfForm {
     query_field: string;
     value_field: string;
     text_field: string;
+    icon_field: string;
   }
 
   export type StatementJSON = [string | StatementJSON, number, any | StatementJSON] | null;

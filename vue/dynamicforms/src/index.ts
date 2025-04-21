@@ -1,4 +1,4 @@
-import { DynamicFormsInputs } from '@dynamicforms/vuetify-inputs';
+import { DynamicFormsInputs, VuetifyComponents as vc } from '@dynamicforms/vuetify-inputs';
 import Notifications from '@kyvg/vue3-notification';
 import type { App } from 'vue';
 
@@ -58,14 +58,14 @@ export function createDynamicForms(options: DynamicFormsOptions = defaultOptions
     app.provide('$df$ApplicationTheme', ui);
     app.config.globalProperties.gettext = (value: string) => gettext(value);
     app.config.globalProperties.interpolate = (str: string, data: { [key: string]: any }) => interpolate(str, data);
-    app.use(DynamicFormsInputs, { registerComponents: false, registerVuetifyComponents: true });
+    app.use(DynamicFormsInputs, { registerComponents: false, registerVuetifyComponents: false });
     app.use(Notifications);
     switch (ui) {
     case 'vuetify':
       // check if Vuetify is installed
 
       // import all global instances that we need for vuetify to work
-      Object.entries(VuetifyComponents).map(([name, component]) => app.component(name, component));
+      Object.entries({ ...VuetifyComponents, ...vc }).map(([name, component]) => app.component(name, component));
       Object.entries(DfVuetifyComponents).map(([name, component]) => app.component(name, component));
       app.component('DfApp', DfApp);
       break;

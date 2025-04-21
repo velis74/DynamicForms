@@ -1,4 +1,4 @@
-from typing import Hashable
+from typing import Hashable, Tuple
 
 from rest_framework.fields import MultipleChoiceField
 from rest_framework.relations import ManyRelatedField, PKOnlyObject, RelatedField
@@ -9,11 +9,16 @@ from .null_choice import NullChoiceMixin
 from .single_choice import SingleChoiceMixin
 
 
+def parse_choice_icon(choice: Tuple[str]):
+    if len(choice) > 2:
+        return choice[2]
+    return getattr(choice[1], 'icon', None)  # choice.description is a IconisedString
+
 class ChoiceMixin(AllowTagsMixin, NullChoiceMixin, SingleChoiceMixin):
     def __init__(self, *args, **kwargs):
         choices = kwargs.get("choices", [])
         kwargs["choices"] = [choice[:2] for choice in choices]
-        self.choice_icons = {choice[0]: choice[2] for choice in choices if len(choice) > 2}
+        self.choice_icons = {choice[0]: parse_choice_icon(choice) for choice in choices if parse_choice_icon(choice)}
         super().__init__(*args, **kwargs)
         if len(choices) > 100:
             from dynamicforms.utils import print_field_declaration_line

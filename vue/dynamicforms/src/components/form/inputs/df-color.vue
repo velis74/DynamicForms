@@ -1,35 +1,15 @@
 <template>
-  <v-text-field
-    :id="field.uuid"
+  <df-color
     v-model="value"
-    type="text"
-    variant="underlined"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
-    :placeholder="field.placeholder"
-    :persistent-placeholder="Boolean(field.placeholder && field.placeholder.length > 0)"
-
-    :rules="rules"
-    :step="field.renderParams.step"
-    :size="field.renderParams.size"
-
-    :readonly="field.readOnly"
-
+    :errors="baseBinds['error-messages']"
+    :enabled="!field.readOnly"
     v-bind="baseBinds"
-  >
-    <v-menu
-      activator="parent"
-      :close-on-content-click="false"
-    >
-      <v-color-picker v-model="value" mode="hexa"/>
-    </v-menu>
-  </v-text-field>
+  />
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
 import { DfColor } from '@dynamicforms/vuetify-inputs';
-
-import { useTranslations } from '../../util/translations-mixin';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
 
@@ -40,13 +20,4 @@ interface Emits extends BaseEmits {}
 const emits = defineEmits<Emits>();
 
 const { value, baseBinds } = useInputBase(props, emits);
-
-const { gettext } = useTranslations();
-const rules = computed<((val: string) => boolean | string)[]>(() => ([
-  (val: string) => {
-    const regex = /^#?([a-fA-F0-9]{6}[a-fA-F0-9]{0,2})$/;
-    return regex.test(val) ? true : gettext('Not a valid hex string.');
-  },
-]));
 </script>
-
