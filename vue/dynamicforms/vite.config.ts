@@ -5,6 +5,7 @@ import { resolve } from 'path';
 import { defineConfig, searchForWorkspaceRoot } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import vuetify from 'vite-plugin-vuetify';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
@@ -20,6 +21,12 @@ export default defineConfig({
       enforce: 'post',
     },
     vuetify({ autoImport: true }),
+    visualizer({
+      open: false,
+      filename: 'coverage/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   resolve: {
     alias: {
@@ -46,17 +53,21 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@dynamicforms/vue-forms',
+        '@dynamicforms/vuetify-inputs',
         '@ckeditor/ckeditor5-vue',
         'ckeditor5',
         'axios',
         'bootstrap',
         'bootstrap-vue',
-        'lodash',
+        'date-fns',
+        'lodash-es',
         'vue',
         'vue-ionicon',
         'vue-markdown-render',
         'vue-router',
-        'vuetify'
+        'vuetify',
+        /^vuetify\/.*/,
       ],
       output: {
         globals: (id: string) => id, // all external modules are currently not aliased to anything but their own names

@@ -5,7 +5,7 @@
       :is="column.layoutFieldComponentName"
       v-for="(column, idx) in renderableColumns"
       :key="`${idx}${column.renderKey}`"
-      v-bind="columnData(column)"
+      v-bind="columnData!(column)"
       :style="column.colspan !== 1 ? { flex: column.colspan } : null"
     />
     <slot name="after-columns"/>
@@ -13,7 +13,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, inject, PropType } from 'vue';
+
+import FilteredActions from '../actions/filtered-actions';
 
 import FormFieldType from './definitions/field';
 import FormPayload from './definitions/form-payload';
@@ -22,14 +24,36 @@ import FormFieldGroup from './field-group.vue';
 import FormField from './form-field.vue';
 import calculateVisibility from './inputs/conditional-visibility';
 
-export default /* #__PURE__ */ defineComponent({
+interface Props {
+  columns: Array<Column>;
+  errors: Record<string, any>;
+  anyFieldVisible: boolean;
+}
+
+interface Injects {
+  payload: FormPayload;
+  actions: FilteredActions;
+}
+
+interface OwnMethodsAndComputed {
+  renderableColumns: Column[];
+  columnData: (col: any) => any;
+}
+
+export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>({
   name: 'FormRow',
   components: { FormField, FormFieldGroup },
   inject: ['actions', 'payload'],
   props: {
     columns: { type: Array as PropType<Array<Column>>, required: true },
-    errors: { type: Object, default: () => {} },
+    errors: { type: Object, default: () => ({}) },
     anyFieldVisible: { type: Boolean, required: true },
+  } as const,
+  setup() {
+    const actions = inject<FilteredActions>('actions');
+    const payload = inject<FormPayload>('payload');
+
+    return { actions, payload };
   },
   computed: {
     renderableColumns() {

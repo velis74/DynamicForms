@@ -40,6 +40,7 @@
     "@dynamicforms/vuetify-inputs": "^0.1.17",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
+    "date-fns": "^4.1.0",
     "lodash-es": "^4.17.12",
     "vue": "^3.4",
     "vue-ionicon": "^2.1.0",
@@ -47,7 +48,6 @@
     "vuetify": "^3.8.2"
   },
   "dependencies": {
-    "luxon": "^3.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "vue-datetime3": "^1.0.15",
     "vue-multiselect": "^3.0.0-beta.1",
@@ -57,7 +57,6 @@
   "devDependencies": {
     "@types/jest": "^29.2.5",
     "@types/lodash-es": "^4.17.12",
-    "@types/luxon": "^3.3.0",
     "@vitejs/plugin-vue": "^5",
     "@vitest/coverage-v8": "^2",
     "@vue/test-utils": "^2.2.4",
@@ -67,6 +66,7 @@
     "flush-promises": "^1.0.2",
     "jsdom": "^22.0.0",
     "np": "^7.7.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5",
     "vite": "^6.3.2",
     "vite-plugin-dts": "^4",

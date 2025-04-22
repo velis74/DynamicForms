@@ -28,6 +28,6 @@ const emits = defineEmits<Emits>();
 
 const { value, baseBinds } = useInputBase(props, emits);
 
-const inputType = computed(() => props.field.renderParams.inputType);
+const inputType = computed(() => props.field.renderParams.inputType as 'text');
 
 </script>

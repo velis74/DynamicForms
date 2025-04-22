@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { DateTime } from 'luxon';
+import { parseISO, format as formatDate } from 'date-fns';
 import { computed } from 'vue';
 
 import TableColumn from '../definitions/column';
@@ -23,6 +23,6 @@ const format = computed(() => props.column.renderParams.table_format || 'dd.MM.y
 const displayValue = computed(() => {
   if (props.thead) return value.value;
   if (value.value == null) return '';
-  return DateTime.fromISO(value.value).toFormat(format.value);
+  return formatDate(parseISO(value.value), format.value);
 });
 </script>

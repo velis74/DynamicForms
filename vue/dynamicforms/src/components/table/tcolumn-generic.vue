@@ -100,13 +100,15 @@ import { DfTable } from './namespace';
 import OrderingIndicator from './ordering-indicator.vue';
 import { useRenderMeasure } from './render-measure';
 
-const props = defineProps<{
+export interface Props {
   column: TableColumn,
   rowData: Object,
   actions: FilteredActions,
   filterRow?: TableColumn,
   filterDefinition?: TableFilterRow,
-}>();
+}
+
+const props = defineProps<Props>();
 
 const rowType: RowTypes = inject('row-type') as RowTypes;
 const thead = computed(() => RowTypes.isTHead(rowType));
@@ -170,7 +172,7 @@ const ordering = ref();
 useRenderMeasure(onMeasure, { columnsize, ordering });
 </script>
 <script lang="ts">
-export default defineComponent({
+export default defineComponent<Props>({
   name: 'GenericColumn',
   components: { ColumnGroup, OrderingIndicator, FormField, ...TableCells },
 });
