@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import _ from 'lodash';
+import { debounce } from 'lodash-es';
 import { computed, inject, ref, Ref, watch } from 'vue';
 
 import { useActionHandler } from '../actions/action-handler-composable';
@@ -60,7 +60,7 @@ const components: { [key: string]: any } = {
 
 const component = computed(() => components?.[props.field.componentName] ?? DInput);
 
-const debounceHandler = _.debounce((newValue: any, oldValue: any) => {
+const debounceHandler = debounce((newValue: any, oldValue: any) => {
   callHandler(
     props.actions.valueChanged,
     { field: props.field.name, oldValue, newValue },

@@ -1,7 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import _, { merge } from 'lodash';
+import { cloneDeep, merge } from 'lodash-es';
 import { vi } from 'vitest';
-import { createVuetify, useDisplay, Ref } from 'vuetify';
+import { Ref } from 'vue';
+import { createVuetify, useDisplay } from 'vuetify';
 
 import * as VuetifyComponents from '../vuetify';
 
@@ -361,7 +362,7 @@ describe('vuetify-actions action rendering', () => {
 
 describe('Check if visibility flags work as expected', () => {
   async function constructTest(asButton, showLabel, showIcon, clearLabelText) {
-    const actions = _.cloneDeep(actionsCopy);
+    const actions = cloneDeep(actionsCopy);
     if (clearLabelText === true) actions.add.label = null;
     actions.add.displayStyle = {
       xs: {

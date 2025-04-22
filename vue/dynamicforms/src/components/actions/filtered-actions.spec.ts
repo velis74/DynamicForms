@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { zip } from 'lodash-es';
 import { vi } from 'vitest';
 
 import Action from './action';
@@ -26,7 +26,7 @@ describe('Actions', () => {
 
     function simpleTest(actions: FilteredActions, expectedNames: string[], expectedCacheKey: string) {
       expect(actions.length).toEqual(expectedNames.length);
-      for (const action: Action of _.zip(actions.actionsList, expectedNames)) {
+      for (const action: Action of zip(actions.actionsList, expectedNames)) {
         expect(action[0].name).toEqual(action[1]);
       }
       expect(myActions.filterCache[expectedCacheKey]).toBeDefined();

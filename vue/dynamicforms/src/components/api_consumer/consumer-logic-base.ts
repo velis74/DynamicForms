@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { includes } from 'lodash-es';
 
 import FilteredActions from '../actions/filtered-actions';
 import type { ActionsNS } from '../actions/namespace';
@@ -172,7 +172,7 @@ abstract class ConsumerLogicBase implements APIConsumer.ConsumerLogicBaseInterfa
     if (filterData) {
       this.filterData = Object.fromEntries(
         Object.entries(filterData).filter(
-          ([key, value]) => (!_.includes([null, undefined, NaN], value) && !key.endsWith('-display')),
+          ([key, value]) => (!includes([null, undefined, NaN], value) && !key.endsWith('-display')),
         ),
       );
     }

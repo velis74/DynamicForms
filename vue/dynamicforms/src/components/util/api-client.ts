@@ -1,5 +1,5 @@
 import axios, { AxiosProgressEvent, AxiosRequestConfig, AxiosResponse } from 'axios';
-import _ from 'lodash';
+import { includes, keys, map, size, toLower } from 'lodash-es';
 
 import requestTracker from './request-tracker';
 
@@ -45,8 +45,8 @@ apiClient.interceptors.request.use((config) => {
     // @ts-ignore: headers might be undefined, but they are not
     config.headers['x-df-timestamp'] = reqParams.timestamp; // this is for backend so that it can report progress
   }
-  if (_.toLower(config.method) === 'get' && _.size(config.url) > MAX_GET_REQUEST_LENGHT &&
-    _.includes(_.map(_.keys(config.headers), (v) => _.toLower(v)), 'x-viewmode')) {
+  if (toLower(config.method) === 'get' && size(config.url) > MAX_GET_REQUEST_LENGHT &&
+    includes(map(keys(config.headers), (v) => toLower(v)), 'x-viewmode')) {
     const errMsg = 'Your request exceeds maximum length';
     console.error(errMsg);
     new AbortController().abort(errMsg);

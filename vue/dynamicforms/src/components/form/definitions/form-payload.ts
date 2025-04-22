@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { reactive } from 'vue';
 
 import type { APIConsumer } from '../../api_consumer/namespace';
@@ -109,8 +109,8 @@ export default class FormPayload {
       this[itemName] = itemValue;
     });
     return [
-      _.cloneDeep(base._properties), // eslint-disable-line no-underscore-dangle
-      _.cloneDeep(base['$extra-data']),
+      cloneDeep(base._properties), // eslint-disable-line no-underscore-dangle
+      cloneDeep(base['$extra-data']),
     ];
   }
 }

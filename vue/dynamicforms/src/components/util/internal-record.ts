@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 type Internal<T extends object = any> = T & {
   readonly ['__pk_name']: keyof T;
@@ -29,7 +29,7 @@ export default function createInternalRecord <T extends object>(
 }
 
 export function toExternalRecordCopy<T extends object>(record: Internal<T>): T {
-  const el: T = _.cloneDeep(record);
+  const el: T = cloneDeep(record);
   // eslint-disable-next-line no-underscore-dangle
   const pkName = record.__pk_name;
 

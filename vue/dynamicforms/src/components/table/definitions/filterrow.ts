@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { clone, filter, includes, mapValues } from 'lodash-es';
 
 import DisplayMode from '../../classes/display-mode';
 import IndexedArray from '../../classes/indexed-array';
@@ -23,15 +23,15 @@ export default class TableFilterRow {
       this.payload = FormPayload.create();
       return;
     }
-    const filterDataNoActions = _.filter(filterData.columns, (cl) => !_.includes(cl.name, '#actions'));
-    let record = _.clone(filterData.record);
-    record = _.mapValues(record, () => null);
+    const filterDataNoActions = filter(filterData.columns, (cl) => !includes(cl.name, '#actions'));
+    let record = clone(filterData.record);
+    record = mapValues(record, () => null);
     this.value = new TableRow(record);
     const fields: DfForm.FormFieldsJSON = {};
     filterDataNoActions.forEach((column) => {
       fields[column.name] = column;
     });
-    const filteredCols = _.filter(
+    const filteredCols = filter(
       new TableColumns(filterDataNoActions.map((col) => col.name), fields),
       (c) => c.visibility === DisplayMode.FULL,
     );

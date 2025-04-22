@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isString } from 'lodash-es';
 import { defineComponent, h, resolveComponent, DefineComponent } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
@@ -22,7 +22,7 @@ function processSlot(
     return () => h(resolveComponent('DfActions'), { slot, actions: content });
   }
   if (content && 'componentName' in content && 'props' in content) {
-    const component = _.isString(content.componentName) ?
+    const component = isString(content.componentName) ?
       resolveComponent(content.componentName) :
       content.componentName; // it is a component
     return () => h(component, { slot, ...content.props });

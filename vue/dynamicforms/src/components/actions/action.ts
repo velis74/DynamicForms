@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { camelCase, isBoolean, isObjectLike, isString, toLower, upperFirst } from 'lodash-es';
 
 import FormPayload from '../form/definitions/form-payload';
 
@@ -30,7 +30,7 @@ export function defaultActionHandler(
 }
 
 export function getActionName(actionName: string | undefined): `action${string}` {
-  return `action${_.upperFirst(_.camelCase(_.toLower(actionName)))}`;
+  return `action${upperFirst(camelCase(toLower(actionName)))}`;
 }
 
 class Action implements ActionJSON {
@@ -64,7 +64,7 @@ class Action implements ActionJSON {
     const name = data.name;
     const position = data.position;
 
-    if (!_.isString(name) || !/^[a-zA-Z-_]+$/.test(name)) {
+    if (!isString(name) || !/^[a-zA-Z-_]+$/.test(name)) {
       console.warn(
         `Action name must be a valid string, matching [a-zA-Z-_]+. Got ${name}.` +
         ' Impossible to construct handler function name',
@@ -73,9 +73,9 @@ class Action implements ActionJSON {
     }
 
     // any non-string or empty string must resolve as null for label
-    const label = !_.isString(data.label) || data.label.length === 0 ? null : data.label;
+    const label = !isString(data.label) || data.label.length === 0 ? null : data.label;
     // any non-string or empty string must resolve as null for icon
-    const icon = !_.isString(data.icon) || data.icon.length === 0 ? null : data.icon;
+    const icon = !isString(data.icon) || data.icon.length === 0 ? null : data.icon;
 
     // displayStyle is an object of { breakpoint.{ showLabel, showIcon, asButton } } specs detailing how an action
     //  should be rendered at various breakpoints. A special case without a breakpoint is allowed specifying the common
@@ -83,9 +83,9 @@ class Action implements ActionJSON {
     const displayStyleProps = ['asButton', 'showLabel', 'showIcon'];
 
     function displayStyleBreakpointClean(bp: BreakpointsJSON | undefined) {
-      if (bp == null || !_.isObjectLike(bp)) return null;
+      if (bp == null || !isObjectLike(bp)) return null;
       const cbp = displayStyleProps.reduce((res: BreakpointsJSON, p: string) => {
-        if (_.isBoolean(bp[p])) res[p] = bp[p];
+        if (isBoolean(bp[p])) res[p] = bp[p];
         return res;
       }, {});
       return Object.keys(cbp).length === 0 ? null : cbp;
@@ -111,9 +111,9 @@ class Action implements ActionJSON {
 
     const fieldNameTemp = data instanceof Action ? data.fieldName : data.field_name;
     // any non-string or empty string must resolve as null for fieldName
-    const fieldName = !_.isString(fieldNameTemp) || fieldNameTemp.length === 0 ? null : fieldNameTemp;
+    const fieldName = !isString(fieldNameTemp) || fieldNameTemp.length === 0 ? null : fieldNameTemp;
 
-    const title = !_.isString(data.title) || data.title.length === 0 ? null : data.title;
+    const title = !isString(data.title) || data.title.length === 0 ? null : data.title;
 
     const actionName = getActionName(data.name);
     this[actionName] = data[actionName];

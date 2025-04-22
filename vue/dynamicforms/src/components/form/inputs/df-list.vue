@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { computed, onBeforeMount, onMounted, ref, watch } from 'vue';
 
 import APIConsumerVue from '../../api_consumer/api-consumer.vue';
@@ -26,7 +26,7 @@ const { baseBinds } = useInputBase(props, emits);
 
 // computed
 const binds = computed(() => {
-  const bindsClone = _.cloneDeep(baseBinds);
+  const bindsClone = cloneDeep(baseBinds);
   bindsClone.value['error-messages'] = bindsClone.value['error-messages']
     .filter((el: any) => !(el === undefined || el === null || !Object.keys(el).length))
     .map((el: { [key: string]: string }) => Object.keys(el).map((key) => `${key}: ${el[key]}`));

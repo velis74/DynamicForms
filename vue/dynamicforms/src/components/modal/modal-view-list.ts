@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { find, findIndex } from 'lodash-es';
 import { Ref, ref } from 'vue';
 
 import FilteredActions from '../actions/filtered-actions';
@@ -26,7 +26,7 @@ class DialogList {
   }
 
   push(dialogDef: DialogDefinition, existingDialogId?: number): number {
-    const pos: number = _.findIndex(this.list, { dialogId: existingDialogId });
+    const pos: number = findIndex(this.list, { dialogId: existingDialogId });
 
     if (pos !== -1) {
       // replace existing definition
@@ -55,12 +55,12 @@ class DialogList {
   }
 
   getDialogFromId(id: number) {
-    const pos = _.findIndex(this.list, { dialogId: id });
+    const pos = findIndex(this.list, { dialogId: id });
     return pos !== -1 ? this.list[pos] : null;
   }
 
   pop(existingDialogId: number) {
-    const pos = _.findIndex(this.list, { dialogId: existingDialogId });
+    const pos = findIndex(this.list, { dialogId: existingDialogId });
     if (pos !== -1) {
       this.list.splice(pos, 1);
       if (this.list.length && pos === this.list.length) {
@@ -75,7 +75,7 @@ class DialogList {
   }
 
   getDialogDefFromPromise(promise: Promise<any>) {
-    return _.find(this.list, { promise });
+    return find(this.list, { promise });
   }
 }
 

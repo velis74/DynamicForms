@@ -7,7 +7,7 @@
     "preview": "vite --mode preview"
   },
   "dependencies": {
-    "@dynamicforms/vuetify-inputs": "^0.1.15",
+    "@dynamicforms/vuetify-inputs": "^0.1.17",
     "@fullcalendar/core": "^6.1.4",
     "@fullcalendar/daygrid": "^6.1.4",
     "@fullcalendar/interaction": "^6.1.4",
@@ -19,8 +19,8 @@
     "@fullcalendar/vue3": "^6.1.4",
     "@mdi/font": "^7.4.47",
     "@velis/dynamicforms": "*",
-    "axios": "^1.2.0",
-    "lodash": "^4.17.15",
+    "axios": "^1.8.4",
+    "lodash-es": "^4.17.12",
     "suncalc": "^1.9.0",
     "vue": "^3",
     "vue-ionicon": "^2.1.0",
@@ -30,9 +30,10 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5",
     "@types/suncalc": "^1.9.0",
-    "http-proxy-middleware": "^2.0.6",
+    "@types/lodash-es": "^4.17.12",
+    "http-proxy-middleware": "^3.0.5",
     "typescript": "^5",
-    "vite": "^5",
+    "vite": "^6.3.2",
     "vite-plugin-vuetify": "^2",
     "vite-plugin-eslint": "^1.8.1"
   }

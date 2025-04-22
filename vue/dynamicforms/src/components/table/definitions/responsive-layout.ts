@@ -2,7 +2,7 @@
 // TODO: speed - currently there's way too much DOM
 
 // eslint-disable-next-line max-classes-per-file
-import _ from 'lodash';
+import { sum } from 'lodash-es';
 import { reactive } from 'vue';
 
 import DisplayMode from '../../classes/display-mode';
@@ -152,7 +152,7 @@ export class ResponsiveLayouts {
 
   recalculate(containerWidth: number): ResponsiveLayout {
     return this.layouts.find((layout: ResponsiveLayout) => {
-      layout.totalWidth = _.sum(layout.columns.map((el) => el.maxWidth ?? 0));
+      layout.totalWidth = sum(layout.columns.map((el) => el.maxWidth ?? 0));
       return layout.totalWidth <= containerWidth;
     }) ?? this.layouts[this.layouts.length - 1];
   }

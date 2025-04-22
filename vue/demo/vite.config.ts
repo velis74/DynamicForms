@@ -15,9 +15,10 @@ const axiosRedirectConfig = () => ({
     };
     server.middlewares.use(
       '/',
-      createProxyMiddleware(filter, {
+      createProxyMiddleware({
         target: process.env.VITE_AXIOS_TARGET,
         changeOrigin: false,
+        pathFilter: filter,
         pathRewrite: (path) => (path),
       }),
     );

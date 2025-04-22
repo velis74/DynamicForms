@@ -1,11 +1,10 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import DisplayMode from '../../classes/display-mode';
 import Operator from '../definitions/field-operator';
 import FormPayload from '../definitions/form-payload';
 import FormLayout from '../definitions/layout';
-// eslint-disable-next-line import/no-named-as-default
-import DfForm from '../namespace';
+import { FormLayoutNS } from '../namespace';
 
 import calculateVisibility, { Statement, XOR } from './conditional-visibility';
 
@@ -389,7 +388,7 @@ const conditions: { [key: string]: TypeConditions } = {
 /** Creates a deep copy of field definitions and adds visibility condition to a specified field */
 const fieldDefinitionWithCondition =
   (field_name: string, condition: Statement, fieldDefinition: FieldDefinitions): FieldDefinitions => {
-    const res = _.cloneDeep(fieldDefinition);
+    const res = cloneDeep(fieldDefinition);
     res.fields[field_name].conditionalVisibility = condition;
     return res;
   };
@@ -403,7 +402,10 @@ const addConditionFieldCondition =
 const testCondition =
   (condition: Statement, expectedVisibility: boolean) => {
     const definition = addConditionFieldCondition(condition, fieldDefinitions);
-    const payload: FormPayload = FormPayload.create(fieldValues, new FormLayout(definition as DfForm.FormLayoutJSON));
+    const payload: FormPayload = FormPayload.create(
+      fieldValues,
+      new FormLayout(definition as FormLayoutNS.LayoutInterface),
+    );
 
     const visible = calculateVisibility(payload, definition.fields.conditionedField.conditionalVisibility);
     expect(visible).toBe(expectedVisibility);
@@ -461,8 +463,8 @@ describe('Special Cases', () => {
     testCondition(getNumberCondition(Operator.IN, numberValues.equal), false);
     testCondition(getStringCondition(Operator.IN, stringValues.equal), true);
     testCondition(getNumberCondition(Operator.IN, []), false);
-    testCondition(getNumberCondition(Operator.IN, undefined), false);
-    testCondition(getStringCondition(Operator.IN, undefined), false);
+    testCondition(getNumberCondition(Operator.IN, undefined as unknown as number), false);
+    testCondition(getStringCondition(Operator.IN, undefined as unknown as string), false);
   });
 });
 
@@ -480,7 +482,7 @@ describe('ConditionalVisibility', () => {
     testConditions(conditions.compositeConditions);
   });
   it('Test Unknown Operator', () => {
-    expect(() => testCondition(getNumberCondition(-100, 0), false)).toThrow(Error);
-    expect(() => testCondition(getNumberCondition(100, 0), false)).toThrow(Error);
+    expect(() => testCondition(getNumberCondition(-100 as Operator, 0), false)).toThrow(Error);
+    expect(() => testCondition(getNumberCondition(100 as Operator, 0), false)).toThrow(Error);
   });
 });

@@ -1,63 +1,29 @@
 <template>
   <div style="width: 100%;">
-    <v-textarea
-      :id="field.uuid"
+    <df-text-area
       v-model="value"
-      :type="inputType"
-      variant="underlined"
       :class="field.renderParams.fieldCSSClass"
       :name="field.name"
-      :placeholder="field.placeholder"
-      :persistent-placeholder="Boolean(field.placeholder && field.placeholder.length > 0)"
+      :errors="baseBinds['error-messages']"
+      :enabled="!field.readOnly"
 
-      :minlength="minLength"
-      :maxlength="maxLength"
-      :step="field.renderParams.step"
-      :size="field.renderParams.size"
-
-      :readonly="field.readOnly"
-      :disabled="field.readOnly"
-      :label="baseBinds.label"
-      :error-messages="baseBinds['error-messages']"
-      :error-count="baseBinds['error-count']"
-      :hint="baseBinds.hint"
-      :persistent-hint="baseBinds['persistent-hint']"
-      :hide-details="baseBinds['hide-details']"
+      :rows="3"
+      :max-rows="10"
+      v-bind="baseBinds"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { DfTextArea } from '@dynamicforms/vuetify-inputs';
 
 import { BaseEmits, BaseProps, useInputBase } from './base';
 
-interface Props extends BaseProps {
-}
-
+interface Props extends BaseProps { }
 const props = defineProps<Props>();
 
-interface Emits extends BaseEmits {
-}
-
+interface Emits extends BaseEmits { }
 const emits = defineEmits<Emits>();
 
-const { baseBinds } = useInputBase(props, emits);
-
-// computed
-const inputType = computed(() => props.field.renderParams.inputType);
-
-const minLength = computed(() => props.field.renderParams.minLength);
-
-const maxLength = computed(() => props.field.renderParams.maxLength);
-
-const value = computed({
-  get(): any {
-    return props.modelValue;
-  },
-  set(newVal: string) {
-    emits('update:modelValue', newVal);
-  },
-});
-
+const { value, baseBinds } = useInputBase(props, emits);
 </script>

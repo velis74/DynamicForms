@@ -37,10 +37,10 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@dynamicforms/vuetify-inputs": "^0.1.15",
+    "@dynamicforms/vuetify-inputs": "^0.1.17",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
-    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.12",
     "vue": "^3.4",
     "vue-ionicon": "^2.1.0",
     "vue-router": "^4.1.6",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.5",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash-es": "^4.17.12",
     "@types/luxon": "^3.3.0",
     "@vitejs/plugin-vue": "^5",
     "@vitest/coverage-v8": "^2",
@@ -68,11 +68,11 @@
     "jsdom": "^22.0.0",
     "np": "^7.7.0",
     "typescript": "^5",
-    "vite": "^5",
+    "vite": "^6.3.2",
     "vite-plugin-dts": "^4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vuetify": "^2",
-    "vitest": "^2",
+    "vitest": "^3.1.2",
     "vue-tsc": "^2"
   },
   "eslintConfig": {
