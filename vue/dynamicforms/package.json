@@ -16,7 +16,7 @@
       "require": "./dist/dynamicforms.umd.cjs",
       "import": "./dist/dynamicforms.js"
     },
-    "./styles.css": "./dist/style.css"
+    "./styles.css": "./dist/dynamicforms.css"
   },
   "scripts": {
     "build-no-tsc": "vite build",

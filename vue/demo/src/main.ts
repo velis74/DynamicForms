@@ -9,7 +9,7 @@ import router from './router';
 import 'vuetify/styles/main.css';
 import '@mdi/font/css/materialdesignicons.css';
 // eslint-disable-next-line import/no-relative-packages
-import '../../dynamicforms/dist/style.css';
+import '../../dynamicforms/dist/dynamicforms.css';
 import '@dynamicforms/vuetify-inputs/styles.css';
 
 const app = createApp(DemoApp);
