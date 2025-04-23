@@ -4,6 +4,7 @@ import { computed, inject, ref, Ref, watch } from 'vue';
 
 import { useActionHandler } from '../actions/action-handler-composable';
 import FilteredActions from '../actions/filtered-actions';
+import type { ActionsNS } from '../actions/namespace';
 
 import FormField from './definitions/field';
 import FormPayload from './definitions/form-payload';
@@ -18,15 +19,24 @@ import DPlaceholder from './inputs/df-placeholder.vue';
 import DSelect from './inputs/df-select.vue';
 import DTextArea from './inputs/text-area.vue';
 
+type IHandlers = ActionsNS.IHandlers;
+
 interface Props {
   field: FormField
   actions: FilteredActions
   errors: any
   showLabelOrHelpText?: boolean
-  cssClasses?: string
+  cssClasses?: string;
+  handlers?: IHandlers;
+  dialogHandlers?: IHandlers;
 }
 
-const props = withDefaults(defineProps<Props>(), { cssClasses: 'col', showLabelOrHelpText: true });
+const props = withDefaults(defineProps<Props>(), {
+  cssClasses: 'col',
+  showLabelOrHelpText: true,
+  handlers: undefined,
+  dialogHandlers: undefined
+});
 
 const { callHandler } = useActionHandler();
 const payload = inject<Ref<FormPayload>>('payload', ref({}) as Ref<FormPayload>);
@@ -96,6 +106,8 @@ watch(fieldValue, (newValue: any, oldValue: any) => {
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
       @update:modelValueDisplay="updateModelValueDisplay"
+      :handlers="handlers"
+      :dialog-handlers="dialogHandlers"
     />
   </v-col>
 </template>

@@ -1,6 +1,11 @@
 <template>
   <div style="flex: auto">
-    <component :is="renderComponent" v-bind="renderComponentData"/>
+    <component
+      :is="renderComponent"
+      v-bind="renderComponentData"
+      :sub-handlers="handlers?.subhandlers"
+      :dialog-sub-handlers="dialogHandlers?.subhandlers"
+    />
   </div>
 </template>
 

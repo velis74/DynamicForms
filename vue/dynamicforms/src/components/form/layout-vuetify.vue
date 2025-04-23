@@ -18,6 +18,8 @@ interface Props {
   actions: FilteredActions
   actionHandlers?: IHandlers
   errors: { [key: string]: string[] }
+  subHandlers: any
+  dialogSubHandlers: any
 }
 const props = withDefaults(defineProps<Props>(), { payload: null, actionHandlers: undefined });
 
@@ -60,6 +62,8 @@ const nonFieldErrors = computed(() => {
       :columns="row.columns"
       :errors="errors"
       :any-field-visible="row.anyVisible"
+      :sub-handlers="subHandlers"
+      :dialog-sub-handlers="dialogSubHandlers"
     />
   </v-form>
 </template>

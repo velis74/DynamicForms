@@ -7,6 +7,8 @@
       :key="`${idx}${column.renderKey}`"
       v-bind="columnData!(column)"
       :style="column.colspan !== 1 ? { flex: column.colspan } : null"
+      :handlers="getHandlers!(column)"
+      :dialog-handlers="getDialogHandlers!(column)"
     />
     <slot name="after-columns"/>
   </v-row>
@@ -24,10 +26,17 @@ import FormFieldGroup from './field-group.vue';
 import FormField from './form-field.vue';
 import calculateVisibility from './inputs/conditional-visibility';
 
+import type { ActionsNS } from '@/actions/namespace';
+
+type IHandlers = ActionsNS.IHandlers;
+
+
 interface Props {
   columns: Array<Column>;
   errors: Record<string, any>;
   anyFieldVisible: boolean;
+  subHandlers: IHandlers;
+  dialogSubHandlers: IHandlers;
 }
 
 interface Injects {
@@ -38,6 +47,8 @@ interface Injects {
 interface OwnMethodsAndComputed {
   renderableColumns: Column[];
   columnData: (col: any) => any;
+  getHandlers: (fieldTitle: any) => any;
+  getDialogHandlers: (fieldTitle: any) => any;
 }
 
 export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>({
@@ -48,6 +59,8 @@ export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>
     columns: { type: Array as PropType<Array<Column>>, required: true },
     errors: { type: Object, default: () => ({}) },
     anyFieldVisible: { type: Boolean, required: true },
+    subHandlers: { type: Object, default: () => ({}) },
+    dialogSubHandlers: { type: Object, default: () => ({}) },
   } as const,
   setup() {
     const actions = inject<FilteredActions>('actions');
@@ -73,6 +86,12 @@ export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>
         errors: this.errors,
         actions: this.actions,
       };
+    },
+    getHandlers(col: any) {
+      return this.subHandlers[col.name];
+    },
+    getDialogHandlers(col: any) {
+      return this.dialogSubHandlers[col.name];
     },
   },
 });
