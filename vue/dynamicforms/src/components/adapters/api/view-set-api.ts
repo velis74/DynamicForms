@@ -29,10 +29,14 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  definition_url(url: string): string { return `${url}.componentdef`; }
+  definition_url(url: string): string {
+    return `${url}.componentdef`;
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  data_url(url: string): string { return `${url}.json`; }
+  data_url(url: string): string {
+    return `${url}.json`;
+  }
 
   detail_url = (pk?: PrimaryKeyType) => (`${this.baseUrl.value}${pk ? `/${pk}` : ''}`);
 
@@ -48,7 +52,12 @@ export default class ViewSetApi<T> implements IViewSetApi<T> {
 
   list = async (config?: AxiosRequestConfig): Promise<T[]> => {
     const res = await apiClient.get(this.compose_url(this.baseUrl.value), { headers: this.headers, ...config });
-    return { ...res.data, '$response-object': res };
+    let data = res.data;
+    if (Array.isArray(data)) {
+      data = { next: null, prev: null, results: data };
+    }
+
+    return { ...data, '$response-object': res };
   };
 
   retrieve = async (pk: PrimaryKeyType, config?: AxiosRequestConfig): Promise<T> => (

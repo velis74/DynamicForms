@@ -29,7 +29,10 @@ const value = computed(() => props.rowData[props.column.name]);
 const config = computed(() => {
   const tableConfig: any = inject('table-config'); // provided by table.ts
 
-  let cfg = tableConfig[`_TableCellFloat_${props.column.name}`];
+  let cfg;
+  if (tableConfig) {
+    cfg = tableConfig[`_TableCellFloat_${props.column.name}`];
+  }
 
   // if config does not exist yet or if rows actually changed (table was reprovisioned with another one)
   if (!cfg) {
@@ -37,13 +40,15 @@ const config = computed(() => {
       maxDecimals: 0,
       decimalChar: 1.1.toLocaleString().substring(1, 2),
     });
-    tableConfig[`_TableCellFloat_${props.column.name}`] = cfg;
+    if (tableConfig) {
+      tableConfig[`_TableCellFloat_${props.column.name}`] = cfg;
+    }
   }
   return cfg;
 });
 const showZeroes = computed(() => props.column.renderParams.table_show_zeroes ?? false);
 
-const displayValue = computed(() : DisplayValue => {
+const displayValue = computed((): DisplayValue => {
   if (value.value == null) return { main: '', filler: '' };
   if (props.thead) return { main: value.value, filler: '' };
 
@@ -72,9 +77,11 @@ const displayValue = computed(() : DisplayValue => {
 .number-cell {
   text-align: right;
 }
+
 .decimals {
   visibility: hidden;
 }
+
 .show-zeroes .decimals {
   visibility: visible;
   opacity: .6;

@@ -20,7 +20,11 @@ declare module 'axios' {
 }
 
 export function dataWithResponse(response: AxiosResponse<any, any>) {
-  const res = response.data;
+  let res = response.data;
+  if (typeof res === 'string') {
+    // noinspection JSPrimitiveTypeWrapperUsage
+    res = new String(res);
+  }
   if (res) {
     Object.defineProperty(
       res,
