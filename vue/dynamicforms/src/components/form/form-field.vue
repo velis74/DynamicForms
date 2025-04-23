@@ -78,6 +78,10 @@ const updateModelValueDisplay = (newValue: any) => {
 };
 
 watch(fieldValue, (newValue: any, oldValue: any) => {
+  if ((newValue === null || newValue === undefined) &&
+    (oldValue === null || oldValue === undefined)) {
+    return; // Don't trigger the watch logic
+  }
   debounceHandler(newValue, oldValue);
 });
 </script>
