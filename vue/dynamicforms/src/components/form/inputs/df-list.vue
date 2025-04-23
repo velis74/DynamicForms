@@ -1,6 +1,10 @@
 <template>
   <v-input v-bind="binds">
-    <APIConsumerVue v-if="consumer" :consumer="consumer" :display-component="displayComponent"/>
+    <APIConsumerVue
+      v-if="consumer" :consumer="consumer"
+      :display-component="displayComponent"
+      :handlers="handlers"
+      :dialog-handlers="dialogHandlers"/>
   </v-input>
 </template>
 

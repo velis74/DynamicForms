@@ -16,6 +16,8 @@ interface Props {
   payload: FormPayload
   actions: FilteredActions
   errors: any
+  subHandlers: any
+  dialogSubHandlers: any
 }
 
 const props = defineProps<Props>();
@@ -31,7 +33,15 @@ provide('payload', computed(() => props.payload));
       </v-layout>
     </v-card-title>
     <v-card-text>
-      <FormLayout :is="layout.componentName" :layout="layout" :payload="payload" :actions="actions" :errors="errors"/>
+      <FormLayout
+        :is="layout.componentName"
+        :layout="layout"
+        :payload="payload"
+        :actions="actions"
+        :errors="errors"
+        :sub-handlers="subHandlers"
+        :dialog-sub-handlers="dialogSubHandlers"
+      />
     </v-card-text>
     <v-card-actions class="vuetify-form-actions">
       <v-layout justify-end>

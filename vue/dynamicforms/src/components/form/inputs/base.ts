@@ -2,6 +2,9 @@ import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
 import FormField from '../definitions/field';
+import type { ActionsNS } from '@/actions/namespace';
+
+type IHandlers = ActionsNS.IHandlers;
 
 export interface BaseProps {
   field: FormField;
@@ -9,13 +12,15 @@ export interface BaseProps {
   errors: any;
   showLabelOrHelpText?: boolean;
   modelValue: any;
+  handlers?: IHandlers;
+  dialogHandlers?: IHandlers;
 }
 
 export interface BaseEmits {
   (e: 'update:modelValue', value: any): void;
 }
 
-export const basePropsDefault = { showLabelOrHelpText: true };
+export const basePropsDefault = { showLabelOrHelpText: true, handlers: undefined, dialogHandlers: undefined };
 
 export function useInputBase(props: BaseProps, emit: BaseEmits) {
   const value = computed({
