@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   cssClasses: 'col',
   showLabelOrHelpText: true,
   handlers: undefined,
-  dialogHandlers: undefined
+  dialogHandlers: undefined,
 });
 
 const { callHandler } = useActionHandler();
@@ -105,9 +105,9 @@ watch(fieldValue, (newValue: any, oldValue: any) => {
       :actions="actions"
       :errors="errors && errors[field.name]"
       :show-label-or-help-text="showLabelOrHelpText"
-      @update:modelValueDisplay="updateModelValueDisplay"
       :handlers="handlers"
       :dialog-handlers="dialogHandlers"
+      @update:modelValueDisplay="updateModelValueDisplay"
     />
   </v-col>
 </template>

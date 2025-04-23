@@ -18,10 +18,15 @@ interface Props {
   actions: FilteredActions
   actionHandlers?: IHandlers
   errors: { [key: string]: string[] }
-  subHandlers: any
-  dialogSubHandlers: any
+  subHandlers?: any
+  dialogSubHandlers?: any
 }
-const props = withDefaults(defineProps<Props>(), { payload: null, actionHandlers: undefined });
+const props = withDefaults(defineProps<Props>(), {
+  payload: null,
+  actionHandlers: undefined,
+  subHandlers: undefined,
+  dialogSubHandlers: undefined,
+});
 
 provide<FilteredActions>('actions', props.actions);
 provide<ComputedRef<FormPayload | null>>('payload', computed(() => props.payload));

@@ -30,7 +30,6 @@ import type { ActionsNS } from '@/actions/namespace';
 
 type IHandlers = ActionsNS.IHandlers;
 
-
 interface Props {
   columns: Array<Column>;
   errors: Record<string, any>;

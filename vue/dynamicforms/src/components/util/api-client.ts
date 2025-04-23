@@ -23,7 +23,7 @@ export function dataWithResponse(response: AxiosResponse<any, any>) {
   let res = response.data;
   if (typeof res === 'string') {
     // noinspection JSPrimitiveTypeWrapperUsage
-    res = new String(res);
+    res = new String(res); // eslint-disable-line no-new-wrappers
   }
   if (res) {
     Object.defineProperty(
