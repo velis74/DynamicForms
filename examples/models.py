@@ -12,6 +12,7 @@ from enumfields import EnumIntegerField
 from dynamicforms import models_fields
 from dynamicforms.int_choice_enum import IntChoiceEnum
 
+
 class Validated(models.Model):
     """
     Shows validation capabilities
@@ -169,10 +170,12 @@ class EnumFieldChoices(IntChoiceEnum):
     Choice_3 = 2, _("Planet"), "planet"
     Choice_4 = 3, _("Iconless")
 
+
 class AdvancedFields(models.Model):
     """
     Shows advanced available fields in DynamicForms
     """
+
     regex_field = models.CharField(max_length=256)
     choice_field = models.CharField(null=True, max_length=8)
     single_choice_field = models.CharField(null=True, max_length=8)

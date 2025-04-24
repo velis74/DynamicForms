@@ -78,10 +78,11 @@ export default defineConfig({
   test: {
     server: {
       deps: {
-        inline: ['vuetify']
+        inline: [/vuetify/]
       },
     },
     globals: true,
     environment: 'jsdom',
+    exclude: ['**/*.css'],
   },
 });
