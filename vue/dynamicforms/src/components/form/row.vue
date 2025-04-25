@@ -7,8 +7,6 @@
       :key="`${idx}${column.renderKey}`"
       v-bind="columnData!(column)"
       :style="column.colspan !== 1 ? { flex: column.colspan } : null"
-      :handlers="getHandlers!(column)"
-      :dialog-handlers="getDialogHandlers!(column)"
     />
     <slot name="after-columns"/>
   </v-row>
@@ -50,6 +48,14 @@ interface OwnMethodsAndComputed {
   getDialogHandlers: (fieldTitle: any) => any;
 }
 
+interface ColData {
+  field: any;
+  title: any;
+  errors: Record<string, any>;
+  actions: FilteredActions | undefined;
+  [key: string]: any; // Add index signature to allow any string property
+}
+
 export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>({
   name: 'FormRow',
   components: { FormField, FormFieldGroup },
@@ -79,18 +85,21 @@ export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>
   },
   methods: {
     columnData(col: any) {
-      return {
+      const colData: ColData = {
         field: col,
         title: col.title,
         errors: this.errors,
         actions: this.actions,
-      };
-    },
-    getHandlers(col: any) {
-      return this.subHandlers[col.name];
-    },
-    getDialogHandlers(col: any) {
-      return this.dialogSubHandlers[col.name];
+      }
+
+      if (col.layoutFieldComponentName === "form-field-group") {
+        colData.subHandlers = this.subHandlers;
+        colData.dialogSubHandlers = this.dialogSubHandlers;
+      } else {
+        colData.handlers = this.subHandlers ? this.subHandlers[col.name] : undefined;
+        colData.dialogHandlers = this.dialogSubHandlers ? this.dialogSubHandlers[col.name] : undefined;
+      }
+      return colData;
     },
   },
 });

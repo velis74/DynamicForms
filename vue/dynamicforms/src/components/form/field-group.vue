@@ -22,6 +22,8 @@
               :payload="formPayload"
               :actions="actions"
               :errors="errors"
+              :sub-handlers="subHandlers"
+              :dialog-sub-handlers="dialogSubHandlers"
               transition="scale-transition"
             />
           </v-card-text>
@@ -46,10 +48,14 @@ const props = withDefaults(
     errors: Object,
     showLabelOrHelpText?: boolean,
     cssClasses?: string,
+    subHandlers?: any,
+    dialogSubHandlers?: any,
   }>(),
   {
     showLabelOrHelpText: true,
     cssClasses: '',
+    subHandlers: undefined,
+    dialogSubHandlers: undefined,
   },
 );
 
