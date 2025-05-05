@@ -90,9 +90,9 @@ export default defineComponent<Props & Partial<Injects & OwnMethodsAndComputed>>
         title: col.title,
         errors: this.errors,
         actions: this.actions,
-      }
+      };
 
-      if (col.layoutFieldComponentName === "form-field-group") {
+      if (col.layoutFieldComponentName === 'form-field-group') {
         colData.subHandlers = this.subHandlers;
         colData.dialogSubHandlers = this.dialogSubHandlers;
       } else {
