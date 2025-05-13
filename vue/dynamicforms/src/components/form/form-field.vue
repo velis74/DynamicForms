@@ -68,7 +68,7 @@ const components: { [key: string]: any } = {
   DTextArea,
 };
 
-const component = computed(() => components?.[props.field.componentName] ?? DInput);
+const component = computed(() => components?.[props.field.componentName] ?? props.field.componentName);
 
 const debounceHandler = debounce((newValue: any, oldValue: any) => {
   callHandler(

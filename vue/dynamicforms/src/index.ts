@@ -22,6 +22,7 @@ import { apiClient, gettext, interpolate } from '@/util';
 
 export * from './components/api_consumer/index-temporary';
 export * from './components/api_consumer/form-consumer';
+export * from './components/form/inputs/base';
 
 export {
   Action,
