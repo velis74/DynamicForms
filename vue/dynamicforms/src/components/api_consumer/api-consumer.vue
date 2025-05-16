@@ -19,7 +19,7 @@ import FormPayload from '../form/definitions/form-payload';
 import dfModal from '../modal/modal-view-api';
 import TableColumn from '../table/definitions/column';
 import RowTypes from '../table/definitions/row-types';
-import { gettext } from '../util/translations-mixin';
+import { gettext, interpolate } from '../util/translations-mixin';
 
 import ComponentDisplay from './component-display';
 import ConsumerLogicBase from './consumer-logic-base';
@@ -45,7 +45,12 @@ const props = defineProps<{
 }>();
 
 if (!ComponentDisplay.isDefined(props.displayComponent)) {
-  console.warn(`ApiConsumer.displayComponent property has an unsupported value '${props.displayComponent}'`);
+  console.warn(
+    interpolate(
+      'ApiConsumer.displayComponent property has an unsupported value \'%(component)s\'',
+      { component: props.displayComponent },
+    ),
+  );
 }
 
 const renderComponent = computed(() => {
@@ -65,10 +70,10 @@ const displayComponent = computed(() => props.displayComponent);
 const renderComponentData = computed(() => {
   switch (displayComponent.value) {
   case ComponentDisplay.TABLE:
-    return (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).tableDefinition;
+    return (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).tableDefinition;
   case ComponentDisplay.FORM:
     // console.warn(props.consumer.formDefinition);
-    return (<FormConsumerBase> props.consumer).definition;
+    return (<FormConsumerBase>props.consumer).definition;
     // TODO: what about dialog? Where is this APIConsumer even used?
     // TODO: And why isn't APIConsumer used on the page which showcases the three input modes. What's there instead?
   default:
@@ -79,26 +84,26 @@ const renderComponentData = computed(() => {
 const { handler } = useActionHandler();
 
 if (props.consumer instanceof ConsumerLogicBase) {
-  (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).setDialogHandlers(props.dialogHandlers);
+  (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).setDialogHandlers(props.dialogHandlers);
 }
 
 async function actionDelete(actionData: Action, payload: FormPayload) {
   const res = await dfModal.yesNo('Delete', gettext('Are you sure you want to delete this record?'));
   if (res.action.name.toUpperCase() === 'YES') {
-    await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).deleteRow(payload);
+    await (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).deleteRow(payload);
   }
   return true;
 }
 
 function actionValueChanged(actionData: Action, payload: FormPayload) {
   if (props.displayComponent === ComponentDisplay.TABLE) {
-    (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).filter(payload);
+    (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).filter(payload);
   }
   return true;
 }
 
 async function actionAdd() {
-  await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).dialogForm('new');
+  await (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).dialogForm('new');
   return true;
 }
 
@@ -108,7 +113,7 @@ async function actionEdit(
   context: { rowType: RowTypes },
 ) {
   if (context.rowType !== RowTypes.Data || payload == undefined) return false; // eslint-disable-line eqeqeq
-  await (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).dialogForm(payload[props.consumer.pkName]);
+  await (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).dialogForm(payload[props.consumer.pkName]);
   return true;
 }
 
@@ -122,7 +127,7 @@ function actionSort(
     const oldChangeCounter = context.column.ordering.changeCounter;
     context.column.ordering.handleColumnHeaderClick(context.event);
     if (oldChangeCounter !== context.column.ordering.changeCounter) {
-      (<APIConsumer.ConsumerLogicBaseInterface> props.consumer).reload();
+      (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).reload();
     }
     return true;
   }
@@ -130,19 +135,19 @@ function actionSort(
 }
 
 const actionCancel = async (): Promise<boolean> => {
-  await (<FormConsumerBase> props.consumer).getUXDefinition();
+  await (<FormConsumerBase>props.consumer).getUXDefinition();
   return true;
 };
 
 const actionSubmit = async (): Promise<boolean> => {
   try {
-    await (<FormConsumerBase> props.consumer).save();
-    (<FormConsumerBase> props.consumer).withErrors({});
+    await (<FormConsumerBase>props.consumer).save();
+    (<FormConsumerBase>props.consumer).withErrors({});
   } catch (err: any) {
-    (<FormConsumerBase> props.consumer).withErrors({ ...err?.response?.data });
+    (<FormConsumerBase>props.consumer).withErrors({ ...err?.response?.data });
     return true;
   }
-  await (<FormConsumerBase> props.consumer).getUXDefinition();
+  await (<FormConsumerBase>props.consumer).getUXDefinition();
   return true;
 };
 
