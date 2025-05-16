@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-20 13:48+0000\n"
+"POT-Creation-Date: 2025-05-16 10:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,52 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: vue/dynamicforms/dist/dynamicforms.umd.js:8
-msgid "Ok"
+#: vue/dynamicforms/src/components/actions/action.ts:147
+msgid "Close"
 msgstr ""
 
-#: vue/dynamicforms/dist/dynamicforms.umd.js:8
-msgid "Cancel"
+#: vue/dynamicforms/src/components/actions/action.ts:158
+msgid "Yes"
 msgstr ""
 
-#: vue/dynamicforms/dist/dynamicforms.umd.js:48
+#: vue/dynamicforms/src/components/actions/action.ts:169
+msgid "No"
+msgstr ""
+
+#: vue/dynamicforms/src/components/api_consumer/api-consumer.vue:91
+msgid "Are you sure you want to delete this record?"
+msgstr ""
+
+#: vue/dynamicforms/src/components/api_consumer/form-consumer/base.ts:101
+msgid "Cannot delete new record."
+msgstr ""
+
+#: vue/dynamicforms/src/components/notifications/index.ts:31
+msgid "Info"
+msgstr ""
+
+#: vue/dynamicforms/src/components/notifications/index.ts:36
+msgid "Success"
+msgstr ""
+
+#: vue/dynamicforms/src/components/notifications/index.ts:41
+msgid "Warning"
+msgstr ""
+
+#: vue/dynamicforms/src/components/notifications/index.ts:46
+msgid "Error"
+msgstr ""
+
+#: vue/dynamicforms/src/components/table/table-vuetify.vue:21
 msgid "No data"
+msgstr ""
+
+#: vue/dynamicforms/src/components/util/request-tracker.ts:114
+msgid ""
+"Showing progress: We have %(active_requests)s active requests to server "
+"oldest is %(age)s old with timestamp %(timestamp)s"
+msgstr ""
+
+#: vue/dynamicforms/src/components/util/request-tracker.ts:122
+msgid "Performing operation"
 msgstr ""

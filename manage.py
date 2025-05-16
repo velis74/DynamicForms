@@ -25,8 +25,8 @@ if __name__ == "__main__":  # pragma: no cover
     params = list(sys.argv)
     if len(params) >= 2 and params[1] == "makemessages":
         params.extend(("-i", "node_modules", "-i", "static", "-i", "coverage", "-i", "dynamicforms_legacy"))
-        params.extend(("-i", "tests", "-i", "setup", "-i", "examples", "-i", "dynamicforms_dev"))
+        params.extend(("-i", "tests", "-i", "setup", "-i", "examples", "-i", "dynamicforms_dev", "-i", "dist"))
         print("Modified makemessages: will process both django and djangojs domains")
-        execute_from_command_line(params + ["-d", "djangojs", "-e", "js,ts,vue", "-i", "vue"])
+        execute_from_command_line(params + ["-d", "djangojs", "-e", "js,ts,vue"])
 
     execute_from_command_line(params)

@@ -4,10 +4,11 @@ import DialogDefinition from '../modal/dialog-definition';
 import dfModal from '../modal/modal-view-api';
 import { Dialogs } from '../modal/namespace';
 
-import { gettext } from './translations-mixin';
+import { gettext, interpolate } from './translations-mixin';
 
 const SHOW_DIALOG_AFTER_MS = 250;
-const emptyPromise = new Promise<any>(() => {});
+const emptyPromise = new Promise<any>(() => {
+});
 
 class RequestTracker {
   private activeRequests: { [key: number]: number };
@@ -43,7 +44,9 @@ class RequestTracker {
     this.progressDialogCheck(); // remove the progress dialog when all requests are done
   }
 
-  loading() { return Object.keys(this.activeRequests).length; }
+  loading() {
+    return Object.keys(this.activeRequests).length;
+  }
 
   get isShowingProgress() {
     return dfModal.getDialogDefinition(this.dialogPromise) != null;
@@ -106,9 +109,16 @@ class RequestTracker {
 
   show() {
     console.log(
-      `Showing progress: We have ${this.loading()} active requests to server oldest is ` +
-      `${this.oldestActiveRequest().age}ms old with timestamp ${this.oldestActiveRequest().timestamp}.`,
+      interpolate(gettext(
+        // eslint-disable-next-line vue/max-len
+        'Showing progress: We have %(active_requests)s active requests to server oldest is %(age)s old with timestamp %(timestamp)s',
+      ), {
+        active_requests: this.loading(),
+        age: this.oldestActiveRequest().age,
+        timestamp: this.oldestActiveRequest().timestamp,
+      }),
     );
+
     const title = gettext('Performing operation');
     this.dialogPromise = dfModal.message(
       title,
@@ -118,13 +128,15 @@ class RequestTracker {
 
   hide() {
     const dlgDef = dfModal.getDialogDefinition(this.dialogPromise);
-    if (dlgDef != null) (<Function> dlgDef.close)();
+    if (dlgDef != null) (<Function>dlgDef.close)();
     this.dialogPromise = emptyPromise;
   }
 }
 
 const requestTracker = new RequestTracker();
 // Set up the check for progress dialogs
-window.setInterval(() => { requestTracker.progressDialogCheck(); }, 250);
+window.setInterval(() => {
+  requestTracker.progressDialogCheck();
+}, 250);
 
 export default requestTracker;
