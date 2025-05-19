@@ -1,6 +1,7 @@
 import { camelCase, isBoolean, isObjectLike, isString, toLower, upperFirst } from 'lodash-es';
 
 import FormPayload from '../form/definitions/form-payload';
+import { gettext } from '../util/translations-mixin';
 
 import type { ActionsNS } from './namespace';
 
@@ -143,7 +144,7 @@ class Action implements ActionJSON {
   static closeAction(data: ActionJSON = {}) {
     return new Action({
       name: 'close',
-      label: 'Close', // TODO: needs translation
+      label: gettext('Close'),
       icon: 'close-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
@@ -154,7 +155,7 @@ class Action implements ActionJSON {
   static yesAction(data: ActionJSON = {}) {
     return new Action({
       name: 'yes',
-      label: 'Yes', // TODO: needs translation
+      label: gettext('Yes'),
       icon: 'thumbs-up-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
@@ -165,7 +166,7 @@ class Action implements ActionJSON {
   static noAction(data: ActionJSON = {}) {
     return new Action({
       name: 'no',
-      label: 'No', // TODO: needs translation
+      label: gettext('No'),
       icon: 'thumbs-down-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
