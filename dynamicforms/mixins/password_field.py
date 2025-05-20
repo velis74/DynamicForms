@@ -10,7 +10,7 @@ class PasswordFieldMixin(object):
         if value:
             self.display_table = DisplayMode.SUPPRESS
             self.style.update(input_type="password")
-            self.render_params["form_component_name"] = "DPassword"
+            self.render_params["form_component_name"] = "DInput"
             self.render_params["input_type"] = "password"
         else:
             try:

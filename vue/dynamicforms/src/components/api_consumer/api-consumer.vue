@@ -88,7 +88,7 @@ if (props.consumer instanceof ConsumerLogicBase) {
 }
 
 async function actionDelete(actionData: Action, payload: FormPayload) {
-  const res = await dfModal.yesNo('Delete', gettext('Are you sure you want to delete this record?'));
+  const res = await dfModal.yesNo(gettext('Delete'), gettext('Are you sure you want to delete this record?'));
   if (res.action.name.toUpperCase() === 'YES') {
     await (<APIConsumer.ConsumerLogicBaseInterface>props.consumer).deleteRow(payload);
   }
