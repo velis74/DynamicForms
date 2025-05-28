@@ -141,6 +141,17 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
 
         return BoundSerializerRenderActions()
 
+    # noinspection PyMethodMayBeStatic
+    def get_default_data(self):
+        # This is useful if we have subserializer on form... When user clicks add record form uses this data.
+        # Use example:
+        #
+        #   default = self.get_initial()
+        #   if isinstance(default, dict):
+        #       default["my_field"] = "Default data"
+        #   return default
+        return None
+
     def component_params(self: "_ViewModeBoundSerializer", output_json: bool = True):
         from dynamicforms.utils import get_pk_name
 
@@ -156,7 +167,7 @@ class ViewModeSerializer(ViewModeBase, SerializerFilter, metaclass=SerializerMet
             "columns": [c.as_component_def() for c in self.render_fields.fields],
             "responsive_table_layouts": self.get_responsive_table_layouts_def(),
             "actions": self.render_actions.as_action_def(),
-            "record": None if self.parent else self.data,
+            "record": self.get_default_data() if self.parent else self.data,
             "filter": self.filter_serializer_component_params() if self.show_filter else None,
             "row_select": bool(getattr(self, "row_select", False)),
             "dialog": self.get_dialog_def(),
