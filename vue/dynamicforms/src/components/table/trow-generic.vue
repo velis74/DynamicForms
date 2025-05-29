@@ -7,11 +7,7 @@
   <div
     v-else
     ref="row"
-    :class="{
-      [`df-row ${rowData.dfControlStructure.CSSClass}`]: true,
-      ['data-row']: rowType === RowTypes.Data,
-      ['data-selected']: isSelected,
-    }"
+    :class="rowClass"
     :style="rowData.dfControlStructure.CSSStyle"
     @click.stop="handleClick"
     @mouseup.right="(event) => callHandler(actions.rowRightClick, { rowType, event })"
@@ -43,6 +39,8 @@ import RowTypes from './definitions/row-types';
 import { DfTable } from './namespace';
 import { useRenderMeasure } from './render-measure';
 
+import { interpolate } from '@/util';
+
 const props = withDefaults(
   defineProps<{
     renderedColumns: IndexedArray<TableColumn>,
@@ -65,6 +63,7 @@ const rowInfiniteStyle = computed(() => (
   `width: 1px; height: ${props.rowData.dfControlStructure.measuredHeight || 10}px`
 ));
 const payload = computed(() => (props.filterDefinition ? props.filterDefinition.payload : props.rowData));
+
 function filterRow(column: TableColumn) {
   return props.filterDefinition ?
     props.filterDefinition.columns[column.name] || new TableColumn({} as DfTable.ColumnJSON, []) :
@@ -91,7 +90,16 @@ function handleClick(event: any) {
   }));
   callHandler(props.actions.rowClick, { event, rowType: props.rowType });
 }
+
 const isSelected = computed<boolean>(() => props.rowType === RowTypes.Data && selectedRow?.value === payload.value.id);
+
+const rowClass = computed(() => (
+  {
+    [interpolate('df-row %(extraClass)s', { extraClass: props.rowData.dfControlStructure.CSSClass })]: true,
+    'data-row': props.rowType === RowTypes.Data,
+    'data-selected': isSelected,
+  }
+));
 
 const row = ref();
 useRenderMeasure(onMeasure, { row });

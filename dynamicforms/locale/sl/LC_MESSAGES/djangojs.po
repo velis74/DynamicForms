@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-16 10:37+0000\n"
+"POT-Creation-Date: 2025-05-29 08:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,6 +30,10 @@ msgstr "Da"
 #: vue/dynamicforms/src/components/actions/action.ts:169
 msgid "No"
 msgstr "Ne"
+
+#: vue/dynamicforms/src/components/api_consumer/api-consumer.vue:91
+msgid "Delete"
+msgstr "Briši"
 
 #: vue/dynamicforms/src/components/api_consumer/api-consumer.vue:91
 msgid "Are you sure you want to delete this record?"
