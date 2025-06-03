@@ -97,7 +97,7 @@ const rowClass = computed(() => (
   {
     [interpolate('df-row %(extraClass)s', { extraClass: props.rowData.dfControlStructure.CSSClass })]: true,
     'data-row': props.rowType === RowTypes.Data,
-    'data-selected': isSelected,
+    'data-selected': isSelected.value,
   }
 ));
 
