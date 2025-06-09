@@ -15,7 +15,6 @@ describe('RenderParams', () => {
     max_length: 20,
     step: 1,
     size: 10,
-    form_format: 'json',
     multiple: false,
     allow_tags: false,
   };
@@ -33,7 +32,6 @@ describe('RenderParams', () => {
     expect(renderParams.maxLength).toBe(renderParamsJSON.max_length);
     expect(renderParams.step).toBe(renderParamsJSON.step);
     expect(renderParams.size).toBe(renderParamsJSON.size);
-    expect(renderParams.formFormat).toBe(renderParamsJSON.form_format);
     expect(renderParams.multiple).toBe(renderParamsJSON.multiple);
     expect(renderParams.allowTags).toBe(renderParamsJSON.allow_tags);
   });

@@ -19,7 +19,9 @@ export default class RenderParams {
 
   size?: number;
 
-  formFormat?: string;
+  formDateFormat?: string;
+
+  formTimeFormat?: string;
 
   multiple?: boolean;
 
@@ -43,7 +45,8 @@ export default class RenderParams {
     this.size = params.size;
 
     // DateTime
-    this.formFormat = params.form_format;
+    this.formDateFormat = params.form_date_format;
+    this.formTimeFormat = params.form_time_format;
 
     // select
     this.multiple = params.multiple;

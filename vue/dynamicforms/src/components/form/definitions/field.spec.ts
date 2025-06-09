@@ -27,7 +27,6 @@ const fieldDef: DfForm.FormFieldJSON = {
     max_length: 20,
     step: 1,
     size: 10,
-    form_format: 'json',
     multiple: false,
     allow_tags: false,
     table: 'df-tablecell-plaintext',
@@ -70,7 +69,6 @@ describe('FormField', () => {
     expect(formField.renderParams.maxLength).toBe(fieldDef.render_params.max_length);
     expect(formField.renderParams.step).toBe(fieldDef.render_params.step);
     expect(formField.renderParams.size).toBe(fieldDef.render_params.size);
-    expect(formField.renderParams.formFormat).toBe(fieldDef.render_params.form_format);
     expect(formField.renderParams.multiple).toBe(fieldDef.render_params.multiple);
     expect(formField.renderParams.allowTags).toBe(fieldDef.render_params.allow_tags);
     // expect(formField.renderParams.table).toBe(fieldDef.render_params.table); // table member is not mapped

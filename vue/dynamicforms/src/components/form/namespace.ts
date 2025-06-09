@@ -56,7 +56,8 @@ export namespace DfForm {
     max_length?: number;
     step?: number;
     size?: number;
-    form_format?: string;
+    form_date_format?: string;
+    form_time_format?: string;
     multiple?: boolean;
     allow_tags?: boolean;
     table?: string;
