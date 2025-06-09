@@ -22,13 +22,7 @@ class FilterSerializer(serializers.ModelSerializer):
         source="*",
     )
     rtf_field = RTFField(required=False, allow_null=True)
-    datetime_field = DateTimeField(
-        label="Datetime field",
-        render_params=dict(
-            table_format="dd.MM.yyyy HH:mm",
-            form_format="dd.MM.yyyy HH:mm",
-        ),
-    )
+    datetime_field = DateTimeField(label="Datetime field")
 
     class Meta:
         model = Filter

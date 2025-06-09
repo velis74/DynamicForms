@@ -8,6 +8,8 @@
     :persistent-hint="baseBinds['persistent-hint']"
     :clearable="true"
     :input-type="inputType"
+    :display-format-date="displayFormatDate"
+    :display-format-time="displayFormatTime"
   />
 </template>
 
@@ -29,4 +31,6 @@ const { value, baseBinds } = useInputBase(props, emits);
 
 // computed
 const inputType = computed(() => props.field.renderParams.inputType as 'datetime' | 'date' | 'time' | undefined);
+const displayFormatDate = computed(() => props.field.renderParams.formDateFormat as 'str' | undefined);
+const displayFormatTime = computed(() => props.field.renderParams.formTimeFormat as 'str' | undefined);
 </script>
