@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dynamicforms"
-version = "0.80.2"
+version = "0.80.3"
 description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
 readme = "README.md"
 requires-python = ">=3.8"
