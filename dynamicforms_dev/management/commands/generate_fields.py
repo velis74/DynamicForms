@@ -107,7 +107,7 @@ def arepr(value):
 
 
 class Command(BaseCommand):
-    help = "Generate Field classes from DRF with applied DynamicForms mixins"
+    help = "Generate Field classes from DRF with applied DyF mixins"
 
     # def add_arguments(self, parser):
     #     parser.add_argument('-dest', dest='file', type=str, default='strings.xlsx', action='store',

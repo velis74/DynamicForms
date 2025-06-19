@@ -8,9 +8,9 @@ The LICENSE has been modified to a proprietary one with restrictions, so please 
 
 The library is thus deprecated and in maintenance mode only.
 
-# What is DynamicForms?
+# What is DyF?
 
-DynamicForms wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer /
+DyF wants to eliminate HTML form boilerplate for generic tables & forms. Specifying a single DRF Serializer /
 ViewSet and possibly desired form layout instantly provides both HTML renders and JSON renders (and anything else DRF
 supports) keeping you free to implement your project.
 
@@ -28,9 +28,7 @@ authoring operations on the data in question.
 It is based on
 [django-rest-framework](http://www.django-rest-framework.org/)
 
-Documentation [on readthedocs](https://dynamicforms.readthedocs.io/)
-
-## Why DynamicForms
+## Why DyF
 
 - Turn your rest-framework ViewSets into HTML tables & forms
 - Powerful HTML based CRUD
