@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "Proprietary" }
 authors = [
-    { name = "Jure Erznožnik", email = "jure@velis.si" },
+    { name = "velis74", email = "support@velis.si" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
