@@ -30,7 +30,7 @@
     "dynamicforms",
     "velis"
   ],
-  "license": "BSD-3-Clause",
+  "license": "Proprietary",
   "repository": {
     "type": "git",
     "url": "git@github.com:velis74/DynamicForms.git"

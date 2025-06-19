@@ -8,7 +8,7 @@ version = "0.80.1"
 description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "Proprietary", file = "LICENSE" }
+license = { text = "Proprietary" }
 authors = [
     { name = "Jure Erznožnik", email = "jure@velis.si" },
 ]
