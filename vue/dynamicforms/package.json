@@ -1,7 +1,7 @@
 {
   "name": "@velis/dynamicforms",
   "private": false,
-  "version": "0.77.36",
+  "version": "0.80.3",
   "type": "module",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
@@ -30,7 +30,7 @@
     "dynamicforms",
     "velis"
   ],
-  "license": "BSD-3-Clause",
+  "license": "Proprietary",
   "repository": {
     "type": "git",
     "url": "git@github.com:velis74/DynamicForms.git"

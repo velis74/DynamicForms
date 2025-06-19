@@ -4,18 +4,18 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dynamicforms"
-version = "0.77.36"
+version = "0.80.3"
 description = "DynamicForms performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
 readme = "README.md"
 requires-python = ">=3.8"
-license = "MIT"
+license = { text = "Proprietary" }
 authors = [
-    { name = "Jure Erznožnik", email = "jure@velis.si" },
+    { name = "velis74", email = "support@velis.si" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD License",
+    "License :: Other/Proprietary License",
     "Operating System :: OS Independent",
     "Framework :: Django",
 ]
