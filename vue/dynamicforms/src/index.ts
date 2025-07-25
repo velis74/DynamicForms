@@ -20,6 +20,8 @@ import * as VuetifyComponents from './vuetify-components';
 
 import { apiClient, gettext, interpolate } from '@/util';
 
+import '@dynamicforms/vuetify-inputs/styles.css';
+
 export * from './components/api_consumer/index-temporary';
 export * from './components/api_consumer/form-consumer';
 export * from './components/form/inputs/base';

@@ -21,7 +21,7 @@
               :layout="field.layout"
               :payload="formPayload"
               :actions="actions"
-              :errors="errors"
+              :errors="subErrors"
               :sub-handlers="subHandlers"
               :dialog-sub-handlers="dialogSubHandlers"
               transition="scale-transition"
@@ -45,7 +45,7 @@ const props = withDefaults(
   defineProps<{
     field: Group,
     actions: FilteredActions,
-    errors: Object,
+    errors: Record<string, any>,
     showLabelOrHelpText?: boolean,
     cssClasses?: string,
     subHandlers?: any,
@@ -66,6 +66,7 @@ let formPayload = ref<FormPayload>();
 const columnClasses = computed(
   () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
 );
+const subErrors = computed(() => props.errors && props.errors[props.field.name]);
 
 if (props.field.name == null) {
   use.value = true;
