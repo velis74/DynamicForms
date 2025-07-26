@@ -53,6 +53,7 @@ export namespace ActionsNS {
     position?: string;
     field_name?: string;
     title?: string;
+    extra_data?: Record<string, any>;
   }
 
   export interface ActionsJSON {

@@ -57,6 +57,8 @@ class Action implements ActionJSON {
 
   public title?: string;
 
+  public extra_data!: Record<string, any>;
+
   [key: `action${string}`]: ActionsNS.ActionHandler;
 
   constructor(data: Action | ActionJSON, payload?: FormPayload) {
@@ -131,6 +133,7 @@ class Action implements ActionJSON {
       iconAvailable: { get() { return icon != null; }, enumerable: true },
       displayStyle: { get() { return displayStyle; }, enumerable: true },
       title: { get() { return title; }, enumerable: true },
+      extra_data: { get() { return data.extra_data ?? {}; }, enumerable: true },
 
       payload: { get(): FormPayload | undefined { return payload; }, enumerable: true },
       // elementType & bindAttrs, entire action.action concept:

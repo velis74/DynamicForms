@@ -8,7 +8,7 @@ from rest_framework.serializers import Serializer
 
 
 class ActionBase(object):
-    def __init__(self, name: str, serializer: Serializer = None, action=None):
+    def __init__(self, name: str, serializer: Serializer = None, action=None, extra_data: dict = None):
         """
         :param name: name by which to recognise this action in further processing, e.g. Serializer.suppress_action
         :param serializer: bind to this serializer instance
@@ -21,6 +21,7 @@ class ActionBase(object):
         assert name is not None, "Action name must not be None"
         self.name = name
         self.action = action
+        self.extra_data = extra_data or {}
         # serializer will be set when obtaining a resolved copy
         self.serializer = serializer
 
@@ -51,7 +52,7 @@ class ActionBase(object):
         return string
 
     def as_component_def(self):
-        return {k: getattr(self, k) for k in ("name", "action")}
+        return {k: getattr(self, k) for k in ("name", "action", "extra_data")}
 
 
 class TablePosition(IntEnum):
@@ -147,8 +148,9 @@ class TableAction(ActionBase, RenderableActionMixin):
         btn_classes: Union[str, dict, None] = None,
         action=None,
         display_style=None,
+        extra_data: dict = None,
     ):
-        ActionBase.__init__(self, name, serializer, action=action)
+        ActionBase.__init__(self, name, serializer, action=action, extra_data=extra_data)
         RenderableActionMixin.__init__(
             self, label, title, icon, btn_classes, display_style or self.def_display_style(table_position=position)
         )
@@ -191,9 +193,14 @@ class TableAction(ActionBase, RenderableActionMixin):
 
 class FieldChangeAction(ActionBase):
     def __init__(
-        self, tracked_fields: Iterable[str], name: Union[str, None] = None, serializer: Serializer = None, action=None
+        self,
+        tracked_fields: Iterable[str],
+        name: Union[str, None] = None,
+        serializer: Serializer = None,
+        action=None,
+        extra_data: dict = None,
     ):
-        super().__init__(name, serializer, action=action)
+        super().__init__(name, serializer, action=action, extra_data=extra_data)
         self.tracked_fields = tracked_fields or []
         # assert self.tracked_fields, 'When declaring an action, it must track at least one form field'
         if serializer:
@@ -300,8 +307,9 @@ class FormButtonAction(ActionBase, RenderableActionMixin):
         icon: Union[str, None] = None,
         action=None,
         display_style=None,
+        extra_data: dict = None,
     ):
-        ActionBase.__init__(self, name, serializer, action=action)
+        ActionBase.__init__(self, name, serializer, action=action, extra_data=extra_data)
         title = label
         label = label or FormButtonAction.DEFAULT_LABELS[btn_type or FormButtonTypes.CUSTOM]
         RenderableActionMixin.__init__(
@@ -449,11 +457,7 @@ class Actions(object):
     def renderable_actions(self, serializer: Serializer):
         request = serializer.context.get("request", None)
         viewset = serializer.context.get("view", None)
-        return (
-            a
-            for a in self.actions
-            if not serializer.suppress_action(a, request, viewset)
-        )
+        return (a for a in self.actions if not serializer.suppress_action(a, request, viewset))
 
     def actions_not_suppressed(self, serializer: Serializer):
         request = serializer.context.get("request", None)
