@@ -305,7 +305,7 @@ class ModelSerializer(DynamicFormsSerializer, serializers.ModelSerializer):
         Finds all ChoiceFields and RelatedFields and creates additional "-display" fields to show
         resolved display value in table
         """
-        for field_name in field_names[:]:
+        for field_name in set(field_names):
             # existing extra as provided by get_extra_kwargs
             extra = extra_kwargs.get(field_name, dict())
 
