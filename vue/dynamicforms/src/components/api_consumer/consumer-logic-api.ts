@@ -75,9 +75,25 @@ class ConsumerLogicApi extends ConsumerLogicBase implements APIConsumer.Consumer
       if (orderingValue.length) {
         orderingParams[this.ordering.parameter] = `${orderingValue}`;
       }
+      const urlParamsTmp = new URL(url).searchParams;
+      const urlParams = Object.fromEntries(urlParamsTmp.entries());
+      const requestParams = {};
+      let paramsTmp = Object.keys(orderingParams);
+      if (paramsTmp.length) {
+        if (!Object.keys(urlParams).includes(paramsTmp[0])) {
+          Object.assign(requestParams, orderingParams);
+        }
+      }
+      paramsTmp = Object.keys(this.filterData);
+      if (this.filterData) {
+        if (!Object.keys(urlParams).includes(paramsTmp[0])) {
+          Object.assign(requestParams, this.filterData);
+        }
+      }
+
       return (await apiClient.get(url, {
         headers,
-        params: { ...orderingParams, ...this.filterData },
+        params: { ...requestParams },
         showProgress: false,
       })).data;
     } catch (err) {
