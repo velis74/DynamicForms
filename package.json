@@ -5,6 +5,7 @@
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "velis74",
   "license": "UNLICENSED",
+  "main": "",
   "workspaces": [
     "vue/*"
   ],
@@ -14,7 +15,7 @@
     "preview": "npm run build -w @velis/dynamicforms && npm run preview -w demo",
     "build": "npm run build -ws --if-present",
     "build-no-tsc": "npm run build-no-tsc -ws --if-present",
-    "publish": "npm run build || cd vue/dynamicforms && np && cd ../..",
+    "publish": "npm run build || cd vue/dynamicforms && npm publish && cd ../..",
     "test": "npm run test -ws --if-present",
     "lint": "npm run lint -ws --if-present",
     "docs:dev": "vitepress dev docs",
