@@ -1,7 +1,7 @@
 {
   "name": "dynamicform-project",
   "private": false,
-  "version": "0.80.11",
+  "version": "0.80.12",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "velis74",
   "license": "UNLICENSED",
@@ -15,7 +15,7 @@
     "preview": "npm run build -w @velis/dynamicforms && npm run preview -w demo",
     "build": "npm run build -ws --if-present",
     "build-no-tsc": "npm run build-no-tsc -ws --if-present",
-    "publish": "npm run build && cd vue/dynamicforms && npm publish && cd ../..",
+    "publish": "npm run build && npm publish --workspace vue/dynamicforms",
     "test": "npm run test -ws --if-present",
     "lint": "npm run lint -ws --if-present",
     "docs:dev": "vitepress dev docs",
