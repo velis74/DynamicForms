@@ -36,6 +36,7 @@ class FilterBackend(filters.DjangoFilterBackend):
             if getattr(view, "ordering_parameter", None):  # SingleRecordViewSet tega nima
                 locals()[view.ordering_parameter] = MyOrderingFilter(
                     fields=[f.name for f in queryset.model._meta.fields if f.name not in ordering_excluded_fields]
+                    + list(queryset.query.annotations.keys()),
                 )
 
         return FilterSetApplied
