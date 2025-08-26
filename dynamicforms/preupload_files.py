@@ -44,22 +44,25 @@ def count_user_cached_files(user_id: int) -> int:
 
 
 class FileUploadView(APIView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.max_file_size = 1 * 1024 * 1024  # 1MB
+        self.max_files_per_user = 10
+
     def post(self, request):
         """Upload file to cache storage"""
-        MAX_FILE_SIZE = 1 * 1024 * 1024  # 1MB
-        MAX_FILES_PER_USER = 10
 
         uploaded_file = request.FILES.get("file")
         if not uploaded_file:
             raise ValidationError({"file": ["required"]})
 
-        if uploaded_file.size > MAX_FILE_SIZE:
+        if uploaded_file.size > self.max_file_size:
             msg = __("File size exceeds allowed maximum size of {size_mb}MB")
-            raise ValidationError({"file": [msg.format(size_mb=MAX_FILE_SIZE // (1024 * 1024))]})
+            raise ValidationError({"file": [msg.format(size_mb=self.max_file_size // (1024 * 1024))]})
 
         user_id = request.user.id or -1
 
-        if count_user_cached_files(user_id) >= MAX_FILES_PER_USER:
+        if count_user_cached_files(user_id) >= self.max_files_per_user:
             raise ValidationError({"file": [__("Too many files uploaded. Please submit a form or try again later.")]})
 
         try:
