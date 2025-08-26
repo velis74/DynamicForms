@@ -1,7 +1,7 @@
 {
   "name": "dynamicform-project",
   "private": false,
-  "version": "0.80.14",
+  "version": "0.80.15",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "velis74",
   "license": "UNLICENSED",
