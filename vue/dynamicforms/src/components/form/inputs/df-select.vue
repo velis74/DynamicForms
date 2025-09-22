@@ -49,7 +49,7 @@ const limit = ref<number>(99999);
 const isAjax = computed(() => (!!props.field.ajax));
 // computed
 const disabled = computed(() => props.field.readOnly);
-const options = computed(() => (isAjax.value ? null : props.field.choices));
+const options = computed(() => (isAjax.value ? undefined : props.field.choices));
 const multiple = computed(() => props.field.renderParams.multiple);
 const taggable = computed(() => props.field.renderParams.allowTags);
 
