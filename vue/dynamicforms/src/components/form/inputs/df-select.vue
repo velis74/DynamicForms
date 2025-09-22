@@ -46,15 +46,15 @@ const { value, baseBinds } = useInputBase(props, emits);
 // data
 const loadedChoices = ref<DfForm.ChoicesJSON[]>([]);
 const limit = ref<number>(99999);
-
+const isAjax = computed(() => (!!props.field.ajax));
 // computed
 const disabled = computed(() => props.field.readOnly);
-const options = computed(() => props.field.choices || loadedChoices.value);
+const options = computed(() => (isAjax.value ? undefined : props.field.choices));
 const multiple = computed(() => props.field.renderParams.multiple);
 const taggable = computed(() => props.field.renderParams.allowTags);
 
 async function queryOptions(query: string, query_field: string): Promise<void> {
-  if (props.field.choices) return;
+  if (!isAjax.value) return;
   /*
     @adam
     If field already defines the choices it is wasteful to query options,
