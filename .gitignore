@@ -21,7 +21,6 @@ media
 /coverage
 /dynamicforms/static/ckeditor5/
 /dynamicforms/vue/node_modules/
-/dynamicforms/vue/package-lock.json
 /vue/dynamicforms/README.md
 /dist/
 setup/env.py
