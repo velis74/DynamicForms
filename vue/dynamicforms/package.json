@@ -37,7 +37,7 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@dynamicforms/vuetify-inputs": "^0.5.3",
+    "@dynamicforms/vuetify-inputs": "^0.5.8",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "date-fns": "^4.1.0",
@@ -45,7 +45,7 @@
     "vue": "^3.4",
     "vue-ionicon": "^2.1.0",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.8.2"
+    "vuetify": "^3.9"
   },
   "dependencies": {
     "resize-observer-polyfill": "^1.5.1"
