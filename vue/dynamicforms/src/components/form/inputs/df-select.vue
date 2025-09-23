@@ -85,7 +85,7 @@ async function queryOptions(query: string, query_field: string): Promise<void> {
 }
 
 async function fetchChoices(queryValue?: string, idValue?: any | any[]) {
-  await queryOptions(idValue || queryValue, props.field.ajax.query_field);
+  await queryOptions(idValue || queryValue, idValue ? props.field.ajax.value_field : props.field.ajax.query_field);
   return loadedChoices.value;
 }
 </script>
