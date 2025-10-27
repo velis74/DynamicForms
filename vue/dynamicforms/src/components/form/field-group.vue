@@ -66,7 +66,7 @@ let formPayload = ref<FormPayload>();
 const columnClasses = computed(
   () => { const classes = props.field.widthClasses; return classes ? ` ${classes} ` : ''; },
 );
-const subErrors = computed(() => props.errors && props.errors[props.field.name]);
+const subErrors = computed(() => (props.field.name ? props.errors && props.errors[props.field.name] : props.errors));
 
 if (props.field.name == null) {
   use.value = true;
