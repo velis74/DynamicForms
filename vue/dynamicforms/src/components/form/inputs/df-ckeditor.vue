@@ -2,11 +2,11 @@
   <df-rtf-editor
     v-model="value"
 
-    :label="baseBinds.label"
     :errors="baseBinds['error-messages']"
     :hint="baseBinds.hint"
     :persistent-hint="baseBinds['persistent-hint']"
     :hide-details="baseBinds['hide-details']"
+    v-bind="baseBinds"
   />
 </template>
 

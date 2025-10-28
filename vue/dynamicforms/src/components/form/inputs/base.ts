@@ -1,3 +1,4 @@
+import Form, { Field, ValidationErrorRenderContent } from '@dynamicforms/vue-forms';
 import { computed } from 'vue';
 
 import FilteredActions from '../../actions/filtered-actions';
@@ -50,7 +51,20 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     hint?: any;
     'persistent-hint': any;
     'hide-details'?: boolean | 'auto';
+    control?: Form.IField;
   };
+  const control = computed(() => Field.create({
+    value: value.value,
+    touched: true,
+    visibility: Form.DisplayMode.FULL,
+    errors: (errorsList.value || []).map(
+      (error: any) => (error instanceof ValidationErrorRenderContent ? error : new ValidationErrorRenderContent(error)),
+    ),
+    enabled: true,
+  }));
+
+  control.value.validate();
+
   const baseBinds = computed((): BaseBinds => ({
     label: label.value,
     'error-messages': errorsList.value,
@@ -58,6 +72,7 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     hint: helpText.value,
     'persistent-hint': true,
     'hide-details': 'auto',
+    control: control.value,
   }));
 
   return {

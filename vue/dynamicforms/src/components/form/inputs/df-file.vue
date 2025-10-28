@@ -4,10 +4,10 @@
     :comms="fileComms"
     :class="field.renderParams.fieldCSSClass"
     :name="field.name"
-    :label="baseBinds.label"
     :errors="baseBinds['error-messages']"
     :enabled="!field.readOnly"
     :hint="baseBinds.hint"
+    v-bind="baseBinds"
   />
 </template>
 
