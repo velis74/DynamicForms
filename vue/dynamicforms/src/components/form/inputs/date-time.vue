@@ -2,7 +2,6 @@
   <df-date-time
     v-model="value"
 
-    :label="baseBinds.label"
     :errors="baseBinds['error-messages']"
     :hint="baseBinds.hint"
     :persistent-hint="baseBinds['persistent-hint']"
@@ -10,6 +9,7 @@
     :input-type="inputType"
     :display-format-date="displayFormatDate"
     :display-format-time="displayFormatTime"
+    v-bind="baseBinds"
   />
 </template>
 
