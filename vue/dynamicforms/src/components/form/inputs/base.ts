@@ -34,7 +34,13 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     },
   });
 
-  const errorsList = computed(() => props.errors || []);
+  const errorsList = computed(() => {
+    if (props.errors != null) {
+      if (props.errors instanceof Array) return props.errors;
+      return [props.errors];
+    }
+    return [];
+  });
 
   const errorsDisplayCount = computed(() => errorsList.value.length);
 
