@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { cloneDeep, merge } from 'lodash-es';
 import { vi } from 'vitest';
-import { Ref } from 'vue';
+import { h, Ref } from 'vue';
 import { createVuetify, useDisplay } from 'vuetify';
 
 import * as VuetifyComponents from '../vuetify';
@@ -67,6 +67,21 @@ vi.mock('vuetify', async () => {
     useDisplay: vi.fn(() => (defaultUseDisplayMock)),
   };
 });
+vi.mock('vue-cached-icon', async () => ({
+  CachedIcon: {
+    name: 'VueCachedIcon',
+    props: {
+      name: String,
+      // dodaj ostale props, ki jih komponenta sprejema, če jih potrebuješ
+    },
+    setup(props: any) {
+      return () => h('div', {
+        class: 'mocked-ionicon',
+        name: props.name,
+      });
+    },
+  },
+}));
 
 function generateDisplayMock(breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl') {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
@@ -239,7 +254,7 @@ const actionsCopy = {
     action: null,
     label: 'Add',
     title: 'Add new record',
-    icon: 'add-outline',
+    icon: 'ion-add-outline',
     classes: null,
     displayStyle: {
       asButton: true,
@@ -270,7 +285,7 @@ const actionsCopy = {
     action: null,
     label: 'Edit',
     title: 'Edit record',
-    icon: 'edit-outline',
+    icon: 'ion-edit-outline',
     classes: null,
     displayStyle: null,
   },
@@ -282,7 +297,7 @@ const actionsCopy = {
     action: null,
     label: 'Delete',
     title: 'Delete record',
-    icon: 'trash-outline',
+    icon: 'ion-trash-outline',
     classes: null,
     displayStyle: {
       xs: {
@@ -299,7 +314,7 @@ const actionsCopy = {
     action: null,
     label: 'Filter',
     title: 'Filter',
-    icon: 'filter-outline',
+    icon: 'ion-filter-outline',
     classes: null,
     displayStyle: {
       xs: {
@@ -335,28 +350,30 @@ describe('vuetify-actions action rendering', () => {
 
     const htmlCode = mountComponent();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="add-outline"><\/div>/g)).toBeNull();
+    expect(htmlCode.match(/<div class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g)).toBeNull();
   });
 
   it('checks if edit action is correctly rendered', async () => {
     const htmlCode = mountComponent();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Edit<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="edit-outline"><\/div>/g))
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-edit-outline"><\/div>/g))
       .not.toBeNull();
   });
 
   it('checks if delete action is correctly rendered', async () => {
     const htmlCode = mountComponent();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Delete<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="trash-outline"><\/div>/g))
-      .not.toBeNull();
+    expect(htmlCode.match(
+      /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-trash-outline"><\/div>/g,
+    )).not.toBeNull();
   });
 
   it('checks if filter action is correctly rendered', async () => {
     const htmlCode = mountComponent();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Filter<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="filter-outline"><\/div>/g))
-      .not.toBeNull();
+    expect(htmlCode.match(
+      /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-filter-outline"><\/div>/g,
+    )).not.toBeNull();
   });
 });
 
@@ -391,7 +408,7 @@ describe('Check if visibility flags work as expected', () => {
       const htmlCode = await constructTest(true, true, true);
       // preveriš, če se je v add knofu pokazala ikona IN labela
       const iconIsThere = (htmlCode.match(
-        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g,
       ));
       const labelIsThere = (htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g));
       expect(iconIsThere).not.toBeNull();
@@ -405,7 +422,7 @@ describe('Check if visibility flags work as expected', () => {
       const htmlCode = await constructTest(true, false, true);
       // preveriš, če se je v add knofu pokazala samo ikona
       const iconIsThere = (htmlCode.match(
-        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g,
       ));
       expect(iconIsThere).not.toBeNull();
     },
@@ -426,7 +443,7 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, true, true, true);
       const iconIsThere = htmlCode.match(
-        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g,
       );
       expect(iconIsThere).not.toBeNull();
       expect(htmlCode.match(/<span(\sdata-v-\w+="")?>add<\/span>/g)).toBeNull();
@@ -439,7 +456,7 @@ describe('Check if visibility flags work as expected', () => {
     async () => {
       const htmlCode = await constructTest(true, true, false, true);
       const iconIsThere = htmlCode.match(
-        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g,
+        /<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g,
       );
       expect(iconIsThere).toBeNull();
       expect(htmlCode.match(/<span(\sdata-v-\w+="")?>add<\/span>/g)).not.toBeNull();
@@ -467,7 +484,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
 
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g))
       .not.toBeNull();
   });
 
@@ -477,7 +494,7 @@ describe('Check if actions components are responsive', () => {
     const component = mountComponent();
     const htmlCode = component.html();
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g))
       .toBeNull();
   });
 
@@ -487,7 +504,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
 
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g))
       .not.toBeNull();
   });
 
@@ -498,7 +515,7 @@ describe('Check if actions components are responsive', () => {
     const htmlCode = component.html();
 
     expect(htmlCode.match(/<span(\sdata-v-\w+="")?>Add<\/span>/g)).not.toBeNull();
-    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="add-outline"><\/div>/g))
+    expect(htmlCode.match(/<div(\sdata-v-\w+="")? class="mocked-ionicon action-icon" name="ion-add-outline"><\/div>/g))
       .not.toBeNull();
   });
 });

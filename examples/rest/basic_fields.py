@@ -26,7 +26,7 @@ class BasicFieldsSerializer(serializers.ModelSerializer):
             label="field_end",
             title="field_end",
             name="field_end",
-            icon="search-outline",
+            icon="ion-search-outline",
             field_name="char_field",
             action=dict(func_name="examples.showAlertDialog", params=dict(page="Basic fields", field="char")),
         ),

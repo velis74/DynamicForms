@@ -18,7 +18,7 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
             position=TablePosition.FIELD_START,
             label="Up",
             name="up",
-            icon="arrow-up-circle-outline",
+            icon="ion-arrow-up-circle-outline",
             field_name="note",
             display_style=dict(
                 md=dict(asButton=False, showIcon=True, showLabel=True),
@@ -30,7 +30,7 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
             position=TablePosition.FIELD_START,
             label="Up",
             name="up-unit",
-            icon="arrow-up-circle-outline",
+            icon="ion-arrow-up-circle-outline",
             field_name="unit",
             display_style=dict(
                 xs=dict(showIcon=True),
@@ -44,7 +44,7 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
             position=TablePosition.FIELD_START,
             label="Up",
             name="up-int_fld",
-            icon="arrow-up-circle-outline",
+            icon="ion-arrow-up-circle-outline",
             field_name="int_fld",
             display_style=dict(
                 sm=dict(showIcon=False),
@@ -55,7 +55,7 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
             position=TablePosition.FIELD_END,
             label="Down",
             name="down",
-            icon="arrow-down-circle-outline",
+            icon="ion-arrow-down-circle-outline",
             field_name="cst_fld",
             display_style=dict(
                 asButton=False,
@@ -67,7 +67,7 @@ class ActionsOverviewSerializer(serializers.ModelSerializer):
             position=TablePosition.ROW_END,
             label="Edit",
             name="Edit",
-            icon="pencil-outline",
+            icon="ion-pencil-outline",
             display_style=dict(
                 asButton=True,
                 showIcon=True,

@@ -290,7 +290,7 @@
       "action": null,
       "label": "Add",
       "title": "Add new record",
-      "icon": "add-circle-outline",
+      "icon": "ion-add-circle-outline",
       "classes": null
     },
     "edit": {
@@ -300,7 +300,7 @@
       "action": null,
       "label": "Edit",
       "title": "Edit record",
-      "icon": "pencil-outline",
+      "icon": "ion-pencil-outline",
       "classes": null
     },
     "delete": {
@@ -310,7 +310,7 @@
       "action": null,
       "label": "Delete",
       "title": "Delete record",
-      "icon": "trash-outline",
+      "icon": "ion-trash-outline",
       "classes": null
     }
   },

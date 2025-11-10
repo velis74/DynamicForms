@@ -37,14 +37,14 @@
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
   "peerDependencies": {
-    "@dynamicforms/vue-forms": "^0.4.6",
-    "@dynamicforms/vuetify-inputs": "^0.5.8",
+    "@dynamicforms/vue-forms": "^0.4.7",
+    "@dynamicforms/vuetify-inputs": "^0.6.5",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "date-fns": "^4.1.0",
     "lodash-es": "^4.17.12",
     "vue": "^3.4",
-    "vue-ionicon": "^2.1.0",
+    "vue-cached-icon": "^3.0.3",
     "vue-router": "^4.1.6",
     "vuetify": "^3.9"
   },

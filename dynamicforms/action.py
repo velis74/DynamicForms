@@ -364,12 +364,12 @@ class Actions(object):
         if add_default_crud:
             self.actions.append(
                 TableAction(
-                    TablePosition.HEADER, _("Add"), title=_("Add new record"), name="add", icon="add-circle-outline"
+                    TablePosition.HEADER, _("Add"), title=_("Add new record"), name="add", icon="ion-add-circle-outline"
                 )
             )
             self.actions.append(
                 TableAction(
-                    TablePosition.ROW_CLICK, _("Edit"), title=_("Edit record"), name="edit", icon="pencil-outline"
+                    TablePosition.ROW_CLICK, _("Edit"), title=_("Edit record"), name="edit", icon="ion-pencil-outline"
                 )
             )
             self.actions.append(
@@ -378,14 +378,14 @@ class Actions(object):
                     label=_("Delete"),
                     title=_("Delete record"),
                     name="delete",
-                    icon="trash-outline",
+                    icon="ion-trash-outline",
                 )
             )
             self.actions.append(TableAction(TablePosition.ROW_CLICK, _("Sort"), title=_("Sort by column"), name="sort"))
         if add_default_filter:
             self.actions.append(
                 TableAction(
-                    TablePosition.HEADER, label=_("Filter"), title=_("Filter"), name="filter", icon="search-outline"
+                    TablePosition.HEADER, label=_("Filter"), title=_("Filter"), name="filter", icon="ion-search-outline"
                 )
             )
 

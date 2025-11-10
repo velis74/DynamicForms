@@ -10,7 +10,7 @@
       :title="action.title"
       @click.stop="(event: MouseEvent) => callHandler(action, { event })"
     >
-      <IonIcon v-if="displayIcon(action)" class="action-icon" :name="<string> action.icon"/>
+      <cached-icon v-if="displayIcon(action)" class="action-icon" :name="<string> action.icon"/>
       <span v-if="displayIcon(action) && displayLabel(action)" style="width: .5rem"/>
       <span v-if="displayLabel(action)">{{ labelText(action) }}</span>
     </v-btn>
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import IonIcon from 'vue-ionicon';
+import { CachedIcon } from 'vue-cached-icon';
 import { useDisplay } from 'vuetify';
 
 import { useActionHandler } from './action-handler-composable';
@@ -28,7 +28,7 @@ import ActionsMixin from './actions-mixin';
 
 export default /* #__PURE__ */ defineComponent({
   name: 'VuetifyActions',
-  components: { IonIcon },
+  components: { CachedIcon },
   mixins: [ActionsMixin, ActionHandlerMixin],
   setup() {
     const { callHandler } = useActionHandler();
@@ -47,6 +47,7 @@ export default /* #__PURE__ */ defineComponent({
 
 <style scoped>
 .action-icon {
+  margin-top: -0.25em;
   width:  1.5em;
   height: 1.5em;
 }

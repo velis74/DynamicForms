@@ -23,7 +23,7 @@
     "lodash-es": "^4.17.12",
     "suncalc": "^1.9.0",
     "vue": "^3",
-    "vue-ionicon": "^2.1.0",
+    "vue-cached-icon": "^3.0.3",
     "vue-router": "^4",
     "vuetify": "^3"
   },

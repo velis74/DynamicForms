@@ -65,7 +65,7 @@ export default defineConfig({
         'lodash-es',
         'resize-observer-polyfill',
         'vue',
-        'vue-ionicon',
+        'vue-cached-icon',
         'vue-markdown-render',
         'vue-router',
         /^vuetify\/.*/,
