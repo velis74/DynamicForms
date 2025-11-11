@@ -135,7 +135,7 @@ describe('Action', () => {
       expect(action).toHaveProperty('position', 'FORM_FOOTER');
       expect(action).toHaveProperty('label', 'Close');
       expect(action).toHaveProperty('labelAvailable', true);
-      expect(action).toHaveProperty('icon', 'close-outline');
+      expect(action).toHaveProperty('icon', 'ion-close-outline');
       expect(action).toHaveProperty('iconAvailable', true);
     });
 
@@ -148,7 +148,7 @@ describe('Action', () => {
       expect(action).toHaveProperty('position', 'FORM_FOOTER');
       expect(action).toHaveProperty('label', 'Yes');
       expect(action).toHaveProperty('labelAvailable', true);
-      expect(action).toHaveProperty('icon', 'thumbs-up-outline');
+      expect(action).toHaveProperty('icon', 'ion-thumbs-up-outline');
       expect(action).toHaveProperty('iconAvailable', true);
     });
 
@@ -161,7 +161,7 @@ describe('Action', () => {
       expect(action).toHaveProperty('position', 'FORM_FOOTER');
       expect(action).toHaveProperty('label', 'No');
       expect(action).toHaveProperty('labelAvailable', true);
-      expect(action).toHaveProperty('icon', 'thumbs-down-outline');
+      expect(action).toHaveProperty('icon', 'ion-thumbs-down-outline');
       expect(action).toHaveProperty('iconAvailable', true);
     });
   });
