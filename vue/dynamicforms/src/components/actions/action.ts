@@ -148,7 +148,7 @@ class Action implements ActionJSON {
     return new Action({
       name: 'close',
       label: gettext('Close'),
-      icon: 'close-outline',
+      icon: 'ion-close-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
       ...data, // any properties in data should overwrite properties in the constant
@@ -159,7 +159,7 @@ class Action implements ActionJSON {
     return new Action({
       name: 'yes',
       label: gettext('Yes'),
-      icon: 'thumbs-up-outline',
+      icon: 'ion-thumbs-up-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
       ...data, // any properties in data should overwrite properties in the constant
@@ -170,7 +170,7 @@ class Action implements ActionJSON {
     return new Action({
       name: 'no',
       label: gettext('No'),
-      icon: 'thumbs-down-outline',
+      icon: 'ion-thumbs-down-outline',
       displayStyle: { asButton: true, showLabel: true, showIcon: true },
       position: 'FORM_FOOTER',
       ...data, // any properties in data should overwrite properties in the constant
