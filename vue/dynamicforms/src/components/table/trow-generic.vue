@@ -85,7 +85,7 @@ function handleClick(event: any) {
   callHandler(new Action({
     name: 'select',
     label: 'Select',
-    icon: 'thumbs-down-outline',
+    icon: 'ion-thumbs-down-outline',
     position: 'ROW_CLICK',
   }));
   callHandler(props.actions.rowClick, { event, rowType: props.rowType });
