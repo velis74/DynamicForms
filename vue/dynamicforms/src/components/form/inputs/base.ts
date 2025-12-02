@@ -58,6 +58,9 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     'persistent-hint': any;
     'hide-details'?: boolean | 'auto';
     control?: Form.IField;
+    placeholder: string;
+    'persistent-placeholder': boolean;
+    enabled?: boolean;
   };
   const control = computed(() => Field.create({
     value: value.value,
@@ -79,6 +82,9 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     'persistent-hint': true,
     'hide-details': 'auto',
     control: control.value,
+    placeholder: props.field.placeholder,
+    'persistent-placeholder': Boolean(props.field.placeholder && props.field.placeholder.length > 0),
+    enabled: !props.field.readOnly,
   }));
 
   return {
