@@ -30,7 +30,9 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
       return props.modelValue;
     },
     set(newValue: any) {
-      emit('update:modelValue', newValue);
+      if (!props.field.readOnly) {
+        emit('update:modelValue', newValue);
+      }
     },
   });
 
