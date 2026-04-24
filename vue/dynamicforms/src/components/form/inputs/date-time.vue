@@ -2,6 +2,7 @@
   <df-date-time
     v-model="value"
 
+    :class="field.renderParams.fieldCSSClass"
     :errors="baseBinds['error-messages']"
     :hint="baseBinds.hint"
     :persistent-hint="baseBinds['persistent-hint']"
