@@ -61,10 +61,13 @@ const allOptions = computed(() => {
 });
 
 const emitValueChange = (newValue: any) => {
-  if (newValue && allOptions.value) {
-    const text = multiple.value ?
-      newValue.map((i:DfForm.ChoicesJSON) => allOptions.value.find((j) => j.id === i)?.text) :
-      allOptions.value.find((i) => i.id === newValue)?.text;
+  if (allOptions.value) {
+    let text;
+    if (multiple.value && Array.isArray(newValue)) {
+      text = newValue.map((i:DfForm.ChoicesJSON) => allOptions.value.find((j) => j.id === i)?.text);
+    } else if (!multiple.value) {
+      text = allOptions.value.find((i) => i.id === newValue)?.text;
+    }
     if (text) {
       emits('update:modelValueDisplay', text);
       return;
