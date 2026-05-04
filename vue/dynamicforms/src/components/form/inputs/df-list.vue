@@ -2,6 +2,7 @@
   <v-input v-bind="binds">
     <APIConsumerVue
       v-if="consumer"
+      :class="field.renderParams.fieldCSSClass"
       :consumer="consumer"
       :display-component="displayComponent"
       :handlers="handlers"

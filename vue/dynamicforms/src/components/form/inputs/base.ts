@@ -71,7 +71,7 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     errors: (errorsList.value || []).map(
       (error: any) => (error instanceof ValidationErrorRenderContent ? error : new ValidationErrorRenderContent(error)),
     ),
-    enabled: true,
+    enabled: !props.field.readOnly,
   }));
 
   control.value.validate();
