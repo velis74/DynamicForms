@@ -59,12 +59,12 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
     hint?: any;
     'persistent-hint': any;
     'hide-details'?: boolean | 'auto';
-    control?: Form.IField;
+    control?: Form.FieldBase;
     placeholder: string;
     'persistent-placeholder': boolean;
     enabled?: boolean;
   };
-  const control = computed(() => Field.create({
+  const control = computed(() => new Field({
     value: value.value,
     touched: true,
     visibility: Form.DisplayMode.FULL,

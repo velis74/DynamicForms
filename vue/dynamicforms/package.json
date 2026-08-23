@@ -1,7 +1,7 @@
 {
   "name": "@velis/dynamicforms",
   "private": false,
-  "version": "0.81.7",
+  "version": "0.81.8",
   "type": "module",
   "description": "Data entry boilerplate components and a RESTful API consumer",
   "author": "Jure Erznožnik",
@@ -36,14 +36,17 @@
     "url": "git@github.com:velis74/DynamicForms.git"
   },
   "issues": "https://github.com/velis74/DynamicForms/issues",
+  "engines": {
+    "node": ">=22"
+  },
   "peerDependencies": {
-    "@dynamicforms/vue-forms": "^0.5.0",
-    "@dynamicforms/vuetify-inputs": "^0.7.5",
+    "@dynamicforms/vue-forms": "^0.17.1",
+    "@dynamicforms/vuetify-inputs": "^0.10.0",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "date-fns": "^4.1.0",
     "lodash-es": "^4.17.12",
-    "vue": "^3.4",
+    "vue": "^3.5.2",
     "vue-cached-icon": "^3.0.3",
     "vue-router": "^4.1.6",
     "vuetify": "^3.12.3"

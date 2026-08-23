@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/components/*"],
       "~/*": ["../../node_modules/*"],
