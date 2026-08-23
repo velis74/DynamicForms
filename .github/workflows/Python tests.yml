@@ -36,18 +36,8 @@ jobs:
           pip install versio
           pip install tox
 
-      - name: Run Tox py-django3
-        if: (success() || failure())
-        run: tox -e py-django32-drf314
-
-      - name: Run Tox py-django4
-        if: (success() || failure())
-        run: tox -e py-django42-drf314,py-django42-drftip
-
-      - name: Run Tox py-djangotip-drftip
-        if: (success() || failure())
-        continue-on-error: true
-        run: tox -e py-djangotip-drftip
+      - name: Run Tox
+        run: tox -e py-django52-drf318
 
 # TODO: uncomment tests when JSON field is supported for older versions and other browsers tested
 
