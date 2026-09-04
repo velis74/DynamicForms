@@ -40,14 +40,14 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "@dynamicforms/vue-forms": "^0.17.1",
-    "@dynamicforms/vuetify-inputs": "^0.10.0",
+    "@dynamicforms/vue-forms": "^1.0.0",
+    "@dynamicforms/vuetify-inputs": "^0.11.0",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "date-fns": "^4.1.0",
     "lodash-es": "^4.17.12",
     "vue": "^3.5.2",
-    "vue-cached-icon": "^3.0.3",
+    "vue-cached-icon": "^3.1.1",
     "vue-router": "^4.1.6",
     "vuetify": "^3.12.3"
   },
