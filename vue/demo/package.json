@@ -7,7 +7,7 @@
     "preview": "vite --mode preview"
   },
   "dependencies": {
-    "@dynamicforms/vuetify-inputs": "^0.10.0",
+    "@dynamicforms/vuetify-inputs": "^0.11.0",
     "@fullcalendar/core": "^6.1.4",
     "@fullcalendar/daygrid": "^6.1.4",
     "@fullcalendar/interaction": "^6.1.4",
@@ -23,7 +23,7 @@
     "lodash-es": "^4.17.12",
     "suncalc": "^1.9.0",
     "vue": "^3",
-    "vue-cached-icon": "^3.0.3",
+    "vue-cached-icon": "^3.1.1",
     "vue-router": "^4",
     "vuetify": "^3"
   },
