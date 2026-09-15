@@ -524,7 +524,13 @@ class DynamicModelSerializerMixin(DynamicModelMixin):
 
     def __init__(self, *args, **kwargs):
         if model := self.determine_model_at_runtime(kwargs.get("context", {}).get("request")):
-            self.Meta.model = model
+            # `self.Meta` resolves to the CLASS's Meta unless shadowed here - `self.Meta.model = model`
+            # would mutate that shared class object, leaking into every other instance of this
+            # serializer (including ones already alive, and ones from unrelated, concurrent
+            # requests) until some other request's resolved model overwrites it again. Subclassing
+            # Meta and assigning the subclass as an INSTANCE attribute keeps the override local to
+            # this one instance.
+            self.Meta = type("Meta", (self.Meta,), {"model": model})
         super().__init__(*args, **kwargs)
 
     def determine_layout_at_runtime(self, request):
