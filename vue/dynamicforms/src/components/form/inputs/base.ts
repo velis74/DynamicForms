@@ -67,11 +67,10 @@ export function useInputBase(props: BaseProps, emit: BaseEmits) {
   const control = computed(() => new Field({
     value: value.value,
     touched: true,
-    visibility: Form.DisplayMode.FULL,
     errors: (errorsList.value || []).map(
       (error: any) => (error instanceof ValidationErrorRenderContent ? error : new ValidationErrorRenderContent(error)),
     ),
-    enabled: !props.field.readOnly,
+    access: props.field.readOnly ? 'readonly' : 'editable',
   }));
 
   control.value.validate();
