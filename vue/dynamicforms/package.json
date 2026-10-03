@@ -40,8 +40,8 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "@dynamicforms/vue-forms": "^1.0.0",
-    "@dynamicforms/vuetify-inputs": "^0.11.0",
+    "@dynamicforms/vue-forms": "^2.0.2",
+    "@dynamicforms/vuetify-inputs": "^0.12.1",
     "@kyvg/vue3-notification": "^3.2.1",
     "axios": "^1.4.0",
     "date-fns": "^4.1.0",
