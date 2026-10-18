@@ -1,44 +1,16 @@
 {
-  "name": "dynamicform-project",
+  "name": "@velis/dynamicforms",
+  "version": "0.83.0",
   "private": false,
-  "version": "0.82.0",
-  "description": "Data entry boilerplate components and a RESTful API consumer",
-  "author": "velis74",
-  "license": "UNLICENSED",
-  "main": "",
-  "workspaces": [
-    "vue/*"
+  "type": "module",
+  "license": "Proprietary",
+  "description": "Tombstone release. This package has been retired; no code is included.",
+  "main": "index.js",
+  "files": [
+    "index.js"
   ],
-  "scripts": {
-    "clean": "rf",
-    "dev": "npm run dev -ws --if-present",
-    "preview": "npm run build -w @velis/dynamicforms && npm run preview -w demo",
-    "build": "npm run build -ws --if-present",
-    "build-no-tsc": "npm run build-no-tsc -ws --if-present",
-    "publish": "python sync_version.py && npm run build && npm publish --workspace vue/dynamicforms",
-    "test": "npm run test -ws --if-present",
-    "lint": "npm run lint -ws --if-present",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "vitepress": "^1.3.2"
-  },
-  "eslintConfig": {
-    "extends": [
-      "velis"
-    ],
-    "rules": {
-      "vuejs-accessibility/click-events-have-key-events": "off",
-      "vuejs-accessibility/form-control-has-label": "off",
-      "vuejs-accessibility/label-has-for": "off"
-    },
-    "ignorePatterns": [
-      "dist/*",
-      "coverage/*",
-      "node_modules/*"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/velis74/DynamicForms"
   }
 }

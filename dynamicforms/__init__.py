@@ -1,8 +1,4 @@
 __title__ = "DynamicForms"
-__version__ = "0.82.0"
-__author__ = "Jure Erznožnik"
-__email__ = "jure.erznoznik@gmail.com"
-__license__ = "BSD 3-Clause"
-__copyright__ = "Copyright 2017-present Jure Erznožnik"
+__version__ = "0.83.0"
 
 VERSION = __version__

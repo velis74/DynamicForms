@@ -1,7 +1,0 @@
-selenium
-tox
-flake8
-isort
-parameterized
-coverage
-django_coverage_plugin
