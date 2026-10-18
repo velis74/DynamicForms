@@ -2,10 +2,13 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.publish]
+tests = false
+
 [project]
 name = "dynamicforms"
-version = "0.82.0"
-description = "DyF performs all the visualisation & data entry of your DRF Serializers & ViewSets and adds some candy of its own"
+version = "0.83.0"
+description = "Tombstone release. This package has been retired; no code is included."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "Proprietary" }
@@ -13,82 +16,18 @@ authors = [
     { name = "Jure Erznožnik", email = "support@velis.si" },
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 7 - Inactive",
     "Programming Language :: Python :: 3",
     "License :: Other/Proprietary License",
     "Operating System :: OS Independent",
-    "Framework :: Django",
-]
-
-dependencies = [
-    "pytz",
-    "coreapi>=1.32",
-    "django>=2",
-    "djangorestframework>=3.14",
-    "django-filter",
-    "django-enumfields >= 2.1.1",
-    "jsonschema",
-    "pillow",
-    "django-cors-headers",
-    "versio",
-    "ruff",
-    "ruff-lsp",
-    "six",
-    "drf_spectacular",
 ]
 
 [project.urls]
 Homepage = "https://github.com/velis74/DynamicForms"
 Repository = "https://github.com/velis74/DynamicForms"
-"Bug Tracker" = "https://github.com/velis74/DynamicForms/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["dynamicforms", "dynamicforms_legacy"]
+packages = ["dynamicforms"]
 
-[tool.hatch.version]
-path = "dynamicforms/__init__.py"
-
-
-[tool.ruff]
-exclude = [
-    'dockertest', 'docs', 'scripts', 'README.md', 'LICENSE', 'MANIFEST.in',
-    'pyproject.toml', 'Pipfile', 'Pipfile.lock', 'ruff.egg-info', 'dist', 'build', '.gitignore', '.git', '.idea',
-    '.pytest_cache', '.coverage', '.ruff', '*/migrations/*']
-line-length = 120
-
-[tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
-select = ["E4", "E7", "E9", "F", "I"]
-ignore = ["E731", "E722"]
-
-# Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.format]
-
-# Like Black, use double quotes for strings.
-quote-style = "double"
-
-# Like Black, indent with spaces, rather than tabs.
-indent-style = "space"
-
-# Like Black, respect magic trailing commas.
-skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
-line-ending = "auto"
-
-[tool.ruff.lint.isort]
-case-sensitive = false
-lines-between-types = 1
-combine-as-imports = true
-order-by-type = false
-known-local-folder = []
-
-
+[tool.hatch.build.targets.sdist]
+include = ["/dynamicforms", "/README.md", "/LICENSE"]
